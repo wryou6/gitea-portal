@@ -1,14 +1,30 @@
+# Dependencies and package-manager caches
 node_modules/
+.pnpm-store/
+
+# Build, test, and tool output
 dist/
 build/
 coverage/
+.vite/
+.turbo/
+*.tsbuildinfo
 *.log
+*.pid
+
+# Local configuration and credentials
 .env*
 !.env.example
+
+# Local editor settings
 .vscode/
 .idea/
+
+# Runtime Board JSON persistence
 data/boards.json
 data/boards.json.lock
 data/*.tmp
+
+# OS metadata
 Thumbs.db
 .DS_Store
