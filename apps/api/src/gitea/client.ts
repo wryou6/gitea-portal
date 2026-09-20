@@ -23,7 +23,7 @@ type GiteaApiMilestone = { id?: number; title?: string };
 
 function repositoryRef(repository: GiteaApiRepository | undefined): RepositoryRef {
   const owner = typeof repository?.owner === 'string' ? repository.owner : repository?.owner?.login;
-  if (!owner || !repository?.name) throw new Error('Gitea returned an Issue without repository identity');
+  if (!owner || !repository?.name) throw new GiteaError(502, 'Gitea returned an Issue without repository identity');
   return { owner, name: repository.name };
 }
 
@@ -33,9 +33,7 @@ function user(value: GiteaApiUser | null | undefined): GiteaUser | null {
 
 function normalizeIssue(value: GiteaApiIssue): GiteaIssue {
   const repository = repositoryRef(value.repository);
-  if (value.number === undefined || !value.title || !value.state || !value.updated_at || !value.html_url) {
-    throw new Error('Gitea returned an incomplete Issue');
-  }
+  if (value.number === undefined || !value.title || !value.state || !value.updated_at || !value.html_url) throw new GiteaError(502, 'Gitea returned an incomplete Issue');
   return {
     repository,
     number: value.number,
@@ -95,8 +93,10 @@ export class GiteaClient {
       return (await response.json()) as T;
     } catch (error) {
       if (error instanceof DOMException && error.name === 'AbortError') throw new GiteaError(504, `Gitea request timed out after ${this.timeoutMs}ms`);
-      this.logger?.({ correlationId: this.requestId, path, elapsedMs: Date.now() - startedAt, error: error instanceof Error ? error.message : String(error) }, 'Gitea request failed');
-      throw error;
+      if (error instanceof GiteaError) throw error;
+      const message = error instanceof Error ? error.message : String(error);
+      this.logger?.({ correlationId: this.requestId, path, elapsedMs: Date.now() - startedAt, error: message }, 'Gitea request failed');
+      throw new GiteaError(502, `Gitea request unavailable: ${message}`);
     } finally {
       clearTimeout(timeout);
     }
