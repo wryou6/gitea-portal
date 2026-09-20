@@ -71,5 +71,12 @@ export class GiteaClient {
     return this.request(`/repos/${repository.owner}/${repository.name}/labels?limit=100`);
   }
 
+  replaceIssueLabels(repository: RepositoryRef, number: number, labelIds: number[]): Promise<unknown> {
+    return this.request(`/repos/${repository.owner}/${repository.name}/issues/${number}/labels`, {
+      method: 'PUT',
+      body: JSON.stringify({ labels: labelIds }),
+    });
+  }
+
   currentUser(): Promise<GiteaUser> { return this.request('/user'); }
 }

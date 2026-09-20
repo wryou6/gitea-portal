@@ -2,6 +2,8 @@ import type { FastifyInstance } from 'fastify';
 import type { AppConfig } from '../config/env.js';
 import { giteaFor } from '../gitea/request.js';
 import { getIssue, searchIssues } from './issue-service.js';
+import { createIssue, updateIssue } from './issue-command-service.js';
+import { validateComment } from './issue-validation.js';
 
 export async function registerIssueRoutes(app: FastifyInstance, config: AppConfig): Promise<void> {
   app.get('/api/repositories', async (request) => giteaFor(request, config.giteaBaseUrl).repositories());
@@ -24,12 +26,12 @@ export async function registerIssueRoutes(app: FastifyInstance, config: AppConfi
   });
   app.post('/api/repositories/:owner/:repo/issues', async (request, reply) => {
     const params = request.params as { owner: string; repo: string };
-    const issue = await giteaFor(request, config.giteaBaseUrl).createIssue({ owner: params.owner, name: params.repo }, request.body);
+    const issue = await createIssue(giteaFor(request, config.giteaBaseUrl), { owner: params.owner, name: params.repo }, request.body);
     return reply.code(201).send(issue);
   });
   app.patch('/api/issues/:owner/:repo/:number', async (request) => {
     const params = request.params as { owner: string; repo: string; number: string };
-    return giteaFor(request, config.giteaBaseUrl).updateIssue({ owner: params.owner, name: params.repo }, Number(params.number), request.body);
+    return updateIssue(giteaFor(request, config.giteaBaseUrl), { owner: params.owner, name: params.repo }, Number(params.number), request.body);
   });
   app.get('/api/issues/:owner/:repo/:number/comments', async (request) => {
     const params = request.params as { owner: string; repo: string; number: string };
@@ -37,8 +39,8 @@ export async function registerIssueRoutes(app: FastifyInstance, config: AppConfi
   });
   app.post('/api/issues/:owner/:repo/:number/comments', async (request, reply) => {
     const params = request.params as { owner: string; repo: string; number: string };
-    const body = (request.body as { body?: string }).body?.trim();
-    if (!body) return reply.code(422).send({ error: 'Comment body is required' });
+    let body: string;
+    try { body = validateComment((request.body as { body?: unknown }).body); } catch (error) { return reply.code(422).send({ error: error instanceof Error ? error.message : 'Comment body is required' }); }
     const comment = await giteaFor(request, config.giteaBaseUrl).createComment({ owner: params.owner, name: params.repo }, Number(params.number), body);
     return reply.code(201).send(comment);
   });

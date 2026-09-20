@@ -86,11 +86,11 @@ description: "跨 Repository Gitea Issue 管理 Portal implementation tasks"
 
 **Independent Test**: 在可修改 Repository 建立 Issue，修改欄位、Close、Reopen，重新從 Portal 與 Gitea 查看並確認同一 Issue 一致；只讀帳號操作不得產生變更。
 
-- [ ] T036 [US3] 建立 `apps/api/src/issues/issue-command-service.ts`，實作 create payload `title` required，以及 body、assignee、labels、milestone 的 Gitea delegated mutation
-- [ ] T037 [US3] 擴充 `apps/api/src/issues/issue-command-service.ts`，實作 Issue patch 的 title、body、state(open/closed)、assignee、labels、milestone，並使用 Gitea 最新資料避免靜默覆蓋
-- [ ] T038 [US3] 擴充 `apps/api/src/http/issue-routes.ts` 的 Repository issue POST 與 Issue PATCH route，依 `contracts/openapi.yaml` 回傳 201/200、403、404、409
-- [ ] T039 [US3] 建立 `apps/api/src/issues/issue-validation.ts`，拒絕空 Title、非法 state、無效 assignee/label/milestone 與缺少 Repository context 的 payload，且 validation failure 不呼叫 Gitea mutation
-- [ ] T040 [P] [US3] 建立 `apps/web/src/features/issues/IssueCreatePage.tsx` 與 `apps/web/src/features/issues/IssueForm.tsx`，提供 Repository 選擇與 Title、Description、Assignee、Labels、Milestone 欄位
+- [X] T036 [US3] 建立 `apps/api/src/issues/issue-command-service.ts`，實作 create payload `title` required，以及 body、assignee、labels、milestone 的 Gitea delegated mutation
+- [X] T037 [US3] 擴充 `apps/api/src/issues/issue-command-service.ts`，實作 Issue patch 的 title、body、state(open/closed)、assignee、labels、milestone，並使用 Gitea 最新資料避免靜默覆蓋
+- [X] T038 [US3] 擴充 `apps/api/src/http/issue-routes.ts` 的 Repository issue POST 與 Issue PATCH route，依 `contracts/openapi.yaml` 回傳 201/200、403、404、409
+- [X] T039 [US3] 建立 `apps/api/src/issues/issue-validation.ts`，拒絕空 Title、非法 state、無效 assignee/label/milestone 與缺少 Repository context 的 payload，且 validation failure 不呼叫 Gitea mutation
+- [X] T040 [P] [US3] 建立 `apps/web/src/features/issues/IssueCreatePage.tsx` 與 `apps/web/src/features/issues/IssueForm.tsx`，提供 Repository 選擇與 Title、Description、Assignee、Labels、Milestone 欄位
 - [ ] T041 [P] [US3] 建立 `apps/web/src/features/issues/IssueEditForm.tsx`，提供 Title、Description、State、Assignee、Labels、Milestone、Close 與 Reopen 操作
 - [ ] T042 [US3] 在 `apps/web/src/features/issues/IssueForm.tsx` 與 `apps/web/src/features/issues/IssueEditForm.tsx` 實作欄位驗證、Gitea permission denied、conflict、unavailable 與成功後重新讀取 Issue
 - [ ] T043 [US3] 在 `apps/api/src/issues/issue-command-service.ts` 與 `apps/web/src/features/issues/IssueDetailPage.tsx` 確保只讀使用者的 create/update/close/reopen 被 Gitea 拒絕時不顯示成功，且不提交第二次或部分本地變更
@@ -122,9 +122,9 @@ description: "跨 Repository Gitea Issue 管理 Portal implementation tasks"
 - [ ] T051 [US5] 建立 `apps/api/src/http/board-routes.ts` 的 Board GET/POST/PATCH/DELETE 與 BoardView route，依 `contracts/openapi.yaml` 回傳 compatibility、permission、not found 與 validation errors
 - [ ] T052 [P] [US5] 建立 `apps/web/src/features/boards/BoardListPage.tsx`、`BoardEditor.tsx` 與 `BoardRepositoryPicker.tsx`，支援共享 Board 建立、編輯、刪除與相同 Convention Repository 選擇
 - [ ] T053 [US5] 建立 `apps/web/src/features/boards/KanbanBoard.tsx`、`KanbanColumn.tsx` 與 `KanbanCard.tsx`，顯示 Repository、Issue Number、Title、Assignee、Labels、unconfigured 與 conflict
-- [ ] T054 [US5] 建立 `apps/api/src/boards/transition-service.ts`，在 mutation 前驗證 current Issue、user permission、Board/repository exact Convention、target state、target Label 存在與 atomic replacement capability
-- [ ] T055 [US5] 在 `apps/api/src/gitea/label-replacement.ts` 實作單一 atomic Gitea Label replacement 或 target instance 支援的等效 atomic operation；禁止 remove-then-add fallback，無法保證 atomic 時回傳 unsupported 且不得修改 Gitea
-- [ ] T056 [US5] 建立 `apps/api/src/http/board-transition-route.ts` 的 transition endpoint；成功回傳 re-read Issue，preflight/unsupported 回傳 422，state conflict 或 Gitea concurrent change 回傳 409，並保證原始 Labels 不變
+- [X] T054 [US5] 建立 `apps/api/src/boards/transition-service.ts`，在 mutation 前驗證 current Issue、user permission、Board/repository exact Convention、target state、target Label 存在與 atomic replacement capability
+- [X] T055 [US5] 在 `apps/api/src/gitea/label-replacement.ts` 實作單一 atomic Gitea Label replacement 或 target instance 支援的等效 atomic operation；禁止 remove-then-add fallback，無法保證 atomic 時回傳 unsupported 且不得修改 Gitea
+- [X] T056 [US5] 建立 `apps/api/src/http/board-transition-route.ts` 的 transition endpoint；成功回傳 re-read Issue，preflight/unsupported 回傳 422，state conflict 或 Gitea concurrent change 回傳 409，並保證原始 Labels 不變
 - [ ] T057 [US5] 建立 `apps/web/src/features/boards/card-transition.ts` 與 `apps/web/src/features/boards/KanbanBoard.tsx` 的 drag/drop transition，只有成功 response 才移動 Card；拒絕或失敗時 refresh 並顯示原因
 - [ ] T058 [US5] 在 `apps/api/src/boards/board-view-service.ts` 與 `apps/web/src/features/boards/KanbanBoard.tsx` 加入重新整理與外部 Gitea 變更處理，確保直接在 Gitea 修改後 Board 不以 Portal 狀態覆蓋
 
