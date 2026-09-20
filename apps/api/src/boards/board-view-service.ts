@@ -1,4 +1,4 @@
-import type { Board, BoardView, IssueSummary, RepositoryRef, WorkflowConvention } from '@gitea-portal/domain';
+import type { Board, BoardCard, BoardView, IssueSummary, RepositoryRef, WorkflowConvention } from '@gitea-portal/domain';
 import { getDefaultWorkflowState, resolveWorkflowState } from '@gitea-portal/domain';
 import { GiteaError } from '../gitea/errors.js';
 import { GiteaClient } from '../gitea/client.js';
@@ -26,6 +26,14 @@ function issueWithWorkflowState(issue: IssueSummary, convention: WorkflowConvent
   return {
     ...issue,
     workflowState: resolved.kind === 'state' ? resolved.key : resolved.kind,
+  };
+}
+
+function boardCardView(issue: IssueSummary, convention: WorkflowConvention): BoardCard {
+  const workflowNames = new Set(convention.states.map((state) => state.labelName));
+  return {
+    ...issue,
+    visibleLabels: issue.labels.filter((label) => !workflowNames.has(label.name)),
   };
 }
 
@@ -146,17 +154,18 @@ export async function getBoardView(client: GiteaClient, board: Board, convention
     convention,
     contextFor({ owner: issue.owner, name: issue.name }),
   )));
+  const boardCards = repairedCards.map((card) => boardCardView(card, convention));
   const normalColumns = convention.states
     .slice()
     .sort((left, right) => left.order - right.order)
     .map((state) => ({
       stateKey: state.key,
       displayName: state.displayName,
-      cards: repairedCards.filter((card) => card.workflowState === state.key),
+      cards: boardCards.filter((card) => card.workflowState === state.key),
     }));
   const anomalyColumns = [
-    { stateKey: 'unconfigured', displayName: '未設定狀態', cards: repairedCards.filter((card) => card.workflowState === 'unconfigured') },
-    { stateKey: 'conflict', displayName: '狀態衝突', cards: repairedCards.filter((card) => card.workflowState === 'conflict') },
+    { stateKey: 'unconfigured', displayName: '未設定狀態', cards: boardCards.filter((card) => card.workflowState === 'unconfigured') },
+    { stateKey: 'conflict', displayName: '狀態衝突', cards: boardCards.filter((card) => card.workflowState === 'conflict') },
   ].filter((column) => column.cards.length > 0);
   return { board, columns: [...anomalyColumns, ...normalColumns] };
 }

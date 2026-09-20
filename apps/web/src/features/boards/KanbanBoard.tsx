@@ -1,13 +1,13 @@
 import { useCallback, useEffect, useState } from 'react';
 import { api } from '../../lib/api';
-import type { BoardView } from './types';
+import type { BoardCard, BoardView } from './types';
 import { KanbanColumn } from './KanbanColumn';
 import { transitionCard } from './card-transition';
 import { ErrorNotice } from '../../components/ErrorNotice';
 
 export function KanbanBoard({ boardId }: { boardId: string }) {
   const [view, setView] = useState<BoardView>();
-  const [dragged, setDragged] = useState<import('../../lib/api').Issue>();
+  const [dragged, setDragged] = useState<BoardCard>();
   const [error, setError] = useState<string>();
   const load = useCallback(async (clearError = true) => {
     try {
@@ -22,7 +22,7 @@ export function KanbanBoard({ boardId }: { boardId: string }) {
   if (error && !view) return <ErrorNotice message={error} />;
   if (!view) return <div className="loading">載入中…</div>;
 
-  const move = async (issue: import('../../lib/api').Issue, stateKey: string) => {
+  const move = async (issue: BoardCard, stateKey: string) => {
     setDragged(undefined);
     try {
       await transitionCard(boardId, issue, stateKey);

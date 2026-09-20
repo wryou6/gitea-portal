@@ -1,6 +1,6 @@
-import type { Issue } from '../../lib/api';
 import { KanbanCard } from './KanbanCard';
-export function KanbanColumn({ column, dragged, onDragStart, onDropCard }: { column: { stateKey: string; displayName: string; cards: Issue[] }; dragged?: Issue; onDragStart: (issue: Issue) => void; onDropCard: (issue: Issue, stateKey: string) => void }) {
+import type { BoardCard } from './types';
+export function KanbanColumn({ column, dragged, onDragStart, onDropCard }: { column: { stateKey: string; displayName: string; cards: BoardCard[] }; dragged?: BoardCard; onDragStart: (issue: BoardCard) => void; onDropCard: (issue: BoardCard, stateKey: string) => void }) {
   const canDrop = column.stateKey !== 'unconfigured' && column.stateKey !== 'conflict';
   return <section
     className={`kanban-column${canDrop ? '' : ' anomaly-column'}`}
