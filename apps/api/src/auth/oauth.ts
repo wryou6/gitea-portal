@@ -8,6 +8,7 @@ export function oauthAuthorizeUrl(config: AppConfig, state: string): string {
   url.searchParams.set('client_id', config.oauthClientId);
   url.searchParams.set('redirect_uri', config.oauthRedirectUri);
   url.searchParams.set('response_type', 'code');
+  url.searchParams.set('scope', config.oauthScope);
   url.searchParams.set('state', state);
   return url.toString();
 }

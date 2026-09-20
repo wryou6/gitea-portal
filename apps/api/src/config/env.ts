@@ -6,6 +6,7 @@ export type AppConfig = {
   oauthClientId: string;
   oauthClientSecret: string;
   oauthRedirectUri: string;
+  oauthScope: string;
   sessionSecret: string;
   workflowConfigPath: string;
   boardStorePath: string;
@@ -44,6 +45,7 @@ export function loadConfig(env = process.env): AppConfig {
     oauthClientId: required('GITEA_OAUTH_CLIENT_ID'),
     oauthClientSecret: required('GITEA_OAUTH_CLIENT_SECRET'),
     oauthRedirectUri: required('GITEA_OAUTH_REDIRECT_URI'),
+    oauthScope: env.GITEA_OAUTH_SCOPE ?? 'read:user read:repository read:issue write:issue',
     sessionSecret: required('PORTAL_SESSION_SECRET'),
     workflowConfigPath: resolveConfiguredPath(env.WORKFLOW_CONFIG_PATH ?? 'config/workflows/conventions.yaml'),
     boardStorePath: resolveConfiguredPath(env.BOARD_STORE_PATH ?? 'data/boards.json'),

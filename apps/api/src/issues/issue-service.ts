@@ -20,7 +20,7 @@ export function mapIssue(issue: GiteaIssue): IssueSummary {
 
 export async function searchIssues(client: GiteaClient, query: IssueQuery) {
   const result = await client.searchIssues(query);
-  return { items: result.data.map(mapIssue), page: query.page ?? 1, limit: query.limit ?? 50, hasNext: result.data.length >= (query.limit ?? 50) };
+  return { items: result.map(mapIssue), page: query.page ?? 1, limit: query.limit ?? 50, hasNext: result.length >= (query.limit ?? 50) };
 }
 
 export async function getIssue(client: GiteaClient, repository: RepositoryRef, number: number) {

@@ -2,6 +2,62 @@ import type { GiteaComment, GiteaIssue, GiteaRepository, GiteaUser } from '@gite
 import type { IssueState, RepositoryRef } from '@gitea-portal/domain';
 import { mapGiteaError } from './errors.js';
 
+type GiteaApiUser = { login?: string; full_name?: string };
+type GiteaApiRepository = { owner?: GiteaApiUser | string; name?: string; full_name?: string; html_url?: string };
+type GiteaApiLabel = { name?: string; color?: string };
+type GiteaApiIssue = {
+  repository?: GiteaApiRepository;
+  number?: number;
+  title?: string;
+  body?: string;
+  state?: string;
+  assignee?: GiteaApiUser | null;
+  labels?: GiteaApiLabel[];
+  milestone?: { id?: number; title?: string } | null;
+  updated_at?: string;
+  html_url?: string;
+};
+type GiteaApiComment = { id?: number; user?: GiteaApiUser; body?: string; created_at?: string; updated_at?: string };
+
+function repositoryRef(repository: GiteaApiRepository | undefined): RepositoryRef {
+  const owner = typeof repository?.owner === 'string' ? repository.owner : repository?.owner?.login;
+  if (!owner || !repository?.name) throw new Error('Gitea returned an Issue without repository identity');
+  return { owner, name: repository.name };
+}
+
+function user(value: GiteaApiUser | null | undefined): GiteaUser | null {
+  return value?.login ? { login: value.login, fullName: value.full_name } : null;
+}
+
+function normalizeIssue(value: GiteaApiIssue): GiteaIssue {
+  const repository = repositoryRef(value.repository);
+  if (value.number === undefined || !value.title || !value.state || !value.updated_at || !value.html_url) {
+    throw new Error('Gitea returned an incomplete Issue');
+  }
+  return {
+    repository,
+    number: value.number,
+    title: value.title,
+    body: value.body ?? '',
+    state: value.state === 'closed' ? 'closed' : 'open',
+    assignee: user(value.assignee),
+    labels: (value.labels ?? []).filter((label): label is { name: string; color?: string } => Boolean(label.name)).map((label) => ({ name: label.name, color: label.color })),
+    milestone: value.milestone?.title && value.milestone.id !== undefined ? { id: value.milestone.id, title: value.milestone.title } : null,
+    updatedAt: value.updated_at,
+    htmlUrl: value.html_url,
+  };
+}
+
+function normalizeComment(value: GiteaApiComment): GiteaComment {
+  if (value.id === undefined || !value.user?.login || value.created_at === undefined) throw new Error('Gitea returned an incomplete Comment');
+  return { id: value.id, user: { login: value.user.login, fullName: value.user.full_name }, body: value.body ?? '', createdAt: value.created_at, updatedAt: value.updated_at };
+}
+
+function normalizeRepository(value: GiteaApiRepository): GiteaRepository {
+  const repository = repositoryRef(value);
+  return { ...repository, fullName: value.full_name ?? `${repository.owner}/${repository.name}`, htmlUrl: value.html_url ?? '' };
+}
+
 export type IssueQuery = {
   q?: string;
   repository?: string;
@@ -30,45 +86,80 @@ export class GiteaClient {
     return (await response.json()) as T;
   }
 
-  repositories(): Promise<GiteaRepository[]> {
-    return this.request('/user/repos?limit=100');
+  async repositories(): Promise<GiteaRepository[]> {
+    const repositories = await this.request<GiteaApiRepository[]>('/user/repos?limit=100');
+    return repositories.map(normalizeRepository);
   }
 
   repositoryPermission(repository: RepositoryRef): Promise<{ pull?: boolean; push?: boolean }> {
     return this.request<{ permissions?: { pull?: boolean; push?: boolean } }>(`/repos/${encodeURIComponent(repository.owner)}/${encodeURIComponent(repository.name)}`).then((repo) => repo.permissions ?? {});
   }
 
-  searchIssues(query: IssueQuery): Promise<{ data: GiteaIssue[]; total: number }> {
+  private issueSearchParams(query: IssueQuery, page = query.page ?? 1, limit = query.limit ?? 50): URLSearchParams {
     const params = new URLSearchParams();
     if (query.q) params.set('q', query.q);
-    if (query.repository) params.set('repo', query.repository);
     params.set('state', query.state ?? 'all');
-    params.set('page', String(query.page ?? 1));
-    params.set('limit', String(query.limit ?? 50));
+    params.set('page', String(page));
+    params.set('limit', String(limit));
     if (query.labels?.length) params.set('labels', query.labels.join(','));
-    if (query.assignee) params.set('assigned', query.assignee);
     if (query.milestone) params.set('milestones', query.milestone);
-    return this.request(`/repos/issues/search?${params}`);
+    return params;
   }
 
-  issue(repository: RepositoryRef, number: number): Promise<GiteaIssue> {
-    return this.request(`/repos/${encodeURIComponent(repository.owner)}/${encodeURIComponent(repository.name)}/issues/${number}`);
+  private async repositoryIssues(repository: RepositoryRef, query: IssueQuery): Promise<GiteaApiIssue[]> {
+    const issues: GiteaApiIssue[] = [];
+    const limit = 100;
+    for (let page = 1; ; page += 1) {
+      const params = this.issueSearchParams(query, page, limit);
+      if (query.assignee) params.set('assigned_by', query.assignee);
+      const pageIssues = await this.request<GiteaApiIssue[]>(`/repos/${encodeURIComponent(repository.owner)}/${encodeURIComponent(repository.name)}/issues?${params}`);
+      issues.push(...pageIssues);
+      if (pageIssues.length < limit) return issues;
+    }
   }
 
-  comments(repository: RepositoryRef, number: number): Promise<GiteaComment[]> {
-    return this.request(`/repos/${repository.owner}/${repository.name}/issues/${number}/comments`);
+  async searchIssues(query: IssueQuery): Promise<GiteaIssue[]> {
+    if (query.repository) {
+      const [owner, name] = query.repository.split('/', 2);
+      if (!owner || !name) throw new Error('Invalid repository filter');
+      const params = this.issueSearchParams(query);
+      if (query.assignee) params.set('assigned_by', query.assignee);
+      const issues = await this.request<GiteaApiIssue[]>(`/repos/${encodeURIComponent(owner)}/${encodeURIComponent(name)}/issues?${params}`);
+      return issues.map(normalizeIssue);
+    }
+
+    if (query.assignee) {
+      const repositories = await this.repositories();
+      const issues = (await Promise.all(repositories.map((repository) => this.repositoryIssues(repository, query)))).flat();
+      issues.sort((left, right) => Date.parse(right.updated_at ?? '') - Date.parse(left.updated_at ?? ''));
+      const offset = ((query.page ?? 1) - 1) * (query.limit ?? 50);
+      return issues.slice(offset, offset + (query.limit ?? 50)).map(normalizeIssue);
+    }
+
+    const params = this.issueSearchParams(query);
+    const issues = await this.request<GiteaApiIssue[]>(`/repos/issues/search?${params}`);
+    return issues.map(normalizeIssue);
   }
 
-  createIssue(repository: RepositoryRef, payload: unknown): Promise<GiteaIssue> {
-    return this.request(`/repos/${repository.owner}/${repository.name}/issues`, { method: 'POST', body: JSON.stringify(payload) });
+  async issue(repository: RepositoryRef, number: number): Promise<GiteaIssue> {
+    return normalizeIssue(await this.request<GiteaApiIssue>(`/repos/${encodeURIComponent(repository.owner)}/${encodeURIComponent(repository.name)}/issues/${number}`));
   }
 
-  updateIssue(repository: RepositoryRef, number: number, payload: unknown): Promise<GiteaIssue> {
-    return this.request(`/repos/${repository.owner}/${repository.name}/issues/${number}`, { method: 'PATCH', body: JSON.stringify(payload) });
+  async comments(repository: RepositoryRef, number: number): Promise<GiteaComment[]> {
+    const comments = await this.request<GiteaApiComment[]>(`/repos/${repository.owner}/${repository.name}/issues/${number}/comments`);
+    return comments.map(normalizeComment);
   }
 
-  createComment(repository: RepositoryRef, number: number, body: string): Promise<GiteaComment> {
-    return this.request(`/repos/${repository.owner}/${repository.name}/issues/${number}/comments`, { method: 'POST', body: JSON.stringify({ body }) });
+  async createIssue(repository: RepositoryRef, payload: unknown): Promise<GiteaIssue> {
+    return normalizeIssue(await this.request<GiteaApiIssue>(`/repos/${repository.owner}/${repository.name}/issues`, { method: 'POST', body: JSON.stringify(payload) }));
+  }
+
+  async updateIssue(repository: RepositoryRef, number: number, payload: unknown): Promise<GiteaIssue> {
+    return normalizeIssue(await this.request<GiteaApiIssue>(`/repos/${repository.owner}/${repository.name}/issues/${number}`, { method: 'PATCH', body: JSON.stringify(payload) }));
+  }
+
+  async createComment(repository: RepositoryRef, number: number, body: string): Promise<GiteaComment> {
+    return normalizeComment(await this.request<GiteaApiComment>(`/repos/${repository.owner}/${repository.name}/issues/${number}/comments`, { method: 'POST', body: JSON.stringify({ body }) }));
   }
 
   labels(repository: RepositoryRef): Promise<Array<{ id: number; name: string; color: string }>> {
@@ -82,5 +173,10 @@ export class GiteaClient {
     });
   }
 
-  currentUser(): Promise<GiteaUser> { return this.request('/user'); }
+  async currentUser(): Promise<GiteaUser> {
+    const currentUser = await this.request<GiteaApiUser>('/user');
+    const normalized = user(currentUser);
+    if (!normalized) throw new Error('Gitea returned an incomplete user');
+    return normalized;
+  }
 }

@@ -6,5 +6,5 @@ export async function searchIssuesReadThrough(client: GiteaClient, query: IssueQ
   const limit = Math.min(Math.max(query.limit ?? 50, 1), 100);
   const page = Math.max(query.page ?? 1, 1);
   const result = await client.searchIssues({ ...query, page, limit });
-  return { items: result.data.map(mapIssue), page, limit, hasNext: result.data.length >= limit };
+  return { items: result.map(mapIssue), page, limit, hasNext: result.length >= limit };
 }
