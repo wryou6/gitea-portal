@@ -8,7 +8,10 @@ export function registerHttpRoutes(app: FastifyInstance, config: AppConfig): voi
   app.get('/auth/callback', async (request, reply) => {
     const code = (request.query as { code?: string }).code;
     if (!code) return reply.code(400).send({ error: 'OAuth code is required' });
-    await exchangeOAuthCode(config, code, reply);
+    try { await exchangeOAuthCode(config, code, reply); } catch (error) {
+      request.log.error({ err: error }, 'OAuth callback failed');
+      return reply.code(502).send({ error: 'OAuth login failed', detail: error instanceof Error ? error.message : 'Gitea OAuth provider unavailable' });
+    }
     return reply.redirect('/');
   });
   app.post('/auth/logout', async (_request, reply) => { clearSession(reply); return reply.code(204).send(); });

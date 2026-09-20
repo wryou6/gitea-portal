@@ -19,6 +19,7 @@ export async function buildApp(config: AppConfig) {
   registerRequestMetrics(app);
   registerHttpRoutes(app, config);
   registerAuthMiddleware(app, config);
+  app.get('/', async (_request, reply) => reply.redirect(config.webOrigin));
   app.get('/health', async () => ({ ok: true }));
   await registerIssueRoutes(app, config);
   registerBoardRoutes(app, config, boards, conventions);
