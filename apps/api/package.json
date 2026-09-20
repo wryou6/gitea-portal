@@ -1,0 +1,14 @@
+{
+  "name": "@gitea-portal/api",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": { "dev": "tsx watch src/server.ts", "build": "tsc -p tsconfig.json", "typecheck": "tsc -p tsconfig.json --noEmit" },
+  "dependencies": {
+    "@gitea-portal/domain": "workspace:*",
+    "@gitea-portal/gitea-contracts": "workspace:*",
+    "fastify": "^5.2.1",
+    "js-yaml": "^4.1.0"
+  },
+  "devDependencies": { "tsx": "^4.19.3", "@types/node": "^22.13.4", "@types/js-yaml": "^4.0.9" }
+}

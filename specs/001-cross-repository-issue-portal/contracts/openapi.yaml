@@ -1,0 +1,363 @@
+openapi: 3.0.3
+info:
+  title: Gitea Cross-Repository Issue Portal API
+  version: 0.1.0
+  description: >-
+    Portal-owned API boundary. Issue data is read-through from Gitea; Board and
+    Workflow Convention configuration are the only Portal-owned resources.
+servers:
+  - url: /api
+security:
+  - sessionCookie: []
+tags:
+  - name: session
+  - name: repositories
+  - name: issues
+  - name: boards
+  - name: workflow-conventions
+paths:
+  /session:
+    get:
+      tags: [session]
+      responses:
+        '200':
+          description: Current Gitea identity and Portal capabilities.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Session' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+  /repositories:
+    get:
+      tags: [repositories]
+      responses:
+        '200':
+          description: Repositories visible to the current Gitea user.
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/Repository' }
+  /repositories/{owner}/{repo}/issues:
+    post:
+      tags: [issues]
+      parameters:
+        - { $ref: '#/components/parameters/owner' }
+        - { $ref: '#/components/parameters/repo' }
+      summary: Create an Issue in the selected Repository.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/IssueCreate' }
+      responses:
+        '201':
+          description: Created Gitea Issue.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Issue' }
+  /issues:
+    get:
+      tags: [issues]
+      parameters:
+        - { $ref: '#/components/parameters/q' }
+        - { $ref: '#/components/parameters/state' }
+        - { $ref: '#/components/parameters/repository' }
+        - { $ref: '#/components/parameters/assignee' }
+        - { $ref: '#/components/parameters/label' }
+        - { $ref: '#/components/parameters/milestone' }
+        - { $ref: '#/components/parameters/page' }
+        - { $ref: '#/components/parameters/limit' }
+      responses:
+        '200':
+          description: Cross-Repository Issue results; filter groups are ANDed.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/IssuePage' }
+  /issues/{owner}/{repo}/{number}:
+    parameters:
+      - { $ref: '#/components/parameters/owner' }
+      - { $ref: '#/components/parameters/repo' }
+      - { $ref: '#/components/parameters/number' }
+    get:
+      tags: [issues]
+      responses:
+        '200':
+          description: Issue read through from Gitea.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Issue' }
+        '404': { $ref: '#/components/responses/NotFound' }
+    patch:
+      tags: [issues]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/IssuePatch' }
+      responses:
+        '200':
+          description: Updated Gitea Issue.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Issue' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '409': { $ref: '#/components/responses/Conflict' }
+  /issues/{owner}/{repo}/{number}/comments:
+    parameters:
+      - { $ref: '#/components/parameters/owner' }
+      - { $ref: '#/components/parameters/repo' }
+      - { $ref: '#/components/parameters/number' }
+    get:
+      tags: [issues]
+      responses:
+        '200':
+          description: Gitea comments for the Issue.
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/Comment' }
+    post:
+      tags: [issues]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [body]
+              properties:
+                body: { type: string, minLength: 1 }
+      responses:
+        '201':
+          description: Created Gitea Comment.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Comment' }
+  /boards:
+    get:
+      tags: [boards]
+      responses:
+        '200':
+          description: Shared Board configurations.
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/Board' }
+    post:
+      tags: [boards]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/BoardInput' }
+      responses:
+        '201':
+          description: Created shared Board configuration.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Board' }
+  /boards/{boardId}:
+    parameters:
+      - { $ref: '#/components/parameters/boardId' }
+    get:
+      tags: [boards]
+      responses:
+        '200':
+          description: Board configuration and current read-through cards.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/BoardView' }
+    patch:
+      tags: [boards]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/BoardInput' }
+      responses:
+        '200':
+          description: Updated Board configuration.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Board' }
+    delete:
+      tags: [boards]
+      responses:
+        '204': { description: Board configuration deleted; Gitea Issues unchanged. }
+  /boards/{boardId}/cards/{owner}/{repo}/{number}/transition:
+    post:
+      tags: [boards]
+      parameters:
+        - { $ref: '#/components/parameters/boardId' }
+        - { $ref: '#/components/parameters/owner' }
+        - { $ref: '#/components/parameters/repo' }
+        - { $ref: '#/components/parameters/number' }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [stateKey]
+              properties:
+                stateKey: { type: string }
+      responses:
+        '200':
+          description: Re-read Issue after successful atomic Gitea Label transition.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Issue' }
+        '409': { $ref: '#/components/responses/Conflict' }
+        '422': { description: Invalid Convention state, incompatible Repository, or unsupported atomic transition; no Gitea mutation is performed. }
+  /workflow-conventions:
+    get:
+      tags: [workflow-conventions]
+      responses:
+        '200':
+          description: Read-only published Workflow Convention versions.
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/WorkflowConvention' }
+components:
+  securitySchemes:
+    sessionCookie:
+      type: apiKey
+      in: cookie
+      name: portal_session
+  parameters:
+    owner: { name: owner, in: path, required: true, schema: { type: string } }
+    repo: { name: repo, in: path, required: true, schema: { type: string } }
+    number: { name: number, in: path, required: true, schema: { type: integer, format: int64 } }
+    boardId: { name: boardId, in: path, required: true, schema: { type: string, format: uuid } }
+    q: { name: q, in: query, schema: { type: string } }
+    state: { name: state, in: query, schema: { type: string, enum: [open, closed, all] } }
+    repository: { name: repository, in: query, style: form, explode: true, schema: { type: array, items: { type: string } } }
+    assignee: { name: assignee, in: query, schema: { type: string } }
+    label: { name: label, in: query, style: form, explode: true, schema: { type: array, items: { type: string } } }
+    milestone: { name: milestone, in: query, schema: { type: string } }
+    page: { name: page, in: query, schema: { type: integer, minimum: 1, default: 1 } }
+    limit: { name: limit, in: query, schema: { type: integer, minimum: 1, maximum: 100, default: 50 } }
+  responses:
+    Unauthorized: { description: Authentication required or Gitea session expired. }
+    Forbidden: { description: Gitea denied the requested operation. }
+    NotFound: { description: Resource not found or not visible to the current user. }
+    Conflict: { description: Gitea state changed or atomic transition preconditions failed; no successful mutation is reported and the original Labels remain. }
+  schemas:
+    Session:
+      type: object
+      required: [login]
+      properties:
+        login: { type: string }
+        displayName: { type: string }
+    Repository:
+      type: object
+      required: [owner, name, fullName]
+      properties:
+        owner: { type: string }
+        name: { type: string }
+        fullName: { type: string }
+        htmlUrl: { type: string, format: uri }
+        conventionId: { type: string, nullable: true }
+        conventionVersion: { type: string, nullable: true }
+    Issue:
+      type: object
+      required: [repository, number, title, state, labels, updatedAt, htmlUrl]
+      properties:
+        repository: { type: string }
+        number: { type: integer, format: int64 }
+        title: { type: string }
+        body: { type: string }
+        state: { type: string, enum: [open, closed] }
+        assignee: { type: string, nullable: true }
+        labels: { type: array, items: { type: string } }
+        milestone: { type: string, nullable: true }
+        updatedAt: { type: string, format: date-time }
+        htmlUrl: { type: string, format: uri }
+        workflowState: { type: string, description: Convention state key, unconfigured, or conflict. }
+    IssuePage:
+      type: object
+      required: [items, page, limit]
+      properties:
+        items: { type: array, items: { $ref: '#/components/schemas/Issue' } }
+        page: { type: integer }
+        limit: { type: integer }
+        hasNext: { type: boolean }
+    IssueCreate:
+      type: object
+      required: [title]
+      properties:
+        title: { type: string, minLength: 1 }
+        body: { type: string }
+        assignee: { type: string, nullable: true }
+        labels: { type: array, items: { type: string } }
+        milestone: { type: string, nullable: true }
+    IssuePatch:
+      type: object
+      properties:
+        title: { type: string, minLength: 1 }
+        body: { type: string }
+        state: { type: string, enum: [open, closed] }
+        assignee: { type: string, nullable: true }
+        labels: { type: array, items: { type: string } }
+        milestone: { type: string, nullable: true }
+    Comment:
+      type: object
+      required: [id, author, body, createdAt]
+      properties:
+        id: { type: integer, format: int64 }
+        author: { type: string }
+        body: { type: string }
+        createdAt: { type: string, format: date-time }
+        updatedAt: { type: string, format: date-time, nullable: true }
+    WorkflowConvention:
+      type: object
+      required: [id, version, name, states]
+      properties:
+        id: { type: string }
+        version: { type: string }
+        name: { type: string }
+        states:
+          type: array
+          items:
+            type: object
+            required: [key, labelName, displayName, order]
+            properties:
+              key: { type: string }
+              labelName: { type: string }
+              displayName: { type: string }
+              order: { type: integer, minimum: 0 }
+    BoardInput:
+      type: object
+      required: [name, repositoryRefs, workflowConventionId, workflowConventionVersion]
+      properties:
+        name: { type: string, minLength: 1 }
+        repositoryRefs: { type: array, minItems: 1, items: { type: string } }
+        workflowConventionId: { type: string }
+        workflowConventionVersion: { type: string }
+    Board:
+      allOf:
+        - $ref: '#/components/schemas/BoardInput'
+        - type: object
+          required: [id, createdAt, updatedAt]
+          properties:
+            id: { type: string, format: uuid }
+            createdAt: { type: string, format: date-time }
+            updatedAt: { type: string, format: date-time }
+    BoardView:
+      type: object
+      required: [board, columns]
+      properties:
+        board: { $ref: '#/components/schemas/Board' }
+        columns:
+          type: array
+          items:
+            type: object
+            required: [stateKey, displayName, cards]
+            properties:
+              stateKey: { type: string }
+              displayName: { type: string }
+              cards: { type: array, items: { $ref: '#/components/schemas/Issue' } }

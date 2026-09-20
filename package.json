@@ -1,0 +1,16 @@
+{
+  "name": "gitea-cross-repository-issue-portal",
+  "private": true,
+  "version": "0.1.0",
+  "packageManager": "pnpm@9.15.0",
+  "scripts": {
+    "dev": "pnpm --parallel --filter @gitea-portal/api --filter @gitea-portal/web dev",
+    "build": "pnpm -r build",
+    "typecheck": "pnpm -r typecheck",
+    "format:check": "prettier --check ."
+  },
+  "devDependencies": {
+    "prettier": "^3.5.3",
+    "typescript": "^5.8.2"
+  }
+}

@@ -1,0 +1,9 @@
+conventions:
+  - id: workflow-a
+    version: '1'
+    name: Workflow A
+    states:
+      - { key: todo, labelName: 'workflow-a:todo', displayName: Todo, order: 0 }
+      - { key: wip, labelName: 'workflow-a:wip', displayName: WIP, order: 1 }
+      - { key: done, labelName: 'workflow-a:done', displayName: Done, order: 2 }
+    repositories: []
