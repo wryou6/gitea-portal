@@ -153,7 +153,7 @@ description: "跨 Repository Gitea Issue 管理 Portal implementation tasks"
 - [X] T066 [P] 在 `apps/api/src/telemetry/request-metrics.ts` 與 `apps/web/src/lib/performance.ts` 加入跨 Repository list/detail/Board response timing，量測工程 response-time 目標；SC-002、SC-003、SC-005、SC-008 的使用者成效量測留給後續產品驗收
 - [X] T067 [P] 在 `apps/web/src/styles/accessibility.css`、`apps/web/src/components/LoadingState.tsx` 與 `apps/web/src/components/EmptyState.tsx` 完成鍵盤操作、focus state、loading、empty、error 與 responsive layout 的共用 UI 行為
 - [X] T068 在 `README.md` 補充本 feature 的 local setup、Gitea OAuth 設定、workflow convention config、Board persistence boundary 與禁止把 access token 寫入 repository/frontend 的說明
-- [ ] T069 在 `specs/001-cross-repository-issue-portal/quickstart.md` 執行並記錄六個 validation scenarios，包含 atomic transition 成功與 unsupported/preflight rejection；evidence 不得保存 token、密碼或未授權 Issue 內容
+- [X] T069 在 `specs/001-cross-repository-issue-portal/quickstart.md` 執行並記錄六個 validation scenarios，包含 atomic transition 成功與 unsupported/preflight rejection；evidence 不得保存 token、密碼或未授權 Issue 內容
 - [X] T070 在 `specs/001-cross-repository-issue-portal/checklists/portal-quality.md` 逐項進行 reviewer review，將未完成項目記錄於 implementation review notes，不直接勾選 reviewer-owned checklist marker
 - [X] T071 檢查 `spec.md`、`plan.md`、`data-model.md`、`contracts/openapi.yaml`、`quickstart.md` 與 `tasks.md` 的 Source of Truth、Gitea permission、Board shared model、exact Convention version、no Issue mirror 與 atomic transition wording 一致
 
@@ -231,3 +231,17 @@ Then integrate T024, T026 and validate the US1 independent test before starting 
 - User Story tasks include exactly one `[USn]` label and an implementation path.
 - Board transition implementation must not fall back to remove-then-add Label updates. If target Gitea cannot guarantee atomic replacement, the Portal rejects the operation before mutation.
 - No task introduces a Portal Issue database, Board owner/member records, elevated shared Gitea credential, or Portal-owned workflow state.
+
+## Phase 10: Convergence
+
+- [X] T072 執行並記錄 `quickstart.md` 定義的六個 validation scenarios，包含成功、權限拒絕、外部 Gitea 變更、Board persistence 與 atomic transition unsupported/preflight rejection per T069/SC-001–SC-007
+- [X] T073 完成 `apps/web/src/features/boards/BoardEditor.tsx` 與 `BoardListPage.tsx` 的共享 Board 建立、編輯、刪除、Workflow Convention 選擇與相容 Repository 選擇流程 per FR-011/FR-011a
+- [X] T074 完成 `apps/web/src/features/issues/IssueCreatePage.tsx` 的 Repository、Assignee、Labels、Milestone 與欄位驗證，讓 Portal 能建立帶有 Gitea 原生 Issue 資訊的正式 Issue per FR-008/FR-009/T040
+- [X] T075 修正 `apps/web/src/features/boards/KanbanColumn.tsx`、`KanbanCard.tsx` 與 `KanbanBoard.tsx` 的 drag/drop Issue 傳遞，確保 Card transition 成功後才更新畫面、失敗時保留原狀 per FR-013/US5 AC2
+- [X] T076 在 `apps/api/src/gitea/` 與 `apps/api/src/boards/transition-service.ts` 實作 atomic Label replacement capability preflight、同 Convention 狀態衝突檢查、concurrent change conflict handling 與失敗不修改原始 Labels 的流程 per FR-014/FR-020a/T055–T058
+- [X] T077 修正 `apps/api/src/boards/board-compatibility.ts` 與 Workflow Convention 設定驗證，使空的 Repository assignment 表示未指派而非允許所有 Repository per FR-015/FR-015f
+- [X] T078 修正 `apps/api/src/http/error-handler.ts`、`apps/api/src/issues/issue-routes.ts` 與 `apps/api/src/boards/board-routes.ts` 的 permission、not found、conflict、unsupported transition 與 validation status mapping，避免授權失敗回傳 500 或所有 transition 錯誤回傳 422 per FR-020/T064
+- [X] T079 在 `apps/api/src/issues/issue-validation.ts` 與 Issue mutation routes 補齊 create/update 的 State、Assignee、Labels、Milestone、Repository context 與 payload schema 驗證，且 validation failure 不呼叫 Gitea mutation per FR-009/T039/T042
+- [X] T080 在 `apps/api/src/gitea/client.ts` 補上 Gitea 外部請求 timeout、可追蹤的 request correlation ID 與對應 request log per plan: Gitea adapter/T017
+- [X] T081 在 `apps/web/src/features/issues/issue-list-state.ts`、`IssueFilters.tsx` 與 `IssueListPage.tsx` 補上 pagination controls 與 URL query state persistence，讓 `page/hasNext` 可被使用者操作與分享 per FR-004/T025/T027
+- [X] T082 補回或替代 `apps/web/src/lib/performance.ts` 的前端 list/detail/Board response timing instrumentation，並與後端 metrics 對齊驗證方式 per T066

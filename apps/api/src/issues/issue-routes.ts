@@ -38,10 +38,10 @@ export async function registerIssueRoutes(app: FastifyInstance, config: AppConfi
     const issue = await createIssue(client, repository, request.body);
     return reply.code(201).send(issue);
   });
-  app.patch('/api/issues/:owner/:repo/:number', async (request) => {
+  app.patch('/api/issues/:owner/:repo/:number', async (request, reply) => {
     const params = request.params as { owner: string; repo: string; number: string };
     const client = giteaFor(request, config.giteaBaseUrl, config); const repository = { owner: params.owner, name: params.repo };
-    if (!await canAccessRepository(client, repository, 'update')) throw new Error('Permission denied');
+    if (!await canAccessRepository(client, repository, 'update')) return reply.code(403).send({ error: 'Permission denied' });
     return updateIssue(client, repository, Number(params.number), request.body);
   });
   app.get('/api/issues/:owner/:repo/:number/comments', async (request) => {

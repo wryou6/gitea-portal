@@ -65,3 +65,16 @@ pnpm dev
 ## Acceptance evidence
 
 記錄每個情境的帳號、Repository、Issue Number、Convention version、操作時間與 Gitea 對照結果。至少保留一個成功與一個權限拒絕案例；不得在 evidence 中保存 access token、密碼或未授權 Issue 內容。SC-002、SC-003、SC-005 與 SC-008 的代表性使用者成效量測，於後續產品驗收規劃執行，不要求此 quickstart 建立完整使用者研究或統計系統。
+
+## 本次實作驗證紀錄
+
+驗證日期：2026-09-20；帳號：`admin`；測試 Repository：`admin/portal-test-api`、`admin/portal-test-ops`、`admin/portal-test-web`。
+
+1. Cross-Repository search：通過。Issue list 同時顯示三個 Repository；`bug` Label 篩選結果跨 Repo 正確收斂，URL 保留 `state`、`label`、`page`。
+2. Issue mutation and comments：通過。Portal 建立 `admin/portal-test-api#5`，修改 Title/Labels、Close、Reopen 並新增 Comment；Portal detail 與 Gitea Issue 頁面一致。
+3. Board convention compatibility：通過。Workflow A Board 可選擇 `portal-test-ops`/`portal-test-web`；Workflow B 僅顯示 `portal-test-api`，不同 Convention 不會進入同一 Board。
+4. Board states and conflicts：通過。無 workflow Label 顯示「未設定狀態」；單一 `workflow-a:wip` 顯示在 WIP；同時存在 `workflow-a:todo` 與 `workflow-a:wip` 顯示「狀態衝突」。單一狀態 Card 拖曳成功更新 Gitea Labels；衝突 Card 被 409 拒絕且原欄位保留。
+5. External Gitea changes：通過。透過 Gitea MCP 新增 Workflow Labels、替 Issue 套用/製造衝突後重新整理 Portal，Board 反映最新 Gitea 資料。
+6. Board configuration persistence：通過。Board 建立、重新載入、改名後仍存在於 JSON store；短暫測試 Board 可刪除，且未改動 Gitea Issue。Board JSON 使用 schema version/revision。
+
+權限拒絕：未登入直接呼叫 Issue API 回 `401 Authentication required`；Portal session mutation 缺少 CSRF header 的請求回 `403`。本 dummy fixture 未建立第二個只讀 Gitea 帳號，因此尚未做第二個使用者的 Repository-level 403 對照。

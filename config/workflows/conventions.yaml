@@ -6,4 +6,17 @@ conventions:
       - { key: todo, labelName: 'workflow-a:todo', displayName: Todo, order: 0 }
       - { key: wip, labelName: 'workflow-a:wip', displayName: WIP, order: 1 }
       - { key: done, labelName: 'workflow-a:done', displayName: Done, order: 2 }
-    repositories: []
+    repositories:
+      - admin/portal-test-web
+      - admin/portal-test-ops
+  - id: workflow-b
+    version: '1'
+    name: Workflow B
+    states:
+      - { key: open, labelName: 'workflow-b:open', displayName: Open, order: 0 }
+      - { key: todo, labelName: 'workflow-b:todo', displayName: Todo, order: 1 }
+      - { key: wip, labelName: 'workflow-b:wip', displayName: WIP, order: 2 }
+      - { key: review, labelName: 'workflow-b:review', displayName: Review, order: 3 }
+      - { key: done, labelName: 'workflow-b:done', displayName: Done, order: 4 }
+    repositories:
+      - admin/portal-test-api

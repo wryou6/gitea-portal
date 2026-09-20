@@ -1,6 +1,7 @@
+import { randomUUID } from 'node:crypto';
 import type { GiteaComment, GiteaIssue, GiteaRepository, GiteaUser } from '@gitea-portal/gitea-contracts';
 import type { IssueState, RepositoryRef } from '@gitea-portal/domain';
-import { mapGiteaError } from './errors.js';
+import { GiteaError, mapGiteaError } from './errors.js';
 
 type GiteaApiUser = { login?: string; full_name?: string };
 type GiteaApiRepository = { owner?: GiteaApiUser | string; name?: string; full_name?: string; html_url?: string };
@@ -18,6 +19,7 @@ type GiteaApiIssue = {
   html_url?: string;
 };
 type GiteaApiComment = { id?: number; user?: GiteaApiUser; body?: string; created_at?: string; updated_at?: string };
+type GiteaApiMilestone = { id?: number; title?: string };
 
 function repositoryRef(repository: GiteaApiRepository | undefined): RepositoryRef {
   const owner = typeof repository?.owner === 'string' ? repository.owner : repository?.owner?.login;
@@ -70,20 +72,34 @@ export type IssueQuery = {
 };
 
 export class GiteaClient {
-  constructor(private readonly baseUrl: string, private readonly token?: string) {}
+  constructor(private readonly baseUrl: string, private readonly token?: string, private readonly timeoutMs = 10000, private readonly logger?: (details: Record<string, unknown>, message: string) => void, private readonly requestId: string = randomUUID()) {}
 
   private async request<T>(path: string, init: RequestInit = {}): Promise<T> {
-    const response = await fetch(`${this.baseUrl}/api/v1${path}`, {
-      ...init,
-      headers: {
-        Accept: 'application/json',
-        ...(this.token ? { Authorization: `token ${this.token}` } : {}),
-        ...(init.body ? { 'Content-Type': 'application/json' } : {}),
-        ...init.headers,
-      },
-    });
-    if (!response.ok) throw mapGiteaError(response.status, await response.text());
-    return (await response.json()) as T;
+    const startedAt = Date.now();
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), this.timeoutMs);
+    try {
+      const response = await fetch(`${this.baseUrl}/api/v1${path}`, {
+        ...init,
+        signal: controller.signal,
+        headers: {
+          Accept: 'application/json',
+          'X-Request-ID': this.requestId,
+          ...(this.token ? { Authorization: `token ${this.token}` } : {}),
+          ...(init.body ? { 'Content-Type': 'application/json' } : {}),
+          ...init.headers,
+        },
+      });
+      this.logger?.({ correlationId: this.requestId, path, statusCode: response.status, elapsedMs: Date.now() - startedAt }, 'Gitea request completed');
+      if (!response.ok) throw mapGiteaError(response.status, await response.text());
+      return (await response.json()) as T;
+    } catch (error) {
+      if (error instanceof DOMException && error.name === 'AbortError') throw new GiteaError(504, `Gitea request timed out after ${this.timeoutMs}ms`);
+      this.logger?.({ correlationId: this.requestId, path, elapsedMs: Date.now() - startedAt, error: error instanceof Error ? error.message : String(error) }, 'Gitea request failed');
+      throw error;
+    } finally {
+      clearTimeout(timeout);
+    }
   }
 
   async repositories(): Promise<GiteaRepository[]> {
@@ -164,6 +180,11 @@ export class GiteaClient {
 
   labels(repository: RepositoryRef): Promise<Array<{ id: number; name: string; color: string }>> {
     return this.request(`/repos/${repository.owner}/${repository.name}/labels?limit=100`);
+  }
+
+  async milestones(repository: RepositoryRef): Promise<Array<{ id: number; title: string }>> {
+    const milestones = await this.request<GiteaApiMilestone[]>(`/repos/${repository.owner}/${repository.name}/milestones?state=all&limit=100`);
+    return milestones.filter((milestone): milestone is { id: number; title: string } => milestone.id !== undefined && Boolean(milestone.title));
   }
 
   replaceIssueLabels(repository: RepositoryRef, number: number, labelIds: number[]): Promise<unknown> {

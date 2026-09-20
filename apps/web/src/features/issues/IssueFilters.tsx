@@ -2,8 +2,8 @@ import { useState } from 'react';
 
 export type IssueFiltersValue = { q: string; repository: string; state: string; assignee: string; label: string; milestone: string };
 
-export function IssueFilters({ onSubmit }: { onSubmit: (filters: IssueFiltersValue) => void }) {
-  const [filters, setFilters] = useState<IssueFiltersValue>({ q: '', repository: '', state: 'all', assignee: '', label: '', milestone: '' });
+export function IssueFilters({ initial, onSubmit }: { initial: IssueFiltersValue; onSubmit: (filters: IssueFiltersValue) => void }) {
+  const [filters, setFilters] = useState<IssueFiltersValue>(initial);
   const update = (key: keyof IssueFiltersValue, value: string) => setFilters((current) => ({ ...current, [key]: value }));
   return <form className="filters" onSubmit={(event) => { event.preventDefault(); onSubmit(filters); }}>
     <input aria-label="關鍵字" placeholder="搜尋 Issue" value={filters.q} onChange={(e) => update('q', e.target.value)} />
