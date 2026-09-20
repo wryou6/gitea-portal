@@ -14,11 +14,11 @@
 
 **Language/Version**: TypeScript 5.x, Node.js 22 LTS
 
-**Primary Dependencies**: React 19, Vite, Fastify, Node.js filesystem APIs, OpenAPI tooling, Gitea REST client generated or typed from the target instance OpenAPI document
+**Primary Dependencies**: React 19, Vite, Fastify, Node.js filesystem APIs, typed Portal/Gitea boundary models, and the target instance Gitea REST API
 
 **Storage**: Versioned JSON file for Board configuration with schema validation, atomic replacement and lock-file concurrency protection; no Issue/Comment mirror
 
-**Testing**: TypeScript unit tests, API contract tests against `contracts/openapi.yaml`, Gitea integration tests against an isolated Gitea test instance, and browser acceptance tests for the quickstart scenarios; formal measurement of SC-002, SC-003, SC-005, and SC-008 is a later product-acceptance activity, not a required first-implementation research system
+**Testing**: The feature specification defines quickstart acceptance scenarios but does not require a specific automated test implementation. The current implementation is verified with workspace typecheck/build and manual browser validation against the local Gitea instance; formal measurement of SC-002, SC-003, SC-005, and SC-008 remains a later product-acceptance activity.
 
 **Target Platform**: Internal web browsers and a Linux-compatible Node.js server inside the private network
 
@@ -61,10 +61,7 @@ apps/
 │   │   ├── features/boards/
 │   │   ├── features/workflows/
 │   │   ├── components/
-│   │   └── lib/api-client/
-│   └── tests/
-│       ├── component/
-│       └── browser/
+│   │   └── lib/api.ts
 └── api/
     ├── src/
     │   ├── auth/
@@ -74,10 +71,6 @@ apps/
     │   ├── workflows/
     │   ├── persistence/       # versioned JSON Board store
     │   └── http/
-    └── tests/
-        ├── unit/
-        ├── contract/
-        └── integration/
 
 config/
 └── workflows/
@@ -105,4 +98,4 @@ Research is recorded in [research.md](./research.md). The key decisions are reso
 - [contracts/openapi.yaml](./contracts/openapi.yaml): Portal API boundary for session, repositories, Issues, comments, Boards, transitions, and read-only Workflow Conventions.
 - [quickstart.md](./quickstart.md): end-to-end validation scenarios for search, mutations, permissions, Board compatibility, atomic state transitions, state conflicts, external Gitea changes, and JSON Board persistence.
 
-**Gate status after design**: PASS. The design contains no local Issue mirror, no elevated shared Gitea credential, no owner/member model, and no unbounded custom Workflow engine. Board transitions require an atomic Gitea-supported label replacement; if the target Gitea capability cannot guarantee that result, the operation is rejected before mutation. Remaining choices are implementation-level items for task planning: exact OAuth provider configuration, Gitea version capability checks, database migration details, UI component choices, and deployment wiring.
+**Gate status after design**: PASS. The design contains no local Issue mirror, no elevated shared Gitea credential, no owner/member model, and no unbounded custom Workflow engine. Board transitions require an atomic Gitea-supported label replacement; if the target Gitea capability cannot guarantee that result, the operation is rejected before mutation. Remaining choices are implementation-level items for task planning: exact OAuth provider configuration, Gitea version capability checks, JSON store path and file permissions, UI component choices, and deployment wiring.

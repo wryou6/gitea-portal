@@ -12,7 +12,7 @@ pnpm install
 pnpm dev
 ```
 
-API 預設在 `http://localhost:3000`，Web 預設在 `http://localhost:5173`。Board 設定預設寫入 `data/boards.json`，可由 `BOARD_STORE_PATH` 指定其他路徑。JSON store 具備 schema version、啟動驗證、atomic temp-file rename、flush 與 lock-file 並行寫入保護。
+API 預設在 `http://localhost:3001`，Web 預設在 `http://localhost:5173`。Board 設定預設寫入 `data/boards.json`，可由 `BOARD_STORE_PATH` 指定其他路徑。JSON store 具備 schema version、啟動驗證、atomic temp-file rename、flush 與 lock-file 並行寫入保護。
 
 Gitea delegated access token 只能由後端使用，不得寫入 frontend bundle、repository 檔案或提交紀錄。Workflow Convention 從 `config/workflows/conventions.yaml` 讀取，Board 只能加入 exact matching Convention version 的 Repository。
 

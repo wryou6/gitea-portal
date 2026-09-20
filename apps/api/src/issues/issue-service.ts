@@ -1,6 +1,6 @@
 import type { IssueSummary, RepositoryRef } from '@gitea-portal/domain';
 import type { GiteaIssue } from '@gitea-portal/gitea-contracts';
-import { GiteaClient, type IssueQuery } from '../gitea/client.js';
+import { GiteaClient } from '../gitea/client.js';
 
 export function mapIssue(issue: GiteaIssue): IssueSummary {
   return {
@@ -16,11 +16,6 @@ export function mapIssue(issue: GiteaIssue): IssueSummary {
     htmlUrl: issue.htmlUrl,
     workflowState: 'unconfigured',
   };
-}
-
-export async function searchIssues(client: GiteaClient, query: IssueQuery) {
-  const result = await client.searchIssues(query);
-  return { items: result.map(mapIssue), page: query.page ?? 1, limit: query.limit ?? 50, hasNext: result.length >= (query.limit ?? 50) };
 }
 
 export async function getIssue(client: GiteaClient, repository: RepositoryRef, number: number) {

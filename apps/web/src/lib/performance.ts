@@ -1,1 +1,0 @@
-export function markPortalTiming(name: string, startedAt: number = performance.now()): number { const elapsed = performance.now() - startedAt; if (typeof window !== 'undefined') console.debug(`[portal] ${name}: ${Math.round(elapsed)}ms`); return elapsed; }

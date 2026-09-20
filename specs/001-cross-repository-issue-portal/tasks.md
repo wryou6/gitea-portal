@@ -41,7 +41,7 @@ description: "跨 Repository Gitea Issue 管理 Portal implementation tasks"
 - [X] T017 建立 `apps/api/src/gitea/client.ts`、`apps/api/src/gitea/errors.ts` 與 `apps/api/src/gitea/request.ts`，集中 Gitea REST API 呼叫、timeout、401/403/404/409 mapping 與 request correlation logging
 - [X] T018 建立 `apps/api/src/http/error-handler.ts`、`apps/api/src/http/auth-middleware.ts` 與 `apps/api/src/http/routes.ts`，統一 session cookie、未授權、不可見資源與外部 Gitea failure response
 - [X] T019 建立 `apps/api/src/app.ts`，註冊 `/api` routes、session middleware、error handler 與 health/config checks，且不讓前端直接呼叫 Gitea
-- [X] T020 建立 `apps/web/src/lib/api-client/client.ts`、`apps/web/src/lib/api-client/errors.ts` 與 `apps/web/src/lib/api-client/types.ts`，依 Portal OpenAPI contract 呼叫後端並處理 session/permission/error 狀態
+- [X] T020 建立 `apps/web/src/lib/api.ts`，依 Portal API contract 呼叫後端並處理 session、permission 與 error 狀態
 - [X] T021 建立 `apps/web/src/app/App.tsx`、`apps/web/src/app/routes.tsx` 與 `apps/web/src/components/AppShell.tsx`，提供 Issue、Board、workflow convention 的共用導航與登入狀態
 
 **Checkpoint**: 基礎 auth、Gitea adapter、persistence boundary、workflow config loader 與 Portal API/client skeleton 可供所有 story 使用。
@@ -56,7 +56,7 @@ description: "跨 Repository Gitea Issue 管理 Portal implementation tasks"
 
 - [X] T022 [P] [US1] 建立 `apps/api/src/repositories/repository-service.ts`，從 Gitea 取得目前使用者可見 Repository，保留原始 `owner/name/fullName/htmlUrl` 與 workflow assignment metadata
 - [X] T023 [US1] 建立 `apps/api/src/issues/issue-search-service.ts`，以 Gitea cross-Repository issue search/read-through 組合 keyword、Repository、State、Assignee、Label、Milestone、page 與 limit 條件，所有 filter groups 以 AND 語意處理
-- [X] T024 [US1] 建立 `apps/api/src/http/issue-routes.ts` 的 `GET /api/issues` 與 `GET /api/repositories`，把 Gitea 權限拒絕映射為不可見結果或明確錯誤，不回傳無權 Repository 存在資訊
+- [X] T024 [US1] 建立 `apps/api/src/issues/issue-routes.ts` 的 `GET /api/issues` 與 `GET /api/repositories`，把 Gitea 權限拒絕映射為不可見結果或明確錯誤，不回傳無權 Repository 存在資訊
 - [X] T025 [P] [US1] 建立 `apps/web/src/features/issues/issue-list-state.ts`，管理 query、filter、pagination、loading、empty、permission 與 Gitea unavailable state
 - [X] T026 [US1] 建立 `apps/web/src/features/issues/IssueListPage.tsx`，顯示 Repository、Issue Number、Title、State、Assignee、Labels、Milestone、Updated Time 與原始 Issue link
 - [X] T027 [US1] 建立 `apps/web/src/features/issues/IssueFilters.tsx`，提供 Repository、Open/Closed、Assignee、Label、Milestone 與 keyword 組合篩選，送出後保留可分享的 query state
@@ -72,7 +72,7 @@ description: "跨 Repository Gitea Issue 管理 Portal implementation tasks"
 
 - [X] T029 [US2] 擴充 `apps/api/src/issues/issue-service.ts`，以 `(repositoryOwner, repositoryName, number)` 讀取 Issue detail 與 Gitea HTML URL，不以 Issue Number 單獨識別
 - [X] T030 [US2] 建立 `apps/api/src/issues/comment-query-service.ts`，從 Gitea read-through 取得指定 Issue Comments，保留 author、body、createdAt、updatedAt 與時間順序
-- [X] T031 [US2] 擴充 `apps/api/src/http/issue-routes.ts` 的 `GET /api/issues/{owner}/{repo}/{number}` 與 comments GET route，處理不存在、失去權限與 Gitea 最新資料
+- [X] T031 [US2] 擴充 `apps/api/src/issues/issue-routes.ts` 的 `GET /api/issues/{owner}/{repo}/{number}` 與 comments GET route，處理不存在、失去權限與 Gitea 最新資料
 - [X] T032 [P] [US2] 建立 `apps/web/src/features/issues/IssueDetailPage.tsx` 與 `apps/web/src/features/issues/IssueDetailHeader.tsx`，顯示所有原生 Issue 欄位、Repository identity 與 state
 - [X] T033 [P] [US2] 建立 `apps/web/src/features/issues/IssueComments.tsx`，依 Gitea comment 時間順序顯示作者與內容，並隔離不同 Repository/Issue context
 - [X] T034 [US2] 建立 `apps/web/src/features/issues/IssueDetailRoute.tsx`，由清單使用 owner/repo/number composite route 開啟 detail，並提供明確的原始 Gitea Issue link
@@ -88,7 +88,7 @@ description: "跨 Repository Gitea Issue 管理 Portal implementation tasks"
 
 - [X] T036 [US3] 建立 `apps/api/src/issues/issue-command-service.ts`，實作 create payload `title` required，以及 body、assignee、labels、milestone 的 Gitea delegated mutation
 - [X] T037 [US3] 擴充 `apps/api/src/issues/issue-command-service.ts`，實作 Issue patch 的 title、body、state(open/closed)、assignee、labels、milestone，並使用 Gitea 最新資料避免靜默覆蓋
-- [X] T038 [US3] 擴充 `apps/api/src/http/issue-routes.ts` 的 Repository issue POST 與 Issue PATCH route，依 `contracts/openapi.yaml` 回傳 201/200、403、404、409
+- [X] T038 [US3] 擴充 `apps/api/src/issues/issue-routes.ts` 的 Repository issue POST 與 Issue PATCH route，依 `contracts/openapi.yaml` 回傳 201/200、403、404、409
 - [X] T039 [US3] 建立 `apps/api/src/issues/issue-validation.ts`，拒絕空 Title、非法 state、無效 assignee/label/milestone 與缺少 Repository context 的 payload，且 validation failure 不呼叫 Gitea mutation
 - [X] T040 [P] [US3] 建立 `apps/web/src/features/issues/IssueCreatePage.tsx` 與 `apps/web/src/features/issues/IssueForm.tsx`，提供 Repository 選擇與 Title、Description、Assignee、Labels、Milestone 欄位
 - [X] T041 [P] [US3] 建立 `apps/web/src/features/issues/IssueEditForm.tsx`，提供 Title、Description、State、Assignee、Labels、Milestone、Close 與 Reopen 操作
@@ -104,7 +104,7 @@ description: "跨 Repository Gitea Issue 管理 Portal implementation tasks"
 **Independent Test**: 在可新增 Comment 的 Issue 提交非空內容，從 Portal 與 Gitea 確認作者、內容與所屬 Issue 一致；無權限操作不產生 Comment。
 
 - [X] T044 [US4] 擴充 `apps/api/src/issues/comment-command-service.ts`，以 delegated Gitea identity 新增 Comment，要求 `body` 長度至少 1，成功後回傳 Gitea Comment
-- [X] T045 [US4] 擴充 `apps/api/src/http/issue-routes.ts` 的 comments POST route，處理 201、401、403、404、Gitea timeout 與 duplicate-submit protection
+- [X] T045 [US4] 擴充 `apps/api/src/issues/issue-routes.ts` 的 comments POST route，處理 201、401、403、404、Gitea timeout 與 duplicate-submit protection
 - [X] T046 [P] [US4] 建立 `apps/web/src/features/issues/CommentComposer.tsx`，提供非空驗證、submit pending、permission denied 與 unavailable feedback
 - [X] T047 [US4] 整合 `apps/web/src/features/issues/CommentComposer.tsx` 與 `IssueComments.tsx`，成功後只以 Gitea response/re-read 更新畫面，失敗時不插入假 Comment
 
@@ -119,7 +119,7 @@ description: "跨 Repository Gitea Issue 管理 Portal implementation tasks"
 - [X] T048 [US5] 建立 `apps/api/src/boards/board-service.ts`，實作 shared Board create/list/get/update/delete；不建立 owner/member 欄位，所有 Portal 使用者可管理 Board config，刪除只刪 Portal config
 - [X] T049 [US5] 建立 `apps/api/src/boards/board-compatibility.ts`，要求 Board 與每個 Repository 使用相同 exact Convention id/version，拒絕 unknown/unassigned/mismatched Repository
 - [X] T050 [US5] 建立 `apps/api/src/boards/board-view-service.ts`，依 Board repositoryRefs 從 Gitea read-through 取得目前使用者可見 Issues，計算欄位、unconfigured 與 conflict presentation，不保存 Issue snapshot
-- [X] T051 [US5] 建立 `apps/api/src/http/board-routes.ts` 的 Board GET/POST/PATCH/DELETE 與 BoardView route，依 `contracts/openapi.yaml` 回傳 compatibility、permission、not found 與 validation errors
+- [X] T051 [US5] 建立 `apps/api/src/boards/board-routes.ts` 的 Board GET/POST/PATCH/DELETE 與 BoardView route，依 `contracts/openapi.yaml` 回傳 compatibility、permission、not found 與 validation errors
 - [X] T052 [P] [US5] 建立 `apps/web/src/features/boards/BoardListPage.tsx`、`BoardEditor.tsx` 與 `BoardRepositoryPicker.tsx`，支援共享 Board 建立、編輯、刪除與相同 Convention Repository 選擇
 - [X] T053 [US5] 建立 `apps/web/src/features/boards/KanbanBoard.tsx`、`KanbanColumn.tsx` 與 `KanbanCard.tsx`，顯示 Repository、Issue Number、Title、Assignee、Labels、unconfigured 與 conflict
 - [X] T054 [US5] 建立 `apps/api/src/boards/transition-service.ts`，在 mutation 前驗證 current Issue、user permission、Board/repository exact Convention、target state、target Label 存在與 atomic replacement capability
@@ -149,7 +149,7 @@ description: "跨 Repository Gitea Issue 管理 Portal implementation tasks"
 **Purpose**: 完成跨故事的可靠性、可操作性、效能與需求驗證。
 
 - [X] T064 [P] 在 `apps/api/src/http/error-handler.ts` 與 `apps/web/src/components/ErrorNotice.tsx` 統一 Gitea unavailable、permission denied、not found、conflict、unsupported atomic transition 與 validation message，禁止未成功 mutation 顯示為成功
-- [X] T065 [P] 在 `apps/api/src/auth/session.ts`、`apps/api/src/http/auth-middleware.ts` 與 `apps/web/src/lib/api-client/client.ts` 完成 cookie/session hardening、CSRF 防護、token redaction 與禁止 browser 直接保存 Gitea token
+- [X] T065 [P] 在 `apps/api/src/auth/session.ts`、`apps/api/src/http/auth-middleware.ts` 與 `apps/web/src/lib/api.ts` 完成 cookie/session hardening、CSRF 防護、token redaction 與禁止 browser 直接保存 Gitea token
 - [X] T066 [P] 在 `apps/api/src/telemetry/request-metrics.ts` 與 `apps/web/src/lib/performance.ts` 加入跨 Repository list/detail/Board response timing，量測工程 response-time 目標；SC-002、SC-003、SC-005、SC-008 的使用者成效量測留給後續產品驗收
 - [X] T067 [P] 在 `apps/web/src/styles/accessibility.css`、`apps/web/src/components/LoadingState.tsx` 與 `apps/web/src/components/EmptyState.tsx` 完成鍵盤操作、focus state、loading、empty、error 與 responsive layout 的共用 UI 行為
 - [X] T068 在 `README.md` 補充本 feature 的 local setup、Gitea OAuth 設定、workflow convention config、Board persistence boundary 與禁止把 access token 寫入 repository/frontend 的說明
