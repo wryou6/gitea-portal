@@ -5,6 +5,7 @@ export type AppConfig = {
   oauthRedirectUri: string;
   sessionSecret: string;
   workflowConfigPath: string;
+  boardStorePath: string;
   port: number;
 };
 
@@ -21,6 +22,7 @@ export function loadConfig(env = process.env): AppConfig {
     oauthRedirectUri: required('GITEA_OAUTH_REDIRECT_URI'),
     sessionSecret: required('PORTAL_SESSION_SECRET'),
     workflowConfigPath: env.WORKFLOW_CONFIG_PATH ?? 'config/workflows/conventions.yaml',
+    boardStorePath: env.BOARD_STORE_PATH ?? 'data/boards.json',
     port: Number(env.API_PORT ?? 3000),
   };
 }

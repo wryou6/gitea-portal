@@ -9,33 +9,33 @@ import { getBoardView } from './board-view-service.js';
 
 export function registerBoardRoutes(app: FastifyInstance, config: AppConfig, boards: BoardRepository, conventions: WorkflowConvention[]): void {
   app.get('/api/boards', async () => boards.list());
-  app.post('/api/boards', async (request, reply) => reply.code(201).send(createBoard(boards, request.body as BoardInput, conventions)));
+  app.post('/api/boards', async (request, reply) => reply.code(201).send(await createBoard(boards, request.body as BoardInput, conventions)));
   app.get('/api/boards/:id', async (request, reply) => {
-    const board = boards.get((request.params as { id: string }).id);
+    const board = await boards.get((request.params as { id: string }).id);
     if (!board) return reply.code(404).send({ error: 'Board not found' });
     const convention = conventions.find((item) => item.id === board.workflowConventionId && item.version === board.workflowConventionVersion);
     if (!convention) return reply.code(422).send({ error: 'Workflow Convention is unavailable' });
     return getBoardView(giteaFor(request, config.giteaBaseUrl, config), board, convention);
   });
   app.patch('/api/boards/:id', async (request, reply) => {
-    const board = updateBoard(boards, (request.params as { id: string }).id, request.body as BoardInput, conventions);
+    const board = await updateBoard(boards, (request.params as { id: string }).id, request.body as BoardInput, conventions);
     if (!board) return reply.code(404).send({ error: 'Board not found' });
     return board;
   });
   app.delete('/api/boards/:id', async (request, reply) => {
-    boards.delete((request.params as { id: string }).id);
+    await boards.delete((request.params as { id: string }).id);
     return reply.code(204).send();
   });
   app.post('/api/boards/:id/cards/:owner/:repo/:number/transition', async (request, reply) => {
     const params = request.params as { id: string; owner: string; repo: string; number: string };
-    const board = boards.get(params.id);
+    const board = await boards.get(params.id);
     if (!board) return reply.code(404).send({ error: 'Board not found' });
     const convention = conventions.find((item) => item.id === board.workflowConventionId && item.version === board.workflowConventionVersion);
     if (!convention) return reply.code(422).send({ error: 'Workflow Convention is unavailable' });
     try {
       const body = request.body as { stateKey?: string };
       if (!body.stateKey) return reply.code(422).send({ error: 'stateKey is required' });
-    return await transitionCard(giteaFor(request, config.giteaBaseUrl, config), board, convention, { owner: params.owner, name: params.repo }, Number(params.number), body.stateKey);
+      return await transitionCard(giteaFor(request, config.giteaBaseUrl, config), board, convention, { owner: params.owner, name: params.repo }, Number(params.number), body.stateKey);
     } catch (error) {
       return reply.code(422).send({ error: error instanceof Error ? error.message : 'Atomic transition rejected' });
     }

@@ -86,6 +86,6 @@
 ## Implementation review notes
 
 - 已完成跨 Repository read-through、Issue mutation、Comment、OAuth delegated session、共享 Board、Workflow Convention compatibility 與 atomic Label transition 的程式骨架與 TypeScript/build 驗證。
-- T012 的目前 persistence adapter 為可替換的 in-process Database boundary；正式 PostgreSQL wiring 留待部署與資料庫規劃階段，未把 Issue 資料寫入 Portal。
+- Board persistence 已採版本化 JSON store，具備 schema validation、atomic write 與 lock-file 並行寫入保護；未引入資料庫，且未把 Issue 資料寫入 Portal。
 - T069 的六個 quickstart 情境需要目標內網 Gitea、OAuth client 與測試帳號；本次沒有可用的外部測試環境，因此未宣稱端到端通過。
 - `checklists/requirements.md` 是由 `$speckit-specify` 與 `$speckit-clarify` 維護的獨立內建規格清單。

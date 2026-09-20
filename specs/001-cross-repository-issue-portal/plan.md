@@ -14,9 +14,9 @@
 
 **Language/Version**: TypeScript 5.x, Node.js 22 LTS
 
-**Primary Dependencies**: React 19, Vite, Fastify, PostgreSQL client/ORM, OpenAPI tooling, Gitea REST client generated or typed from the target instance OpenAPI document
+**Primary Dependencies**: React 19, Vite, Fastify, Node.js filesystem APIs, OpenAPI tooling, Gitea REST client generated or typed from the target instance OpenAPI document
 
-**Storage**: PostgreSQL for Board configuration and published Workflow Convention/repository assignment configuration metadata; no Issue/Comment mirror
+**Storage**: Versioned JSON file for Board configuration with schema validation, atomic replacement and lock-file concurrency protection; no Issue/Comment mirror
 
 **Testing**: TypeScript unit tests, API contract tests against `contracts/openapi.yaml`, Gitea integration tests against an isolated Gitea test instance, and browser acceptance tests for the quickstart scenarios; formal measurement of SC-002, SC-003, SC-005, and SC-008 is a later product-acceptance activity, not a required first-implementation research system
 
@@ -72,7 +72,7 @@ apps/
     │   ├── issues/
     │   ├── boards/
     │   ├── workflows/
-    │   ├── persistence/
+    │   ├── persistence/       # versioned JSON Board store
     │   └── http/
     └── tests/
         ├── unit/
@@ -87,11 +87,9 @@ packages/
 ├── domain/                  # shared types and invariants
 └── gitea-contracts/         # typed Gitea/Portal boundary models
 
-database/
-└── migrations/
 ```
 
-**Structure Decision**: Use a pnpm workspace with separate `apps/web` and `apps/api`, shared domain/contract packages, centralized versioned Workflow Convention configuration, and PostgreSQL migrations. The backend is the only component allowed to call Gitea or access delegated tokens.
+**Structure Decision**: Use a pnpm workspace with separate `apps/web` and `apps/api`, shared domain/contract packages, centralized versioned Workflow Convention configuration, and a backend-owned versioned JSON Board store. The backend is the only component allowed to call Gitea or access delegated tokens.
 
 ## Complexity Tracking
 
@@ -105,6 +103,6 @@ Research is recorded in [research.md](./research.md). The key decisions are reso
 
 - [data-model.md](./data-model.md): persisted Board/config entities, external Issue model, identity rules, convention compatibility, and state transitions.
 - [contracts/openapi.yaml](./contracts/openapi.yaml): Portal API boundary for session, repositories, Issues, comments, Boards, transitions, and read-only Workflow Conventions.
-- [quickstart.md](./quickstart.md): end-to-end validation scenarios for search, mutations, permissions, Board compatibility, atomic state transitions, state conflicts, external Gitea changes, and Board persistence.
+- [quickstart.md](./quickstart.md): end-to-end validation scenarios for search, mutations, permissions, Board compatibility, atomic state transitions, state conflicts, external Gitea changes, and JSON Board persistence.
 
 **Gate status after design**: PASS. The design contains no local Issue mirror, no elevated shared Gitea credential, no owner/member model, and no unbounded custom Workflow engine. Board transitions require an atomic Gitea-supported label replacement; if the target Gitea capability cannot guarantee that result, the operation is rejected before mutation. Remaining choices are implementation-level items for task planning: exact OAuth provider configuration, Gitea version capability checks, database migration details, UI component choices, and deployment wiring.

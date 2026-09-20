@@ -20,7 +20,7 @@ description: "跨 Repository Gitea Issue 管理 Portal implementation tasks"
 - [X] T003 [P] 建立 `apps/api/package.json`、Fastify 入口與 `apps/api/src/server.ts`
 - [X] T004 [P] 建立 `packages/domain/package.json` 與 `packages/domain/src/index.ts`，作為前後端共用領域型別入口
 - [X] T005 [P] 建立 `packages/gitea-contracts/package.json` 與 `packages/gitea-contracts/src/index.ts`，承載 Gitea/Portal boundary 型別
-- [X] T006 建立 `.env.example` 與 `apps/api/src/config/env.ts`，列出 Gitea base URL、OAuth client、session、database 與 workflow config 設定
+- [X] T006 建立 `.env.example` 與 `apps/api/src/config/env.ts`，列出 Gitea base URL、OAuth client、session、JSON Board store path 與 workflow config 設定
 - [X] T007 [P] 建立 `apps/web/src/styles/`、`apps/web/src/components/`、`apps/api/src/http/` 與 `apps/api/src/gitea/` 的初始目錄結構
 
 ---
@@ -32,8 +32,8 @@ description: "跨 Repository Gitea Issue 管理 Portal implementation tasks"
 - [X] T008 建立 `packages/domain/src/repository.ts`、`packages/domain/src/issue.ts`、`packages/domain/src/workflow.ts` 與 `packages/domain/src/board.ts`，定義 Repository+Issue Number composite identity、`unconfigured`、`conflict` 與 exact Convention version 型別
 - [X] T009 建立 `packages/gitea-contracts/src/gitea.ts`，定義 Gitea Issue、Comment、Label、Milestone、Repository、User 與 API error mapping 型別
 - [X] T010 建立 `packages/gitea-contracts/src/portal.ts`，依 `contracts/openapi.yaml` 定義 Session、Issue、IssuePage、Board、BoardView、WorkflowConvention 與 mutation payload
-- [X] T011 建立 `database/migrations/001_boards.sql`，只保存 Board、BoardRepository 與 immutable Convention version reference；不得建立 Issue、Comment、Label、Assignee 或 Milestone mirror 欄位
-- [ ] T012 建立 `apps/api/src/persistence/database.ts` 與 `apps/api/src/persistence/board-repository.ts`，實作 shared Board configuration 的 CRUD 與 `(owner, name)` repository identity constraint
+- [X] T011 建立 `apps/api/src/persistence/database.ts` 的 versioned JSON Board store schema，包含 `schemaVersion`、`revision`、Board configuration 與禁止 Issue mirror 的 validation
+- [X] T012 建立 `apps/api/src/persistence/database.ts` 與 `apps/api/src/persistence/board-repository.ts`，實作 JSON shared Board CRUD、atomic write、schema validation、schema version 與 lock-file 並行寫入保護
 - [X] T013 建立 `config/workflows/conventions.yaml` 的 versioned read-only schema 範例，明確包含 convention id/version、ordered states、exact label names 與 repository assignments
 - [X] T014 建立 `apps/api/src/workflows/convention-loader.ts` 與 `packages/domain/src/workflow-state-resolver.ts`，載入並驗證 unique state key、unique Label name、deterministic order、每 Repository 僅一個 exact Convention version，並實作 no workflow label → `unconfigured`、exactly one matching label → ordered state、multiple same-Convention labels → `conflict`；非 Workflow Labels 不參與判定
 - [X] T015 建立 `apps/api/src/auth/oauth.ts` 與 `apps/api/src/auth/session.ts`，實作 Gitea OAuth2 delegated session；Gitea access token 僅存在後端 session，不得進入 browser bundle

@@ -12,7 +12,8 @@ import { registerRequestMetrics } from './telemetry/request-metrics.js';
 
 export async function buildApp(config: AppConfig) {
   const app = Fastify({ logger: true });
-  const boards = new BoardRepository();
+  const boards = new BoardRepository(config.boardStorePath);
+  await boards.initialize();
   const conventions = await loadConventions(config.workflowConfigPath);
   registerErrorHandler(app);
   registerRequestMetrics(app);

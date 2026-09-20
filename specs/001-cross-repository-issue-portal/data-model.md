@@ -2,7 +2,7 @@
 
 ## Persistence boundary
 
-Portal 只保存 Board 與 Workflow 設定。Gitea Issue、Comment、Label、Assignee、Milestone、State 與 Updated Time 不在 Portal 持久化；以下標示為 **external/read-through** 的資料只存在於請求處理與 UI state。
+Portal 使用版本化 JSON store 只保存 Board 與 Workflow reference 設定。Store document 包含 `schemaVersion`、單調遞增 `revision` 與 `boards[]`；寫入以同目錄 temporary file flush + rename 完成，lock file 防止多程序並行寫入。Gitea Issue、Comment、Label、Assignee、Milestone、State 與 Updated Time 不在 Portal 持久化；以下標示為 **external/read-through** 的資料只存在於請求處理與 UI state。
 
 ## Entities
 

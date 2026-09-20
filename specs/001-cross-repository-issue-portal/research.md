@@ -18,9 +18,9 @@
 
 ## Decision 3: Local persistence boundary
 
-- **Decision**: 使用 PostgreSQL 只保存 Board 設定、Board-Repository 關聯、Board 選用的 Workflow Convention version，以及集中 Workflow Convention config 的同步版本；不保存 Issue、Comment、Label、Assignee 或 Milestone mirror。
-- **Rationale**: Board 是 Portal 的工作視圖設定，需要跨 session 保存；Issue 內容仍每次從 Gitea 取得，避免 stale local copy。
-- **Alternatives considered**: 不保存 Board 設定會無法實現共享 Board；保存完整 Issue snapshot 會違反 Source of Truth 原則；使用檔案保存可行但不適合多人同時修改共享 Board。
+- **Decision**: 使用版本化 JSON file 只保存 Board 設定、Board-Repository 關聯、Board 選用的 Workflow Convention version、timestamps 與 store revision；不保存 Issue、Comment、Label、Assignee 或 Milestone mirror。
+- **Rationale**: Board 是 Portal 的工作視圖設定，需要跨 session 保存；Issue 內容仍每次從 Gitea 取得，避免 stale local copy。JSON store 以 schema version、啟動驗證、同目錄 temporary file flush + rename，以及 lock file 保護並行寫入。
+- **Alternatives considered**: 不保存 Board 設定會無法實現共享 Board；保存完整 Issue snapshot 會違反 Source of Truth 原則；PostgreSQL 被排除，因本階段 Board 設定量與內網部署需求不需要資料庫服務。
 
 ## Decision 4: Workflow Convention configuration
 
