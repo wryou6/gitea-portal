@@ -1,0 +1,1 @@
+export function LabelList({ labels }: { labels: Array<{ name: string; color?: string }> }) { return <div className="labels">{labels.map((label) => <span className="label" key={label.name} style={label.color ? { borderColor: `#${label.color}` } : undefined}>{label.name}</span>)}</div>; }

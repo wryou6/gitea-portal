@@ -4,17 +4,21 @@ import { BoardRepository, type BoardInput } from '../persistence/board-repositor
 import { giteaFor } from '../gitea/request.js';
 import { transitionCard } from './transition-service.js';
 import type { WorkflowConvention } from '@gitea-portal/domain';
+import { createBoard, updateBoard } from './board-service.js';
+import { getBoardView } from './board-view-service.js';
 
 export function registerBoardRoutes(app: FastifyInstance, config: AppConfig, boards: BoardRepository, conventions: WorkflowConvention[]): void {
   app.get('/api/boards', async () => boards.list());
-  app.post('/api/boards', async (request, reply) => reply.code(201).send(boards.create(request.body as BoardInput)));
+  app.post('/api/boards', async (request, reply) => reply.code(201).send(createBoard(boards, request.body as BoardInput, conventions)));
   app.get('/api/boards/:id', async (request, reply) => {
     const board = boards.get((request.params as { id: string }).id);
     if (!board) return reply.code(404).send({ error: 'Board not found' });
-    return board;
+    const convention = conventions.find((item) => item.id === board.workflowConventionId && item.version === board.workflowConventionVersion);
+    if (!convention) return reply.code(422).send({ error: 'Workflow Convention is unavailable' });
+    return getBoardView(giteaFor(request, config.giteaBaseUrl, config), board, convention);
   });
   app.patch('/api/boards/:id', async (request, reply) => {
-    const board = boards.update((request.params as { id: string }).id, request.body as BoardInput);
+    const board = updateBoard(boards, (request.params as { id: string }).id, request.body as BoardInput, conventions);
     if (!board) return reply.code(404).send({ error: 'Board not found' });
     return board;
   });
@@ -31,7 +35,7 @@ export function registerBoardRoutes(app: FastifyInstance, config: AppConfig, boa
     try {
       const body = request.body as { stateKey?: string };
       if (!body.stateKey) return reply.code(422).send({ error: 'stateKey is required' });
-      return await transitionCard(giteaFor(request, config.giteaBaseUrl), board, convention, { owner: params.owner, name: params.repo }, Number(params.number), body.stateKey);
+    return await transitionCard(giteaFor(request, config.giteaBaseUrl, config), board, convention, { owner: params.owner, name: params.repo }, Number(params.number), body.stateKey);
     } catch (error) {
       return reply.code(422).send({ error: error instanceof Error ? error.message : 'Atomic transition rejected' });
     }

@@ -1,4 +1,5 @@
 import type { RepositoryRef } from './repository.js';
+import type { IssueSummary } from './issue.js';
 
 export type Board = {
   id: string;
@@ -9,3 +10,6 @@ export type Board = {
   createdAt: string;
   updatedAt: string;
 };
+
+export type BoardColumn = { stateKey: string; displayName: string; cards: IssueSummary[] };
+export type BoardView = { board: Board; columns: BoardColumn[] };

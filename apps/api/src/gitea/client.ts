@@ -34,6 +34,10 @@ export class GiteaClient {
     return this.request('/user/repos?limit=100');
   }
 
+  repositoryPermission(repository: RepositoryRef): Promise<{ pull?: boolean; push?: boolean }> {
+    return this.request<{ permissions?: { pull?: boolean; push?: boolean } }>(`/repos/${encodeURIComponent(repository.owner)}/${encodeURIComponent(repository.name)}`).then((repo) => repo.permissions ?? {});
+  }
+
   searchIssues(query: IssueQuery): Promise<{ data: GiteaIssue[]; total: number }> {
     const params = new URLSearchParams();
     if (query.q) params.set('q', query.q);

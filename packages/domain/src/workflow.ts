@@ -10,4 +10,5 @@ export type WorkflowConvention = {
   version: string;
   name: string;
   states: WorkflowState[];
+  repositories?: string[];
 };

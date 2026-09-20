@@ -24,5 +24,6 @@ export async function searchIssues(client: GiteaClient, query: IssueQuery) {
 }
 
 export async function getIssue(client: GiteaClient, repository: RepositoryRef, number: number) {
-  return mapIssue(await client.issue(repository, number));
+  const issue = await client.issue(repository, number);
+  return { ...mapIssue(issue), body: issue.body };
 }

@@ -10,7 +10,7 @@ export function IssueFilters({ onSubmit }: { onSubmit: (filters: IssueFiltersVal
     <input aria-label="Repository" placeholder="owner/repository" value={filters.repository} onChange={(e) => update('repository', e.target.value)} />
     <select aria-label="狀態" value={filters.state} onChange={(e) => update('state', e.target.value)}><option value="all">全部</option><option value="open">Open</option><option value="closed">Closed</option></select>
     <input aria-label="Assignee" placeholder="Assignee" value={filters.assignee} onChange={(e) => update('assignee', e.target.value)} />
-    <input aria-label="Label" placeholder="Label" value={filters.label} onChange={(e) => update('label', e.target.value)} />
+    <input aria-label="Label" placeholder="Label（workflow 或一般分類）" value={filters.label} onChange={(e) => update('label', e.target.value)} />
     <input aria-label="Milestone" placeholder="Milestone" value={filters.milestone} onChange={(e) => update('milestone', e.target.value)} />
     <button type="submit">搜尋</button>
   </form>;

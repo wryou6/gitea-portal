@@ -1,0 +1,2 @@
+import type { FastifyInstance } from 'fastify';
+export function registerRequestMetrics(app: FastifyInstance): void { app.addHook('onRequest', async (request) => { (request as typeof request & { portalStartedAt?: number }).portalStartedAt = Date.now(); }); app.addHook('onResponse', async (request, reply) => { const started = (request as typeof request & { portalStartedAt?: number }).portalStartedAt ?? Date.now(); app.log.info({ path: request.routeOptions.url, statusCode: reply.statusCode, elapsedMs: Date.now() - started }, 'request completed'); }); }

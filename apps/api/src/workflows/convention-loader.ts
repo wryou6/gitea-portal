@@ -13,6 +13,10 @@ export async function loadConventions(path: string): Promise<WorkflowConvention[
     if (keys.size !== convention.states.length || labels.size !== convention.states.length) {
       throw new Error(`Invalid duplicate Workflow state in ${convention.id}@${convention.version}`);
     }
+    const orders = convention.states.map((state) => state.order);
+    if (new Set(orders).size !== orders.length || orders.some((order) => order < 0) || convention.states.some((state) => !state.key || !state.labelName)) throw new Error(`Invalid Workflow state ordering in ${convention.id}@${convention.version}`);
   }
+  const assigned = new Map<string, string>();
+  for (const convention of conventions) for (const repository of convention.repositories ?? []) { if (assigned.has(repository)) throw new Error(`Repository assigned to multiple Workflow Conventions: ${repository}`); assigned.set(repository, `${convention.id}@${convention.version}`); }
   return conventions;
 }
