@@ -1,1 +1,19 @@
-export function LabelList({ labels }: { labels: Array<{ name: string; color?: string }> }) { return <div className="labels">{labels.map((label) => <span className="label" key={label.name} style={label.color ? { borderColor: `#${label.color}` } : undefined}>{label.name}</span>)}</div>; }
+import { Badge } from "../../components/ui/Badge";
+export function LabelList({
+  labels,
+}: {
+  labels: Array<{ name: string; color?: string }>;
+}) {
+  return (
+    <div className="labels" aria-label="Labels">
+      {labels.map((label) => (
+        <Badge
+          key={label.name}
+          style={label.color ? { borderColor: `#${label.color}` } : undefined}
+        >
+          {label.name}
+        </Badge>
+      ))}
+    </div>
+  );
+}

@@ -4,9 +4,11 @@ node_modules/
 
 # Build, test, and tool output
 dist/
+storybook-static/
 build/
 coverage/
 .vite/
+.playwright-cli/
 .turbo/
 *.tsbuildinfo
 *.log

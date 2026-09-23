@@ -1,1 +1,0 @@
-export function WorkflowLegend({ states }: { states: Array<{ key: string; displayName: string }> }) { return <div className="workflow-legend">{states.map((state) => <span key={state.key}>{state.displayName}</span>)}</div>; }

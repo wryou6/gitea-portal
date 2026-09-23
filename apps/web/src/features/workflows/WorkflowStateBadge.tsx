@@ -1,1 +1,0 @@
-export function WorkflowStateBadge({ state }: { state: string }) { return <span className={`workflow-badge workflow-${state}`}>{state === 'unconfigured' ? '未設定狀態' : state === 'conflict' ? '狀態衝突' : state}</span>; }
