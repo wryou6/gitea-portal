@@ -16,9 +16,11 @@ export function IssueEditForm({
   const [body, setBody] = useState(issue.body ?? "");
   const [assignee, setAssignee] = useState(issue.assignee ?? "");
   const [labels, setLabels] = useState(
-    issue.labels.map((label) => label.name).join(", "),
+    issue.labels.filter((label) => !label.name.startsWith("start-date:")).map((label) => label.name).join(", "),
   );
   const [milestone, setMilestone] = useState(issue.milestone ?? "");
+  const [startDate, setStartDate] = useState(issue.startDate ?? "");
+  const [dueDate, setDueDate] = useState(issue.dueDate ?? "");
   const [state, setState] = useState(issue.state);
   const [error, setError] = useState<string>();
   const [saving, setSaving] = useState(false);
@@ -31,6 +33,7 @@ export function IssueEditForm({
       await api(`/api/issues/${issue.owner}/${issue.name}/${issue.number}`, {
         method: "PATCH",
         body: JSON.stringify({
+          expectedUpdatedAt: issue.updatedAt,
           title: title.trim(),
           body,
           state,
@@ -40,6 +43,8 @@ export function IssueEditForm({
             .map((item) => item.trim())
             .filter(Boolean),
           milestone: milestone || null,
+          startDate: startDate || null,
+          dueDate: dueDate || null,
         }),
       });
       await onSaved();
@@ -96,6 +101,16 @@ export function IssueEditForm({
           value={labels}
           onChange={(e) => setLabels(e.target.value)}
         />
+      </Field>
+      <Field>
+        <FieldLabel htmlFor="edit-start-date">Start date</FieldLabel>
+        <Input id="edit-start-date" type="date" value={startDate} onChange={(event) => setStartDate(event.target.value)} />
+        <Button type="button" variant="ghost" aria-label="清除 Start date" disabled={saving} onClick={() => setStartDate("")}>清除日期</Button>
+      </Field>
+      <Field>
+        <FieldLabel htmlFor="edit-due-date">Due date</FieldLabel>
+        <Input id="edit-due-date" type="date" value={dueDate} onChange={(event) => setDueDate(event.target.value)} />
+        <Button type="button" variant="ghost" aria-label="清除 Due date" disabled={saving} onClick={() => setDueDate("")}>清除日期</Button>
       </Field>
       <Field>
         <FieldLabel htmlFor="edit-milestone">Milestone</FieldLabel>

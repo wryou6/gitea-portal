@@ -8,6 +8,7 @@ import { createBoard, updateBoard } from './board-service.js';
 import { getBoardView } from './board-view-service.js';
 import { canAccessRepository } from '../auth/permissions.js';
 import { PortalError } from '../errors.js';
+import { getBoardGanttView } from './gantt-service.js';
 
 export function registerBoardRoutes(app: FastifyInstance, config: AppConfig, boards: BoardRepository, conventions: WorkflowConvention[]): void {
   app.get('/api/boards', async () => boards.list());
@@ -23,6 +24,15 @@ export function registerBoardRoutes(app: FastifyInstance, config: AppConfig, boa
     const convention = conventions.find((item) => item.id === board.workflowConventionId && item.version === board.workflowConventionVersion);
     if (!convention) return reply.code(422).send({ error: 'Workflow Convention is unavailable' });
     return getBoardView(giteaFor(request, config.giteaBaseUrl, config), board, convention);
+  });
+  app.get('/api/boards/:id/gantt', async (request, reply) => {
+    const board = await boards.get((request.params as { id: string }).id);
+    if (!board) return reply.code(404).send({ error: 'Board not found' });
+    const convention = conventions.find((item) => item.id === board.workflowConventionId && item.version === board.workflowConventionVersion);
+    if (!convention) return reply.code(422).send({ error: 'Workflow Convention is unavailable' });
+    const client = giteaFor(request, config.giteaBaseUrl, config);
+    if (!await repositoriesReadable(client, board.repositoryRefs)) return reply.code(403).send({ error: 'Permission denied for one or more Board repositories' });
+    return getBoardGanttView(client, board);
   });
   app.patch('/api/boards/:id', async (request, reply) => {
     const input = request.body as BoardInput;

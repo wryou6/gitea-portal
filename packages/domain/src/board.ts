@@ -14,3 +14,4 @@ export type Board = {
 export type BoardCard = IssueSummary & { visibleLabels: IssueLabel[] };
 export type BoardColumn = { stateKey: string; displayName: string; cards: BoardCard[] };
 export type BoardView = { board: Board; columns: BoardColumn[] };
+export type BoardGanttView = { board: Board; issues: IssueSummary[] };

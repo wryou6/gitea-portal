@@ -14,6 +14,8 @@ export function IssueCreatePage() {
   const [assignee, setAssignee] = useState("");
   const [labels, setLabels] = useState("");
   const [milestone, setMilestone] = useState("");
+  const [startDate, setStartDate] = useState("");
+  const [dueDate, setDueDate] = useState("");
   const [error, setError] = useState<string>();
 
   useEffect(() => {
@@ -50,6 +52,8 @@ export function IssueCreatePage() {
               .map((item) => item.trim())
               .filter(Boolean),
             milestone: milestone.trim() || null,
+            startDate: startDate || null,
+            dueDate: dueDate || null,
           }),
         },
       );
@@ -121,6 +125,14 @@ export function IssueCreatePage() {
               value={labels}
               onChange={(event) => setLabels(event.target.value)}
             />
+          </Field>
+          <Field>
+            <FieldLabel htmlFor="new-start-date">Start date</FieldLabel>
+            <Input id="new-start-date" type="date" value={startDate} onChange={(event) => setStartDate(event.target.value)} />
+          </Field>
+          <Field>
+            <FieldLabel htmlFor="new-due-date">Due date</FieldLabel>
+            <Input id="new-due-date" type="date" value={dueDate} onChange={(event) => setDueDate(event.target.value)} />
           </Field>
           <Field>
             <FieldLabel htmlFor="new-milestone">Milestone（可選）</FieldLabel>

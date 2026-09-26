@@ -61,7 +61,7 @@ export function BoardListPage() {
       <div className="board-list">
         {boards.map((board) => (
           <article className="board-link" key={board.id}>
-            <a href={`/boards/${board.id}`}>
+            <a href={`/boards/${board.id}/kanban`}>
               <h2>{board.name}</h2>
               <p>
                 {board.repositoryRefs
@@ -72,6 +72,10 @@ export function BoardListPage() {
                 {board.workflowConventionId}@{board.workflowConventionVersion}
               </small>
             </a>
+            <nav className="board-view-links" aria-label={`${board.name} 檢視方式`}>
+              <a href={`/boards/${board.id}/kanban`}>Kanban</a>
+              <a href={`/boards/${board.id}/gantt`}>甘特圖</a>
+            </nav>
             <Button
               variant="secondary"
               type="button"

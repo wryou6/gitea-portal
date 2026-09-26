@@ -18,7 +18,14 @@ export function IssueRow({ issue }: { issue: Issue }) {
             {issue.state === "open" ? "Open" : "Closed"}
           </span>
           <span>{issue.assignee ?? "未指派"}</span>
+          <span>Start：{issue.startDate ?? "未設定"}</span>
+          <span>Due：{issue.dueDate ?? "未設定"}</span>
           <span>{issue.milestone ?? "未設定 Milestone"}</span>
+          {issue.scheduleStatus === "invalid" && (
+            <span className="schedule-anomaly" role="status">
+              排程日期異常：{issue.scheduleAnomaly}
+            </span>
+          )}
           <time dateTime={issue.updatedAt}>
             {new Date(issue.updatedAt).toLocaleString("zh-TW")}
           </time>

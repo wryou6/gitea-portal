@@ -1,6 +1,6 @@
 # Gitea 跨 Repository Issue Portal
 
-供內網工程團隊使用的跨 Repository Issue 管理 Portal。Portal 統一呈現多個 Gitea Repository 的 Issues、搜尋篩選、Issue 編輯、留言與 Kanban Board；Gitea 仍是 Issue、Comment、Label、Assignee、Milestone 與狀態的唯一 Source of Truth。
+供內網工程團隊使用的跨 Repository Issue 管理 Portal。Portal 統一呈現多個 Gitea Repository 的 Issues、搜尋篩選、Issue 編輯、留言與 Kanban/Gantt Board；Gitea 仍是 Issue、Comment、Label、Assignee、Milestone、排程日期與狀態的唯一 Source of Truth。
 
 Portal 不建立 Issue mirror，也不取代 Gitea 的 Git Hosting、Pull Request、Code Review 或 CI/CD 功能。未提供的 Gitea 功能可從 Issue detail 的原始 Gitea URL 開啟。
 
@@ -97,4 +97,6 @@ pnpm.cmd format:check
 
 ## 範圍
 
-目前範圍包含跨 Repository Issue 搜尋、篩選、建立、編輯、留言、Open/Close/Reopen、Assignee、Labels、Milestone 與跨 Repository Kanban。Epic、Parent/Child、dependency graph、Story Points、time tracking、Gantt、Roadmap、custom fields、Pull Request、CI/CD 與獨立 Issue database 不在第一階段範圍。
+目前範圍包含跨 Repository Issue 搜尋、篩選、建立、編輯、留言、Open/Close/Reopen、Assignee、Labels、Milestone，以及使用 Gitea start-date Label 與原生 due date 的跨 Repository Kanban/Gantt Board。Epic、Parent/Child、dependency graph、Story Points、time tracking、Roadmap、custom fields、Pull Request、CI/CD 與獨立 Issue database 不在第一階段範圍。
+
+每個 Board 的 Kanban 與甘特圖使用獨立頁面 URL：`/boards/<board-id>/kanban` 與 `/boards/<board-id>/gantt`。舊的 `/boards/<board-id>` URL 仍開啟 Kanban。

@@ -13,11 +13,18 @@ export function IssueDetailHeader({ issue }: { issue: Issue }) {
           {issue.state === "open" ? "Open" : "Closed"}
         </Badge>
         <span>Assignee：{issue.assignee ?? "未指派"}</span>
+        <span>Start：{issue.startDate ?? "未設定"}</span>
+        <span>Due：{issue.dueDate ?? "未設定"}</span>
         <span>Milestone：{issue.milestone ?? "未設定 Milestone"}</span>
         <time dateTime={issue.updatedAt}>
           更新於 {new Date(issue.updatedAt).toLocaleString("zh-TW")}
         </time>
       </p>
+      {issue.scheduleStatus === "invalid" && (
+        <p className="schedule-anomaly" role="status">
+          排程日期異常：{issue.scheduleAnomaly}
+        </p>
+      )}
       <LabelList labels={issue.labels} />
     </>
   );

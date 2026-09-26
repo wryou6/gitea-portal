@@ -1,6 +1,7 @@
 import { PortalError } from '../errors.js';
+import { isCalendarDate } from '@gitea-portal/domain';
 
-export type IssueMutationInput = { title: string; body?: string; state?: 'open' | 'closed'; assignee?: string | null; labels?: string[]; milestone?: string | null };
+export type IssueMutationInput = { title: string; body?: string; state?: 'open' | 'closed'; assignee?: string | null; labels?: string[]; milestone?: string | null; startDate?: string | null; dueDate?: string | null; expectedUpdatedAt?: string };
 
 function validateIssueInput(input: unknown, requireTitle: boolean): asserts input is IssueMutationInput {
   if (!input || typeof input !== 'object') throw new PortalError(422, 'Issue payload is required');
@@ -12,6 +13,12 @@ function validateIssueInput(input: unknown, requireTitle: boolean): asserts inpu
   if (value.assignee !== undefined && value.assignee !== null && (typeof value.assignee !== 'string' || !value.assignee.trim())) throw new PortalError(422, 'Issue assignee is invalid');
   if (value.labels !== undefined && (!Array.isArray(value.labels) || value.labels.some((label) => typeof label !== 'string' || !label.trim()))) throw new PortalError(422, 'Issue labels are invalid');
   if (value.milestone !== undefined && value.milestone !== null && (typeof value.milestone !== 'string' || !value.milestone.trim())) throw new PortalError(422, 'Issue milestone is invalid');
+  if (value.expectedUpdatedAt !== undefined && (typeof value.expectedUpdatedAt !== 'string' || !Number.isFinite(Date.parse(value.expectedUpdatedAt)))) throw new PortalError(422, 'expectedUpdatedAt must be a valid timestamp');
+  if (!requireTitle && (typeof value.expectedUpdatedAt !== 'string' || !Number.isFinite(Date.parse(value.expectedUpdatedAt)))) throw new PortalError(422, 'expectedUpdatedAt is required for Issue updates');
+  for (const dateField of ['startDate', 'dueDate']) {
+    const date = value[dateField];
+    if (date !== undefined && date !== null && !isCalendarDate(date)) throw new PortalError(422, `${dateField} must be a valid YYYY-MM-DD calendar date`);
+  }
 }
 
 export function validateIssueCreate(input: unknown): asserts input is IssueMutationInput & { title: string } {

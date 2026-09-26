@@ -1,6 +1,6 @@
 import { randomUUID } from 'node:crypto';
 import type { GiteaComment, GiteaIssue, GiteaRepository, GiteaUser } from '@gitea-portal/gitea-contracts';
-import type { IssueState, RepositoryRef } from '@gitea-portal/domain';
+import { issueScheduleFromLabels, isCalendarDate, type IssueState, type RepositoryRef } from '@gitea-portal/domain';
 import { GiteaError, mapGiteaError } from './errors.js';
 
 type GiteaApiUser = { login?: string; full_name?: string };
@@ -15,6 +15,7 @@ type GiteaApiIssue = {
   assignee?: GiteaApiUser | null;
   labels?: GiteaApiLabel[];
   milestone?: { id?: number; title?: string } | null;
+  due_date?: string | null;
   updated_at?: string;
   html_url?: string;
 };
@@ -34,6 +35,14 @@ function user(value: GiteaApiUser | null | undefined): GiteaUser | null {
 function normalizeIssue(value: GiteaApiIssue): GiteaIssue {
   const repository = repositoryRef(value.repository);
   if (value.number === undefined || !value.title || !value.state || !value.updated_at || !value.html_url) throw new GiteaError(502, 'Gitea returned an incomplete Issue');
+  const labels = (value.labels ?? []).filter((label): label is { name: string; color?: string } => Boolean(label.name)).map((label) => ({ name: label.name, color: label.color }));
+  const rawDueDate = value.due_date;
+  const parsedDueDate = typeof rawDueDate === 'string' ? new Date(rawDueDate) : null;
+  const candidateDueDate = parsedDueDate && Number.isFinite(parsedDueDate.getTime())
+    ? parsedDueDate.toISOString().slice(0, 10)
+    : null;
+  const invalidDueDate = rawDueDate !== undefined && rawDueDate !== null && !isCalendarDate(candidateDueDate);
+  const schedule = issueScheduleFromLabels(labels, invalidDueDate ? null : candidateDueDate, invalidDueDate);
   return {
     repository,
     number: value.number,
@@ -41,7 +50,8 @@ function normalizeIssue(value: GiteaApiIssue): GiteaIssue {
     body: value.body ?? '',
     state: value.state === 'closed' ? 'closed' : 'open',
     assignee: user(value.assignee),
-    labels: (value.labels ?? []).filter((label): label is { name: string; color?: string } => Boolean(label.name)).map((label) => ({ name: label.name, color: label.color })),
+    labels,
+    ...schedule,
     milestone: value.milestone?.title && value.milestone.id !== undefined ? { id: value.milestone.id, title: value.milestone.title } : null,
     updatedAt: value.updated_at,
     htmlUrl: value.html_url,
@@ -62,6 +72,7 @@ export type IssueQuery = {
   q?: string;
   repository?: string;
   state?: IssueState | 'all';
+  type?: 'issues' | 'pulls';
   page?: number;
   limit?: number;
   labels?: string[];
@@ -115,6 +126,7 @@ export class GiteaClient {
     const params = new URLSearchParams();
     if (query.q) params.set('q', query.q);
     params.set('state', query.state ?? 'all');
+    if (query.type) params.set('type', query.type);
     params.set('page', String(page));
     params.set('limit', String(limit));
     if (query.labels?.length) params.set('labels', query.labels.join(','));
@@ -132,6 +144,10 @@ export class GiteaClient {
       issues.push(...pageIssues);
       if (pageIssues.length < limit) return issues;
     }
+  }
+
+  async repositoryIssuesAllPages(repository: RepositoryRef, query: IssueQuery = { state: 'all' }): Promise<GiteaIssue[]> {
+    return (await this.repositoryIssues(repository, query)).map(normalizeIssue);
   }
 
   async searchIssues(query: IssueQuery): Promise<GiteaIssue[]> {
@@ -178,8 +194,17 @@ export class GiteaClient {
     return normalizeComment(await this.request<GiteaApiComment>(`/repos/${repository.owner}/${repository.name}/issues/${number}/comments`, { method: 'POST', body: JSON.stringify({ body }) }));
   }
 
-  labels(repository: RepositoryRef): Promise<Array<{ id: number; name: string; color: string }>> {
-    return this.request(`/repos/${repository.owner}/${repository.name}/labels?limit=100`);
+  async labels(repository: RepositoryRef): Promise<Array<{ id: number; name: string; color: string }>> {
+    const labels: Array<{ id: number; name: string; color: string }> = [];
+    for (let page = 1; ; page += 1) {
+      const current = await this.request<Array<{ id: number; name: string; color: string }>>(`/repos/${encodeURIComponent(repository.owner)}/${encodeURIComponent(repository.name)}/labels?page=${page}&limit=100`);
+      labels.push(...current);
+      if (current.length < 100) return labels;
+    }
+  }
+
+  createLabel(repository: RepositoryRef, input: { name: string; color: string; description?: string }): Promise<{ id: number; name: string; color: string }> {
+    return this.request(`/repos/${encodeURIComponent(repository.owner)}/${encodeURIComponent(repository.name)}/labels`, { method: 'POST', body: JSON.stringify(input) });
   }
 
   async milestones(repository: RepositoryRef): Promise<Array<{ id: number; title: string }>> {

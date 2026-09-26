@@ -407,6 +407,141 @@ button.danger {
   padding-left: 0.55rem;
   color: var(--destructive);
 }
+.board-view-toggle {
+  display: flex;
+  gap: 0.5rem;
+  margin: 0 0 1rem;
+}
+.board-view-toggle button[aria-pressed="true"] {
+  box-shadow: 0 0 0 2px var(--ring);
+}
+.board-view-toggle a,
+.board-view-links a {
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 0.45rem 0.7rem;
+  text-decoration: none;
+}
+.board-view-toggle a[aria-current="page"] {
+  border-color: var(--ring);
+  box-shadow: 0 0 0 1px var(--ring);
+}
+.board-view-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+}
+.gantt-view {
+  display: grid;
+  gap: 1.25rem;
+}
+.gantt-filters {
+  display: flex;
+  align-items: end;
+  flex-wrap: wrap;
+  gap: 1rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--card);
+  padding: 0.9rem;
+}
+.gantt-filters .field {
+  min-width: min(100%, 16rem);
+}
+.gantt-filters fieldset {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  margin: 0;
+  border: 0;
+  padding: 0;
+}
+.gantt-filters fieldset label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+.gantt-filters input[type="checkbox"] {
+  width: auto;
+}
+.gantt-scheduled,
+.gantt-issue-section {
+  display: grid;
+  gap: 0.55rem;
+}
+.gantt-issue-section h2 {
+  margin: 0 0 0.2rem;
+  font-size: 1rem;
+}
+.gantt-issue-section h2 span {
+  color: var(--muted-foreground);
+  font-size: 0.85rem;
+}
+.gantt-axis,
+.gantt-row {
+  display: grid;
+  grid-template-columns: minmax(13rem, 0.8fr) minmax(20rem, 1.2fr);
+  gap: 1rem;
+}
+.gantt-axis {
+  color: var(--muted-foreground);
+  font-size: 0.78rem;
+}
+.gantt-axis span:last-child {
+  text-align: right;
+}
+.gantt-row {
+  align-items: center;
+  min-height: 4.7rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--card);
+  padding: 0.7rem 0.8rem;
+}
+.gantt-issue {
+  display: grid;
+  gap: 0.15rem;
+  min-width: 0;
+}
+.gantt-issue > a,
+.gantt-anomaly > a {
+  overflow-wrap: anywhere;
+  font-weight: 700;
+}
+.gantt-issue small {
+  color: var(--muted-foreground);
+  overflow-wrap: anywhere;
+}
+.gantt-track {
+  position: relative;
+  min-height: 1.5rem;
+  border-bottom: 1px solid var(--border);
+  background: repeating-linear-gradient(90deg, transparent 0, transparent calc(10% - 1px), var(--border) 10%);
+}
+.gantt-bar {
+  position: absolute;
+  top: 0.25rem;
+  height: 1rem;
+  min-width: 0.25rem;
+  border-radius: 999px;
+  background: var(--primary);
+}
+.gantt-anomaly {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  border: 1px solid color-mix(in oklch, var(--warning) 55%, var(--border));
+  border-radius: var(--radius);
+  background: color-mix(in oklch, var(--warning) 8%, var(--card));
+  padding: 0.8rem;
+}
+.schedule-anomaly {
+  color: var(--destructive);
+}
 .detail-grid {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(16rem, 22rem);
@@ -476,6 +611,22 @@ button.danger {
   .kanban-lane-picker {
     display: grid;
     margin-bottom: 1rem;
+  }
+  .gantt-axis {
+    display: none;
+  }
+  .gantt-row {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .gantt-track {
+    display: none;
+  }
+  .gantt-filters {
+    align-items: stretch;
+    flex-direction: column;
+  }
+  .gantt-filters fieldset {
+    flex-wrap: wrap;
   }
 }
 @media (prefers-reduced-motion: reduce) {

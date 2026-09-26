@@ -9,7 +9,7 @@ export function App() {
   const match = window.location.pathname.match(
     /^\/issue\/([^/]+)\/([^/]+)\/(\d+)$/,
   );
-  const boardMatch = window.location.pathname.match(/^\/boards\/([^/]+)$/);
+  const boardMatch = window.location.pathname.match(/^\/boards\/([^/]+)(?:\/(kanban|gantt))?$/);
   const content =
     window.location.pathname === "/issue/new" ? (
       <IssueCreatePage />
@@ -20,7 +20,7 @@ export function App() {
         number={Number(match[3])}
       />
     ) : boardMatch ? (
-      <KanbanBoard boardId={boardMatch[1]!} />
+      <KanbanBoard boardId={boardMatch[1]!} viewMode={boardMatch[2] === "gantt" ? "gantt" : "kanban"} />
     ) : window.location.pathname === "/boards" ? (
       <BoardListPage />
     ) : (

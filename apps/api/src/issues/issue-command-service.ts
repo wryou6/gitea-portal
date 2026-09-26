@@ -3,48 +3,56 @@ import { GiteaClient } from '../gitea/client.js';
 import { PortalError } from '../errors.js';
 import { validateIssueCreate, validateIssueUpdate, type IssueMutationInput } from './issue-validation.js';
 import { mapIssue } from './issue-service.js';
+import { issueCreateLabelIds, refreshedScheduleMessage, scheduleMutationError, updateIssueLabelsAndSchedule } from './issue-schedule-service.js';
 
 export async function createIssue(client: GiteaClient, repository: RepositoryRef, input: unknown) {
   validateIssueCreate(input);
   const payload = await toGiteaPayload(client, repository, input, 'create');
+  if (input.labels !== undefined || input.startDate) {
+    payload.labels = await issueCreateLabelIds(client, repository, input.labels, input.startDate);
+  }
   return mapIssue(await client.createIssue(repository, payload));
 }
 
 export async function updateIssue(client: GiteaClient, repository: RepositoryRef, number: number, input: unknown) {
   validateIssueUpdate(input);
   const labels = input.labels;
+  const current = await client.issue(repository, number);
+  if (input.expectedUpdatedAt !== current.updatedAt) throw new PortalError(409, 'Issue changed in Gitea; reload before saving your changes');
   const payload = await toGiteaPayload(client, repository, input, 'update');
-  if (labels !== undefined) delete payload.labels;
-  await client.updateIssue(repository, number, payload);
-  if (labels !== undefined) {
-    const labelIds = await resolveLabelIds(client, repository, labels);
-    await client.replaceIssueLabels(repository, number, labelIds);
+  delete payload.labels;
+  const hasScheduleMutation = input.startDate !== undefined || input.dueDate !== undefined;
+  let updated = current;
+  try {
+    if (labels !== undefined || input.startDate !== undefined) {
+      updated = await updateIssueLabelsAndSchedule(client, repository, current, labels, input.startDate);
+    }
+    if (Object.keys(payload).length > 0) updated = await client.updateIssue(repository, number, payload);
+  } catch (error) {
+    if (hasScheduleMutation) {
+      throw scheduleMutationError(error, await refreshedScheduleMessage(client, repository, number));
+    }
+    throw error;
   }
-  return mapIssue(await client.issue(repository, number));
+  return mapIssue(updated);
 }
 
 async function toGiteaPayload(client: GiteaClient, repository: RepositoryRef, input: IssueMutationInput, operation: 'create' | 'update'): Promise<Record<string, unknown>> {
   const payload: Record<string, unknown> = { ...input };
+  delete payload.startDate;
+  delete payload.dueDate;
   if (operation === 'create' && input.state !== undefined) {
     payload.closed = input.state === 'closed';
     delete payload.state;
   }
-  if (input.labels !== undefined) payload.labels = await resolveLabelIds(client, repository, input.labels);
+  if (input.dueDate) payload.due_date = `${input.dueDate}T00:00:00Z`;
+  if (operation === 'update' && input.dueDate === null) payload.unset_due_date = true;
   if (input.milestone !== undefined) payload.milestone = input.milestone === null ? 0 : await resolveMilestoneId(client, repository, input.milestone);
   if (input.assignee === null) {
     delete payload.assignee;
     payload.assignees = [];
   }
   return payload;
-}
-
-async function resolveLabelIds(client: GiteaClient, repository: RepositoryRef, names: string[]): Promise<number[]> {
-  const labels = await client.labels(repository);
-  return names.map((name) => {
-    const label = labels.find((candidate) => candidate.name === name);
-    if (!label) throw new PortalError(422, `Label does not exist in Gitea: ${name}`);
-    return label.id;
-  });
 }
 
 async function resolveMilestoneId(client: GiteaClient, repository: RepositoryRef, value: string): Promise<number> {

@@ -1,8 +1,8 @@
-import type { IssueLabel, IssueState, RepositoryRef } from '@gitea-portal/domain';
+import type { IssueLabel, IssueSchedule, IssueState, RepositoryRef } from '@gitea-portal/domain';
 
 export type GiteaRepository = RepositoryRef & { fullName: string; htmlUrl: string };
 export type GiteaUser = { login: string; fullName?: string };
-export type GiteaIssue = {
+export type GiteaIssue = IssueSchedule & {
   repository: RepositoryRef;
   number: number;
   title: string;

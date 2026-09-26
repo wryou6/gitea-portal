@@ -13,6 +13,10 @@ export type Issue = {
   body?: string;
   assignee: string | null;
   labels: Array<{ name: string }>;
+  startDate: string | null;
+  dueDate: string | null;
+  scheduleStatus: "scheduled" | "unscheduled" | "invalid";
+  scheduleAnomaly?: "invalid_start_date" | "multiple_start_dates" | "invalid_due_date" | "date_range_reversed";
   milestone: string | null;
   updatedAt: string;
   htmlUrl: string;
