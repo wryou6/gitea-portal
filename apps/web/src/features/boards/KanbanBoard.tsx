@@ -7,6 +7,7 @@ import { transitionCard } from "./card-transition";
 import { ErrorNotice } from "../../components/feedback/ErrorNotice";
 import { LoadingState } from "../../components/feedback/LoadingState";
 import { PageHeader } from "../../components/layout/PageHeader";
+import { routePaths } from "../../app/routes";
 
 export function KanbanBoard({ boardId, viewMode }: { boardId: string; viewMode: "kanban" | "gantt" }) {
   const [view, setView] = useState<BoardView>();
@@ -80,7 +81,7 @@ export function KanbanBoard({ boardId, viewMode }: { boardId: string; viewMode: 
 
   return (
     <section>
-      <a href="/boards">← 回到 Boards</a>
+      <a href={routePaths.boardSettings}>← 回到 Boards</a>
       {error && <ErrorNotice message={error} />}
       <PageHeader
         eyebrow="KANBAN WORKSPACE"
@@ -88,8 +89,18 @@ export function KanbanBoard({ boardId, viewMode }: { boardId: string; viewMode: 
         description={`${board.workflowConventionId}@${board.workflowConventionVersion}${viewMode === "kanban" ? ` · ${view?.columns.length ?? 0} 個狀態欄位` : ""}`}
       />
       <nav className="board-view-toggle" aria-label="Board 檢視方式">
-        <a href={`/boards/${boardId}/kanban`} aria-current={viewMode === "kanban" ? "page" : undefined}>Kanban</a>
-        <a href={`/boards/${boardId}/gantt`} aria-current={viewMode === "gantt" ? "page" : undefined}>甘特圖</a>
+        <a
+          href={routePaths.boardView(boardId, "kanban")}
+          aria-current={viewMode === "kanban" ? "page" : undefined}
+        >
+          Kanban
+        </a>
+        <a
+          href={routePaths.boardView(boardId, "gantt")}
+          aria-current={viewMode === "gantt" ? "page" : undefined}
+        >
+          甘特圖
+        </a>
       </nav>
       {viewMode === "gantt" ? (
         ganttView ? <GanttBoard issues={ganttView.issues} /> : <LoadingState />

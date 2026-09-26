@@ -1,11 +1,13 @@
 import type { Issue } from "../../lib/api";
 import { LabelList } from "./LabelList";
+import { routePaths } from "../../app/routes";
+
 export function IssueRow({ issue }: { issue: Issue }) {
   return (
     <article className="issue-row">
       <div style={{ minWidth: 0 }}>
         <a
-          href={`/issue/${issue.owner}/${issue.name}/${issue.number}`}
+          href={routePaths.issueDetail(issue.owner, issue.name, issue.number)}
           className="issue-title"
         >
           {issue.title}

@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { EmptyState } from "../../components/feedback/EmptyState";
 import { ErrorNotice } from "../../components/feedback/ErrorNotice";
 import { api, type Issue } from "../../lib/api";
+import { routePaths } from "../../app/routes";
 
 function displayStart(issue: Issue): string | null {
   return issue.startDate ?? issue.dueDate;
@@ -58,7 +59,11 @@ export function GanttBoard({ issues }: { issues: Issue[] }) {
     return (
       <article className="gantt-row" key={`${issue.owner}/${issue.name}#${issue.number}`}>
         <div className="gantt-issue">
-          <a href={`/issue/${issue.owner}/${issue.name}/${issue.number}`}>{issue.title}</a>
+          <a
+            href={routePaths.issueDetail(issue.owner, issue.name, issue.number)}
+          >
+            {issue.title}
+          </a>
           <small>{issue.owner}/{issue.name} #{issue.number} · {issue.assignee ?? "未指派"}</small>
           <small>{start && end ? `${start} — ${end}` : "沒有排程日期"}</small>
         </div>
@@ -103,7 +108,15 @@ export function GanttBoard({ issues }: { issues: Issue[] }) {
           <h2 id="gantt-anomaly-title">日期異常 <span>（{anomalousIssues.length}）</span></h2>
           {anomalousIssues.map((issue) => (
             <article className="gantt-anomaly" key={`${issue.owner}/${issue.name}#${issue.number}`}>
-              <a href={`/issue/${issue.owner}/${issue.name}/${issue.number}`}>{issue.owner}/{issue.name} #{issue.number} · {issue.title}</a>
+              <a
+                href={routePaths.issueDetail(
+                  issue.owner,
+                  issue.name,
+                  issue.number,
+                )}
+              >
+                {issue.owner}/{issue.name} #{issue.number} · {issue.title}
+              </a>
               <span role="status">{issue.scheduleAnomaly ?? "日期異常"}</span>
             </article>
           ))}

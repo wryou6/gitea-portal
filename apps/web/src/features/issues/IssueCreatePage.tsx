@@ -5,6 +5,7 @@ import { Button } from "../../components/ui/Button";
 import { Field, FieldLabel, Input, Textarea } from "../../components/ui/Field";
 import { Select } from "../../components/ui/Select";
 import { ErrorNotice } from "../../components/feedback/ErrorNotice";
+import { routePaths } from "../../app/routes";
 
 export function IssueCreatePage() {
   const [repositories, setRepositories] = useState<Repository[]>([]);
@@ -57,7 +58,11 @@ export function IssueCreatePage() {
           }),
         },
       );
-      window.location.href = `/issue/${issue.owner}/${issue.name}/${issue.number}`;
+      window.location.href = routePaths.issueDetail(
+        issue.owner,
+        issue.name,
+        issue.number,
+      );
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : "建立 Issue 失敗");
     }
@@ -65,7 +70,7 @@ export function IssueCreatePage() {
 
   return (
     <section>
-      <a href="/">← 回到 Issues</a>
+      <a href={routePaths.issues}>← 回到 Issues</a>
       <div className="detail-card">
         <PageHeader
           eyebrow="NEW GITEA ISSUE"

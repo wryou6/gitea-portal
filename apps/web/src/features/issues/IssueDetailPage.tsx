@@ -8,6 +8,7 @@ import type { Comment } from "./types";
 import { LoadingState } from "../../components/feedback/LoadingState";
 import { ErrorNotice } from "../../components/feedback/ErrorNotice";
 import { Button } from "../../components/ui/Button";
+import { routePaths } from "../../app/routes";
 
 export function IssueDetailPage({
   owner,
@@ -46,14 +47,14 @@ export function IssueDetailPage({
   if (error)
     return (
       <section>
-        <a href="/">← 回到 Issues</a>
+        <a href={routePaths.issues}>← 回到 Issues</a>
         <ErrorNotice message={error} />
       </section>
     );
   if (!issue) return <LoadingState />;
   return (
     <section>
-      <a href="/">← 回到 Issues</a>
+      <a href={routePaths.issues}>← 回到 Issues</a>
       <div className="detail-grid">
         <div className="detail-card">
           <IssueDetailHeader issue={issue} />

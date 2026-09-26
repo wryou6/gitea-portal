@@ -7,8 +7,13 @@ import { Button } from "../../components/ui/Button";
 import { EmptyState } from "../../components/feedback/EmptyState";
 import { ErrorNotice } from "../../components/feedback/ErrorNotice";
 import { LoadingState } from "../../components/feedback/LoadingState";
+import { routePaths } from "../../app/routes";
 
-export function BoardListPage() {
+export function BoardListPage({
+  viewIntent,
+}: {
+  viewIntent?: "kanban" | "gantt";
+}) {
   const [boards, setBoards] = useState<Board[]>([]);
   const [repositories, setRepositories] = useState<Repository[]>([]);
   const [conventions, setConventions] = useState<WorkflowConvention[]>([]);
@@ -41,27 +46,35 @@ export function BoardListPage() {
   return (
     <section>
       <PageHeader
-        eyebrow="SHARED WORKSPACE"
-        title="Boards"
-        description="跨 Repository 管理 Gitea Issue 的工作狀態。"
+        eyebrow={viewIntent ? "BOARD SELECTION" : "SHARED WORKSPACE"}
+        title={viewIntent ? "選擇 Board" : "Boards"}
+        description={
+          viewIntent
+            ? viewIntent === "gantt"
+              ? "選擇要開啟甘特圖的 Board。"
+              : "選擇要開啟 Kanban 的 Board。"
+            : "跨 Repository 管理 Gitea Issue 的工作狀態。"
+        }
       />
       {error && <ErrorNotice message={error} />}
       {loading && <LoadingState />}
-      <BoardEditor
-        key={editing?.id ?? "new"}
-        board={editing}
-        repositories={repositories}
-        conventions={conventions}
-        onSaved={async () => {
-          setEditing(undefined);
-          await load();
-        }}
-        onCancelled={() => setEditing(undefined)}
-      />
+      {!viewIntent && !error && (
+        <BoardEditor
+          key={editing?.id ?? "new"}
+          board={editing}
+          repositories={repositories}
+          conventions={conventions}
+          onSaved={async () => {
+            setEditing(undefined);
+            await load();
+          }}
+          onCancelled={() => setEditing(undefined)}
+        />
+      )}
       <div className="board-list">
         {boards.map((board) => (
           <article className="board-link" key={board.id}>
-            <a href={`/boards/${board.id}/kanban`}>
+            <a href={routePaths.boardView(board.id, viewIntent ?? "kanban")}>
               <h2>{board.name}</h2>
               <p>
                 {board.repositoryRefs
@@ -72,20 +85,39 @@ export function BoardListPage() {
                 {board.workflowConventionId}@{board.workflowConventionVersion}
               </small>
             </a>
-            <nav className="board-view-links" aria-label={`${board.name} 檢視方式`}>
-              <a href={`/boards/${board.id}/kanban`}>Kanban</a>
-              <a href={`/boards/${board.id}/gantt`}>甘特圖</a>
-            </nav>
-            <Button
-              variant="secondary"
-              type="button"
-              onClick={() => setEditing(board)}
-            >
-              編輯
-            </Button>
+            {!viewIntent && (
+              <>
+                <nav
+                  className="board-view-links"
+                  aria-label={`${board.name} 檢視方式`}
+                >
+                  <a href={routePaths.boardView(board.id, "kanban")}>Kanban</a>
+                  <a href={routePaths.boardView(board.id, "gantt")}>甘特圖</a>
+                </nav>
+                <Button
+                  variant="secondary"
+                  type="button"
+                  onClick={() => setEditing(board)}
+                >
+                  編輯
+                </Button>
+              </>
+            )}
           </article>
         ))}
-        {!loading && !boards.length && <EmptyState>尚未建立 Board</EmptyState>}
+        {!loading && !error && !boards.length && (
+          <EmptyState>
+            {viewIntent ? (
+              <>
+                尚未建立 Board。前往{" "}
+                <a href={routePaths.boardSettings}>Board Settings</a> 建立
+                Board。
+              </>
+            ) : (
+              "尚未建立 Board"
+            )}
+          </EmptyState>
+        )}
       </div>
     </section>
   );

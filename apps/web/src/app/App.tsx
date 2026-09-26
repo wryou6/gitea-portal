@@ -4,27 +4,34 @@ import { IssueCreatePage } from "../features/issues/IssueCreatePage";
 import { BoardListPage } from "../features/boards/BoardListPage";
 import { KanbanBoard } from "../features/boards/KanbanBoard";
 import { AppShell } from "../components/layout/AppShell";
+import { resolveAppRoute } from "./routes";
 
 export function App() {
-  const match = window.location.pathname.match(
-    /^\/issue\/([^/]+)\/([^/]+)\/(\d+)$/,
+  const route = resolveAppRoute(
+    window.location.pathname,
+    window.location.search,
   );
-  const boardMatch = window.location.pathname.match(/^\/boards\/([^/]+)(?:\/(kanban|gantt))?$/);
-  const content =
-    window.location.pathname === "/issue/new" ? (
-      <IssueCreatePage />
-    ) : match ? (
-      <IssueDetailPage
-        owner={match[1]!}
-        repo={match[2]!}
-        number={Number(match[3])}
-      />
-    ) : boardMatch ? (
-      <KanbanBoard boardId={boardMatch[1]!} viewMode={boardMatch[2] === "gantt" ? "gantt" : "kanban"} />
-    ) : window.location.pathname === "/boards" ? (
-      <BoardListPage />
-    ) : (
-      <IssueListPage />
-    );
+  const content = (() => {
+    switch (route.type) {
+      case "issue-create":
+        return <IssueCreatePage />;
+      case "issue-detail":
+        return (
+          <IssueDetailPage
+            owner={route.owner}
+            repo={route.repo}
+            number={route.number}
+          />
+        );
+      case "board-view":
+        return <KanbanBoard boardId={route.boardId} viewMode={route.view} />;
+      case "board-selection":
+        return <BoardListPage viewIntent={route.viewIntent} />;
+      case "board-settings":
+        return <BoardListPage />;
+      case "issues":
+        return <IssueListPage />;
+    }
+  })();
   return <AppShell>{content}</AppShell>;
 }

@@ -7,6 +7,7 @@ import { Button } from "../../components/ui/Button";
 import { LoadingState } from "../../components/feedback/LoadingState";
 import { EmptyState } from "../../components/feedback/EmptyState";
 import { ErrorNotice } from "../../components/feedback/ErrorNotice";
+import { routePaths } from "../../app/routes";
 
 const defaults: IssueFiltersValue = {
   q: "",
@@ -42,7 +43,7 @@ export function IssueListPage() {
         title="Issues"
         description="從單一入口管理不同 Repository 的 Gitea Issues。"
         action={
-          <a className="button" href="/issue/new">
+          <a className="button" href={routePaths.issueCreate}>
             建立 Issue
           </a>
         }

@@ -1,5 +1,6 @@
 import type { BoardCard } from "./types";
 import { Badge } from "../../components/ui/Badge";
+import { routePaths } from "../../app/routes";
 export function KanbanCard({
   issue,
   onDragStart,
@@ -18,7 +19,7 @@ export function KanbanCard({
       draggable
       onDragStart={() => onDragStart(issue)}
     >
-      <a href={`/issue/${issue.owner}/${issue.name}/${issue.number}`}>
+      <a href={routePaths.issueDetail(issue.owner, issue.name, issue.number)}>
         {issue.title}
       </a>
       <small>
