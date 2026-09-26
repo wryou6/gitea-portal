@@ -6,11 +6,13 @@ export function KanbanCard({
   onDragStart,
   destinations,
   onMove,
+  returnTo,
 }: {
   issue: BoardCard;
   onDragStart: (issue: BoardCard) => void;
   destinations: Array<{ stateKey: string; displayName: string }>;
   onMove: (issue: BoardCard, stateKey: string) => void;
+  returnTo?: string;
 }) {
   const repair = issue.workflowRepair;
   return (
@@ -19,7 +21,18 @@ export function KanbanCard({
       draggable
       onDragStart={() => onDragStart(issue)}
     >
-      <a href={routePaths.issueDetail(issue.owner, issue.name, issue.number)}>
+      <a
+        href={
+          returnTo
+            ? routePaths.issueDetailFrom(
+                issue.owner,
+                issue.name,
+                issue.number,
+                returnTo,
+              )
+            : routePaths.issueDetail(issue.owner, issue.name, issue.number)
+        }
+      >
         {issue.title}
       </a>
       <small>

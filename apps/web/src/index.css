@@ -100,6 +100,47 @@ textarea:focus-visible,
   padding: 0.8rem clamp(1rem, 4vw, 4rem);
   backdrop-filter: blur(12px);
 }
+.workspace-selector {
+  display: grid;
+  grid-template-columns: auto minmax(12rem, min(28rem, 52vw));
+  align-items: center;
+  gap: 0.65rem;
+  margin-left: auto;
+}
+.workspace-selector label {
+  color: var(--muted-foreground);
+  font-size: 0.85rem;
+  font-weight: 650;
+}
+.workspace-selector select {
+  width: 100%;
+  min-width: 0;
+  min-height: 2.6rem;
+  border: 1px solid var(--input);
+  border-radius: var(--radius);
+  background: var(--card);
+  color: var(--foreground);
+  padding: 0.45rem 0.7rem;
+}
+.workspace-selector-error {
+  grid-column: 2;
+  color: var(--destructive);
+  font-size: 0.78rem;
+}
+.workspace-notice {
+  margin: 0 0 1rem;
+  border: 1px solid color-mix(in oklch, var(--warning) 55%, var(--border));
+  border-radius: var(--radius);
+  background: color-mix(in oklch, var(--warning) 8%, var(--card));
+  padding: 0.9rem 1rem;
+}
+.workspace-notice a {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.workspace-notice-actions {
+  margin-top: 0.75rem;
+}
 .brand {
   font-weight: 750;
   letter-spacing: -0.02em;
@@ -682,6 +723,11 @@ button.danger {
     align-items: flex-start;
     flex-direction: column;
     gap: 0.4rem;
+  }
+  .workspace-selector {
+    width: 100%;
+    grid-template-columns: auto minmax(0, 1fr);
+    margin-left: 0;
   }
   .page-heading,
   .issue-row,

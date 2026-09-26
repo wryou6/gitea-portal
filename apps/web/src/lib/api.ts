@@ -16,7 +16,11 @@ export type Issue = {
   startDate: string | null;
   dueDate: string | null;
   scheduleStatus: "scheduled" | "unscheduled" | "invalid";
-  scheduleAnomaly?: "invalid_start_date" | "multiple_start_dates" | "invalid_due_date" | "date_range_reversed";
+  scheduleAnomaly?:
+    | "invalid_start_date"
+    | "multiple_start_dates"
+    | "invalid_due_date"
+    | "date_range_reversed";
   milestone: string | null;
   updatedAt: string;
   htmlUrl: string;
@@ -43,6 +47,33 @@ export type WorkflowConvention = {
   }>;
   repositories?: string[];
 };
+export type Board = {
+  id: string;
+  name: string;
+  repositoryRefs: Array<{ owner: string; name: string }>;
+  workflowConventionId: string;
+  workflowConventionVersion: string;
+  createdAt: string;
+  updatedAt: string;
+};
+export type IssuePage = {
+  items: Issue[];
+  page: number;
+  limit: number;
+  hasNext: boolean;
+};
+export type BoardIssuePage = IssuePage & { board: Board };
+export type RepositoryKanbanView = {
+  repository: Repository;
+  conventionId: string;
+  conventionVersion: string;
+  columns: Array<{
+    stateKey: string;
+    displayName: string;
+    cards: Array<Issue & { visibleLabels: Issue["labels"] }>;
+  }>;
+};
+export type RepositoryGanttView = { repository: Repository; issues: Issue[] };
 
 export async function api<T>(path: string, init?: RequestInit): Promise<T> {
   const startedAt = performance.now();
@@ -82,9 +113,52 @@ export async function api<T>(path: string, init?: RequestInit): Promise<T> {
 
 export function queryIssues(
   filters: Record<string, string>,
-): Promise<{ items: Issue[]; page: number; limit: number; hasNext: boolean }> {
+): Promise<IssuePage> {
   const params = new URLSearchParams(
     Object.entries(filters).filter(([, value]) => value),
   );
   return api(`/api/issues?${params}`);
+}
+
+export function queryBoardIssues(
+  boardId: string,
+  filters: Record<string, string>,
+): Promise<BoardIssuePage> {
+  const params = new URLSearchParams(
+    Object.entries(filters).filter(([, value]) => value),
+  );
+  return api(`/api/boards/${encodeURIComponent(boardId)}/issues?${params}`);
+}
+
+export function queryRepositoryKanban(
+  owner: string,
+  repo: string,
+): Promise<RepositoryKanbanView> {
+  return api(
+    `/api/repositories/${encodeURIComponent(owner)}/${encodeURIComponent(repo)}/kanban`,
+  );
+}
+
+export function queryRepositoryGantt(
+  owner: string,
+  repo: string,
+): Promise<RepositoryGanttView> {
+  return api(
+    `/api/repositories/${encodeURIComponent(owner)}/${encodeURIComponent(repo)}/gantt`,
+  );
+}
+
+export function transitionRepositoryCard(
+  owner: string,
+  repo: string,
+  issue: Issue,
+  stateKey: string,
+): Promise<Issue> {
+  return api(
+    `/api/repositories/${encodeURIComponent(owner)}/${encodeURIComponent(repo)}/issues/${issue.number}/transition`,
+    {
+      method: "POST",
+      body: JSON.stringify({ stateKey }),
+    },
+  );
 }

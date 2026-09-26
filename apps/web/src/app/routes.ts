@@ -1,12 +1,33 @@
 export type BoardView = "kanban" | "gantt";
+export type WorkspaceView = "issues" | BoardView;
 
 export const routePaths = {
   issues: "/issues",
   issueCreate: "/issues/new",
+  issueCreateForRepository: (owner: string, repo: string, returnTo: string) => {
+    const params = new URLSearchParams({
+      repository: `${owner}/${repo}`,
+      returnTo,
+    });
+    return `/issues/new?${params}`;
+  },
   issueDetail: (owner: string, repo: string, number: number) =>
     `/issues/${encodeURIComponent(owner)}/${encodeURIComponent(repo)}/${number}`,
+  issueDetailFrom: (
+    owner: string,
+    repo: string,
+    number: number,
+    returnTo: string,
+  ) => {
+    const params = new URLSearchParams({ returnTo });
+    return `${routePaths.issueDetail(owner, repo, number)}?${params}`;
+  },
+  repositoryView: (owner: string, repo: string, view: WorkspaceView) =>
+    `/repositories/${encodeURIComponent(owner)}/${encodeURIComponent(repo)}/${view}`,
   boardSettings: "/boards",
   boardSelection: (view: BoardView) => `/${view}`,
+  boardIssues: (boardId: string) =>
+    `/boards/${encodeURIComponent(boardId)}/issues`,
   boardView: (boardId: string, view: BoardView) =>
     `/boards/${encodeURIComponent(boardId)}/${view}`,
 };
@@ -17,7 +38,13 @@ export type AppRoute =
   | { type: "issue-detail"; owner: string; repo: string; number: number }
   | { type: "board-settings" }
   | { type: "board-selection"; viewIntent: BoardView }
-  | { type: "board-view"; boardId: string; view: BoardView };
+  | {
+      type: "repository-view";
+      owner: string;
+      repo: string;
+      view: WorkspaceView;
+    }
+  | { type: "board-view"; boardId: string; view: WorkspaceView };
 
 export function resolveAppRoute(pathname: string, search = ""): AppRoute {
   const path = pathname.length > 1 ? pathname.replace(/\/+$/, "") : pathname;
@@ -41,6 +68,18 @@ export function resolveAppRoute(pathname: string, search = ""): AppRoute {
     return { type: "board-selection", viewIntent: path.slice(1) as BoardView };
   }
 
+  const repositoryMatch = path.match(
+    /^\/repositories\/([^/]+)\/([^/]+)\/(issues|kanban|gantt)$/,
+  );
+  if (repositoryMatch) {
+    return {
+      type: "repository-view",
+      owner: decodeURIComponent(repositoryMatch[1]!),
+      repo: decodeURIComponent(repositoryMatch[2]!),
+      view: repositoryMatch[3] as WorkspaceView,
+    };
+  }
+
   if (path === routePaths.boardSettings) {
     const legacyView = new URLSearchParams(search).get("view");
     if (legacyView === "kanban" || legacyView === "gantt") {
@@ -49,14 +88,35 @@ export function resolveAppRoute(pathname: string, search = ""): AppRoute {
     return { type: "board-settings" };
   }
 
-  const boardMatch = path.match(/^\/boards\/([^/]+)(?:\/(kanban|gantt))?$/);
+  const boardMatch = path.match(
+    /^\/boards\/([^/]+)(?:\/(issues|kanban|gantt))?$/,
+  );
   if (boardMatch) {
     return {
       type: "board-view",
       boardId: boardMatch[1]!,
-      view: (boardMatch[2] as BoardView | undefined) ?? "kanban",
+      view: (boardMatch[2] as WorkspaceView | undefined) ?? "kanban",
     };
   }
 
   return { type: "issues" };
+}
+
+export function safeReturnTo(
+  value: string | null | undefined,
+): string | undefined {
+  if (!value?.startsWith("/") || value.startsWith("//") || value.includes("\\"))
+    return undefined;
+  try {
+    const url = new URL(value, window.location.origin);
+    if (url.origin !== window.location.origin) return undefined;
+    const path = url.pathname.replace(/\/+$/, "") || "/";
+    const knownRoute =
+      path === "/issues" ||
+      /^\/repositories\/[^/]+\/[^/]+\/(issues|kanban|gantt)$/.test(path) ||
+      /^\/boards\/[^/]+\/(issues|kanban|gantt)$/.test(path);
+    return knownRoute ? `${path}${url.search}` : undefined;
+  } catch {
+    return undefined;
+  }
 }

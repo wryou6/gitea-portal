@@ -43,11 +43,22 @@ export function BoardListPage({
     void load();
   }, [load]);
 
+  const readableRepositories = new Set(
+    repositories.map((repository) => `${repository.owner}/${repository.name}`),
+  );
+  const visibleBoards = boards.filter(
+    (board) =>
+      board.repositoryRefs.length >= 2 &&
+      board.repositoryRefs.every((repository) =>
+        readableRepositories.has(`${repository.owner}/${repository.name}`),
+      ),
+  );
+
   return (
     <section>
       <PageHeader
         eyebrow={viewIntent ? "BOARD SELECTION" : "SHARED WORKSPACE"}
-        title={viewIntent ? "選擇 Board" : "Boards"}
+        title={viewIntent ? "選擇跨庫看板" : "跨庫看板"}
         description={
           viewIntent
             ? viewIntent === "gantt"
@@ -72,7 +83,7 @@ export function BoardListPage({
         />
       )}
       <div className="board-list">
-        {boards.map((board) => (
+        {visibleBoards.map((board) => (
           <article className="board-link" key={board.id}>
             <a href={routePaths.boardView(board.id, viewIntent ?? "kanban")}>
               <h2>{board.name}</h2>
@@ -105,16 +116,15 @@ export function BoardListPage({
             )}
           </article>
         ))}
-        {!loading && !error && !boards.length && (
+        {!loading && !error && !visibleBoards.length && (
           <EmptyState>
             {viewIntent ? (
               <>
-                尚未建立 Board。前往{" "}
-                <a href={routePaths.boardSettings}>Board Settings</a> 建立
-                Board。
+                尚未建立跨庫看板。前往{" "}
+                <a href={routePaths.boardSettings}>跨庫看板設定</a> 建立 看板。
               </>
             ) : (
-              "尚未建立 Board"
+              "尚未建立跨庫看板"
             )}
           </EmptyState>
         )}

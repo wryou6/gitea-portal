@@ -5,9 +5,12 @@ import { Button } from "../../components/ui/Button";
 import { Field, FieldLabel, Input, Textarea } from "../../components/ui/Field";
 import { Select } from "../../components/ui/Select";
 import { ErrorNotice } from "../../components/feedback/ErrorNotice";
-import { routePaths } from "../../app/routes";
+import { routePaths, safeReturnTo } from "../../app/routes";
 
 export function IssueCreatePage() {
+  const params = new URLSearchParams(window.location.search);
+  const requestedRepository = params.get("repository") ?? "";
+  const returnTo = safeReturnTo(params.get("returnTo")) ?? routePaths.issues;
   const [repositories, setRepositories] = useState<Repository[]>([]);
   const [repository, setRepository] = useState("");
   const [title, setTitle] = useState("");
@@ -23,7 +26,16 @@ export function IssueCreatePage() {
     void api<Repository[]>("/api/repositories")
       .then((items) => {
         setRepositories(items);
-        if (items[0]) setRepository(items[0].fullName);
+        if (
+          requestedRepository &&
+          items.some((item) => item.fullName === requestedRepository)
+        ) {
+          setRepository(requestedRepository);
+        } else if (!requestedRepository && items[0]) {
+          setRepository(items[0].fullName);
+        } else if (requestedRepository) {
+          setError("目前使用者無法建立 Issue 的目標 Repository");
+        }
       })
       .catch((cause) =>
         setError(
@@ -58,10 +70,11 @@ export function IssueCreatePage() {
           }),
         },
       );
-      window.location.href = routePaths.issueDetail(
+      window.location.href = routePaths.issueDetailFrom(
         issue.owner,
         issue.name,
         issue.number,
+        returnTo,
       );
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : "建立 Issue 失敗");
@@ -70,7 +83,7 @@ export function IssueCreatePage() {
 
   return (
     <section>
-      <a href={routePaths.issues}>← 回到 Issues</a>
+      <a href={returnTo}>← 返回工作區</a>
       <div className="detail-card">
         <PageHeader
           eyebrow="NEW GITEA ISSUE"
@@ -133,11 +146,21 @@ export function IssueCreatePage() {
           </Field>
           <Field>
             <FieldLabel htmlFor="new-start-date">Start date</FieldLabel>
-            <Input id="new-start-date" type="date" value={startDate} onChange={(event) => setStartDate(event.target.value)} />
+            <Input
+              id="new-start-date"
+              type="date"
+              value={startDate}
+              onChange={(event) => setStartDate(event.target.value)}
+            />
           </Field>
           <Field>
             <FieldLabel htmlFor="new-due-date">Due date</FieldLabel>
-            <Input id="new-due-date" type="date" value={dueDate} onChange={(event) => setDueDate(event.target.value)} />
+            <Input
+              id="new-due-date"
+              type="date"
+              value={dueDate}
+              onChange={(event) => setDueDate(event.target.value)}
+            />
           </Field>
           <Field>
             <FieldLabel htmlFor="new-milestone">Milestone（可選）</FieldLabel>

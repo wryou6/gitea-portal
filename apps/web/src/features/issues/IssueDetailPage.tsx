@@ -8,7 +8,7 @@ import type { Comment } from "./types";
 import { LoadingState } from "../../components/feedback/LoadingState";
 import { ErrorNotice } from "../../components/feedback/ErrorNotice";
 import { Button } from "../../components/ui/Button";
-import { routePaths } from "../../app/routes";
+import { routePaths, safeReturnTo } from "../../app/routes";
 
 export function IssueDetailPage({
   owner,
@@ -19,6 +19,9 @@ export function IssueDetailPage({
   repo: string;
   number: number;
 }) {
+  const returnTo =
+    safeReturnTo(new URLSearchParams(window.location.search).get("returnTo")) ??
+    routePaths.issues;
   const [issue, setIssue] = useState<Issue>();
   const [comments, setComments] = useState<Comment[]>([]);
   const [error, setError] = useState<string>();
@@ -47,14 +50,14 @@ export function IssueDetailPage({
   if (error)
     return (
       <section>
-        <a href={routePaths.issues}>← 回到 Issues</a>
+        <a href={returnTo}>← 返回工作區</a>
         <ErrorNotice message={error} />
       </section>
     );
   if (!issue) return <LoadingState />;
   return (
     <section>
-      <a href={routePaths.issues}>← 回到 Issues</a>
+      <a href={returnTo}>← 返回工作區</a>
       <div className="detail-grid">
         <div className="detail-card">
           <IssueDetailHeader issue={issue} />

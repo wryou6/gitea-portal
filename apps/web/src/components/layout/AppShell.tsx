@@ -1,5 +1,6 @@
 import { useState, type ReactNode } from "react";
-import { resolveAppRoute, routePaths } from "../../app/routes";
+import { resolveAppRoute, routePaths, safeReturnTo } from "../../app/routes";
+import { WorkspaceSelector } from "./WorkspaceSelector";
 
 const SIDEBAR_STATE_KEY = "gitea-portal:sidebar-expanded";
 
@@ -49,17 +50,36 @@ export function AppShell({ children }: { children: ReactNode }) {
     window.location.pathname,
     window.location.search,
   );
-  const boardId = route.type === "board-view" ? route.boardId : undefined;
+  const returnTo =
+    route.type === "issue-detail" || route.type === "issue-create"
+      ? safeReturnTo(
+          new URLSearchParams(window.location.search).get("returnTo"),
+        )
+      : undefined;
+  const returnUrl = returnTo
+    ? new URL(returnTo, window.location.origin)
+    : undefined;
+  const contextRoute = returnUrl
+    ? resolveAppRoute(returnUrl.pathname, returnUrl.search)
+    : route;
+  const boardId =
+    contextRoute.type === "board-view" ? contextRoute.boardId : undefined;
+  const repository =
+    contextRoute.type === "repository-view" ? contextRoute : undefined;
   const boardView =
-    route.type === "board-view"
-      ? route.view
-      : route.type === "board-selection"
-        ? route.viewIntent
+    contextRoute.type === "board-view"
+      ? contextRoute.view
+      : contextRoute.type === "board-selection"
+        ? contextRoute.viewIntent
         : undefined;
-  const onIssues = ["issues", "issue-create", "issue-detail"].includes(
-    route.type,
-  );
+  const onIssues =
+    contextRoute.type === "issues" ||
+    (contextRoute.type === "repository-view" &&
+      contextRoute.view === "issues") ||
+    (contextRoute.type === "board-view" && contextRoute.view === "issues");
   const onBoardSettings = route.type === "board-settings";
+  const [isCrossRepositoryBoardSelected, setIsCrossRepositoryBoardSelected] =
+    useState(false);
   const [expanded, setExpanded] = useState(() => {
     try {
       return window.sessionStorage.getItem(SIDEBAR_STATE_KEY) !== "collapsed";
@@ -93,7 +113,11 @@ export function AppShell({ children }: { children: ReactNode }) {
     {
       key: "issues",
       label: "Issues",
-      href: routePaths.issues,
+      href: repository
+        ? routePaths.repositoryView(repository.owner, repository.repo, "issues")
+        : boardId
+          ? routePaths.boardIssues(boardId)
+          : routePaths.issues,
       icon: "issues",
       active: onIssues,
     },
@@ -102,27 +126,41 @@ export function AppShell({ children }: { children: ReactNode }) {
       label: "Kanban",
       href: boardId
         ? routePaths.boardView(boardId, "kanban")
-        : routePaths.boardSelection("kanban"),
+        : repository
+          ? routePaths.repositoryView(
+              repository.owner,
+              repository.repo,
+              "kanban",
+            )
+          : routePaths.boardSelection("kanban"),
       icon: "kanban",
-      active: boardView === "kanban",
+      active: boardView === "kanban" || repository?.view === "kanban",
     },
     {
       key: "gantt",
       label: "Gantt Chart",
       href: boardId
         ? routePaths.boardView(boardId, "gantt")
-        : routePaths.boardSelection("gantt"),
+        : repository
+          ? routePaths.repositoryView(
+              repository.owner,
+              repository.repo,
+              "gantt",
+            )
+          : routePaths.boardSelection("gantt"),
       icon: "gantt",
-      active: boardView === "gantt",
+      active: boardView === "gantt" || repository?.view === "gantt",
     },
-    {
+  ];
+  if (isCrossRepositoryBoardSelected) {
+    navigationItems.push({
       key: "settings",
-      label: "Board Settings",
+      label: "跨庫看板設定",
       href: routePaths.boardSettings,
       icon: "settings",
       active: onBoardSettings,
-    },
-  ];
+    });
+  }
 
   return (
     <div
@@ -132,6 +170,9 @@ export function AppShell({ children }: { children: ReactNode }) {
         <a className="brand" href={routePaths.issues}>
           Gitea Issue Portal
         </a>
+        <WorkspaceSelector
+          onCrossRepositoryBoardSelected={setIsCrossRepositoryBoardSelected}
+        />
       </header>
       <div className="app-layout">
         <aside className="sidebar" aria-label="工作區導覽">

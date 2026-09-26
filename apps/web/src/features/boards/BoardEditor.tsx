@@ -68,9 +68,9 @@ export function BoardEditor({
 
   const submit = async (event: FormEvent) => {
     event.preventDefault();
-    if (!name.trim() || !convention || selectedRepositories.length === 0) {
+    if (!name.trim() || !convention || selectedRepositories.length < 2) {
       setError(
-        "請輸入 Board 名稱、選擇 Workflow Convention 與至少一個相容 Repository",
+        "請輸入跨庫看板名稱、選擇 Workflow Convention 與至少兩個不同的相容 Repository",
       );
       return;
     }
@@ -100,7 +100,8 @@ export function BoardEditor({
   };
 
   const remove = async () => {
-    if (!board || !window.confirm(`確定刪除 Board「${board.name}」？`)) return;
+    if (!board || !window.confirm(`確定刪除跨庫看板「${board.name}」？`))
+      return;
     setSaving(true);
     try {
       await api(`/api/boards/${board.id}`, { method: "DELETE" });
@@ -116,7 +117,7 @@ export function BoardEditor({
     <form className="detail-card board-form" onSubmit={submit}>
       <div className="page-heading">
         <div>
-          <h2>{board ? "編輯 Board" : "建立 Board"}</h2>
+          <h2>{board ? "編輯跨庫看板" : "建立跨庫看板"}</h2>
           <p className="muted">
             Board 設定共享保存；Issue 資料仍以 Gitea 為準。
           </p>
@@ -133,10 +134,10 @@ export function BoardEditor({
         )}
       </div>
       <Field>
-        <FieldLabel htmlFor="board-name">Board 名稱</FieldLabel>
+        <FieldLabel htmlFor="board-name">跨庫看板名稱</FieldLabel>
         <Input
           id="board-name"
-          placeholder="Board 名稱"
+          placeholder="跨庫看板名稱"
           value={name}
           onChange={(event) => setName(event.target.value)}
         />
@@ -184,7 +185,7 @@ export function BoardEditor({
       </fieldset>
       <div className="actions">
         <Button type="submit" disabled={saving}>
-          {saving ? "儲存中…" : board ? "儲存 Board" : "建立 Board"}
+          {saving ? "儲存中…" : board ? "儲存跨庫看板" : "建立跨庫看板"}
         </Button>
         {board && onCancelled && (
           <Button variant="secondary" type="button" onClick={onCancelled}>

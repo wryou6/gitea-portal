@@ -17,7 +17,7 @@ const defaults: IssueFiltersValue = {
   label: "",
   milestone: "",
 };
-function filtersFromUrl(): IssueFiltersValue {
+export function filtersFromUrl(): IssueFiltersValue {
   const params = new URLSearchParams(window.location.search);
   return Object.fromEntries(
     Object.keys(defaults).map((key) => [
@@ -27,28 +27,65 @@ function filtersFromUrl(): IssueFiltersValue {
   ) as IssueFiltersValue;
 }
 
-export function IssueListPage() {
+export function IssueListPage({
+  repository,
+}: { repository?: { owner: string; name: string } } = {}) {
+  const initialFilters = filtersFromUrl();
+  if (repository)
+    initialFilters.repository = `${repository.owner}/${repository.name}`;
   const { issues, filters, page, hasNext, loading, error, load } =
-    useIssueListState(filtersFromUrl());
+    useIssueListState(initialFilters);
   useEffect(() => {
     void load(
-      filters,
+      repository
+        ? { ...filters, repository: `${repository.owner}/${repository.name}` }
+        : filters,
       Number(new URLSearchParams(window.location.search).get("page") ?? 1),
     );
-  }, []);
+  }, [repository?.owner, repository?.name]);
+  const returnTo = `${window.location.pathname}${window.location.search}`;
   return (
     <section>
       <PageHeader
-        eyebrow="CROSS-REPOSITORY"
-        title="Issues"
-        description="從單一入口管理不同 Repository 的 Gitea Issues。"
+        eyebrow={repository ? "REPOSITORY WORKSPACE" : "CROSS-REPOSITORY"}
+        title={repository ? `${repository.owner}/${repository.name}` : "Issues"}
+        description={
+          repository
+            ? "查看此 Repository 的 Gitea Issues。"
+            : "從單一入口管理不同 Repository 的 Gitea Issues。"
+        }
         action={
-          <a className="button" href={routePaths.issueCreate}>
+          <a
+            className="button"
+            href={
+              repository
+                ? routePaths.issueCreateForRepository(
+                    repository.owner,
+                    repository.name,
+                    returnTo,
+                  )
+                : routePaths.issueCreate
+            }
+          >
             建立 Issue
           </a>
         }
       />
-      <IssueFilters initial={filters} onSubmit={(next) => load(next, 1)} />
+      <IssueFilters
+        initial={filters}
+        onSubmit={(next) =>
+          load(
+            repository
+              ? {
+                  ...next,
+                  repository: `${repository.owner}/${repository.name}`,
+                }
+              : next,
+            1,
+          )
+        }
+        showRepository={!repository}
+      />
       {error && <ErrorNotice message={error} />}
       {loading && <LoadingState />}
       <div className="issue-list">
@@ -56,6 +93,7 @@ export function IssueListPage() {
           <IssueRow
             key={`${issue.owner}/${issue.name}#${issue.number}`}
             issue={issue}
+            returnTo={repository ? returnTo : undefined}
           />
         ))}
         {!issues.length && !loading && !error && (

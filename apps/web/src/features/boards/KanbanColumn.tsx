@@ -6,12 +6,14 @@ export function KanbanColumn({
   dragged,
   onDragStart,
   onDropCard,
+  returnTo,
 }: {
   column: { stateKey: string; displayName: string; cards: BoardCard[] };
   destinations: Array<{ stateKey: string; displayName: string }>;
   dragged?: BoardCard;
   onDragStart: (issue: BoardCard) => void;
   onDropCard: (issue: BoardCard, stateKey: string) => void;
+  returnTo?: string;
 }) {
   const canDrop =
     column.stateKey !== "unconfigured" && column.stateKey !== "conflict";
@@ -38,6 +40,7 @@ export function KanbanColumn({
             )}
             onMove={onDropCard}
             onDragStart={onDragStart}
+            returnTo={returnTo}
           />
         </div>
       ))}

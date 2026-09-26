@@ -15,9 +15,11 @@ export type IssueFiltersValue = {
 export function IssueFilters({
   initial,
   onSubmit,
+  showRepository = true,
 }: {
   initial: IssueFiltersValue;
   onSubmit: (filters: IssueFiltersValue) => void;
+  showRepository?: boolean;
 }) {
   const [filters, setFilters] = useState<IssueFiltersValue>(initial);
   const update = (key: keyof IssueFiltersValue, value: string) =>
@@ -39,15 +41,17 @@ export function IssueFilters({
           onChange={(e) => update("q", e.target.value)}
         />
       </Field>
-      <Field>
-        <FieldLabel htmlFor="issue-repository">Repository</FieldLabel>
-        <Input
-          id="issue-repository"
-          placeholder="owner/repository"
-          value={filters.repository}
-          onChange={(e) => update("repository", e.target.value)}
-        />
-      </Field>
+      {showRepository && (
+        <Field>
+          <FieldLabel htmlFor="issue-repository">Repository</FieldLabel>
+          <Input
+            id="issue-repository"
+            placeholder="owner/repository"
+            value={filters.repository}
+            onChange={(e) => update("repository", e.target.value)}
+          />
+        </Field>
+      )}
       <Field>
         <FieldLabel htmlFor="issue-state">狀態</FieldLabel>
         <Select
