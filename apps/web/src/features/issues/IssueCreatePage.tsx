@@ -6,6 +6,7 @@ import { Field, FieldLabel, Input, Textarea } from "../../components/ui/Field";
 import { Select } from "../../components/ui/Select";
 import { ErrorNotice } from "../../components/feedback/ErrorNotice";
 import { routePaths, safeReturnTo } from "../../app/routes";
+import type { IssueType } from "@gitea-portal/domain";
 
 export function IssueCreatePage() {
   const params = new URLSearchParams(window.location.search);
@@ -14,6 +15,7 @@ export function IssueCreatePage() {
   const [repositories, setRepositories] = useState<Repository[]>([]);
   const [repository, setRepository] = useState("");
   const [title, setTitle] = useState("");
+  const [type, setType] = useState<IssueType | "">("");
   const [body, setBody] = useState("");
   const [assignee, setAssignee] = useState("");
   const [labels, setLabels] = useState("");
@@ -47,8 +49,8 @@ export function IssueCreatePage() {
   const submit = async (event: FormEvent) => {
     event.preventDefault();
     const [owner, name] = repository.split("/");
-    if (!owner || !name || !title.trim()) {
-      setError("請選擇 Repository 並輸入 Title");
+    if (!owner || !name || !title.trim() || !type) {
+      setError("請選擇 Repository、輸入 Title 並選擇 Issue Type");
       return;
     }
     try {
@@ -58,6 +60,7 @@ export function IssueCreatePage() {
           method: "POST",
           body: JSON.stringify({
             title: title.trim(),
+            type,
             body,
             assignee: assignee.trim() || null,
             labels: labels
@@ -116,6 +119,22 @@ export function IssueCreatePage() {
               onChange={(event) => setTitle(event.target.value)}
               required
             />
+          </Field>
+          <Field>
+            <FieldLabel htmlFor="new-type">Issue Type</FieldLabel>
+            <Select
+              id="new-type"
+              value={type}
+              onChange={(event) =>
+                setType(event.target.value as IssueType | "")
+              }
+              required
+            >
+              <option value="">選擇 Type</option>
+              <option value="bug">Bug：既有行為錯誤或與預期不符</option>
+              <option value="feature">Feature：新增或改變產品能力</option>
+              <option value="task">Task：文件、測試、維護或部署工作</option>
+            </Select>
           </Field>
           <Field>
             <FieldLabel htmlFor="new-description">Description</FieldLabel>

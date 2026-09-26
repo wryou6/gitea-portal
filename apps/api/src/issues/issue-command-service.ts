@@ -8,9 +8,7 @@ import { issueCreateLabelIds, refreshedScheduleMessage, scheduleMutationError, u
 export async function createIssue(client: GiteaClient, repository: RepositoryRef, input: unknown) {
   validateIssueCreate(input);
   const payload = await toGiteaPayload(client, repository, input, 'create');
-  if (input.labels !== undefined || input.startDate) {
-    payload.labels = await issueCreateLabelIds(client, repository, input.labels, input.startDate);
-  }
+  payload.labels = await issueCreateLabelIds(client, repository, input.type, input.labels, input.startDate);
   return mapIssue(await client.createIssue(repository, payload));
 }
 
@@ -24,9 +22,7 @@ export async function updateIssue(client: GiteaClient, repository: RepositoryRef
   const hasScheduleMutation = input.startDate !== undefined || input.dueDate !== undefined;
   let updated = current;
   try {
-    if (labels !== undefined || input.startDate !== undefined) {
-      updated = await updateIssueLabelsAndSchedule(client, repository, current, labels, input.startDate);
-    }
+    updated = await updateIssueLabelsAndSchedule(client, repository, current, labels, input.startDate, input.type);
     if (Object.keys(payload).length > 0) updated = await client.updateIssue(repository, number, payload);
   } catch (error) {
     if (hasScheduleMutation) {
@@ -41,6 +37,7 @@ async function toGiteaPayload(client: GiteaClient, repository: RepositoryRef, in
   const payload: Record<string, unknown> = { ...input };
   delete payload.startDate;
   delete payload.dueDate;
+  delete payload.type;
   if (operation === 'create' && input.state !== undefined) {
     payload.closed = input.state === 'closed';
     delete payload.state;

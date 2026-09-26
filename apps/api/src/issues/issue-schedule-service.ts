@@ -1,5 +1,5 @@
-import type { IssueLabel, RepositoryRef } from '@gitea-portal/domain';
-import { issueScheduleFromLabels, startDateLabelName, START_DATE_LABEL_PREFIX } from '@gitea-portal/domain';
+import type { IssueLabel, IssueType, RepositoryRef } from '@gitea-portal/domain';
+import { isIssueTypeLabelName, issueScheduleFromLabels, issueTypeFromLabels, issueTypeLabelName, startDateLabelName, START_DATE_LABEL_PREFIX } from '@gitea-portal/domain';
 import type { GiteaIssue } from '@gitea-portal/gitea-contracts';
 import { PortalError } from '../errors.js';
 import { GiteaError } from '../gitea/errors.js';
@@ -7,6 +7,16 @@ import { GiteaClient } from '../gitea/client.js';
 import { replaceIssueLabelsAtomically } from '../gitea/label-replacement.js';
 
 const DATE_LABEL_COLOR = '808080';
+const TYPE_LABEL_COLORS: Record<IssueType, string> = {
+  bug: '#d73a4a',
+  feature: '#a2eeef',
+  task: '#cfd3d7',
+};
+const TYPE_LABEL_DESCRIPTIONS: Record<IssueType, string> = {
+  bug: '處理既有行為故障或與預期不符的工作',
+  feature: '新增或改變產品能力',
+  task: '文件、測試、維護或部署等支援性工作',
+};
 
 function isStartDateLabel(name: string): boolean {
   return name.startsWith(START_DATE_LABEL_PREFIX);
@@ -31,6 +41,29 @@ async function startDateLabelId(client: GiteaClient, repository: RepositoryRef, 
   }
 }
 
+async function issueTypeLabel(
+  client: GiteaClient,
+  repository: RepositoryRef,
+  type: IssueType,
+): Promise<{ id: number; name: string; color: string }> {
+  const name = issueTypeLabelName(type);
+  const existing = (await client.labels(repository)).find((label) => label.name === name);
+  if (existing) return existing;
+
+  try {
+    return await client.createLabel(repository, {
+      name,
+      color: TYPE_LABEL_COLORS[type] ?? '#cfd3d7',
+      description: TYPE_LABEL_DESCRIPTIONS[type],
+    });
+  } catch (error) {
+    // Reuse the definition if another writer created it after the initial lookup.
+    const concurrent = (await client.labels(repository)).find((label) => label.name === name);
+    if (concurrent) return concurrent;
+    throw error;
+  }
+}
+
 async function labelIds(client: GiteaClient, repository: RepositoryRef, names: string[]): Promise<number[]> {
   const definitions = await client.labels(repository);
   return names.map((name) => {
@@ -43,11 +76,13 @@ async function labelIds(client: GiteaClient, repository: RepositoryRef, names: s
 export async function issueCreateLabelIds(
   client: GiteaClient,
   repository: RepositoryRef,
+  type: IssueType,
   requestedNames: string[] = [],
   startDate?: string | null,
 ): Promise<number[]> {
   if (requestedNames.some(isStartDateLabel)) throw new PortalError(422, 'Start date Labels must be set with the startDate field');
   const names = [...new Set(requestedNames)];
+  names.push((await issueTypeLabel(client, repository, type)).name);
   if (startDate) {
     const definition = await startDateLabelId(client, repository, startDate);
     names.push(definition.name);
@@ -61,20 +96,22 @@ export async function updateIssueLabelsAndSchedule(
   issue: GiteaIssue,
   requestedNames: string[] | undefined,
   startDate: string | null | undefined,
+  type: IssueType,
 ): Promise<GiteaIssue> {
   if (requestedNames?.some(isStartDateLabel)) throw new PortalError(422, 'Start date Labels must be set with the startDate field');
 
   const existingDateLabels = issue.labels.filter((label) => isStartDateLabel(label.name));
   const normalNames = requestedNames === undefined
-    ? issue.labels.filter((label) => !isStartDateLabel(label.name)).map((label) => label.name)
+    ? issue.labels.filter((label) => !isStartDateLabel(label.name) && !isIssueTypeLabelName(label.name)).map((label) => label.name)
     : [...new Set(requestedNames)];
+  const selectedTypeLabel = await issueTypeLabel(client, repository, type);
   let dateNames = existingDateLabels.map((label) => label.name);
   if (startDate !== undefined) {
     dateNames = startDate === null ? [] : [(await startDateLabelId(client, repository, startDate)).name];
   }
-  const nextNames = [...normalNames, ...dateNames];
+  const nextNames = [...normalNames, ...dateNames, selectedTypeLabel.name];
   const currentNames = issue.labels.map((label) => label.name);
-  if (requestedNames === undefined && startDate === undefined) return issue;
+  if (requestedNames === undefined && startDate === undefined && issueTypeFromLabels(issue.labels) === type) return issue;
 
   return replaceIssueLabelsAtomically(
     client,

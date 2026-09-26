@@ -1,7 +1,18 @@
 import type { Issue } from "../../lib/api";
 import { LabelList } from "./LabelList";
 import { Badge } from "../../components/ui/Badge";
+import {
+  issueTypeDisplayName,
+  issueTypeStatusFromLabels,
+} from "@gitea-portal/domain";
 export function IssueDetailHeader({ issue }: { issue: Issue }) {
+  const typeStatus = issueTypeStatusFromLabels(issue.labels);
+  const typeText = issue.type
+    ? issueTypeDisplayName(issue.type)
+    : typeStatus === "missing"
+      ? "未設定"
+      : "衝突";
+
   return (
     <>
       <p className="eyebrow">
@@ -12,6 +23,12 @@ export function IssueDetailHeader({ issue }: { issue: Issue }) {
         <Badge className={issue.state}>
           {issue.state === "open" ? "Open" : "Closed"}
         </Badge>
+        <span
+          className={issue.type ? undefined : "schedule-anomaly"}
+          role={issue.type ? undefined : "status"}
+        >
+          Type：{typeText}
+        </span>
         <span>Assignee：{issue.assignee ?? "未指派"}</span>
         <span>Start：{issue.startDate ?? "未設定"}</span>
         <span>Due：{issue.dueDate ?? "未設定"}</span>

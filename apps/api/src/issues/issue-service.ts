@@ -1,4 +1,5 @@
 import type { IssueSummary, RepositoryRef } from '@gitea-portal/domain';
+import { issueTypeFromLabels } from '@gitea-portal/domain';
 import type { GiteaIssue } from '@gitea-portal/gitea-contracts';
 import { GiteaClient } from '../gitea/client.js';
 
@@ -10,6 +11,7 @@ export function mapIssue(issue: GiteaIssue): IssueSummary {
     title: issue.title,
     state: issue.state,
     assignee: issue.assignee?.login ?? null,
+    type: issueTypeFromLabels(issue.labels),
     labels: issue.labels,
     milestone: issue.milestone?.title ?? null,
     startDate: issue.startDate,

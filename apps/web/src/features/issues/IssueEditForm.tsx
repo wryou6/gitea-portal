@@ -5,6 +5,11 @@ import { Button } from "../../components/ui/Button";
 import { Field, FieldLabel, Input, Textarea } from "../../components/ui/Field";
 import { Select } from "../../components/ui/Select";
 import { ErrorNotice } from "../../components/feedback/ErrorNotice";
+import {
+  issueTypeStatusFromLabels,
+  type IssueType,
+} from "@gitea-portal/domain";
+
 export function IssueEditForm({
   issue,
   onSaved,
@@ -14,9 +19,17 @@ export function IssueEditForm({
 }) {
   const [title, setTitle] = useState(issue.title);
   const [body, setBody] = useState(issue.body ?? "");
+  const [type, setType] = useState<IssueType | "">(issue.type ?? "");
   const [assignee, setAssignee] = useState(issue.assignee ?? "");
   const [labels, setLabels] = useState(
-    issue.labels.filter((label) => !label.name.startsWith("start-date:")).map((label) => label.name).join(", "),
+    issue.labels
+      .filter(
+        (label) =>
+          !label.name.startsWith("start-date:") &&
+          !label.name.startsWith("type:"),
+      )
+      .map((label) => label.name)
+      .join(", "),
   );
   const [milestone, setMilestone] = useState(issue.milestone ?? "");
   const [startDate, setStartDate] = useState(issue.startDate ?? "");
@@ -24,9 +37,11 @@ export function IssueEditForm({
   const [state, setState] = useState(issue.state);
   const [error, setError] = useState<string>();
   const [saving, setSaving] = useState(false);
+  const issueTypeStatus = issueTypeStatusFromLabels(issue.labels);
   const submit = async (event: FormEvent) => {
     event.preventDefault();
     if (!title.trim()) return setError("Title 不可為空白");
+    if (!type) return setError("請選擇一種 Issue Type");
     setSaving(true);
     setError(undefined);
     try {
@@ -35,6 +50,7 @@ export function IssueEditForm({
         body: JSON.stringify({
           expectedUpdatedAt: issue.updatedAt,
           title: title.trim(),
+          type,
           body,
           state,
           assignee: assignee || null,
@@ -64,6 +80,27 @@ export function IssueEditForm({
           value={title}
           onChange={(e) => setTitle(e.target.value)}
         />
+      </Field>
+      <Field>
+        <FieldLabel htmlFor="edit-type">Issue Type</FieldLabel>
+        <Select
+          id="edit-type"
+          value={type}
+          onChange={(event) => setType(event.target.value as IssueType | "")}
+          required
+        >
+          <option value="">選擇 Type</option>
+          <option value="bug">Bug：既有行為錯誤或與預期不符</option>
+          <option value="feature">Feature：新增或改變產品能力</option>
+          <option value="task">Task：文件、測試、維護或部署工作</option>
+        </Select>
+        {!type && (
+          <p className="schedule-anomaly" role="status">
+            {issueTypeStatus === "missing"
+              ? "Issue 尚未設定 Type，儲存前請選擇一種。"
+              : "Issue 的 Type 有衝突，請選擇一種以修正。"}
+          </p>
+        )}
       </Field>
       <Field>
         <FieldLabel htmlFor="edit-body">Description</FieldLabel>
@@ -104,13 +141,39 @@ export function IssueEditForm({
       </Field>
       <Field>
         <FieldLabel htmlFor="edit-start-date">Start date</FieldLabel>
-        <Input id="edit-start-date" type="date" value={startDate} onChange={(event) => setStartDate(event.target.value)} />
-        <Button type="button" variant="ghost" aria-label="清除 Start date" disabled={saving} onClick={() => setStartDate("")}>清除日期</Button>
+        <Input
+          id="edit-start-date"
+          type="date"
+          value={startDate}
+          onChange={(event) => setStartDate(event.target.value)}
+        />
+        <Button
+          type="button"
+          variant="ghost"
+          aria-label="清除 Start date"
+          disabled={saving}
+          onClick={() => setStartDate("")}
+        >
+          清除日期
+        </Button>
       </Field>
       <Field>
         <FieldLabel htmlFor="edit-due-date">Due date</FieldLabel>
-        <Input id="edit-due-date" type="date" value={dueDate} onChange={(event) => setDueDate(event.target.value)} />
-        <Button type="button" variant="ghost" aria-label="清除 Due date" disabled={saving} onClick={() => setDueDate("")}>清除日期</Button>
+        <Input
+          id="edit-due-date"
+          type="date"
+          value={dueDate}
+          onChange={(event) => setDueDate(event.target.value)}
+        />
+        <Button
+          type="button"
+          variant="ghost"
+          aria-label="清除 Due date"
+          disabled={saving}
+          onClick={() => setDueDate("")}
+        >
+          清除日期
+        </Button>
       </Field>
       <Field>
         <FieldLabel htmlFor="edit-milestone">Milestone</FieldLabel>

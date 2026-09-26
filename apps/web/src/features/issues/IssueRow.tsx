@@ -1,6 +1,10 @@
 import type { Issue } from "../../lib/api";
 import { LabelList } from "./LabelList";
 import { routePaths } from "../../app/routes";
+import {
+  issueTypeDisplayName,
+  issueTypeStatusFromLabels,
+} from "@gitea-portal/domain";
 
 export function IssueRow({
   issue,
@@ -9,6 +13,13 @@ export function IssueRow({
   issue: Issue;
   returnTo?: string;
 }) {
+  const typeStatus = issueTypeStatusFromLabels(issue.labels);
+  const typeText = issue.type
+    ? issueTypeDisplayName(issue.type)
+    : typeStatus === "missing"
+      ? "未設定"
+      : "衝突";
+
   return (
     <article className="issue-row">
       <div style={{ minWidth: 0 }}>
@@ -33,6 +44,12 @@ export function IssueRow({
           </span>
           <span className={issue.state}>
             {issue.state === "open" ? "Open" : "Closed"}
+          </span>
+          <span
+            className={issue.type ? undefined : "schedule-anomaly"}
+            role={issue.type ? undefined : "status"}
+          >
+            Type：{typeText}
           </span>
           <span>{issue.assignee ?? "未指派"}</span>
           <span>Start：{issue.startDate ?? "未設定"}</span>

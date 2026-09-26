@@ -10,6 +10,7 @@ export type Issue = {
   number: number;
   title: string;
   state: "open" | "closed";
+  type: IssueType | null;
   body?: string;
   assignee: string | null;
   labels: Array<{ name: string }>;
@@ -74,6 +75,8 @@ export type RepositoryKanbanView = {
   }>;
 };
 export type RepositoryGanttView = { repository: Repository; issues: Issue[] };
+
+import type { IssueType } from "@gitea-portal/domain";
 
 export async function api<T>(path: string, init?: RequestInit): Promise<T> {
   const startedAt = performance.now();

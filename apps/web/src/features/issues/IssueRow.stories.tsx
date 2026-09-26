@@ -10,6 +10,11 @@ type Story = StoryObj<typeof meta>;
 export const Default: Story = { args: { issue: demoIssue } };
 export const NoOptionalMetadata: Story = {
   args: {
-    issue: { ...demoIssue, assignee: null, milestone: null, labels: [] },
+    issue: {
+      ...demoIssue,
+      assignee: null,
+      milestone: null,
+      labels: [{ name: "type:feature" }],
+    },
   },
 };
