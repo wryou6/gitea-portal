@@ -1,5 +1,4 @@
-export type BoardView = "kanban" | "gantt";
-export type WorkspaceView = "issues" | BoardView;
+export type WorkspaceView = "issues" | "kanban" | "gantt";
 
 export const routePaths = {
   dashboard: "/dashboard",
@@ -24,14 +23,10 @@ export const routePaths = {
     return `${routePaths.issueDetail(owner, repo, number)}?${params}`;
   },
   settings: "/settings",
+  kanban: "/kanban",
+  gantt: "/gantt",
   repositoryView: (owner: string, repo: string, view: WorkspaceView) =>
     `/repositories/${encodeURIComponent(owner)}/${encodeURIComponent(repo)}/${view}`,
-  boardSettings: "/boards",
-  boardSelection: (view: BoardView) => `/${view}`,
-  boardIssues: (boardId: string) =>
-    `/boards/${encodeURIComponent(boardId)}/issues`,
-  boardView: (boardId: string, view: BoardView) =>
-    `/boards/${encodeURIComponent(boardId)}/${view}`,
 };
 
 export type AppRoute =
@@ -40,23 +35,24 @@ export type AppRoute =
   | { type: "issue-create" }
   | { type: "issue-detail"; owner: string; repo: string; number: number }
   | { type: "settings" }
-  | { type: "board-settings" }
-  | { type: "board-selection"; viewIntent: BoardView }
+  | { type: "not-found" }
   | {
       type: "repository-view";
       owner: string;
       repo: string;
       view: WorkspaceView;
     }
-  | { type: "board-view"; boardId: string; view: WorkspaceView };
+  | { type: "all-repositories-view"; view: "kanban" | "gantt" };
 
-export function resolveAppRoute(pathname: string, search = ""): AppRoute {
+export function resolveAppRoute(pathname: string, _search = ""): AppRoute {
   const path = pathname.length > 1 ? pathname.replace(/\/+$/, "") : pathname;
 
   if (path === routePaths.settings) return { type: "settings" };
-  if (path === "/" || path === routePaths.dashboard)
-    return { type: "dashboard" };
+  if (path === "/") return { type: "all-repositories-view", view: "gantt" };
+  if (path === routePaths.dashboard) return { type: "dashboard" };
   if (path === routePaths.issues) return { type: "issues" };
+  if (path === routePaths.kanban || path === routePaths.gantt)
+    return { type: "all-repositories-view", view: path.slice(1) as "kanban" | "gantt" };
   if (path === routePaths.issueCreate || path === "/issue/new") {
     return { type: "issue-create" };
   }
@@ -71,10 +67,6 @@ export function resolveAppRoute(pathname: string, search = ""): AppRoute {
     };
   }
 
-  if (path === "/kanban" || path === "/gantt") {
-    return { type: "board-selection", viewIntent: path.slice(1) as BoardView };
-  }
-
   const repositoryMatch = path.match(
     /^\/repositories\/([^/]+)\/([^/]+)\/(issues|kanban|gantt)$/,
   );
@@ -87,26 +79,7 @@ export function resolveAppRoute(pathname: string, search = ""): AppRoute {
     };
   }
 
-  if (path === routePaths.boardSettings) {
-    const legacyView = new URLSearchParams(search).get("view");
-    if (legacyView === "kanban" || legacyView === "gantt") {
-      return { type: "board-selection", viewIntent: legacyView };
-    }
-    return { type: "board-settings" };
-  }
-
-  const boardMatch = path.match(
-    /^\/boards\/([^/]+)(?:\/(issues|kanban|gantt))?$/,
-  );
-  if (boardMatch) {
-    return {
-      type: "board-view",
-      boardId: boardMatch[1]!,
-      view: (boardMatch[2] as WorkspaceView | undefined) ?? "kanban",
-    };
-  }
-
-  return { type: "issues" };
+  return { type: "not-found" };
 }
 
 export function safeReturnTo(
@@ -119,9 +92,9 @@ export function safeReturnTo(
     if (url.origin !== window.location.origin) return undefined;
     const path = url.pathname.replace(/\/+$/, "") || "/";
     const knownRoute =
-      path === "/issues" ||
+      path === "/" || path === "/issues" || path === "/kanban" || path === "/gantt" ||
       /^\/repositories\/[^/]+\/[^/]+\/(issues|kanban|gantt)$/.test(path) ||
-      /^\/boards\/[^/]+\/(issues|kanban|gantt)$/.test(path);
+      path === "/dashboard";
     return knownRoute ? `${path}${url.search}` : undefined;
   } catch {
     return undefined;

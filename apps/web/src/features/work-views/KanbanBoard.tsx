@@ -1,41 +1,35 @@
 import { useCallback, useEffect, useState } from "react";
 import { api, toUserFacingError, type UserFacingError } from "../../lib/api";
-import type {
-  BoardCard,
-  WorkspaceGanttView,
-  WorkspaceKanbanView,
-} from "./types";
+import type { WorkViewCard, WorkspaceGanttView, WorkspaceKanbanView } from "./types";
 import { GanttBoard } from "./GanttBoard";
 import { KanbanColumn } from "./KanbanColumn";
 import { transitionIssue } from "../../lib/api";
 import { ErrorNotice } from "../../components/feedback/ErrorNotice";
+import { EmptyState } from "../../components/feedback/EmptyState";
 import { LoadingState } from "../../components/feedback/LoadingState";
 import { PageHeader } from "../../components/layout/PageHeader";
-import { routePaths } from "../../app/routes";
 import { WorkflowTransitionDialog } from "../issues/WorkflowTransitionDialog";
 import { useTranslation } from "react-i18next";
 import { formatNumber } from "../../i18n/format";
 
 export function KanbanBoard({
-  boardId,
   repository,
   viewMode,
 }: {
-  boardId?: string;
   repository?: { owner: string; name: string };
   viewMode: "kanban" | "gantt";
 }) {
-  const { t, i18n } = useTranslation("boards");
+  const { t, i18n } = useTranslation("work-views");
   const [view, setView] = useState<WorkspaceKanbanView>();
   const [ganttView, setGanttView] = useState<WorkspaceGanttView>();
-  const [dragged, setDragged] = useState<BoardCard>();
+  const [dragged, setDragged] = useState<WorkViewCard>();
   const [error, setError] = useState<UserFacingError>();
   const [isMobileViewport, setIsMobileViewport] = useState(
     () => window.matchMedia("(max-width: 720px)").matches,
   );
   const [activeColumnKey, setActiveColumnKey] = useState<string>();
   const [pendingTransition, setPendingTransition] = useState<{
-    issue: BoardCard;
+    issue: WorkViewCard;
     targetState: string;
   }>();
 
@@ -49,6 +43,9 @@ export function KanbanBoard({
 
   const load = useCallback(
     async (clearError = true) => {
+      setView(undefined);
+      setGanttView(undefined);
+      if (clearError) setError(undefined);
       try {
         if (repository) {
           if (viewMode === "kanban")
@@ -63,29 +60,21 @@ export function KanbanBoard({
                 `/api/repositories/${encodeURIComponent(repository.owner)}/${encodeURIComponent(repository.name)}/gantt`,
               ),
             );
-        } else if (boardId && viewMode === "kanban")
-          setView(
-            await api<WorkspaceKanbanView>(
-              `/api/boards/${encodeURIComponent(boardId)}`,
-            ),
-          );
-        else if (boardId)
-          setGanttView(
-            await api<WorkspaceGanttView>(
-              `/api/boards/${encodeURIComponent(boardId)}/gantt`,
-            ),
-          );
+        } else if (viewMode === "kanban")
+          setView(await api<WorkspaceKanbanView>("/api/repositories/kanban"));
+        else
+          setGanttView(await api<WorkspaceGanttView>("/api/repositories/gantt"));
         if (clearError) setError(undefined);
       } catch (cause) {
         setError(
           toUserFacingError(
             cause,
-            viewMode === "gantt" ? t("ganttLoadError") : t("boardLoadError"),
+            viewMode === "gantt" ? t("ganttLoadError") : t("viewLoadError"),
           ),
         );
       }
     },
-    [boardId, repository?.owner, repository?.name, viewMode, t],
+    [repository?.owner, repository?.name, viewMode, t],
   );
 
   useEffect(() => {
@@ -103,13 +92,14 @@ export function KanbanBoard({
   }, [view, viewMode]);
 
   const currentView = viewMode === "gantt" ? ganttView : view;
-  const board =
-    currentView && "board" in currentView ? currentView.board : undefined;
   const repositoryView =
     currentView && "repository" in currentView
       ? currentView.repository
       : undefined;
-  if (error && !currentView) return <ErrorNotice message={error} />;
+  const hasNoReadableRepositories = Boolean(
+    currentView && "repositories" in currentView && currentView.repositories.length === 0,
+  );
+  if (error && !currentView) return <section><ErrorNotice message={error} /><button type="button" onClick={() => void load()}>{t("retry")}</button></section>;
   if (!currentView) return <LoadingState />;
 
   const selectedColumnKey = view?.columns.some(
@@ -123,7 +113,7 @@ export function KanbanBoard({
       ) ?? [])
     : (view?.columns ?? []);
 
-  const move = async (issue: BoardCard, stateKey: string) => {
+  const move = async (issue: WorkViewCard, stateKey: string) => {
     setDragged(undefined);
     setPendingTransition({ issue, targetState: stateKey });
   };
@@ -152,13 +142,10 @@ export function KanbanBoard({
 
   return (
     <section>
-      {!repository && (
-        <a href={routePaths.boardSettings}>← {t("returnToBoard")}</a>
-      )}
-      {error && <ErrorNotice message={error} />}
+      {error && <><ErrorNotice message={error} /><button type="button" onClick={() => void load()}>{t("retry")}</button></>}
       <PageHeader
         eyebrow={t(viewMode === "gantt" ? "ganttEyebrow" : "kanbanEyebrow")}
-        title={board?.name ?? repositoryView?.fullName ?? t("workspace")}
+        title={repositoryView?.fullName ?? t("allRepositories")}
         description={
           viewMode === "gantt"
             ? t("ganttDescription")
@@ -169,6 +156,7 @@ export function KanbanBoard({
         ganttView ? (
           <GanttBoard
             issues={ganttView.issues}
+            emptyMessage={"repositories" in ganttView && ganttView.repositories.length === 0 ? t("noReadableRepositories") : undefined}
             returnTo={`${window.location.pathname}${window.location.search}`}
           />
         ) : (
@@ -176,6 +164,7 @@ export function KanbanBoard({
         )
       ) : (
         <>
+          {hasNoReadableRepositories && <EmptyState>{t("noReadableRepositories")}</EmptyState>}
           {isMobileViewport && (view?.columns.length ?? 0) > 0 && (
             <div className="field kanban-lane-picker">
               <label htmlFor="kanban-active-column">{t("statusColumn")}</label>
@@ -195,7 +184,7 @@ export function KanbanBoard({
           <div
             className={`kanban-board${isMobileViewport ? " kanban-board-mobile" : ""}`}
           >
-            {visibleColumns.map((column) => (
+            {!hasNoReadableRepositories && visibleColumns.map((column) => (
               <KanbanColumn
                 key={column.stateKey}
                 column={column}

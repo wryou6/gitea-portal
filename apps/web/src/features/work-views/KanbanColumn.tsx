@@ -1,5 +1,5 @@
 import { KanbanCard } from "./KanbanCard";
-import type { BoardCard } from "./types";
+import type { WorkViewCard } from "./types";
 import { useTranslation } from "react-i18next";
 import { formatNumber } from "../../i18n/format";
 import { workflowStateTranslationKey } from "../../i18n/workflow";
@@ -11,11 +11,11 @@ export function KanbanColumn({
   onDropCard,
   returnTo,
 }: {
-  column: { stateKey: string; displayName: string; cards: BoardCard[] };
+  column: { stateKey: string; displayName: string; cards: WorkViewCard[] };
   destinations: Array<{ stateKey: string; displayName: string }>;
-  dragged?: BoardCard;
-  onDragStart: (issue: BoardCard) => void;
-  onDropCard: (issue: BoardCard, stateKey: string) => void;
+  dragged?: WorkViewCard;
+  onDragStart: (issue: WorkViewCard) => void;
+  onDropCard: (issue: WorkViewCard, stateKey: string) => void;
   returnTo?: string;
 }) {
   const { t, i18n } = useTranslation("issues");
@@ -47,6 +47,7 @@ export function KanbanColumn({
           />
         </div>
       ))}
+      {column.cards.length === 0 && <p className="muted">{t("noMatchingIssues")}</p>}
     </section>
   );
 }

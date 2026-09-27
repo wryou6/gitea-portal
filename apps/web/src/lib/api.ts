@@ -104,20 +104,12 @@ export type WorkflowDefinition = {
     labelName: string;
   }>;
 };
-export type Board = {
-  id: string;
-  name: string;
-  repositoryRefs: Array<{ owner: string; name: string }>;
-  createdAt: string;
-  updatedAt: string;
-};
 export type IssuePage = {
   items: Issue[];
   page: number;
   limit: number;
   hasNext: boolean;
 };
-export type BoardIssuePage = IssuePage & { board: Board };
 export type RepositoryKanbanView = {
   repository: Repository;
   columns: Array<{
@@ -127,6 +119,11 @@ export type RepositoryKanbanView = {
   }>;
 };
 export type RepositoryGanttView = { repository: Repository; issues: Issue[] };
+export type AllRepositoriesKanbanView = {
+  repositories: Repository[];
+  columns: RepositoryKanbanView["columns"];
+};
+export type AllRepositoriesGanttView = { repositories: Repository[]; issues: Issue[] };
 
 export async function api<T>(path: string, init?: RequestInit): Promise<T> {
   const startedAt = performance.now();
@@ -185,16 +182,6 @@ export function queryIssues(
     Object.entries(filters).filter(([, value]) => value),
   );
   return api(`/api/issues?${params}`);
-}
-
-export function queryBoardIssues(
-  boardId: string,
-  filters: Record<string, string>,
-): Promise<BoardIssuePage> {
-  const params = new URLSearchParams(
-    Object.entries(filters).filter(([, value]) => value),
-  );
-  return api(`/api/boards/${encodeURIComponent(boardId)}/issues?${params}`);
 }
 
 export function queryRepositoryKanban(

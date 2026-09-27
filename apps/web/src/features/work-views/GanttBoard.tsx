@@ -27,12 +27,14 @@ export function GanttBoard({
   issues,
   returnTo,
   demo = false,
+  emptyMessage,
 }: {
   issues: Issue[];
   returnTo?: string;
   demo?: boolean;
+  emptyMessage?: string;
 }) {
-  const { t, i18n } = useTranslation("boards");
+  const { t, i18n } = useTranslation("work-views");
   const { t: tIssues } = useTranslation("issues");
   const initialQuery = new URLSearchParams(window.location.search);
   const [login, setLogin] = useState<string>();
@@ -268,9 +270,9 @@ export function GanttBoard({
       )}
       {visibleIssues.length === 0 && (
         <EmptyState>
-          {assignee === "self" && !login
+          {emptyMessage ?? (assignee === "self" && !login
             ? t("loadingCurrentUserIssues")
-            : t("noFilteredIssues")}
+            : t("noFilteredIssues"))}
         </EmptyState>
       )}
     </section>

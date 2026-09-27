@@ -10,9 +10,15 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 export const PageComposition: Story = {
   render: () => (
-    <AppShell>
+    <AppShell
+      routePathname="/issues"
+      workspaceRepositories={[
+        { owner: "engineering", name: "portal", fullName: "engineering/portal", htmlUrl: "#" },
+        { owner: "platform", name: "service-api", fullName: "platform/service-api", htmlUrl: "#" },
+      ]}
+    >
       <PageHeader
-        eyebrow="CROSS-REPOSITORY"
+        eyebrow="所有儲存庫"
         title="Issues"
         description="Layout primitives 的 isolated showcase。"
         action={<Button>建立 Issue</Button>}

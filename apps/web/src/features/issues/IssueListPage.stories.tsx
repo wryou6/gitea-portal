@@ -16,6 +16,12 @@ export const Default: Story = {
       demoIssue,
       {
         ...demoIssue,
+        owner: "platform",
+        name: "service-api",
+        title: "相同 Issue 編號來自另一個 Repository",
+      },
+      {
+        ...demoIssue,
         number: 51,
         title: "補上工作狀態轉換原因",
         workflowState: "todo",

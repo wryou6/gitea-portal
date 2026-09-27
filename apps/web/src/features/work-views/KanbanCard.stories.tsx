@@ -4,7 +4,7 @@ import { demoIssue } from "../../stories/fixtures";
 
 const card = { ...demoIssue, visibleLabels: demoIssue.labels };
 const meta = {
-  title: "Boards/KanbanCard",
+  title: "Work views/Kanban card",
   component: KanbanCard,
 } satisfies Meta<typeof KanbanCard>;
 export default meta;

@@ -7,7 +7,7 @@ declare module "i18next" {
       dashboard: Record<string, string>;
       settings: Record<string, string>;
       issues: Record<string, string>;
-      boards: Record<string, string>;
+      "work-views": Record<string, string>;
       feedback: Record<string, string>;
       "api-errors": Record<string, string>;
     };

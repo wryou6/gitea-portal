@@ -19,8 +19,8 @@ These Portal labels use the matching Gitea locale catalog entries from release `
 | `issues.assignee` | `repo.issues.filter_assignee` | 負責人 | Assignee | 担当者 |
 | `issues.label` | `repo.issues.filter_label` | 標籤 | Label | ラベル |
 | `issues.milestone` | `repo.issues.filter_milestone` | 里程碑 | Milestone | マイルストーン |
-| `boards.open` | `repo.issues.open_title` | 開啟 | Open | オープン |
-| `boards.closed` | `repo.issues.closed_title` | 已關閉 | Closed | クローズ |
+| `work-views.open` | `repo.issues.open_title` | 開啟 | Open | オープン |
+| `work-views.closed` | `repo.issues.closed_title` | 已關閉 | Closed | クローズ |
 
 ## Maintenance
 
@@ -31,4 +31,4 @@ For each shared concept added to a resource, record its resource key, Gitea cata
 | Resource key | zh-TW | en | ja | Source |
 | --- | --- | --- | --- | --- |
 | `common.globalNavigation` | 全域導覽 | Global navigation | グローバルナビゲーション | Portal navigation structure |
-| `common.crossRepositoryBoards` | 跨庫看板 | Cross-repository boards | リポジトリ横断ボード | Portal workspace concept |
+| `common.allRepos` | 所有儲存庫 | All repos | すべてのリポジトリ | Aggregated accessible Repository workspace |

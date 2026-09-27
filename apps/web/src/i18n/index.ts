@@ -2,7 +2,7 @@ import i18next, { type i18n as I18nInstance } from "i18next";
 import { initReactI18next } from "react-i18next";
 import { defaultLocale, type Locale } from "./locales";
 import { apiErrors } from "./resources/api-errors";
-import { boards } from "./resources/boards";
+import { workViews } from "./resources/work-views";
 import { common } from "./resources/common";
 import { dashboard } from "./resources/dashboard";
 import { feedback } from "./resources/feedback";
@@ -15,7 +15,7 @@ export const resources = {
     dashboard: dashboard["zh-TW"],
     settings: settings["zh-TW"],
     issues: issues["zh-TW"],
-    boards: boards["zh-TW"],
+    "work-views": workViews["zh-TW"],
     feedback: feedback["zh-TW"],
     "api-errors": apiErrors["zh-TW"],
   },
@@ -24,7 +24,7 @@ export const resources = {
     dashboard: dashboard.en,
     settings: settings.en,
     issues: issues.en,
-    boards: boards.en,
+    "work-views": workViews.en,
     feedback: feedback.en,
     "api-errors": apiErrors.en,
   },
@@ -33,7 +33,7 @@ export const resources = {
     dashboard: dashboard.ja,
     settings: settings.ja,
     issues: issues.ja,
-    boards: boards.ja,
+    "work-views": workViews.ja,
     feedback: feedback.ja,
     "api-errors": apiErrors.ja,
   },
@@ -46,7 +46,7 @@ void i18n.use(initReactI18next).init({
   lng: defaultLocale,
   fallbackLng: defaultLocale,
   defaultNS: "common",
-  ns: ["common", "dashboard", "settings", "issues", "boards", "feedback", "api-errors"],
+  ns: ["common", "dashboard", "settings", "issues", "work-views", "feedback", "api-errors"],
   interpolation: { escapeValue: false },
   initAsync: false,
 });

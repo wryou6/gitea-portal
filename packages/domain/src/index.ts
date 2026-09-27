@@ -4,6 +4,6 @@ export * from "./issue-type.js";
 export * from "./issue-priority.js";
 export * from "./issue-schedule.js";
 export * from "./workflow.js";
-export * from "./board.js";
+export * from "./work-view.js";
 export * from "./workflow-state-resolver.js";
 export * from "./api-error.js";

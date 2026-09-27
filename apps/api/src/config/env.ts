@@ -9,7 +9,6 @@ export type AppConfig = {
   oauthScope: string;
   giteaTimeoutMs: number;
   sessionSecret: string;
-  boardStorePath: string;
   webOrigin: string;
   port: number;
 };
@@ -38,11 +37,6 @@ function loadLocalEnv(): void {
   }
 }
 
-function resolveConfiguredPath(value: string): string {
-  if (value.startsWith("/") || /^[A-Za-z]:[\\/]/.test(value)) return value;
-  return resolve(projectRoot(), value);
-}
-
 export function loadConfig(env = process.env): AppConfig {
   loadLocalEnv();
   const required = (name: string): string => {
@@ -61,9 +55,6 @@ export function loadConfig(env = process.env): AppConfig {
       "read:user read:repository read:issue write:issue",
     giteaTimeoutMs: Number(env.GITEA_API_TIMEOUT_MS ?? 10000),
     sessionSecret: required("PORTAL_SESSION_SECRET"),
-    boardStorePath: resolveConfiguredPath(
-      env.BOARD_STORE_PATH ?? "data/boards.json",
-    ),
     webOrigin: env.WEB_ORIGIN ?? "http://localhost:5173",
     port: Number(env.API_PORT ?? 3000),
   };

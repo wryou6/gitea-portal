@@ -22,9 +22,7 @@ coverage/
 .vscode/
 .idea/
 
-# Runtime Board JSON persistence
-data/boards.json
-data/boards.json.lock
+# Runtime temporary files
 data/*.tmp
 
 # OS metadata

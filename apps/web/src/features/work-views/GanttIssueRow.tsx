@@ -29,7 +29,7 @@ export function GanttIssueRow({
   width?: number;
   anomaly?: string;
 }) {
-  const { t } = useTranslation("boards");
+  const { t } = useTranslation("work-views");
   const { t: tIssues } = useTranslation("issues");
   const heading = (
     <div className="gantt-issue-heading">

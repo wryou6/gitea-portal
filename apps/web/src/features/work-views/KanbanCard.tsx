@@ -1,4 +1,4 @@
-import type { BoardCard } from "./types";
+import type { WorkViewCard } from "./types";
 import { Badge } from "../../components/ui/Badge";
 import { IssueTypeBadge } from "../../components/ui/IssueTypeBadge";
 import { PriorityBadge } from "../../components/ui/PriorityBadge";
@@ -18,13 +18,13 @@ export function KanbanCard({
   onMove,
   returnTo,
 }: {
-  issue: BoardCard;
-  onDragStart: (issue: BoardCard) => void;
+  issue: WorkViewCard;
+  onDragStart: (issue: WorkViewCard) => void;
   destinations: Array<{ stateKey: string; displayName: string }>;
-  onMove: (issue: BoardCard, stateKey: string) => void;
+  onMove: (issue: WorkViewCard, stateKey: string) => void;
   returnTo?: string;
 }) {
-  const { t } = useTranslation("boards");
+  const { t } = useTranslation("work-views");
   const { t: tIssues } = useTranslation("issues");
   const visibleLabels = visibleIssueLabels(issue.visibleLabels);
   return (

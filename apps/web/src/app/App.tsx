@@ -5,16 +5,10 @@ import { useTranslation } from "react-i18next";
 import { IssueListPage } from "../features/issues/IssueListPage";
 import { IssueDetailPage } from "../features/issues/IssueDetailPage";
 import { IssueCreatePage } from "../features/issues/IssueCreatePage";
-import { BoardListPage } from "../features/boards/BoardListPage";
-import { KanbanBoard } from "../features/boards/KanbanBoard";
-import { BoardIssuesPage } from "../features/boards/BoardIssuesPage";
 import { SettingsPage } from "../features/settings/SettingsPage";
 import { DashboardPage } from "../features/dashboard/DashboardPage";
-import type { Board } from "../features/boards/types";
+import { WorkspaceViewPage } from "../features/work-views/WorkspaceViewPage";
 import { RepositoryWorkspacePage } from "../features/repositories/RepositoryWorkspacePage";
-import { ErrorNotice } from "../components/feedback/ErrorNotice";
-import { LoadingState } from "../components/feedback/LoadingState";
-import { api, toUserFacingError, type UserFacingError } from "../lib/api";
 import { AppShell } from "../components/layout/AppShell";
 import {
   applyThemePreference,
@@ -24,40 +18,6 @@ import {
 } from "../features/settings/theme-preference";
 import { saveLocalePreference } from "../features/settings/locale-preference";
 import { resolveAppRoute } from "./routes";
-
-function BoardRoutePage({
-  boardId,
-  view,
-}: {
-  boardId: string;
-  view: "issues" | "kanban" | "gantt";
-}) {
-  const { t } = useTranslation("boards");
-  const [board, setBoard] = useState<Board>();
-  const [error, setError] = useState<UserFacingError>();
-  useEffect(() => {
-    let cancelled = false;
-    void api<Board[]>("/api/boards")
-      .then((boards) => {
-        const match = boards.find((item) => item.id === boardId);
-        if (!match) throw new Error(t("boardUnavailable"));
-        if (!cancelled) setBoard(match);
-      })
-      .catch((cause) => {
-        if (!cancelled)
-          setError(toUserFacingError(cause, t("boardLoadError")));
-      });
-    return () => {
-      cancelled = true;
-    };
-  }, [boardId, t]);
-
-  if (error) return <ErrorNotice message={error} />;
-  if (!board) return <LoadingState />;
-  if (view === "issues")
-    return <BoardIssuesPage key={boardId} boardId={boardId} />;
-  return <KanbanBoard key={boardId} boardId={boardId} viewMode={view} />;
-}
 
 export function App({
   login,
@@ -115,8 +75,8 @@ export function App({
             number={route.number}
           />
         );
-      case "board-view":
-        return <BoardRoutePage boardId={route.boardId} view={route.view} />;
+      case "all-repositories-view":
+        return <WorkspaceViewPage view={route.view} />;
       case "repository-view":
         return (
           <RepositoryWorkspacePage
@@ -125,12 +85,10 @@ export function App({
             view={route.view}
           />
         );
-      case "board-selection":
-        return <BoardListPage viewIntent={route.viewIntent} />;
-      case "board-settings":
-        return <BoardListPage />;
       case "issues":
         return <IssueListPage />;
+      case "not-found":
+        return <main><h1>404</h1></main>;
     }
   })();
   return <AppShell login={login}>{content}</AppShell>;

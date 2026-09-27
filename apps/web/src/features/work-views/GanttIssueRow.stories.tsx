@@ -3,7 +3,7 @@ import { GanttIssueRow } from "./GanttIssueRow";
 import { demoIssue } from "../../stories/fixtures";
 
 const meta = {
-  title: "Boards/GanttIssueRow",
+  title: "Work views/Gantt issue row",
   component: GanttIssueRow,
   args: {
     issue: demoIssue,

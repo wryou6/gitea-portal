@@ -65,12 +65,12 @@ export function IssueListPage({
   return (
     <section>
       <PageHeader
-        eyebrow={t(repository ? "repositoryWorkspaceEyebrow" : "crossRepositoryEyebrow")}
+        eyebrow={t(repository ? "repositoryWorkspaceEyebrow" : "allReposEyebrow")}
         title={repository ? `${repository.owner}/${repository.name}` : t("issueListTitle")}
         description={
           repository
             ? t("repositoryIssueDescription")
-            : t("crossRepositoryIssueDescription")
+            : t("allReposIssueDescription")
         }
         action={
           <a
@@ -106,14 +106,14 @@ export function IssueListPage({
           showRepository={!repository}
         />
       )}
-      {error && <ErrorNotice message={error} />}
+      {error && <><ErrorNotice message={error} /><Button variant="secondary" type="button" onClick={() => void load(filters, page)}>{t("retry")}</Button></>}
       {loading && <LoadingState />}
       <div className="issue-list">
         {issues.map((issue) => (
           <IssueRow
             key={`${issue.owner}/${issue.name}#${issue.number}`}
             issue={issue}
-            returnTo={repository ? returnTo : undefined}
+            returnTo={returnTo}
           />
         ))}
         {!issues.length && !loading && !error && (

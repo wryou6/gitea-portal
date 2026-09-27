@@ -9,7 +9,7 @@ import { listRepositories } from "../repositories/repository-service.js";
 import { canAccessRepository } from "../auth/permissions.js";
 import { createIssue, updateIssue } from "./issue-command-service.js";
 import { validateComment } from "./issue-validation.js";
-import { transitionIssue } from "../boards/transition-service.js";
+import { transitionIssue } from "./workflow-transition-service.js";
 import { apiErrorResponse } from "../errors.js";
 
 export async function registerIssueRoutes(

@@ -2,6 +2,7 @@ import { useEffect, useRef, useState, type ReactNode } from "react";
 import { resolveAppRoute, routePaths, safeReturnTo } from "../../app/routes";
 import { WorkspaceSelector } from "./WorkspaceSelector";
 import { useTranslation } from "react-i18next";
+import type { Repository } from "../../lib/api";
 
 const SIDEBAR_STATE_KEY = "gitea-portal:sidebar-expanded";
 
@@ -49,19 +50,27 @@ function NavigationIcon({ name }: { name: NavigationIconName }) {
 export function AppShell({
   children,
   login,
+  routePathname,
+  routeSearch,
+  workspaceRepositories,
 }: {
   children: ReactNode;
   login?: string;
+  routePathname?: string;
+  routeSearch?: string;
+  workspaceRepositories?: Repository[];
 }) {
   const { t } = useTranslation("common");
+  const pathname = routePathname ?? window.location.pathname;
+  const search = routeSearch ?? window.location.search;
   const route = resolveAppRoute(
-    window.location.pathname,
-    window.location.search,
+    pathname,
+    search,
   );
   const returnTo =
     route.type === "issue-detail" || route.type === "issue-create"
       ? safeReturnTo(
-          new URLSearchParams(window.location.search).get("returnTo"),
+          new URLSearchParams(search).get("returnTo"),
         )
       : undefined;
   const returnUrl = returnTo
@@ -70,25 +79,13 @@ export function AppShell({
   const contextRoute = returnUrl
     ? resolveAppRoute(returnUrl.pathname, returnUrl.search)
     : route;
-  const boardId =
-    contextRoute.type === "board-view" ? contextRoute.boardId : undefined;
   const repository =
     contextRoute.type === "repository-view" ? contextRoute : undefined;
-  const boardView =
-    contextRoute.type === "board-view"
-      ? contextRoute.view
-      : contextRoute.type === "board-selection"
-        ? contextRoute.viewIntent
-        : undefined;
+  const allReposView = contextRoute.type === "all-repositories-view" ? contextRoute.view : undefined;
   const onIssues =
     contextRoute.type === "issues" ||
-    (contextRoute.type === "repository-view" &&
-      contextRoute.view === "issues") ||
-    (contextRoute.type === "board-view" && contextRoute.view === "issues");
+    (contextRoute.type === "repository-view" && contextRoute.view === "issues");
   const onDashboard = route.type === "dashboard";
-  const onBoardSettings = route.type === "board-settings";
-  const [isCrossRepositoryBoardSelected, setIsCrossRepositoryBoardSelected] =
-    useState(false);
   const [accountMenuOpen, setAccountMenuOpen] = useState(false);
   const accountMenuRef = useRef<HTMLDivElement>(null);
   const accountTriggerRef = useRef<HTMLButtonElement>(null);
@@ -157,52 +154,37 @@ export function AppShell({
       label: t("issues"),
       href: repository
         ? routePaths.repositoryView(repository.owner, repository.repo, "issues")
-        : boardId
-          ? routePaths.boardIssues(boardId)
-          : routePaths.issues,
+        : routePaths.issues,
       icon: "issues",
       active: onIssues,
     },
     {
       key: "kanban",
       label: t("kanban"),
-      href: boardId
-        ? routePaths.boardView(boardId, "kanban")
-        : repository
+      href: repository
           ? routePaths.repositoryView(
               repository.owner,
               repository.repo,
               "kanban",
             )
-          : routePaths.boardSelection("kanban"),
+          : routePaths.kanban,
       icon: "kanban",
-      active: boardView === "kanban" || repository?.view === "kanban",
+      active: allReposView === "kanban" || repository?.view === "kanban",
     },
     {
       key: "gantt",
       label: t("gantt"),
-      href: boardId
-        ? routePaths.boardView(boardId, "gantt")
-        : repository
+      href: repository
           ? routePaths.repositoryView(
               repository.owner,
               repository.repo,
               "gantt",
             )
-          : routePaths.boardSelection("gantt"),
+          : routePaths.gantt,
       icon: "gantt",
-      active: boardView === "gantt" || repository?.view === "gantt",
+      active: allReposView === "gantt" || repository?.view === "gantt",
     },
   ];
-  if (isCrossRepositoryBoardSelected) {
-    navigationItems.push({
-      key: "settings",
-      label: t("boardSettings"),
-      href: routePaths.boardSettings,
-      icon: "settings",
-      active: onBoardSettings,
-    });
-  }
 
   return (
     <div
@@ -223,7 +205,8 @@ export function AppShell({
           </a>
         </div>
         <WorkspaceSelector
-          onCrossRepositoryBoardSelected={setIsCrossRepositoryBoardSelected}
+          initialRepositories={workspaceRepositories}
+          initialPathname={routePathname}
         />
         {login && (
           <div className="account-menu" ref={accountMenuRef}>

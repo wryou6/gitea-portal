@@ -3,7 +3,7 @@ import type { GiteaRepository } from "@gitea-portal/gitea-contracts";
 import { canAccessRepository } from "../auth/permissions.js";
 import { PortalError } from "../errors.js";
 import { GiteaClient } from "../gitea/client.js";
-import { getWorkflowColumns } from "../boards/board-view-service.js";
+import { getWorkflowColumns } from "../work-views/kanban-service.js";
 import { mapIssue } from "../issues/issue-service.js";
 
 export type RepositoryWorkspaceView = GiteaRepository;

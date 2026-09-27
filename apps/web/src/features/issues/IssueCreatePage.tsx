@@ -12,7 +12,7 @@ import { PriorityField } from "./PriorityField";
 import { ScheduleDateFields } from "./ScheduleDateFields";
 import { useTranslation } from "react-i18next";
 
-export function IssueCreatePage() {
+export function IssueCreatePage({ initialRepositories, initialRepository }: { initialRepositories?: Repository[]; initialRepository?: string } = {}) {
   const { t } = useTranslation("issues");
   const params = new URLSearchParams(window.location.search);
   const requestedRepository = params.get("repository") ?? "";
@@ -31,26 +31,30 @@ export function IssueCreatePage() {
   const [error, setError] = useState<UserFacingError>();
 
   useEffect(() => {
-    void api<Repository[]>("/api/repositories")
-      .then((items) => {
+    const setAvailableRepositories = (items: Repository[]) => {
         setRepositories(items);
+        const preferredRepository = initialRepository ?? requestedRepository;
         if (
-          requestedRepository &&
-          items.some((item) => item.fullName === requestedRepository)
+          preferredRepository &&
+          items.some((item) => item.fullName === preferredRepository)
         ) {
-          setRepository(requestedRepository);
-        } else if (!requestedRepository && items[0]) {
-          setRepository(items[0].fullName);
+          setRepository(preferredRepository);
         } else if (requestedRepository) {
           setError(t("issueRepositoryRequired"));
         }
-      })
+    };
+    if (initialRepositories) {
+      setAvailableRepositories(initialRepositories);
+      return;
+    }
+    void api<Repository[]>("/api/repositories")
+      .then(setAvailableRepositories)
       .catch((cause) =>
         setError(
           toUserFacingError(cause, t("repositoriesUnavailable")),
         ),
       );
-  }, [requestedRepository, t]);
+  }, [initialRepositories, initialRepository, requestedRepository, t]);
 
   const submit = async (event: FormEvent) => {
     event.preventDefault();

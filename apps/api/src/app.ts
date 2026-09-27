@@ -1,9 +1,7 @@
 import Fastify from "fastify";
 import type { AppConfig } from "./config/env.js";
-import { BoardRepository } from "./persistence/board-repository.js";
 import { registerErrorHandler } from "./http/error-handler.js";
 import { registerIssueRoutes } from "./issues/issue-routes.js";
-import { registerBoardRoutes } from "./boards/board-routes.js";
 import { registerHttpRoutes } from "./http/routes.js";
 import { registerAuthMiddleware } from "./http/auth-middleware.js";
 import { registerRequestMetrics } from "./telemetry/request-metrics.js";
@@ -12,8 +10,6 @@ import { registerWorkflowDefinitionRoutes } from "./http/workflow-definition-rou
 
 export async function buildApp(config: AppConfig) {
   const app = Fastify({ logger: true });
-  const boards = new BoardRepository(config.boardStorePath);
-  await boards.initialize();
   registerErrorHandler(app);
   registerRequestMetrics(app);
   registerHttpRoutes(app, config);
@@ -22,7 +18,6 @@ export async function buildApp(config: AppConfig) {
   app.get("/health", async () => ({ ok: true }));
   await registerIssueRoutes(app, config);
   registerRepositoryRoutes(app, config);
-  registerBoardRoutes(app, config, boards);
   registerWorkflowDefinitionRoutes(app);
   return app;
 }

@@ -11,7 +11,6 @@ import {
   type Repository,
   type UserFacingError,
 } from "../../lib/api";
-import type { Board } from "../boards/types";
 import {
   buildWorkspaceDirectory,
   type WorkspaceDirectoryItem,
@@ -29,13 +28,10 @@ export function DashboardPage() {
     setLoading(true);
     setError(undefined);
 
-    void Promise.all([
-      api<Repository[]>("/api/repositories"),
-      api<Board[]>("/api/boards"),
-    ])
-      .then(([repositories, boards]) => {
+    void api<Repository[]>("/api/repositories")
+      .then((repositories) => {
         if (cancelled) return;
-        setWorkspaces(buildWorkspaceDirectory(repositories, boards));
+        setWorkspaces(buildWorkspaceDirectory(repositories));
       })
       .catch((cause) => {
         if (!cancelled) {
@@ -81,14 +77,9 @@ export function DashboardPage() {
                 <span className="workspace-card-kind">
                   {t(workspace.kind)}
                 </span>
-                <strong>{workspace.name}</strong>
-                {workspace.kind === "board" && (
-                  <span className="workspace-card-repositories">
-                    {workspace.repositoryRefs
-                      .map(({ owner, name }) => `${owner}/${name}`)
-                      .join(" · ")}
-                  </span>
-                )}
+                <strong>
+                  {workspace.name ?? t("allRepositories")}
+                </strong>
               </a>
             </li>
           ))}

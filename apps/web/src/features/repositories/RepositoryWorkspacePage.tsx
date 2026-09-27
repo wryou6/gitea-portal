@@ -4,7 +4,7 @@ import { LoadingState } from "../../components/feedback/LoadingState";
 import { routePaths } from "../../app/routes";
 import { api, toUserFacingError, type Repository, type UserFacingError } from "../../lib/api";
 import { IssueListPage } from "../issues/IssueListPage";
-import { KanbanBoard } from "../boards/KanbanBoard";
+import { KanbanBoard } from "../work-views/KanbanBoard";
 import { useTranslation } from "react-i18next";
 
 type View = "issues" | "kanban" | "gantt";
