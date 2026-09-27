@@ -1,3 +1,5 @@
+import type { IssuePriority, IssueType } from "@gitea-portal/domain";
+
 export type WorkflowRepair = {
   outcome: "repaired" | "failed";
   sourceState: "unconfigured" | "conflict";
@@ -11,6 +13,7 @@ export type Issue = {
   title: string;
   state: "open" | "closed";
   type: IssueType | null;
+  priority: IssuePriority | null;
   body?: string;
   assignee: string | null;
   labels: Array<{ name: string }>;
@@ -75,8 +78,6 @@ export type RepositoryKanbanView = {
   }>;
 };
 export type RepositoryGanttView = { repository: Repository; issues: Issue[] };
-
-import type { IssueType } from "@gitea-portal/domain";
 
 export async function api<T>(path: string, init?: RequestInit): Promise<T> {
   const startedAt = performance.now();

@@ -1,5 +1,6 @@
 import type { Issue } from "../../lib/api";
 import { IssueTypeBadge } from "../../components/ui/IssueTypeBadge";
+import { PriorityBadge } from "../../components/ui/PriorityBadge";
 import { ScheduleDates } from "../issues/ScheduleDates";
 
 export type GanttIssueRowVariant = "scheduled" | "unscheduled" | "anomaly";
@@ -27,6 +28,7 @@ export function GanttIssueRow({
     <div className="gantt-issue-heading">
       <a href={href}>{issue.title}</a>
       <IssueTypeBadge type={issue.type} labels={issue.labels} />
+      <PriorityBadge priority={issue.priority} labels={issue.labels} />
     </div>
   );
   const details = (
@@ -66,10 +68,7 @@ export function GanttIssueRow({
         {heading}
         {details}
       </div>
-      <div
-        className="gantt-track"
-        aria-hidden="true"
-      >
+      <div className="gantt-track" aria-hidden="true">
         {start && end && (
           <span
             className="gantt-bar"

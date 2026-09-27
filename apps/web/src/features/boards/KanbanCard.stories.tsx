@@ -121,3 +121,35 @@ export const ConflictingType: Story = {
     },
   },
 };
+
+export const MissingPriority: Story = {
+  args: {
+    ...Default.args,
+    issue: {
+      ...card,
+      priority: null,
+      labels: [{ name: "type:feature" }],
+      visibleLabels: [{ name: "type:feature" }],
+    },
+  },
+};
+
+export const ConflictingPriority: Story = {
+  args: {
+    ...Default.args,
+    issue: {
+      ...card,
+      priority: null,
+      labels: [
+        { name: "type:feature" },
+        { name: "priority:critical" },
+        { name: "priority:high" },
+      ],
+      visibleLabels: [
+        { name: "type:feature" },
+        { name: "priority:critical" },
+        { name: "priority:high" },
+      ],
+    },
+  },
+};

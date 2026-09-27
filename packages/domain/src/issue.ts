@@ -1,5 +1,6 @@
 import type { RepositoryRef } from "./repository.js";
 import type { IssueType } from "./issue-type.js";
+import type { IssuePriority } from "./issue-priority.js";
 
 export type IssueState = "open" | "closed";
 export type IssueIdentity = RepositoryRef & { number: number };
@@ -38,6 +39,7 @@ export type IssueSummary = IssueIdentity &
     state: IssueState;
     assignee: string | null;
     type: IssueType | null;
+    priority: IssuePriority | null;
     labels: IssueLabel[];
     milestone: string | null;
     updatedAt: string;

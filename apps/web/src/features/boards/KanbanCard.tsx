@@ -1,6 +1,7 @@
 import type { BoardCard } from "./types";
 import { Badge } from "../../components/ui/Badge";
 import { IssueTypeBadge } from "../../components/ui/IssueTypeBadge";
+import { PriorityBadge } from "../../components/ui/PriorityBadge";
 import { routePaths } from "../../app/routes";
 import { ScheduleDates, scheduleAnomalyMessage } from "../issues/ScheduleDates";
 import { visibleIssueLabels } from "../issues/issueLabelPresentation";
@@ -41,6 +42,7 @@ export function KanbanCard({
       </a>
       <div className="kanban-card-type">
         <IssueTypeBadge type={issue.type} labels={issue.labels} />
+        <PriorityBadge priority={issue.priority} labels={issue.labels} />
       </div>
       <small>
         {issue.owner}/{issue.name} #{issue.number}

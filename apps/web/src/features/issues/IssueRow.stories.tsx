@@ -119,3 +119,48 @@ export const InvalidType: Story = {
     },
   },
 };
+
+export const AllPriorityLevels: Story = {
+  args: { issue: demoIssue },
+  render: () => (
+    <div className="stack">
+      {(["critical", "high", "medium", "low"] as const).map((priority) => (
+        <IssueRow
+          key={priority}
+          issue={{
+            ...demoIssue,
+            priority,
+            labels: [
+              { name: "type:feature" },
+              { name: `priority:${priority}` },
+            ],
+          }}
+        />
+      ))}
+    </div>
+  ),
+};
+
+export const MissingPriority: Story = {
+  args: {
+    issue: {
+      ...demoIssue,
+      priority: null,
+      labels: [{ name: "type:feature" }],
+    },
+  },
+};
+
+export const ConflictingPriority: Story = {
+  args: {
+    issue: {
+      ...demoIssue,
+      priority: null,
+      labels: [
+        { name: "type:feature" },
+        { name: "priority:critical" },
+        { name: "priority:high" },
+      ],
+    },
+  },
+};

@@ -8,6 +8,7 @@ export const demoIssue: Issue = {
   body: "這是 Storybook 的虛構資料。",
   state: "open",
   type: "feature",
+  priority: "high",
   assignee: "engineer",
   labels: [
     { name: "type:feature" },

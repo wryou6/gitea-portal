@@ -6,8 +6,9 @@ import { Field, FieldLabel, Input, Textarea } from "../../components/ui/Field";
 import { Select } from "../../components/ui/Select";
 import { ErrorNotice } from "../../components/feedback/ErrorNotice";
 import { routePaths, safeReturnTo } from "../../app/routes";
-import type { IssueType } from "@gitea-portal/domain";
+import type { IssuePriority, IssueType } from "@gitea-portal/domain";
 import { IssueTypeField } from "./IssueTypeField";
+import { PriorityField } from "./PriorityField";
 import { ScheduleDateFields } from "./ScheduleDateFields";
 
 export function IssueCreatePage() {
@@ -18,6 +19,7 @@ export function IssueCreatePage() {
   const [repository, setRepository] = useState("");
   const [title, setTitle] = useState("");
   const [type, setType] = useState<IssueType | "">("");
+  const [priority, setPriority] = useState<IssuePriority | "">("");
   const [body, setBody] = useState("");
   const [assignee, setAssignee] = useState("");
   const [labels, setLabels] = useState("");
@@ -51,8 +53,14 @@ export function IssueCreatePage() {
   const submit = async (event: FormEvent) => {
     event.preventDefault();
     const [owner, name] = repository.split("/");
-    if (!owner || !name || !title.trim() || !type) {
-      setError("請選擇 Repository、輸入 Title 並選擇 Issue Type");
+    if (!owner || !name || !title.trim() || !type || !priority) {
+      setError("請選擇 Repository、輸入 Title，並選擇 Issue Type 與優先級");
+      return;
+    }
+    if (
+      labels.split(",").some((label) => label.trim().startsWith("priority:"))
+    ) {
+      setError("請使用優先級欄位設定優先級，不要將 priority:* 加入一般 Labels");
       return;
     }
     try {
@@ -63,6 +71,7 @@ export function IssueCreatePage() {
           body: JSON.stringify({
             title: title.trim(),
             type,
+            priority,
             body,
             assignee: assignee.trim() || null,
             labels: labels
@@ -123,6 +132,11 @@ export function IssueCreatePage() {
             />
           </Field>
           <IssueTypeField id="new-type" value={type} onChange={setType} />
+          <PriorityField
+            id="new-priority"
+            value={priority}
+            onChange={setPriority}
+          />
           <Field>
             <FieldLabel htmlFor="new-description">Description</FieldLabel>
             <Textarea

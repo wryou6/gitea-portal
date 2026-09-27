@@ -30,6 +30,21 @@
   --issue-type-missing-foreground: #664d03;
   --issue-type-missing-background: #fff3cd;
   --issue-type-missing-border: #ffda6a;
+  --priority-critical-foreground: #842029;
+  --priority-critical-background: #f8d7da;
+  --priority-critical-border: #f1aeb5;
+  --priority-high-foreground: #7f2704;
+  --priority-high-background: #ffedd5;
+  --priority-high-border: #fdba74;
+  --priority-medium-foreground: #664d03;
+  --priority-medium-background: #fff3cd;
+  --priority-medium-border: #ffda6a;
+  --priority-low-foreground: #084298;
+  --priority-low-background: #cfe2ff;
+  --priority-low-border: #9ec5fe;
+  --priority-anomaly-foreground: #842029;
+  --priority-anomaly-background: #f8d7da;
+  --priority-anomaly-border: #f1aeb5;
 }
 .dark {
   --background: oklch(0.16 0.02 255);
@@ -60,6 +75,21 @@
   --issue-type-missing-foreground: #ffda6a;
   --issue-type-missing-background: #332701;
   --issue-type-missing-border: #997404;
+  --priority-critical-foreground: #f1aeb5;
+  --priority-critical-background: #58151c;
+  --priority-critical-border: #a52834;
+  --priority-high-foreground: #fdba74;
+  --priority-high-background: #431407;
+  --priority-high-border: #9a3412;
+  --priority-medium-foreground: #ffda6a;
+  --priority-medium-background: #332701;
+  --priority-medium-border: #997404;
+  --priority-low-foreground: #9ec5fe;
+  --priority-low-background: #052c65;
+  --priority-low-border: #084298;
+  --priority-anomaly-foreground: #f1aeb5;
+  --priority-anomaly-background: #58151c;
+  --priority-anomaly-border: #a52834;
 }
 * {
   border-color: var(--border);
@@ -430,6 +460,10 @@ textarea:focus-visible,
   overflow-wrap: anywhere;
 }
 .issue-detail-type {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.35rem;
   margin-top: 0.5rem;
 }
 .meta {
@@ -552,6 +586,60 @@ textarea:focus-visible,
   display: inline-flex;
   flex-wrap: wrap;
   gap: 0.25rem;
+}
+.priority-badge {
+  flex: none;
+  font-weight: 650;
+  line-height: 1.25;
+  white-space: nowrap;
+}
+.priority-badge--critical {
+  color: var(--priority-critical-foreground);
+  background: var(--priority-critical-background);
+  border-color: var(--priority-critical-border);
+}
+.priority-badge--high {
+  color: var(--priority-high-foreground);
+  background: var(--priority-high-background);
+  border-color: var(--priority-high-border);
+}
+.priority-badge--medium {
+  color: var(--priority-medium-foreground);
+  background: var(--priority-medium-background);
+  border-color: var(--priority-medium-border);
+}
+.priority-badge--low {
+  color: var(--priority-low-foreground);
+  background: var(--priority-low-background);
+  border-color: var(--priority-low-border);
+}
+.priority-badge--missing,
+.priority-badge--conflict-value {
+  color: var(--priority-medium-foreground);
+  background: var(--priority-medium-background);
+  border-color: var(--priority-medium-border);
+}
+.priority-badge--conflict {
+  color: var(--priority-anomaly-foreground);
+  background: var(--priority-anomaly-background);
+  border-color: var(--priority-anomaly-border);
+}
+.priority-conflict {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.25rem;
+  min-width: 0;
+}
+.priority-conflict-values {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+}
+.priority-field-help {
+  margin: 0;
+  color: var(--muted-foreground);
+  font-size: 0.875rem;
 }
 .filters {
   display: grid;
@@ -769,6 +857,9 @@ button.danger {
 }
 .kanban-card-type {
   display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.35rem;
   justify-content: flex-start;
   min-width: 0;
 }

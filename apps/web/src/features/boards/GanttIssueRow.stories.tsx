@@ -90,3 +90,25 @@ export const ConflictingTypeInDateAnomaly: Story = {
     },
   },
 };
+
+export const MissingPriority: Story = {
+  args: {
+    variant: "scheduled",
+    issue: {
+      ...demoIssue,
+      priority: null,
+      labels: [{ name: "type:feature" }],
+    },
+  },
+};
+
+export const UnknownPriority: Story = {
+  args: {
+    variant: "scheduled",
+    issue: {
+      ...demoIssue,
+      priority: null,
+      labels: [{ name: "type:feature" }, { name: "priority:urgent" }],
+    },
+  },
+};

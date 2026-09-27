@@ -7,9 +7,11 @@ import { Select } from "../../components/ui/Select";
 import { ErrorNotice } from "../../components/feedback/ErrorNotice";
 import {
   issueTypeStatusFromLabels,
+  type IssuePriority,
   type IssueType,
 } from "@gitea-portal/domain";
 import { IssueTypeField } from "./IssueTypeField";
+import { PriorityField } from "./PriorityField";
 import { ScheduleDateFields } from "./ScheduleDateFields";
 
 export function IssueEditForm({
@@ -22,13 +24,17 @@ export function IssueEditForm({
   const [title, setTitle] = useState(issue.title);
   const [body, setBody] = useState(issue.body ?? "");
   const [type, setType] = useState<IssueType | "">(issue.type ?? "");
+  const [priority, setPriority] = useState<IssuePriority | "">(
+    issue.priority ?? "",
+  );
   const [assignee, setAssignee] = useState(issue.assignee ?? "");
   const [labels, setLabels] = useState(
     issue.labels
       .filter(
         (label) =>
           !label.name.startsWith("start-date:") &&
-          !label.name.startsWith("type:"),
+          !label.name.startsWith("type:") &&
+          !label.name.startsWith("priority:"),
       )
       .map((label) => label.name)
       .join(", "),
@@ -44,6 +50,14 @@ export function IssueEditForm({
     event.preventDefault();
     if (!title.trim()) return setError("Title 不可為空白");
     if (!type) return setError("請選擇一種 Issue Type");
+    if (!priority) return setError("請選擇一級優先級");
+    if (
+      labels.split(",").some((label) => label.trim().startsWith("priority:"))
+    ) {
+      return setError(
+        "請使用優先級欄位設定優先級，不要將 priority:* 加入一般 Labels",
+      );
+    }
     setSaving(true);
     setError(undefined);
     try {
@@ -53,6 +67,7 @@ export function IssueEditForm({
           expectedUpdatedAt: issue.updatedAt,
           title: title.trim(),
           type,
+          priority,
           body,
           state,
           assignee: assignee || null,
@@ -88,6 +103,12 @@ export function IssueEditForm({
         value={type}
         onChange={setType}
         status={issueTypeStatus}
+      />
+      <PriorityField
+        id="edit-priority"
+        value={priority}
+        onChange={setPriority}
+        labels={issue.labels}
       />
       <Field>
         <FieldLabel htmlFor="edit-body">Description</FieldLabel>

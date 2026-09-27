@@ -82,3 +82,23 @@ export const ConflictingType: Story = {
     },
   },
 };
+
+export const MissingPriority: Story = {
+  args: {
+    issue: {
+      ...demoIssue,
+      priority: null,
+      labels: [{ name: "type:feature" }],
+    },
+  },
+};
+
+export const ConflictingPriority: Story = {
+  args: {
+    issue: {
+      ...demoIssue,
+      priority: null,
+      labels: [{ name: "type:feature" }, { name: "priority:urgent" }],
+    },
+  },
+};

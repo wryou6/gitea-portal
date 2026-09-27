@@ -2,6 +2,7 @@ import type { Issue } from "../../lib/api";
 import { LabelList } from "./LabelList";
 import { routePaths } from "../../app/routes";
 import { IssueTypeBadge } from "../../components/ui/IssueTypeBadge";
+import { PriorityBadge } from "../../components/ui/PriorityBadge";
 import { ScheduleDates, scheduleAnomalyMessage } from "./ScheduleDates";
 import { visibleIssueLabels } from "./issueLabelPresentation";
 
@@ -32,6 +33,7 @@ export function IssueRow({
             {issue.title}
           </a>
           <IssueTypeBadge type={issue.type} labels={issue.labels} />
+          <PriorityBadge priority={issue.priority} labels={issue.labels} />
         </div>
         <div className="meta">
           <span>
