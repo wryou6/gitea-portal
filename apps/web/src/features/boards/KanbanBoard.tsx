@@ -152,19 +152,9 @@ export function KanbanBoard({
 
   return (
     <section>
-      <a
-        href={
-          repository
-            ? routePaths.repositoryView(
-                repository.owner,
-                repository.name,
-                "issues",
-              )
-            : routePaths.boardSettings
-        }
-      >
-        ← {repository ? t("returnToRepositoryIssues") : t("returnToBoard")}
-      </a>
+      {!repository && (
+        <a href={routePaths.boardSettings}>← {t("returnToBoard")}</a>
+      )}
       {error && <ErrorNotice message={error} />}
       <PageHeader
         eyebrow={t(viewMode === "gantt" ? "ganttEyebrow" : "kanbanEyebrow")}

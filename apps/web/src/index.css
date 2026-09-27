@@ -154,6 +154,92 @@ textarea:focus-visible,
   padding: 0.8rem clamp(1rem, 4vw, 4rem);
   backdrop-filter: blur(12px);
 }
+.topbar-primary {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  flex: none;
+}
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  color: var(--foreground);
+  font-weight: 750;
+  letter-spacing: -0.02em;
+  white-space: nowrap;
+}
+.brand-mark {
+  width: 1.8rem;
+  height: 1.8rem;
+  flex: none;
+}
+.dashboard-link {
+  display: inline-flex;
+  align-items: center;
+  min-height: 2.6rem;
+  border-radius: var(--radius);
+  color: var(--muted-foreground);
+  font-weight: 650;
+  padding: 0.45rem 0.7rem;
+  text-decoration: none;
+  white-space: nowrap;
+}
+.dashboard-link:hover,
+.dashboard-link[aria-current="page"] {
+  background: var(--muted);
+  color: var(--foreground);
+  text-decoration: none;
+}
+.dashboard-page {
+  display: grid;
+  gap: 1.25rem;
+}
+.workspace-directory {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 17rem), 1fr));
+  gap: 1rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.workspace-card {
+  display: grid;
+  align-content: start;
+  gap: 0.65rem;
+  min-width: 0;
+  min-height: 8rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--card);
+  color: var(--foreground);
+  padding: 1.1rem;
+  text-decoration: none;
+  transition:
+    border-color 150ms ease,
+    box-shadow 150ms ease,
+    transform 150ms ease;
+}
+.workspace-card:hover {
+  border-color: var(--ring);
+  box-shadow: 0 8px 24px color-mix(in oklch, var(--foreground) 8%, transparent);
+  text-decoration: none;
+  transform: translateY(-1px);
+}
+.workspace-card strong,
+.workspace-card-repositories {
+  overflow-wrap: anywhere;
+}
+.workspace-card-kind,
+.workspace-card-repositories {
+  color: var(--muted-foreground);
+  font-size: 0.85rem;
+}
+.dashboard-error-state {
+  display: grid;
+  justify-items: start;
+  gap: 0.75rem;
+}
 .workspace-selector {
   display: grid;
   grid-template-columns: auto minmax(12rem, min(28rem, 52vw));
@@ -236,10 +322,6 @@ textarea:focus-visible,
 }
 .workspace-notice-actions {
   margin-top: 0.75rem;
-}
-.brand {
-  font-weight: 750;
-  letter-spacing: -0.02em;
 }
 .settings-page {
   display: grid;
@@ -1235,6 +1317,22 @@ button.danger {
     align-items: flex-start;
     flex-direction: column;
     gap: 0.4rem;
+  }
+  .topbar-primary {
+    width: 100%;
+    gap: 0.65rem;
+  }
+  .brand {
+    gap: 0.35rem;
+    font-size: 0.95rem;
+  }
+  .brand-mark {
+    width: 1.55rem;
+    height: 1.55rem;
+  }
+  .dashboard-link {
+    min-height: 2.25rem;
+    padding-inline: 0.45rem;
   }
   .workspace-selector {
     width: 100%;

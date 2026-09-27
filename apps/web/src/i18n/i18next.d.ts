@@ -4,6 +4,7 @@ declare module "i18next" {
     defaultNS: "common";
     resources: {
       common: Record<string, string>;
+      dashboard: Record<string, string>;
       settings: Record<string, string>;
       issues: Record<string, string>;
       boards: Record<string, string>;

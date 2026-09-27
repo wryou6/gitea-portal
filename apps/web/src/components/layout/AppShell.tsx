@@ -85,6 +85,7 @@ export function AppShell({
     (contextRoute.type === "repository-view" &&
       contextRoute.view === "issues") ||
     (contextRoute.type === "board-view" && contextRoute.view === "issues");
+  const onDashboard = route.type === "dashboard";
   const onBoardSettings = route.type === "board-settings";
   const [isCrossRepositoryBoardSelected, setIsCrossRepositoryBoardSelected] =
     useState(false);
@@ -208,9 +209,19 @@ export function AppShell({
       className={`app-shell ${expanded ? "app-shell--expanded" : "app-shell--collapsed"}`}
     >
       <header className="topbar">
-        <a className="brand" href={routePaths.issues}>
-          Gitea Issue Portal
-        </a>
+        <div className="topbar-primary">
+          <div className="brand" aria-label="Gitea Portal">
+            <img className="brand-mark" src="/favicon.svg" alt="" />
+            <span>Gitea Portal</span>
+          </div>
+          <a
+            className="dashboard-link"
+            href={routePaths.dashboard}
+            aria-current={onDashboard ? "page" : undefined}
+          >
+            {t("dashboard")}
+          </a>
+        </div>
         <WorkspaceSelector
           onCrossRepositoryBoardSelected={setIsCrossRepositoryBoardSelected}
         />

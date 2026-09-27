@@ -22,6 +22,7 @@ function routeContext() {
 
 function routeWorkspaceValue(): string {
   const route = routeContext();
+  if (route.type === "dashboard") return "all-workspaces";
   if (route.type === "repository-view")
     return `repository:${route.owner}/${route.repo}`;
   if (route.type === "board-view") return `board:${route.boardId}`;
@@ -35,6 +36,7 @@ export function WorkspaceSelector({
   onCrossRepositoryBoardSelected: (selected: boolean) => void;
 }) {
   const { t } = useTranslation("common");
+  const isDashboard = routeContext().type === "dashboard";
   const [repositories, setRepositories] = useState<Repository[]>([]);
   const [boards, setBoards] = useState<Board[]>([]);
   const [loading, setLoading] = useState(true);
@@ -85,6 +87,7 @@ export function WorkspaceSelector({
   const candidate = routeWorkspaceValue();
   const selected =
     candidate === "all" ||
+    candidate === "all-workspaces" ||
     repositories.some(
       (repository) =>
         candidate === `repository:${repository.owner}/${repository.name}`,
@@ -98,7 +101,9 @@ export function WorkspaceSelector({
   }, [onCrossRepositoryBoardSelected, selected]);
 
   const navigate = (value: string) => {
-    if (value === "all") window.location.href = routePaths.issues;
+    if (value === "all-workspaces")
+      window.location.href = routePaths.dashboard;
+    else if (value === "all") window.location.href = routePaths.issues;
     else if (value.startsWith("repository:")) {
       const [owner, repo] = value.slice("repository:".length).split("/", 2);
       if (owner && repo)
@@ -120,6 +125,7 @@ export function WorkspaceSelector({
         onChange={(event) => navigate(event.target.value)}
       >
         <option value="">{loading ? t("loadingWorkspace") : t("selectWorkspace")}</option>
+        <option value="all-workspaces">{t("allWorkspaces")}</option>
         <option value="all">{t("allIssues")}</option>
         <optgroup label={t("repositoryWorkspace")}>
           {repositories.map((repository) => (
@@ -139,7 +145,7 @@ export function WorkspaceSelector({
           ))}
         </optgroup>
       </select>
-      {error && <ErrorNotice message={error} />}
+      {error && !isDashboard && <ErrorNotice message={error} />}
     </div>
   );
 }

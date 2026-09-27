@@ -4,6 +4,7 @@ import { defaultLocale, type Locale } from "./locales";
 import { apiErrors } from "./resources/api-errors";
 import { boards } from "./resources/boards";
 import { common } from "./resources/common";
+import { dashboard } from "./resources/dashboard";
 import { feedback } from "./resources/feedback";
 import { issues } from "./resources/issues";
 import { settings } from "./resources/settings";
@@ -11,6 +12,7 @@ import { settings } from "./resources/settings";
 export const resources = {
   "zh-TW": {
     common: common["zh-TW"],
+    dashboard: dashboard["zh-TW"],
     settings: settings["zh-TW"],
     issues: issues["zh-TW"],
     boards: boards["zh-TW"],
@@ -19,6 +21,7 @@ export const resources = {
   },
   en: {
     common: common.en,
+    dashboard: dashboard.en,
     settings: settings.en,
     issues: issues.en,
     boards: boards.en,
@@ -27,6 +30,7 @@ export const resources = {
   },
   ja: {
     common: common.ja,
+    dashboard: dashboard.ja,
     settings: settings.ja,
     issues: issues.ja,
     boards: boards.ja,
@@ -42,7 +46,7 @@ void i18n.use(initReactI18next).init({
   lng: defaultLocale,
   fallbackLng: defaultLocale,
   defaultNS: "common",
-  ns: ["common", "settings", "issues", "boards", "feedback", "api-errors"],
+  ns: ["common", "dashboard", "settings", "issues", "boards", "feedback", "api-errors"],
   interpolation: { escapeValue: false },
   initAsync: false,
 });

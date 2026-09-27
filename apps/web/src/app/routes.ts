@@ -2,6 +2,7 @@ export type BoardView = "kanban" | "gantt";
 export type WorkspaceView = "issues" | BoardView;
 
 export const routePaths = {
+  dashboard: "/dashboard",
   issues: "/issues",
   issueCreate: "/issues/new",
   issueCreateForRepository: (owner: string, repo: string, returnTo: string) => {
@@ -34,6 +35,7 @@ export const routePaths = {
 };
 
 export type AppRoute =
+  | { type: "dashboard" }
   | { type: "issues" }
   | { type: "issue-create" }
   | { type: "issue-detail"; owner: string; repo: string; number: number }
@@ -52,7 +54,9 @@ export function resolveAppRoute(pathname: string, search = ""): AppRoute {
   const path = pathname.length > 1 ? pathname.replace(/\/+$/, "") : pathname;
 
   if (path === routePaths.settings) return { type: "settings" };
-  if (path === "/" || path === routePaths.issues) return { type: "issues" };
+  if (path === "/" || path === routePaths.dashboard)
+    return { type: "dashboard" };
+  if (path === routePaths.issues) return { type: "issues" };
   if (path === routePaths.issueCreate || path === "/issue/new") {
     return { type: "issue-create" };
   }

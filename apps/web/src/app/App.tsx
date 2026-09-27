@@ -9,6 +9,7 @@ import { BoardListPage } from "../features/boards/BoardListPage";
 import { KanbanBoard } from "../features/boards/KanbanBoard";
 import { BoardIssuesPage } from "../features/boards/BoardIssuesPage";
 import { SettingsPage } from "../features/settings/SettingsPage";
+import { DashboardPage } from "../features/dashboard/DashboardPage";
 import type { Board } from "../features/boards/types";
 import { RepositoryWorkspacePage } from "../features/repositories/RepositoryWorkspacePage";
 import { ErrorNotice } from "../components/feedback/ErrorNotice";
@@ -92,6 +93,8 @@ export function App({
   );
   const content = (() => {
     switch (route.type) {
+      case "dashboard":
+        return <DashboardPage />;
       case "settings":
         return (
           <SettingsPage
