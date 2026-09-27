@@ -22,6 +22,7 @@ export const routePaths = {
     const params = new URLSearchParams({ returnTo });
     return `${routePaths.issueDetail(owner, repo, number)}?${params}`;
   },
+  settings: "/settings",
   repositoryView: (owner: string, repo: string, view: WorkspaceView) =>
     `/repositories/${encodeURIComponent(owner)}/${encodeURIComponent(repo)}/${view}`,
   boardSettings: "/boards",
@@ -36,6 +37,7 @@ export type AppRoute =
   | { type: "issues" }
   | { type: "issue-create" }
   | { type: "issue-detail"; owner: string; repo: string; number: number }
+  | { type: "settings" }
   | { type: "board-settings" }
   | { type: "board-selection"; viewIntent: BoardView }
   | {
@@ -49,6 +51,7 @@ export type AppRoute =
 export function resolveAppRoute(pathname: string, search = ""): AppRoute {
   const path = pathname.length > 1 ? pathname.replace(/\/+$/, "") : pathname;
 
+  if (path === routePaths.settings) return { type: "settings" };
   if (path === "/" || path === routePaths.issues) return { type: "issues" };
   if (path === routePaths.issueCreate || path === "/issue/new") {
     return { type: "issue-create" };

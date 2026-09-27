@@ -1,4 +1,4 @@
-import { useState, type ReactNode } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import { resolveAppRoute, routePaths, safeReturnTo } from "../../app/routes";
 import { WorkspaceSelector } from "./WorkspaceSelector";
 
@@ -45,7 +45,13 @@ function NavigationIcon({ name }: { name: NavigationIconName }) {
   );
 }
 
-export function AppShell({ children }: { children: ReactNode }) {
+export function AppShell({
+  children,
+  login,
+}: {
+  children: ReactNode;
+  login?: string;
+}) {
   const route = resolveAppRoute(
     window.location.pathname,
     window.location.search,
@@ -80,6 +86,9 @@ export function AppShell({ children }: { children: ReactNode }) {
   const onBoardSettings = route.type === "board-settings";
   const [isCrossRepositoryBoardSelected, setIsCrossRepositoryBoardSelected] =
     useState(false);
+  const [accountMenuOpen, setAccountMenuOpen] = useState(false);
+  const accountMenuRef = useRef<HTMLDivElement>(null);
+  const accountTriggerRef = useRef<HTMLButtonElement>(null);
   const [expanded, setExpanded] = useState(() => {
     try {
       return window.sessionStorage.getItem(SIDEBAR_STATE_KEY) !== "collapsed";
@@ -102,6 +111,36 @@ export function AppShell({ children }: { children: ReactNode }) {
       return next;
     });
   };
+
+  useEffect(() => {
+    if (!accountMenuOpen) return;
+
+    const closeOnOutsidePointer = (event: PointerEvent) => {
+      if (
+        event.target instanceof Node &&
+        !accountMenuRef.current?.contains(event.target)
+      ) {
+        setAccountMenuOpen(false);
+      }
+    };
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setAccountMenuOpen(false);
+        accountTriggerRef.current?.focus();
+      }
+    };
+
+    document.addEventListener("pointerdown", closeOnOutsidePointer);
+    document.addEventListener("keydown", closeOnEscape);
+    return () => {
+      document.removeEventListener("pointerdown", closeOnOutsidePointer);
+      document.removeEventListener("keydown", closeOnEscape);
+    };
+  }, [accountMenuOpen]);
+
+  useEffect(() => {
+    setAccountMenuOpen(false);
+  }, [login]);
 
   const navigationItems: Array<{
     key: string;
@@ -173,6 +212,30 @@ export function AppShell({ children }: { children: ReactNode }) {
         <WorkspaceSelector
           onCrossRepositoryBoardSelected={setIsCrossRepositoryBoardSelected}
         />
+        {login && (
+          <div className="account-menu" ref={accountMenuRef}>
+            <button
+              ref={accountTriggerRef}
+              className="account-menu-trigger"
+              type="button"
+              aria-label={`目前使用者：${login}`}
+              aria-expanded={accountMenuOpen}
+              aria-controls="account-menu-panel"
+              onClick={() => setAccountMenuOpen((open) => !open)}
+            >
+              <span className="account-menu-login">{login}</span>
+              <span aria-hidden="true">▾</span>
+            </button>
+            <nav
+              id="account-menu-panel"
+              className="account-menu-panel"
+              aria-label="使用者功能"
+              hidden={!accountMenuOpen}
+            >
+              <a href={routePaths.settings}>設定</a>
+            </nav>
+          </div>
+        )}
       </header>
       <div className="app-layout">
         <aside className="sidebar" aria-label="工作區導覽">

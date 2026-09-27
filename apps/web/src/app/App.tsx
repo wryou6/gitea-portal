@@ -6,12 +6,19 @@ import { BoardListPage } from "../features/boards/BoardListPage";
 import { KanbanBoard } from "../features/boards/KanbanBoard";
 import { BoardIssuesPage } from "../features/boards/BoardIssuesPage";
 import { LegacyBoardNoticePage } from "../features/boards/LegacyBoardNoticePage";
+import { SettingsPage } from "../features/settings/SettingsPage";
 import type { Board } from "../features/boards/types";
 import { RepositoryWorkspacePage } from "../features/repositories/RepositoryWorkspacePage";
 import { ErrorNotice } from "../components/feedback/ErrorNotice";
 import { LoadingState } from "../components/feedback/LoadingState";
 import { api } from "../lib/api";
 import { AppShell } from "../components/layout/AppShell";
+import {
+  applyThemePreference,
+  saveThemePreference,
+  subscribeToSystemTheme,
+  type ThemeMode,
+} from "../features/settings/theme-preference";
 import { resolveAppRoute } from "./routes";
 
 function BoardRoutePage({
@@ -49,13 +56,36 @@ function BoardRoutePage({
   return <KanbanBoard key={boardId} boardId={boardId} viewMode={view} />;
 }
 
-export function App() {
+export function App({
+  login,
+  initialTheme = "system",
+}: {
+  login?: string;
+  initialTheme?: ThemeMode;
+} = {}) {
+  const [themeMode, setThemeMode] = useState<ThemeMode>(initialTheme);
+  useEffect(() => subscribeToSystemTheme(themeMode), [themeMode]);
+
+  const changeTheme = (mode: ThemeMode) => {
+    saveThemePreference(login, mode);
+    applyThemePreference(mode);
+    setThemeMode(mode);
+  };
+
   const route = resolveAppRoute(
     window.location.pathname,
     window.location.search,
   );
   const content = (() => {
     switch (route.type) {
+      case "settings":
+        return (
+          <SettingsPage
+            login={login}
+            mode={themeMode}
+            onThemeChange={changeTheme}
+          />
+        );
       case "issue-create":
         return <IssueCreatePage />;
       case "issue-detail":
@@ -84,5 +114,5 @@ export function App() {
         return <IssueListPage />;
     }
   })();
-  return <AppShell>{content}</AppShell>;
+  return <AppShell login={login}>{content}</AppShell>;
 }

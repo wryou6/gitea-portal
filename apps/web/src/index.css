@@ -127,6 +127,48 @@ textarea:focus-visible,
   color: var(--destructive);
   font-size: 0.78rem;
 }
+.account-menu {
+  position: relative;
+  flex: none;
+}
+.account-menu-trigger {
+  max-width: min(20rem, 35vw);
+  min-height: 2.6rem;
+  border-color: var(--border);
+  background: var(--card);
+  color: var(--foreground);
+}
+.account-menu-login {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.account-menu-panel {
+  position: absolute;
+  top: calc(100% + 0.4rem);
+  right: 0;
+  z-index: 30;
+  min-width: 9rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--card);
+  padding: 0.35rem;
+  box-shadow: 0 8px 24px color-mix(in oklch, var(--foreground) 12%, transparent);
+}
+.account-menu-panel[hidden] {
+  display: none;
+}
+.account-menu-panel a {
+  display: flex;
+  align-items: center;
+  min-height: 2.5rem;
+  border-radius: calc(var(--radius) - 2px);
+  padding: 0.5rem 0.65rem;
+  color: var(--foreground);
+}
+.account-menu-panel a:hover {
+  background: var(--muted);
+  text-decoration: none;
+}
 .workspace-notice {
   margin: 0 0 1rem;
   border: 1px solid color-mix(in oklch, var(--warning) 55%, var(--border));
@@ -144,6 +186,69 @@ textarea:focus-visible,
 .brand {
   font-weight: 750;
   letter-spacing: -0.02em;
+}
+.settings-page {
+  display: grid;
+  gap: 1rem;
+}
+.settings-card {
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--card);
+  padding: 1.25rem;
+}
+.settings-card h2 {
+  margin: 0 0 0.75rem;
+  font-size: 1.1rem;
+}
+.settings-card p {
+  margin: 0.4rem 0;
+}
+.theme-options {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.65rem;
+  margin: 1rem 0 0;
+  border: 0;
+  padding: 0;
+}
+.theme-options legend {
+  margin-bottom: 0.4rem;
+  padding: 0;
+}
+.theme-option {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  min-width: 0;
+  min-height: 3.5rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--card);
+  padding: 0.65rem 0.8rem;
+  cursor: pointer;
+}
+.theme-option input[type="radio"] {
+  width: auto;
+  flex: none;
+  accent-color: var(--primary);
+}
+.theme-option span {
+  display: grid;
+  gap: 0.1rem;
+  min-width: 0;
+}
+.theme-option small {
+  color: var(--muted-foreground);
+}
+.theme-option--selected {
+  border-color: var(--ring);
+  background: color-mix(in oklch, var(--primary) 7%, var(--card));
+  box-shadow: 0 0 0 1px var(--ring);
+}
+.theme-option:focus-within {
+  outline: 3px solid color-mix(in oklch, var(--ring) 45%, transparent);
+  outline-offset: 2px;
 }
 .app-layout {
   display: grid;
@@ -728,6 +833,12 @@ button.danger {
     width: 100%;
     grid-template-columns: auto minmax(0, 1fr);
     margin-left: 0;
+  }
+  .account-menu {
+    align-self: flex-end;
+  }
+  .theme-options {
+    grid-template-columns: minmax(0, 1fr);
   }
   .page-heading,
   .issue-row,
