@@ -38,6 +38,21 @@ export function mapIssue(issue: GiteaIssue): IssueSummary {
           : resolvedWorkflow.kind === "state" && resolvedWorkflow.key === "done"
             ? "無後續動作"
             : "狀態資料異常";
+  const nextActionKey =
+    action &&
+    resolvedWorkflow.kind === "state" &&
+    action.toState === resolvedWorkflow.key
+      ? action.nextActionKey
+      : resolvedWorkflow.kind === "state" && resolvedWorkflow.key === "todo"
+        ? assignees.length > 0
+          ? "begin-work"
+          : "assign-owner"
+        : resolvedWorkflow.kind === "state" &&
+            resolvedWorkflow.key === "in-progress"
+          ? "implement"
+          : resolvedWorkflow.kind === "state" && resolvedWorkflow.key === "done"
+            ? "no-follow-up"
+            : "anomaly";
   return {
     owner: issue.repository.owner,
     name: issue.repository.name,
@@ -64,6 +79,7 @@ export function mapIssue(issue: GiteaIssue): IssueSummary {
         : undefined,
     lastActionKey: action?.key ?? null,
     nextAction,
+    nextActionKey,
   };
 }
 

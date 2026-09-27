@@ -3,10 +3,18 @@ import { LabelList } from "./LabelList";
 import { Badge } from "../../components/ui/Badge";
 import { IssueTypeBadge } from "../../components/ui/IssueTypeBadge";
 import { PriorityBadge } from "../../components/ui/PriorityBadge";
-import { ScheduleDates, scheduleAnomalyMessage } from "./ScheduleDates";
+import { ScheduleDates, scheduleAnomalyTranslationKey } from "./ScheduleDates";
 import { WORKFLOW_ACTIONS } from "@gitea-portal/domain";
 import { IssueAssigneeRoster } from "./IssueAssigneeRoster";
+import { useTranslation } from "react-i18next";
+import {
+  workflowNextActionTranslationKey,
+  workflowReasonTranslationKey,
+  workflowStateTranslationKey,
+} from "../../i18n/workflow";
+import { formatDateTime } from "../../i18n/format";
 export function IssueDetailHeader({ issue }: { issue: Issue }) {
+  const { t, i18n } = useTranslation("issues");
   const action = WORKFLOW_ACTIONS.find(
     (candidate) => candidate.key === issue.lastActionKey,
   );
@@ -22,30 +30,26 @@ export function IssueDetailHeader({ issue }: { issue: Issue }) {
       </div>
       <div className="meta">
         <Badge className={`workflow-status--${issue.workflowState}`}>
-          {issue.workflowState === "todo"
-            ? "待辦"
-            : issue.workflowState === "in-progress"
-              ? "處理中"
-              : issue.workflowState === "done"
-                ? "已完成"
-                : "狀態異常"}
+          {t(workflowStateTranslationKey(issue.workflowState))}
         </Badge>
-        <span>下一步：{issue.nextAction}</span>
-        {action && <span>最後原因：{action.reasonLabel}</span>}
+        <span>{t("nextAction", { action: t(workflowNextActionTranslationKey(issue.nextActionKey)) })}</span>
+        {action && <span>{t("lastReason")}：{t(workflowReasonTranslationKey(action.key))}</span>}
         <ScheduleDates
           startDate={issue.startDate}
           dueDate={issue.dueDate}
           scheduleAnomaly={issue.scheduleAnomaly}
           className="schedule-dates--compact"
         />
-        <span>Milestone：{issue.milestone ?? "未設定 Milestone"}</span>
+        <span>{t("milestone")}：{issue.milestone ?? t("notSet")}</span>
         <time dateTime={issue.updatedAt}>
-          更新於 {new Date(issue.updatedAt).toLocaleString("zh-TW")}
+          {t("updatedAt", {
+            date: formatDateTime(issue.updatedAt, i18n.language),
+          })}
         </time>
       </div>
       {issue.scheduleStatus === "invalid" && (
         <p className="schedule-anomaly" role="status">
-          {scheduleAnomalyMessage(issue.scheduleAnomaly)}
+          {t(scheduleAnomalyTranslationKey(issue.scheduleAnomaly))}
         </p>
       )}
       <IssueAssigneeRoster issue={issue} />

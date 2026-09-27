@@ -1,5 +1,6 @@
 import { Button } from "../../components/ui/Button";
 import { Field, FieldLabel, Input } from "../../components/ui/Field";
+import { useTranslation } from "react-i18next";
 
 export function ScheduleDateFields({
   startDate,
@@ -20,10 +21,11 @@ export function ScheduleDateFields({
   showClearButtons?: boolean;
   disabled?: boolean;
 }) {
+  const { t } = useTranslation("issues");
   return (
     <div className="schedule-date-fields">
       <Field>
-        <FieldLabel htmlFor={startDateId}>開始日期</FieldLabel>
+        <FieldLabel htmlFor={startDateId}>{t("startDate")}</FieldLabel>
         <Input
           id={startDateId}
           type="date"
@@ -36,16 +38,16 @@ export function ScheduleDateFields({
             type="button"
             variant="ghost"
             className="schedule-date-clear"
-            aria-label="清除開始日期"
+            aria-label={t("clearStartDate")}
             disabled={disabled || !startDate}
             onClick={() => onStartDateChange("")}
           >
-            清除
+            {t("clear")}
           </Button>
         )}
       </Field>
       <Field>
-        <FieldLabel htmlFor={dueDateId}>到期日期</FieldLabel>
+        <FieldLabel htmlFor={dueDateId}>{t("dueDate")}</FieldLabel>
         <Input
           id={dueDateId}
           type="date"
@@ -58,11 +60,11 @@ export function ScheduleDateFields({
             type="button"
             variant="ghost"
             className="schedule-date-clear"
-            aria-label="清除到期日期"
+            aria-label={t("clearDueDate")}
             disabled={disabled || !dueDate}
             onClick={() => onDueDateChange("")}
           >
-            清除
+            {t("clear")}
           </Button>
         )}
       </Field>

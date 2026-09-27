@@ -1,11 +1,11 @@
 import {
   ISSUE_TYPES,
-  issueTypeDisplayName,
   issueTypeStatusFromLabels,
   type IssueType,
 } from "@gitea-portal/domain";
 import { Badge } from "./Badge";
 import { cn } from "../../lib/utils";
+import { useTranslation } from "react-i18next";
 
 type IssueTypeBadgeProps = {
   type: IssueType | null;
@@ -13,11 +13,15 @@ type IssueTypeBadgeProps = {
   className?: string;
 };
 
-function conflictValue(labelName: string): string {
+function conflictValue(
+  labelName: string,
+  translate: (key: string) => string,
+): string {
   const value = labelName.slice("type:".length);
   const knownType = ISSUE_TYPES.find((type) => type === value);
-  if (knownType) return issueTypeDisplayName(knownType);
-  return value || "空白";
+  if (knownType)
+    return translate(`type${knownType[0]!.toUpperCase()}${knownType.slice(1)}`);
+  return value || translate("blank");
 }
 
 export function IssueTypeBadge({
@@ -25,6 +29,7 @@ export function IssueTypeBadge({
   labels,
   className,
 }: IssueTypeBadgeProps) {
+  const { t } = useTranslation("issues");
   const status = issueTypeStatusFromLabels(labels);
 
   if (type) {
@@ -36,7 +41,7 @@ export function IssueTypeBadge({
           className,
         )}
       >
-        {issueTypeDisplayName(type)}
+        {t(`type${type[0]!.toUpperCase()}${type.slice(1)}`)}
       </Badge>
     );
   }
@@ -46,21 +51,21 @@ export function IssueTypeBadge({
       <Badge
         className={cn("issue-type-badge issue-type-badge--missing", className)}
       >
-        未設定
+        {t("typeMissing")}
       </Badge>
     );
   }
 
   const typeLabels = labels.filter((label) => label.name.startsWith("type:"));
-  const conflictNames = typeLabels.map((label) => conflictValue(label.name));
+  const conflictNames = typeLabels.map((label) => conflictValue(label.name, t));
 
   return (
     <span
       className={cn("issue-type-conflict", className)}
-      aria-label={`Type 衝突：${conflictNames.join("、")}`}
+      aria-label={t("typeConflictLabel", { values: conflictNames.join("、") })}
     >
       <Badge className="issue-type-badge issue-type-badge--conflict">
-        衝突
+        {t("typeConflict")}
       </Badge>
       <span className="issue-type-conflict-values">
         {typeLabels.map((label, index) => (
@@ -68,7 +73,7 @@ export function IssueTypeBadge({
             className="issue-type-badge issue-type-badge--conflict-value"
             key={`${label.name}-${index}`}
           >
-            {conflictValue(label.name)}
+            {conflictValue(label.name, t)}
           </Badge>
         ))}
       </span>

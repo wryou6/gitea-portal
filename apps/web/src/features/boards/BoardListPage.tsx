@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import { api, type Repository } from "../../lib/api";
+import { api, toUserFacingError, type Repository, type UserFacingError } from "../../lib/api";
 import { BoardEditor } from "./BoardEditor";
 import type { Board } from "./types";
 import { PageHeader } from "../../components/layout/PageHeader";
@@ -8,16 +8,18 @@ import { EmptyState } from "../../components/feedback/EmptyState";
 import { ErrorNotice } from "../../components/feedback/ErrorNotice";
 import { LoadingState } from "../../components/feedback/LoadingState";
 import { routePaths } from "../../app/routes";
+import { useTranslation } from "react-i18next";
 
 export function BoardListPage({
   viewIntent,
 }: {
   viewIntent?: "kanban" | "gantt";
 }) {
+  const { t } = useTranslation("boards");
   const [boards, setBoards] = useState<Board[]>([]);
   const [repositories, setRepositories] = useState<Repository[]>([]);
   const [editing, setEditing] = useState<Board>();
-  const [error, setError] = useState<string>();
+  const [error, setError] = useState<UserFacingError>();
   const [loading, setLoading] = useState(true);
   const load = useCallback(async () => {
     try {
@@ -29,11 +31,11 @@ export function BoardListPage({
       setRepositories(nextRepositories);
       setError(undefined);
     } catch (cause) {
-      setError(cause instanceof Error ? cause.message : "Board 無法載入");
+      setError(toUserFacingError(cause, t("boardLoadError")));
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [t]);
   useEffect(() => {
     void load();
   }, [load]);
@@ -52,14 +54,14 @@ export function BoardListPage({
   return (
     <section>
       <PageHeader
-        eyebrow={viewIntent ? "BOARD SELECTION" : "SHARED WORKSPACE"}
-        title={viewIntent ? "選擇跨庫看板" : "跨庫看板"}
+        eyebrow={t(viewIntent ? "selectionEyebrow" : "workspaceEyebrow")}
+        title={t(viewIntent ? "selectBoard" : "boardListTitle")}
         description={
           viewIntent
             ? viewIntent === "gantt"
-              ? "選擇要開啟甘特圖的 Board。"
-              : "選擇要開啟 Kanban 的 Board。"
-            : "跨 Repository 管理 Gitea Issue 的工作狀態。"
+              ? t("selectGanttBoardDescription")
+              : t("selectKanbanBoardDescription")
+            : t("boardDescription")
         }
       />
       {error && <ErrorNotice message={error} />}
@@ -91,17 +93,17 @@ export function BoardListPage({
               <>
                 <nav
                   className="board-view-links"
-                  aria-label={`${board.name} 檢視方式`}
+                  aria-label={t("boardViews", { board: board.name })}
                 >
-                  <a href={routePaths.boardView(board.id, "kanban")}>Kanban</a>
-                  <a href={routePaths.boardView(board.id, "gantt")}>甘特圖</a>
+                  <a href={routePaths.boardView(board.id, "kanban")}>{t("kanban")}</a>
+                  <a href={routePaths.boardView(board.id, "gantt")}>{t("gantt")}</a>
                 </nav>
                 <Button
                   variant="secondary"
                   type="button"
                   onClick={() => setEditing(board)}
                 >
-                  編輯
+                  {t("edit")}
                 </Button>
               </>
             )}
@@ -111,11 +113,12 @@ export function BoardListPage({
           <EmptyState>
             {viewIntent ? (
               <>
-                尚未建立跨庫看板。前往{" "}
-                <a href={routePaths.boardSettings}>跨庫看板設定</a> 建立 看板。
+                {t("noBoardsWithLink")} {" "}
+                <a href={routePaths.boardSettings}>{t("createBoardLink")}</a>{" "}
+                {t("createBoardSuffix")}
               </>
             ) : (
-              "尚未建立跨庫看板"
+              t("noBoards")
             )}
           </EmptyState>
         )}

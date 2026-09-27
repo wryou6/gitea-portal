@@ -8,7 +8,7 @@ import { giteaFor } from "../gitea/request.js";
 import { createBoard, updateBoard } from "./board-service.js";
 import { getBoardView } from "./board-view-service.js";
 import { canAccessRepository } from "../auth/permissions.js";
-import { PortalError } from "../errors.js";
+import { apiErrorResponse, PortalError } from "../errors.js";
 import { getBoardGanttView } from "./gantt-service.js";
 import { getBoardIssues } from "./board-issue-service.js";
 
@@ -30,32 +30,26 @@ export function registerBoardRoutes(
   });
   app.get("/api/boards/:id", async (request, reply) => {
     const board = await boards.get((request.params as { id: string }).id);
-    if (!board) return reply.code(404).send({ error: "Board not found" });
+    if (!board) return reply.code(404).send(apiErrorResponse("resource.not_found", "Board not found"));
     const client = giteaFor(request, config.giteaBaseUrl, config);
     if (!(await repositoriesReadable(client, board.repositoryRefs)))
-      return reply.code(403).send({
-        error: "Permission denied for one or more Board repositories",
-      });
+      return reply.code(403).send(apiErrorResponse("permission.denied", "Permission denied for one or more Board repositories"));
     return getBoardView(client, board);
   });
   app.get("/api/boards/:id/gantt", async (request, reply) => {
     const board = await boards.get((request.params as { id: string }).id);
-    if (!board) return reply.code(404).send({ error: "Board not found" });
+    if (!board) return reply.code(404).send(apiErrorResponse("resource.not_found", "Board not found"));
     const client = giteaFor(request, config.giteaBaseUrl, config);
     if (!(await repositoriesReadable(client, board.repositoryRefs)))
-      return reply.code(403).send({
-        error: "Permission denied for one or more Board repositories",
-      });
+      return reply.code(403).send(apiErrorResponse("permission.denied", "Permission denied for one or more Board repositories"));
     return getBoardGanttView(client, board);
   });
   app.get("/api/boards/:id/issues", async (request, reply) => {
     const board = await boards.get((request.params as { id: string }).id);
-    if (!board) return reply.code(404).send({ error: "Board not found" });
+    if (!board) return reply.code(404).send(apiErrorResponse("resource.not_found", "Board not found"));
     const client = giteaFor(request, config.giteaBaseUrl, config);
     if (!(await repositoriesReadable(client, board.repositoryRefs))) {
-      return reply.code(403).send({
-        error: "Permission denied for one or more Board repositories",
-      });
+      return reply.code(403).send(apiErrorResponse("permission.denied", "Permission denied for one or more Board repositories"));
     }
     const query = request.query as Record<string, string | undefined>;
     return getBoardIssues(client, board, {
@@ -81,7 +75,7 @@ export function registerBoardRoutes(
       (request.params as { id: string }).id,
       input,
     );
-    if (!board) return reply.code(404).send({ error: "Board not found" });
+    if (!board) return reply.code(404).send(apiErrorResponse("resource.not_found", "Board not found"));
     return board;
   });
   app.delete("/api/boards/:id", async (request, reply) => {

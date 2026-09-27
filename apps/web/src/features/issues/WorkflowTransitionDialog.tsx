@@ -1,8 +1,14 @@
 import { useEffect, useState } from "react";
-import { api, type Issue, type WorkflowDefinition } from "../../lib/api";
+import { api, toUserFacingError, type Issue, type UserFacingError, type WorkflowDefinition } from "../../lib/api";
 import { Button } from "../../components/ui/Button";
 import { Dialog } from "../../components/ui/Dialog";
 import { ErrorNotice } from "../../components/feedback/ErrorNotice";
+import { useTranslation } from "react-i18next";
+import {
+  workflowNextActionTranslationKey,
+  workflowReasonTranslationKey,
+  workflowStateTranslationKey,
+} from "../../i18n/workflow";
 
 type Assignee = { login: string; fullName?: string };
 
@@ -17,11 +23,12 @@ export function WorkflowTransitionDialog({
   onClose: () => void;
   onSubmit: (actionKey: string, selectedAssignee?: string) => Promise<void>;
 }) {
+  const { t } = useTranslation("issues");
   const [definition, setDefinition] = useState<WorkflowDefinition>();
   const [assignees, setAssignees] = useState<Assignee[]>([]);
   const [actionKey, setActionKey] = useState("");
   const [selectedAssignee, setSelectedAssignee] = useState("");
-  const [error, setError] = useState<string>();
+  const [error, setError] = useState<UserFacingError>();
   const [saving, setSaving] = useState(false);
   const actions =
     definition?.actions.filter(
@@ -30,9 +37,7 @@ export function WorkflowTransitionDialog({
         (!targetState || action.toState === targetState),
     ) ?? [];
   const selectedAction = actions.find((action) => action.key === actionKey);
-  const currentStateName =
-    definition?.states.find((state) => state.key === issue.workflowState)
-      ?.displayName ?? stateName(issue.workflowState);
+  const currentStateName = t(workflowStateTranslationKey(issue.workflowState));
   const requiresAssignee =
     selectedAction?.assigneePolicy === "required-handoff" ||
     (selectedAction?.assigneePolicy === "require-if-unassigned" &&
@@ -61,17 +66,19 @@ export function WorkflowTransitionDialog({
       })
       .catch((cause) => {
         if (active)
-          setError(cause instanceof Error ? cause.message : "無法載入轉換選項");
+          setError(toUserFacingError(cause, t("workflowDefinitionLoadError")));
       });
     return () => {
       active = false;
     };
-  }, [issue.name, issue.owner, issue.workflowState, targetState]);
+  }, [issue.name, issue.owner, issue.workflowState, targetState, t]);
 
   const submit = async () => {
     if (!selectedAction || (requiresAssignee && !selectedAssignee)) {
       setError(
-        requiresAssignee ? "此動作需要指定下一位負責人" : "請選擇轉換原因",
+        requiresAssignee
+          ? t("selectedActionRequiresAssignee")
+          : t("chooseTransitionReason"),
       );
       return;
     }
@@ -81,23 +88,23 @@ export function WorkflowTransitionDialog({
       await onSubmit(selectedAction.key, selectedAssignee || undefined);
       onClose();
     } catch (cause) {
-      setError(cause instanceof Error ? cause.message : "狀態轉換失敗");
+      setError(toUserFacingError(cause, t("workflowTransitionFailed")));
     } finally {
       setSaving(false);
     }
   };
 
   return (
-    <Dialog open title="選擇狀態轉換原因" onClose={onClose}>
+    <Dialog open title={t("transitionDialogTitle")} onClose={onClose}>
       <p>
         {issue.title}
         {targetState
-          ? ` · ${currentStateName} → ${definition?.states.find((state) => state.key === targetState)?.displayName ?? stateName(targetState)}`
-          : ` · 目前狀態：${currentStateName}`}
+          ? ` · ${currentStateName} → ${targetState ? t(workflowStateTranslationKey(targetState)) : ""}`
+          : ` · ${t("currentWorkflowState", { state: currentStateName })}`}
       </p>
       {actions.length ? (
         <label className="field">
-          <span>轉換原因</span>
+          <span>{t("transitionReason")}</span>
           <select
             value={actionKey}
             onChange={(event) => {
@@ -106,31 +113,28 @@ export function WorkflowTransitionDialog({
               setError(undefined);
             }}
           >
-            <option value="">選擇原因</option>
+            <option value="">{t("chooseReason")}</option>
             {actions.map((action) => (
               <option key={action.key} value={action.key}>
-                {action.reasonLabel} ·{" "}
-                {definition?.states.find(
-                  (state) => state.key === action.toState,
-                )?.displayName ?? stateName(action.toState)}{" "}
-                · 下一步：
-                {action.nextAction}
+                {t(workflowReasonTranslationKey(action.key))} · {t(workflowStateTranslationKey(action.toState))} · {t("nextAction", {
+                  action: t(workflowNextActionTranslationKey(action.nextActionKey)),
+                })}
               </option>
             ))}
           </select>
         </label>
       ) : (
-        <p>目前狀態沒有可用的轉換原因。</p>
+        <p>{t("noTransitionReasons")}</p>
       )}
       {allowsAssignee && (
         <label className="field">
-          <span>{requiresAssignee ? "下一位負責人" : "審查者（選填）"}</span>
+          <span>{requiresAssignee ? t("nextAssignee") : t("optionalReviewer")}</span>
           <select
             value={selectedAssignee}
             onChange={(event) => setSelectedAssignee(event.target.value)}
           >
             <option value="">
-              {requiresAssignee ? "選擇人員" : "保留目前名單"}
+              {requiresAssignee ? t("choosePerson") : t("keepCurrentAssignees")}
             </option>
             {assignees.map((assignee) => (
               <option key={assignee.login} value={assignee.login}>
@@ -147,7 +151,7 @@ export function WorkflowTransitionDialog({
           disabled={saving || !selectedAction}
           onClick={() => void submit()}
         >
-          {saving ? "儲存中…" : "確認轉換"}
+          {saving ? t("saving") : t("confirmTransition")}
         </Button>
         <Button
           type="button"
@@ -155,19 +159,9 @@ export function WorkflowTransitionDialog({
           disabled={saving}
           onClick={onClose}
         >
-          取消
+          {t("cancel")}
         </Button>
       </div>
     </Dialog>
   );
-}
-
-function stateName(key: string): string {
-  return key === "todo"
-    ? "待辦"
-    : key === "in-progress"
-      ? "處理中"
-      : key === "done"
-        ? "已完成"
-        : "狀態異常";
 }

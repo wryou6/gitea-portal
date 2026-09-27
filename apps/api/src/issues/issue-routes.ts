@@ -10,6 +10,7 @@ import { canAccessRepository } from "../auth/permissions.js";
 import { createIssue, updateIssue } from "./issue-command-service.js";
 import { validateComment } from "./issue-validation.js";
 import { transitionIssue } from "../boards/transition-service.js";
+import { apiErrorResponse } from "../errors.js";
 
 export async function registerIssueRoutes(
   app: FastifyInstance,
@@ -63,7 +64,7 @@ export async function registerIssueRoutes(
     const client = giteaFor(request, config.giteaBaseUrl, config);
     const repository = { owner: params.owner, name: params.repo };
     if (!(await canAccessRepository(client, repository, "create")))
-      return reply.code(403).send({ error: "Permission denied" });
+      return reply.code(403).send(apiErrorResponse("permission.denied", "Permission denied"));
     const issue = await createIssue(client, repository, request.body);
     return reply.code(201).send(issue);
   });
@@ -76,7 +77,7 @@ export async function registerIssueRoutes(
     const client = giteaFor(request, config.giteaBaseUrl, config);
     const repository = { owner: params.owner, name: params.repo };
     if (!(await canAccessRepository(client, repository, "update")))
-      return reply.code(403).send({ error: "Permission denied" });
+      return reply.code(403).send(apiErrorResponse("permission.denied", "Permission denied"));
     return updateIssue(client, repository, Number(params.number), request.body);
   });
   app.post(
@@ -126,15 +127,12 @@ export async function registerIssueRoutes(
       try {
         body = validateComment((request.body as { body?: unknown }).body);
       } catch (error) {
-        return reply.code(422).send({
-          error:
-            error instanceof Error ? error.message : "Comment body is required",
-        });
+        return reply.code(422).send(apiErrorResponse("validation.invalid_request", error instanceof Error ? error.message : "Comment body is required"));
       }
       const client = giteaFor(request, config.giteaBaseUrl, config);
       const repository = { owner: params.owner, name: params.repo };
       if (!(await canAccessRepository(client, repository, "comment")))
-        return reply.code(403).send({ error: "Permission denied" });
+        return reply.code(403).send(apiErrorResponse("permission.denied", "Permission denied"));
       const comment = await addIssueComment(
         client,
         repository,

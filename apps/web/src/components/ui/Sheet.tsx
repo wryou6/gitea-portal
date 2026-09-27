@@ -1,4 +1,5 @@
 import { useEffect, useId, useRef, type ReactNode } from "react";
+import { useTranslation } from "react-i18next";
 
 export function Sheet({
   open,
@@ -12,6 +13,7 @@ export function Sheet({
   onOpenChange: (open: boolean) => void;
 }) {
   const titleId = useId();
+  const { t } = useTranslation("common");
   const closeRef = useRef<HTMLButtonElement>(null);
   useEffect(() => {
     if (!open) return;
@@ -57,7 +59,7 @@ export function Sheet({
             className="secondary"
             onClick={() => onOpenChange(false)}
           >
-            關閉
+            {t("close")}
           </button>
         </div>
         {children}

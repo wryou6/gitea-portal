@@ -1,4 +1,49 @@
-import type { IssuePriority, IssueType } from "@gitea-portal/domain";
+import {
+  isPortalApiErrorCode,
+  type IssuePriority,
+  type IssueType,
+  type PortalApiErrorCode,
+  type PortalApiErrorParams,
+} from "@gitea-portal/domain";
+
+export class PortalApiError extends Error {
+  constructor(
+    public readonly code: PortalApiErrorCode,
+    message: string,
+    public readonly params?: PortalApiErrorParams,
+    public readonly detail?: string,
+  ) {
+    super(message);
+    this.name = "PortalApiError";
+  }
+}
+
+export type UserFacingError = string | PortalApiError;
+
+function isErrorParams(value: unknown): value is PortalApiErrorParams {
+  return (
+    typeof value === "object" &&
+    value !== null &&
+    !Array.isArray(value) &&
+    Object.values(value).every(
+      (entry) =>
+        typeof entry === "string" ||
+        typeof entry === "number" ||
+        typeof entry === "boolean",
+    )
+  );
+}
+
+export function toUserFacingError(
+  cause: unknown,
+  fallback: string,
+): UserFacingError {
+  return cause instanceof PortalApiError
+    ? cause
+    : cause instanceof Error
+      ? cause.message
+      : fallback;
+}
 
 export type Issue = {
   owner: string;
@@ -28,6 +73,7 @@ export type Issue = {
   workflowAnomaly?: { reason: string; labels: string[] };
   lastActionKey: string | null;
   nextAction: string;
+  nextActionKey: string;
 };
 export type Repository = {
   owner: string;
@@ -49,6 +95,7 @@ export type WorkflowDefinition = {
     toState: "todo" | "in-progress" | "done";
     reasonLabel: string;
     nextAction: string;
+    nextActionKey: string;
     assigneePolicy:
       | "required-handoff"
       | "optional-reviewer"
@@ -96,17 +143,31 @@ export async function api<T>(path: string, init?: RequestInit): Promise<T> {
     });
     if (!response.ok) {
       const text = await response.text();
+      let payload: {
+        error?: unknown;
+        code?: unknown;
+        params?: unknown;
+        detail?: unknown;
+      } | undefined;
       try {
-        const payload = JSON.parse(text) as { error?: string; detail?: string };
-        throw new Error(
-          [payload.error, payload.detail].filter(Boolean).join(": ") || text,
-        );
-      } catch (cause) {
-        if (cause instanceof Error && cause.message !== text) throw cause;
-        throw new Error(
-          text || `Request failed with status ${response.status}`,
-        );
+        payload = JSON.parse(text) as typeof payload;
+      } catch {
+        // Non-JSON server responses still get a localized generic summary.
       }
+      const legacyMessage =
+        typeof payload?.error === "string" ? payload.error : "";
+      const upstreamDetail =
+        typeof payload?.detail === "string" ? payload.detail : "";
+      throw new PortalApiError(
+        isPortalApiErrorCode(payload?.code)
+          ? payload.code
+          : "server.internal_error",
+        legacyMessage,
+        isErrorParams(payload?.params) ? payload.params : undefined,
+        [upstreamDetail, payload?.code && !isPortalApiErrorCode(payload.code) ? `Unknown error code: ${String(payload.code)}` : "", !payload ? text || `Request failed with status ${response.status}` : ""]
+          .filter(Boolean)
+          .join("\n\n") || undefined,
+      );
     }
     return response.status === 204
       ? (undefined as T)

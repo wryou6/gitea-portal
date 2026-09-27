@@ -26,4 +26,5 @@ export const demoIssue: Issue = {
   workflowState: "in-progress",
   lastActionKey: "start-work",
   nextAction: "開始實作",
+  nextActionKey: "implement",
 };

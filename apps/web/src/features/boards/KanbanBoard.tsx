@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import { api } from "../../lib/api";
+import { api, toUserFacingError, type UserFacingError } from "../../lib/api";
 import type {
   BoardCard,
   WorkspaceGanttView,
@@ -13,6 +13,8 @@ import { LoadingState } from "../../components/feedback/LoadingState";
 import { PageHeader } from "../../components/layout/PageHeader";
 import { routePaths } from "../../app/routes";
 import { WorkflowTransitionDialog } from "../issues/WorkflowTransitionDialog";
+import { useTranslation } from "react-i18next";
+import { formatNumber } from "../../i18n/format";
 
 export function KanbanBoard({
   boardId,
@@ -23,10 +25,11 @@ export function KanbanBoard({
   repository?: { owner: string; name: string };
   viewMode: "kanban" | "gantt";
 }) {
+  const { t, i18n } = useTranslation("boards");
   const [view, setView] = useState<WorkspaceKanbanView>();
   const [ganttView, setGanttView] = useState<WorkspaceGanttView>();
   const [dragged, setDragged] = useState<BoardCard>();
-  const [error, setError] = useState<string>();
+  const [error, setError] = useState<UserFacingError>();
   const [isMobileViewport, setIsMobileViewport] = useState(
     () => window.matchMedia("(max-width: 720px)").matches,
   );
@@ -75,15 +78,14 @@ export function KanbanBoard({
         if (clearError) setError(undefined);
       } catch (cause) {
         setError(
-          cause instanceof Error
-            ? cause.message
-            : viewMode === "gantt"
-              ? "甘特圖無法載入"
-              : "Board 無法載入",
+          toUserFacingError(
+            cause,
+            viewMode === "gantt" ? t("ganttLoadError") : t("boardLoadError"),
+          ),
         );
       }
     },
-    [boardId, repository?.owner, repository?.name, viewMode],
+    [boardId, repository?.owner, repository?.name, viewMode, t],
   );
 
   useEffect(() => {
@@ -142,7 +144,7 @@ export function KanbanBoard({
       setActiveColumnKey(pendingTransition.targetState);
       await load();
     } catch (cause) {
-      setError(cause instanceof Error ? cause.message : "狀態轉換被拒絕");
+      setError(toUserFacingError(cause, t("transitionRejected")));
       await load(false);
       throw cause;
     }
@@ -161,16 +163,16 @@ export function KanbanBoard({
             : routePaths.boardSettings
         }
       >
-        ← {repository ? "回到 Repository Issues" : "回到跨庫看板"}
+        ← {repository ? t("returnToRepositoryIssues") : t("returnToBoard")}
       </a>
       {error && <ErrorNotice message={error} />}
       <PageHeader
-        eyebrow={viewMode === "gantt" ? "GANTT WORKSPACE" : "KANBAN WORKSPACE"}
-        title={board?.name ?? repositoryView?.fullName ?? "工作區"}
+        eyebrow={t(viewMode === "gantt" ? "ganttEyebrow" : "kanbanEyebrow")}
+        title={board?.name ?? repositoryView?.fullName ?? t("workspace")}
         description={
           viewMode === "gantt"
-            ? "依 Issue 排程檢視工作時間與負責人。"
-            : "依固定工作狀態追蹤 Issues；移動時選擇原因。"
+            ? t("ganttDescription")
+            : t("kanbanDescription")
         }
       />
       {viewMode === "gantt" ? (
@@ -186,7 +188,7 @@ export function KanbanBoard({
         <>
           {isMobileViewport && (view?.columns.length ?? 0) > 0 && (
             <div className="field kanban-lane-picker">
-              <label htmlFor="kanban-active-column">狀態欄位</label>
+              <label htmlFor="kanban-active-column">{t("statusColumn")}</label>
               <select
                 id="kanban-active-column"
                 value={selectedColumnKey}
@@ -194,7 +196,7 @@ export function KanbanBoard({
               >
                 {view?.columns.map((column) => (
                   <option key={column.stateKey} value={column.stateKey}>
-                    {column.displayName}（{column.cards.length}）
+                    {column.displayName}（{formatNumber(column.cards.length, i18n.language)}）
                   </option>
                 ))}
               </select>

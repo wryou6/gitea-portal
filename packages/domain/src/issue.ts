@@ -39,4 +39,5 @@ export type IssueSummary = IssueIdentity &
     };
     lastActionKey: string | null;
     nextAction: string;
+    nextActionKey: string;
   };

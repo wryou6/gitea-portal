@@ -1,8 +1,11 @@
+import { useTranslation } from "react-i18next";
+
 export function PermissionDenied() {
+  const { t } = useTranslation("feedback");
   return (
     <div className="permission" role="alert">
-      <strong>沒有權限</strong>
-      <div>目前的 Gitea 帳號無法執行這項操作。</div>
+      <strong>{t("permissionDenied")}</strong>
+      <div>{t("permissionDeniedDescription")}</div>
     </div>
   );
 }

@@ -3,33 +3,40 @@ import {
   isCalendarDate,
   type IssueScheduleAnomaly,
 } from "@gitea-portal/domain";
+import { useTranslation } from "react-i18next";
+import { formatCalendarDate } from "../../i18n/format";
 
-export function formatScheduleDate(value: string | null): string | null {
+export function formatScheduleDate(
+  value: string | null,
+  locale = "zh-TW",
+): string | null {
   if (!value || !isCalendarDate(value)) return null;
-  return value.replaceAll("-", "/");
+  return formatCalendarDate(value, locale);
 }
 
-export function scheduleAnomalyMessage(
+export function scheduleAnomalyTranslationKey(
   anomaly?: IssueScheduleAnomaly,
 ): string {
   switch (anomaly) {
     case "invalid_start_date":
-      return "開始日期格式無效";
+      return "startDateInvalid";
     case "multiple_start_dates":
-      return "有多個開始日期";
+      return "multipleStartDates";
     case "invalid_due_date":
-      return "到期日期格式無效";
+      return "dueDateInvalid";
     case "date_range_reversed":
-      return "開始日期晚於到期日期";
+      return "dateRangeReversed";
     default:
-      return "排程日期異常";
+      return "scheduleAnomaly";
   }
 }
 
 function displayValue(
   date: string | null,
   field: "start" | "due",
+  translate: (key: string) => string,
   anomaly?: IssueScheduleAnomaly,
+  locale = "zh-TW",
 ): ReactNode {
   const fieldIsInvalid =
     (field === "start" &&
@@ -37,11 +44,11 @@ function displayValue(
         anomaly === "multiple_start_dates")) ||
     (field === "due" && anomaly === "invalid_due_date");
 
-  if (fieldIsInvalid) return "日期異常";
-  if (!date) return "未設定";
+  if (fieldIsInvalid) return translate("dateInvalid");
+  if (!date) return translate("notSet");
 
-  const formatted = formatScheduleDate(date);
-  return formatted ? <time dateTime={date}>{formatted}</time> : "日期異常";
+  const formatted = formatScheduleDate(date, locale);
+  return formatted ? <time dateTime={date}>{formatted}</time> : translate("dateInvalid");
 }
 
 export function ScheduleDates({
@@ -55,18 +62,19 @@ export function ScheduleDates({
   scheduleAnomaly?: IssueScheduleAnomaly;
   className?: string;
 }) {
+  const { t, i18n } = useTranslation("issues");
   return (
     <dl
       className={`schedule-dates${className ? ` ${className}` : ""}`}
-      aria-label="排程日期"
+      aria-label={t("scheduleDates")}
     >
       <div className="schedule-date">
-        <dt>開始</dt>
-        <dd>{displayValue(startDate, "start", scheduleAnomaly)}</dd>
+        <dt>{t("start")}</dt>
+        <dd>{displayValue(startDate, "start", t, scheduleAnomaly, i18n.language)}</dd>
       </div>
       <div className="schedule-date">
-        <dt>到期</dt>
-        <dd>{displayValue(dueDate, "due", scheduleAnomaly)}</dd>
+        <dt>{t("due")}</dt>
+        <dd>{displayValue(dueDate, "due", t, scheduleAnomaly, i18n.language)}</dd>
       </div>
     </dl>
   );

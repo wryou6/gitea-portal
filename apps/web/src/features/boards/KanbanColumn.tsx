@@ -1,5 +1,8 @@
 import { KanbanCard } from "./KanbanCard";
 import type { BoardCard } from "./types";
+import { useTranslation } from "react-i18next";
+import { formatNumber } from "../../i18n/format";
+import { workflowStateTranslationKey } from "../../i18n/workflow";
 export function KanbanColumn({
   column,
   destinations,
@@ -15,6 +18,7 @@ export function KanbanColumn({
   onDropCard: (issue: BoardCard, stateKey: string) => void;
   returnTo?: string;
 }) {
+  const { t, i18n } = useTranslation("issues");
   const canDrop = column.stateKey !== "anomaly";
   return (
     <section
@@ -27,8 +31,8 @@ export function KanbanColumn({
       }}
     >
       <h2>
-        {column.displayName}
-        <span>{column.cards.length}</span>
+        {t(workflowStateTranslationKey(column.stateKey))}
+        <span>{formatNumber(column.cards.length, i18n.language)}</span>
       </h2>
       {column.cards.map((issue) => (
         <div key={`${issue.owner}/${issue.name}#${issue.number}`}>

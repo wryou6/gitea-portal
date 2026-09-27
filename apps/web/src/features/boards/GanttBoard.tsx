@@ -1,13 +1,15 @@
 import { useEffect, useMemo, useState } from "react";
 import { EmptyState } from "../../components/feedback/EmptyState";
 import { ErrorNotice } from "../../components/feedback/ErrorNotice";
-import { api, type Issue } from "../../lib/api";
+import { api, toUserFacingError, type Issue, type UserFacingError } from "../../lib/api";
 import { routePaths } from "../../app/routes";
 import { GanttIssueRow } from "./GanttIssueRow";
 import {
   formatScheduleDate,
-  scheduleAnomalyMessage,
+  scheduleAnomalyTranslationKey,
 } from "../issues/ScheduleDates";
+import { useTranslation } from "react-i18next";
+import { formatNumber } from "../../i18n/format";
 
 function displayStart(issue: Issue): string | null {
   return issue.startDate ?? issue.dueDate;
@@ -30,9 +32,11 @@ export function GanttBoard({
   returnTo?: string;
   demo?: boolean;
 }) {
+  const { t, i18n } = useTranslation("boards");
+  const { t: tIssues } = useTranslation("issues");
   const initialQuery = new URLSearchParams(window.location.search);
   const [login, setLogin] = useState<string>();
-  const [sessionError, setSessionError] = useState<string>();
+  const [sessionError, setSessionError] = useState<UserFacingError>();
   const [assignee, setAssignee] = useState(
     initialQuery.get("gantt_assignee") ?? "self",
   );
@@ -56,13 +60,13 @@ export function GanttBoard({
       .catch((cause) => {
         if (!cancelled)
           setSessionError(
-            cause instanceof Error ? cause.message : "無法取得目前使用者",
+            toUserFacingError(cause, t("currentUserUnavailable")),
           );
       });
     return () => {
       cancelled = true;
     };
-  }, [demo]);
+  }, [demo, t]);
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -164,20 +168,20 @@ export function GanttBoard({
   };
 
   return (
-    <section className="gantt-view" aria-label="工作區甘特圖">
+    <section className="gantt-view" aria-label={t("ganttLabel")}>
       <div className="gantt-filters">
         <label className="field" htmlFor="gantt-assignee">
-          <span>目前負責人</span>
+          <span>{t("currentAssignee")}</span>
           <select
             id="gantt-assignee"
             value={assignee}
             onChange={(event) => setAssignee(event.target.value)}
           >
             <option value="self">
-              目前使用者{login ? `（${login}）` : ""}
+              {t("currentUserAssignee", { login: login ? `（${login}）` : "" })}
             </option>
-            <option value="all">所有負責人</option>
-            <option value="unassigned">未指派</option>
+            <option value="all">{t("allAssignees")}</option>
+            <option value="unassigned">{t("unassigned")}</option>
             {assignees.map((name) => (
               <option key={name} value={name}>
                 {name}
@@ -186,14 +190,14 @@ export function GanttBoard({
           </select>
         </label>
         <fieldset>
-          <legend>Issue 狀態</legend>
+          <legend>{t("issueState")}</legend>
           <label>
             <input
               type="checkbox"
               checked={showOpen}
               onChange={(event) => setShowOpen(event.target.checked)}
             />{" "}
-            Open
+            {t("open")}
           </label>
           <label>
             <input
@@ -201,19 +205,19 @@ export function GanttBoard({
               checked={showClosed}
               onChange={(event) => setShowClosed(event.target.checked)}
             />{" "}
-            Closed
+            {t("closed")}
           </label>
         </fieldset>
       </div>
       {sessionError && <ErrorNotice message={sessionError} />}
       {scheduledIssues.length > 0 && (
-        <section className="gantt-scheduled" aria-label="已排程 Issues">
+        <section className="gantt-scheduled" aria-label={t("scheduledIssues")}>
           <div className="gantt-axis" aria-hidden="true">
             <span>
-              {formatScheduleDate(new Date(minDay).toISOString().slice(0, 10))}
+              {formatScheduleDate(new Date(minDay).toISOString().slice(0, 10), i18n.language)}
             </span>
             <span>
-              {formatScheduleDate(new Date(maxDay).toISOString().slice(0, 10))}
+              {formatScheduleDate(new Date(maxDay).toISOString().slice(0, 10), i18n.language)}
             </span>
           </div>
           {scheduledIssues.map((issue) => renderIssueRow(issue, true))}
@@ -224,12 +228,12 @@ export function GanttBoard({
         aria-labelledby="gantt-unscheduled-title"
       >
         <h2 id="gantt-unscheduled-title">
-          未排程 <span>（{unscheduledIssues.length}）</span>
+          {t("unscheduled")} <span>（{formatNumber(unscheduledIssues.length, i18n.language)}）</span>
         </h2>
         {unscheduledIssues.length ? (
           unscheduledIssues.map((issue) => renderIssueRow(issue, false))
         ) : (
-          <EmptyState>沒有未排程 Issue</EmptyState>
+          <EmptyState>{t("noUnscheduledIssues")}</EmptyState>
         )}
       </section>
       {anomalousIssues.length > 0 && (
@@ -238,7 +242,7 @@ export function GanttBoard({
           aria-labelledby="gantt-anomaly-title"
         >
           <h2 id="gantt-anomaly-title">
-            日期異常 <span>（{anomalousIssues.length}）</span>
+            {t("dateAnomalies")} <span>（{formatNumber(anomalousIssues.length, i18n.language)}）</span>
           </h2>
           {anomalousIssues.map((issue) => {
             const href =
@@ -256,7 +260,7 @@ export function GanttBoard({
                 issue={issue}
                 href={href}
                 variant="anomaly"
-                anomaly={scheduleAnomalyMessage(issue.scheduleAnomaly)}
+                anomaly={tIssues(scheduleAnomalyTranslationKey(issue.scheduleAnomaly))}
               />
             );
           })}
@@ -265,8 +269,8 @@ export function GanttBoard({
       {visibleIssues.length === 0 && (
         <EmptyState>
           {assignee === "self" && !login
-            ? "載入目前使用者的 Issues…"
-            : "沒有符合篩選條件的 Issue"}
+            ? t("loadingCurrentUserIssues")
+            : t("noFilteredIssues")}
         </EmptyState>
       )}
     </section>

@@ -1,6 +1,9 @@
 import type { Comment } from "./types";
+import { useTranslation } from "react-i18next";
+import { formatDateTime } from "../../i18n/format";
 export function IssueComments({ comments }: { comments: Comment[] }) {
-  if (!comments.length) return <div className="empty">尚未有 Comment</div>;
+  const { t, i18n } = useTranslation("issues");
+  if (!comments.length) return <div className="empty">{t("noComments")}</div>;
   return (
     <div className="comments">
       {comments.map((item) => (
@@ -8,7 +11,7 @@ export function IssueComments({ comments }: { comments: Comment[] }) {
           <header>
             <strong>{item.user.login}</strong>
             <time dateTime={item.createdAt}>
-              {new Date(item.createdAt).toLocaleString("zh-TW")}
+              {formatDateTime(item.createdAt, i18n.language)}
             </time>
           </header>
           <p className="prose">{item.body}</p>

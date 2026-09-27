@@ -45,6 +45,7 @@ export const WORKFLOW_ACTIONS = [
     toState: "todo",
     reasonLabel: "重新指派負責人",
     nextAction: "開始處理",
+    nextActionKey: "begin-work",
     assigneePolicy: "required-handoff",
   },
   {
@@ -53,6 +54,7 @@ export const WORKFLOW_ACTIONS = [
     toState: "todo",
     reasonLabel: "釐清或補充需求",
     nextAction: "釐清需求",
+    nextActionKey: "clarify",
     assigneePolicy: "keep-current",
   },
   {
@@ -61,6 +63,7 @@ export const WORKFLOW_ACTIONS = [
     toState: "todo",
     reasonLabel: "等待外部回覆",
     nextAction: "內部跟進",
+    nextActionKey: "internal-follow-up",
     assigneePolicy: "keep-current",
   },
   {
@@ -69,6 +72,7 @@ export const WORKFLOW_ACTIONS = [
     toState: "todo",
     reasonLabel: "重新排期",
     nextAction: "重新排期",
+    nextActionKey: "reschedule",
     assigneePolicy: "keep-current",
   },
   {
@@ -77,6 +81,7 @@ export const WORKFLOW_ACTIONS = [
     toState: "in-progress",
     reasonLabel: "開始處理",
     nextAction: "開始實作",
+    nextActionKey: "implement",
     assigneePolicy: "require-if-unassigned",
   },
   {
@@ -85,6 +90,7 @@ export const WORKFLOW_ACTIONS = [
     toState: "done",
     reasonLabel: "重複 Issue",
     nextAction: "查看既有 Issue",
+    nextActionKey: "view-existing",
     assigneePolicy: "keep-current",
   },
   {
@@ -93,6 +99,7 @@ export const WORKFLOW_ACTIONS = [
     toState: "done",
     reasonLabel: "不處理",
     nextAction: "無後續動作",
+    nextActionKey: "no-follow-up",
     assigneePolicy: "keep-current",
   },
   {
@@ -101,6 +108,7 @@ export const WORKFLOW_ACTIONS = [
     toState: "done",
     reasonLabel: "已在其他地方完成",
     nextAction: "確認完成結果",
+    nextActionKey: "confirm-completion",
     assigneePolicy: "keep-current",
   },
   {
@@ -109,6 +117,7 @@ export const WORKFLOW_ACTIONS = [
     toState: "todo",
     reasonLabel: "暫停並重新排入待辦",
     nextAction: "開始實作",
+    nextActionKey: "implement",
     assigneePolicy: "keep-current",
   },
   {
@@ -117,6 +126,7 @@ export const WORKFLOW_ACTIONS = [
     toState: "todo",
     reasonLabel: "等待外部回覆",
     nextAction: "內部跟進",
+    nextActionKey: "internal-follow-up",
     assigneePolicy: "keep-current",
   },
   {
@@ -125,6 +135,7 @@ export const WORKFLOW_ACTIONS = [
     toState: "todo",
     reasonLabel: "重新排期",
     nextAction: "重新排期",
+    nextActionKey: "reschedule",
     assigneePolicy: "keep-current",
   },
   {
@@ -133,6 +144,7 @@ export const WORKFLOW_ACTIONS = [
     toState: "todo",
     reasonLabel: "釐清或補充需求",
     nextAction: "釐清需求",
+    nextActionKey: "clarify",
     assigneePolicy: "keep-current",
   },
   {
@@ -141,6 +153,7 @@ export const WORKFLOW_ACTIONS = [
     toState: "in-progress",
     reasonLabel: "送交審查",
     nextAction: "審查 Issue",
+    nextActionKey: "review-issue",
     assigneePolicy: "optional-reviewer",
   },
   {
@@ -149,6 +162,7 @@ export const WORKFLOW_ACTIONS = [
     toState: "in-progress",
     reasonLabel: "審查退回修改",
     nextAction: "修改並重新送審",
+    nextActionKey: "revise-and-resubmit",
     assigneePolicy: "keep-current",
   },
   {
@@ -157,6 +171,7 @@ export const WORKFLOW_ACTIONS = [
     toState: "done",
     reasonLabel: "工作完成",
     nextAction: "確認完成結果",
+    nextActionKey: "confirm-completion",
     assigneePolicy: "keep-current",
   },
   {
@@ -165,6 +180,7 @@ export const WORKFLOW_ACTIONS = [
     toState: "done",
     reasonLabel: "重複 Issue",
     nextAction: "查看既有 Issue",
+    nextActionKey: "view-existing",
     assigneePolicy: "keep-current",
   },
   {
@@ -173,6 +189,7 @@ export const WORKFLOW_ACTIONS = [
     toState: "done",
     reasonLabel: "不處理",
     nextAction: "無後續動作",
+    nextActionKey: "no-follow-up",
     assigneePolicy: "keep-current",
   },
   {
@@ -181,6 +198,7 @@ export const WORKFLOW_ACTIONS = [
     toState: "done",
     reasonLabel: "已被其他工作取代",
     nextAction: "查看取代項目",
+    nextActionKey: "view-replacement",
     assigneePolicy: "keep-current",
   },
   {
@@ -189,6 +207,7 @@ export const WORKFLOW_ACTIONS = [
     toState: "todo",
     reasonLabel: "重新評估",
     nextAction: "釐清需求",
+    nextActionKey: "clarify",
     assigneePolicy: "keep-current",
   },
   {
@@ -197,6 +216,7 @@ export const WORKFLOW_ACTIONS = [
     toState: "todo",
     reasonLabel: "需求變更，需釐清",
     nextAction: "釐清需求",
+    nextActionKey: "clarify",
     assigneePolicy: "keep-current",
   },
   {
@@ -205,6 +225,7 @@ export const WORKFLOW_ACTIONS = [
     toState: "in-progress",
     reasonLabel: "恢復處理",
     nextAction: "開始實作",
+    nextActionKey: "implement",
     assigneePolicy: "keep-current",
   },
   {
@@ -213,6 +234,7 @@ export const WORKFLOW_ACTIONS = [
     toState: "in-progress",
     reasonLabel: "驗收未通過",
     nextAction: "修正後重新驗收",
+    nextActionKey: "fix-and-retest",
     assigneePolicy: "keep-current",
   },
   {
@@ -221,6 +243,7 @@ export const WORKFLOW_ACTIONS = [
     toState: "in-progress",
     reasonLabel: "發現回歸問題",
     nextAction: "修正問題",
+    nextActionKey: "fix-issue",
     assigneePolicy: "keep-current",
   },
   {
@@ -229,6 +252,7 @@ export const WORKFLOW_ACTIONS = [
     toState: "done",
     reasonLabel: "修正結案原因",
     nextAction: "確認結案資訊",
+    nextActionKey: "confirm-close-info",
     assigneePolicy: "keep-current",
   },
 ] as const satisfies readonly {
@@ -237,6 +261,7 @@ export const WORKFLOW_ACTIONS = [
   toState: FixedWorkflowStateKey;
   reasonLabel: string;
   nextAction: string;
+  nextActionKey: string;
   assigneePolicy: AssigneePolicy;
 }[];
 

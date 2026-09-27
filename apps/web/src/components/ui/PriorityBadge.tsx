@@ -1,10 +1,10 @@
 import {
-  issuePriorityDisplayName,
   issuePriorityStatusFromLabels,
   type IssuePriority,
 } from "@gitea-portal/domain";
 import { Badge } from "./Badge";
 import { cn } from "../../lib/utils";
+import { useTranslation } from "react-i18next";
 
 export function PriorityBadge({
   priority,
@@ -15,6 +15,7 @@ export function PriorityBadge({
   labels: readonly { name: string }[];
   className?: string;
 }) {
+  const { t } = useTranslation("issues");
   const status = issuePriorityStatusFromLabels(labels);
 
   if (priority && status === "valid") {
@@ -26,7 +27,7 @@ export function PriorityBadge({
           className,
         )}
       >
-        {issuePriorityDisplayName(priority)}
+        {t(`priority${priority[0]!.toUpperCase()}${priority.slice(1)}`)}
       </Badge>
     );
   }
@@ -36,7 +37,7 @@ export function PriorityBadge({
       <Badge
         className={cn("priority-badge priority-badge--missing", className)}
       >
-        未設定優先級
+        {t("priorityMissing")}
       </Badge>
     );
   }
@@ -48,12 +49,14 @@ export function PriorityBadge({
   return (
     <span
       className={cn("priority-conflict", className)}
-      aria-label={`優先級衝突或無效：${priorityLabels
-        .map((label) => label.name.slice("priority:".length) || "空白")
-        .join("、")}`}
+      aria-label={t("priorityConflictLabel", {
+        values: priorityLabels
+          .map((label) => label.name.slice("priority:".length) || t("blank"))
+          .join("、"),
+      })}
     >
       <Badge className="priority-badge priority-badge--conflict">
-        優先級衝突／無效
+        {t("priorityConflict")}
       </Badge>
       <span className="priority-conflict-values">
         {priorityLabels.map((label, index) => (
@@ -61,7 +64,7 @@ export function PriorityBadge({
             className="priority-badge priority-badge--conflict-value"
             key={`${label.name}-${index}`}
           >
-            {label.name.slice("priority:".length) || "空白"}
+            {label.name.slice("priority:".length) || t("blank")}
           </Badge>
         ))}
       </span>

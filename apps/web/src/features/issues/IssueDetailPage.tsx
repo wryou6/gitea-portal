@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import { api, type Issue } from "../../lib/api";
+import { api, toUserFacingError, type Issue, type UserFacingError } from "../../lib/api";
 import { CommentComposer } from "./CommentComposer";
 import { IssueComments } from "./IssueComments";
 import { IssueDetailHeader } from "./IssueDetailHeader";
@@ -10,6 +10,7 @@ import { ErrorNotice } from "../../components/feedback/ErrorNotice";
 import { Button } from "../../components/ui/Button";
 import { routePaths, safeReturnTo } from "../../app/routes";
 import { WorkflowTransitionDialog } from "./WorkflowTransitionDialog";
+import { useTranslation } from "react-i18next";
 
 export function IssueDetailPage({
   owner,
@@ -20,12 +21,13 @@ export function IssueDetailPage({
   repo: string;
   number: number;
 }) {
+  const { t } = useTranslation("issues");
   const returnTo =
     safeReturnTo(new URLSearchParams(window.location.search).get("returnTo")) ??
     routePaths.issues;
   const [issue, setIssue] = useState<Issue>();
   const [comments, setComments] = useState<Comment[]>([]);
-  const [error, setError] = useState<string>();
+  const [error, setError] = useState<UserFacingError>();
   const [editing, setEditing] = useState(false);
   const [transitionOpen, setTransitionOpen] = useState(false);
   const load = useCallback(async () => {
@@ -38,33 +40,29 @@ export function IssueDetailPage({
       setIssue(nextIssue);
       setComments(nextComments);
     } catch (cause) {
-      setError(
-        cause instanceof Error
-          ? cause.message
-          : "Issue 已不存在、無權限或 Gitea 無法使用",
-      );
+      setError(toUserFacingError(cause, t("issueUnavailable")));
       setIssue(undefined);
     }
-  }, [owner, repo, number]);
+  }, [owner, repo, number, t]);
   useEffect(() => {
     void load();
   }, [load]);
   if (error)
     return (
       <section>
-        <a href={returnTo}>← 返回工作區</a>
+        <a href={returnTo}>← {t("returnToWorkspace")}</a>
         <ErrorNotice message={error} />
       </section>
     );
   if (!issue) return <LoadingState />;
   return (
     <section>
-      <a href={returnTo}>← 返回工作區</a>
+      <a href={returnTo}>← {t("returnToWorkspace")}</a>
       <div className="detail-grid">
         <div className="detail-card">
           <IssueDetailHeader issue={issue} />
           <div className="prose" style={{ margin: "1.5rem 0" }}>
-            {issue.body || "沒有 Description"}
+            {issue.body || t("noDescription")}
           </div>
           <div className="actions">
             <a
@@ -73,14 +71,14 @@ export function IssueDetailPage({
               target="_blank"
               rel="noreferrer"
             >
-              在 Gitea 開啟
+              {t("openInGitea")}
             </a>
             <Button
               variant="secondary"
               type="button"
               onClick={() => setEditing((value) => !value)}
             >
-              {editing ? "取消編輯" : "編輯 Issue"}
+              {editing ? t("cancelEdit") : t("editIssue")}
             </Button>
             <Button
               variant="secondary"
@@ -88,7 +86,7 @@ export function IssueDetailPage({
               onClick={() => setTransitionOpen(true)}
               disabled={issue.workflowState === "anomaly"}
             >
-              記錄狀態動作
+              {t("recordWorkflowAction")}
             </Button>
           </div>
           {editing && (
@@ -104,7 +102,7 @@ export function IssueDetailPage({
           )}
         </div>
         <aside className="detail-card">
-          <h2>Comments</h2>
+          <h2>{t("comments")}</h2>
           <IssueComments comments={comments} />
           <CommentComposer
             owner={owner}

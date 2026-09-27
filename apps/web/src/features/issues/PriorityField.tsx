@@ -1,12 +1,12 @@
 import {
   ISSUE_PRIORITIES,
-  issuePriorityDisplayName,
   issuePriorityStatusFromLabels,
   type IssuePriority,
 } from "@gitea-portal/domain";
 import { Field, FieldLabel } from "../../components/ui/Field";
 import { Select } from "../../components/ui/Select";
 import { cn } from "../../lib/utils";
+import { useTranslation } from "react-i18next";
 
 export function PriorityField({
   id,
@@ -21,12 +21,13 @@ export function PriorityField({
   labels?: readonly { name: string }[];
   required?: boolean;
 }) {
+  const { t } = useTranslation("issues");
   const status = labels ? issuePriorityStatusFromLabels(labels) : "valid";
   const helpId = `${id}-help`;
 
   return (
     <Field>
-      <FieldLabel htmlFor={id}>優先級</FieldLabel>
+      <FieldLabel htmlFor={id}>{t("priorityLabel")}</FieldLabel>
       <Select
         id={id}
         aria-describedby={!value && status !== "valid" ? helpId : undefined}
@@ -38,18 +39,18 @@ export function PriorityField({
         onChange={(event) => onChange(event.target.value as IssuePriority | "")}
         required={required}
       >
-        <option value="">選擇優先級</option>
+        <option value="">{t("choosePriority")}</option>
         {ISSUE_PRIORITIES.map((priority) => (
           <option key={priority} value={priority}>
-            {issuePriorityDisplayName(priority)}
+            {t(`priority${priority[0]!.toUpperCase()}${priority.slice(1)}`)}
           </option>
         ))}
       </Select>
       {!value && status !== "valid" && (
         <p id={helpId} className="priority-field-help" role="status">
           {status === "missing"
-            ? "Issue 尚未設定優先級，儲存前請選擇一級。"
-            : "Issue 的優先級有衝突或無效標籤，請選擇一級以修正。"}
+            ? t("missingPriorityBeforeSave")
+            : t("conflictingPriorityBeforeSave")}
         </p>
       )}
     </Field>

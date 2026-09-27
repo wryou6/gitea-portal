@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { resolveAppRoute, routePaths, safeReturnTo } from "../../app/routes";
 import { WorkspaceSelector } from "./WorkspaceSelector";
+import { useTranslation } from "react-i18next";
 
 const SIDEBAR_STATE_KEY = "gitea-portal:sidebar-expanded";
 
@@ -52,6 +53,7 @@ export function AppShell({
   children: ReactNode;
   login?: string;
 }) {
+  const { t } = useTranslation("common");
   const route = resolveAppRoute(
     window.location.pathname,
     window.location.search,
@@ -151,7 +153,7 @@ export function AppShell({
   }> = [
     {
       key: "issues",
-      label: "Issues",
+      label: t("issues"),
       href: repository
         ? routePaths.repositoryView(repository.owner, repository.repo, "issues")
         : boardId
@@ -162,7 +164,7 @@ export function AppShell({
     },
     {
       key: "kanban",
-      label: "Kanban",
+      label: t("kanban"),
       href: boardId
         ? routePaths.boardView(boardId, "kanban")
         : repository
@@ -177,7 +179,7 @@ export function AppShell({
     },
     {
       key: "gantt",
-      label: "Gantt Chart",
+      label: t("gantt"),
       href: boardId
         ? routePaths.boardView(boardId, "gantt")
         : repository
@@ -194,7 +196,7 @@ export function AppShell({
   if (isCrossRepositoryBoardSelected) {
     navigationItems.push({
       key: "settings",
-      label: "跨庫看板設定",
+      label: t("boardSettings"),
       href: routePaths.boardSettings,
       icon: "settings",
       active: onBoardSettings,
@@ -218,7 +220,7 @@ export function AppShell({
               ref={accountTriggerRef}
               className="account-menu-trigger"
               type="button"
-              aria-label={`目前使用者：${login}`}
+              aria-label={t("currentUser", { login })}
               aria-expanded={accountMenuOpen}
               aria-controls="account-menu-panel"
               onClick={() => setAccountMenuOpen((open) => !open)}
@@ -229,20 +231,20 @@ export function AppShell({
             <nav
               id="account-menu-panel"
               className="account-menu-panel"
-              aria-label="使用者功能"
+              aria-label={t("userMenu")}
               hidden={!accountMenuOpen}
             >
-              <a href={routePaths.settings}>設定</a>
+              <a href={routePaths.settings}>{t("settings")}</a>
             </nav>
           </div>
         )}
       </header>
       <div className="app-layout">
-        <aside className="sidebar" aria-label="工作區導覽">
+        <aside className="sidebar" aria-label={t("globalNavigation")}>
           <button
             className="sidebar-toggle"
             type="button"
-            aria-label={`${expanded ? "收合" : "展開"}側邊導覽`}
+            aria-label={t(expanded ? "collapseSidebar" : "expandSidebar")}
             aria-expanded={expanded}
             aria-controls="primary-navigation"
             onClick={toggleSidebar}
@@ -262,7 +264,7 @@ export function AppShell({
           <nav
             id="primary-navigation"
             className="sidebar-nav"
-            aria-label="主要導覽"
+            aria-label={t("globalNavigation")}
           >
             {navigationItems.map((item) => (
               <a

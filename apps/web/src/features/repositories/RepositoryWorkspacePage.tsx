@@ -2,9 +2,10 @@ import { useEffect, useState } from "react";
 import { ErrorNotice } from "../../components/feedback/ErrorNotice";
 import { LoadingState } from "../../components/feedback/LoadingState";
 import { routePaths } from "../../app/routes";
-import { api, type Repository } from "../../lib/api";
+import { api, toUserFacingError, type Repository, type UserFacingError } from "../../lib/api";
 import { IssueListPage } from "../issues/IssueListPage";
 import { KanbanBoard } from "../boards/KanbanBoard";
+import { useTranslation } from "react-i18next";
 
 type View = "issues" | "kanban" | "gantt";
 
@@ -17,8 +18,9 @@ export function RepositoryWorkspacePage({
   repo: string;
   view: View;
 }) {
+  const { t } = useTranslation("common");
   const [repository, setRepository] = useState<Repository>();
-  const [error, setError] = useState<string>();
+  const [error, setError] = useState<UserFacingError>();
 
   useEffect(() => {
     let cancelled = false;
@@ -27,7 +29,7 @@ export function RepositoryWorkspacePage({
         const match = repositories.find(
           (item) => item.owner === owner && item.name === repo,
         );
-        if (!match) throw new Error("Repository 不存在、不可讀取或已移除");
+        if (!match) throw new Error(t("repositoryUnavailable"));
         if (!cancelled) {
           setRepository(match);
           setError(undefined);
@@ -35,22 +37,18 @@ export function RepositoryWorkspacePage({
       })
       .catch((cause) => {
         if (!cancelled)
-          setError(
-            cause instanceof Error
-              ? cause.message
-              : "Repository 工作區無法載入",
-          );
+          setError(toUserFacingError(cause, t("repositoryWorkspaceLoadError")));
       });
     return () => {
       cancelled = true;
     };
-  }, [owner, repo]);
+  }, [owner, repo, t]);
 
   if (error) {
     return (
       <section>
         <ErrorNotice message={error} />
-        <a href={routePaths.issues}>返回 Issues 並重新選擇工作區</a>
+        <a href={routePaths.issues}>{t("returnToIssues")}</a>
       </section>
     );
   }

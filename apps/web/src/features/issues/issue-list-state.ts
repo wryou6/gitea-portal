@@ -1,6 +1,7 @@
 import { useCallback, useState } from "react";
-import { queryIssues, type Issue } from "../../lib/api";
+import { queryIssues, toUserFacingError, type Issue, type UserFacingError } from "../../lib/api";
 import type { IssuePage } from "../../lib/api";
+import { useTranslation } from "react-i18next";
 
 export type IssueFiltersValue = {
   q: string;
@@ -22,15 +23,16 @@ export function useIssueListState(
   page: number;
   hasNext: boolean;
   loading: boolean;
-  error?: string;
+  error?: UserFacingError;
   load: (next?: IssueFiltersValue, page?: number) => Promise<void>;
 } {
+  const { t } = useTranslation("issues");
   const [issues, setIssues] = useState<Issue[]>([]);
   const [filters, setFilters] = useState(initial);
   const [page, setPage] = useState(1);
   const [hasNext, setHasNext] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string>();
+  const [error, setError] = useState<UserFacingError>();
   const load = useCallback(
     async (next = filters, requestedPage = 1) => {
       setFilters(next);
@@ -53,14 +55,12 @@ export function useIssueListState(
       } catch (cause) {
         setIssues([]);
         setHasNext(false);
-        setError(
-          cause instanceof Error ? cause.message : "無法取得 Gitea Issues",
-        );
+        setError(toUserFacingError(cause, t("issueListLoadError")));
       } finally {
         setLoading(false);
       }
     },
-    [filters, loader],
+    [filters, loader, t],
   );
   return { issues, filters, page, hasNext, loading, error, load };
 }

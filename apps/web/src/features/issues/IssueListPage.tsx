@@ -1,4 +1,6 @@
 import { useEffect } from "react";
+import { useTranslation } from "react-i18next";
+import { formatNumber } from "../../i18n/format";
 import { IssueFilters } from "./IssueFilters";
 import { IssueRow } from "./IssueRow";
 import { useIssueListState, type IssueFiltersValue } from "./issue-list-state";
@@ -35,6 +37,7 @@ export function IssueListPage({
   repository?: { owner: string; name: string };
   demoIssues?: Issue[];
 } = {}) {
+  const { t, i18n } = useTranslation("issues");
   const initialFilters = filtersFromUrl();
   if (repository)
     initialFilters.repository = `${repository.owner}/${repository.name}`;
@@ -62,12 +65,12 @@ export function IssueListPage({
   return (
     <section>
       <PageHeader
-        eyebrow={repository ? "REPOSITORY WORKSPACE" : "CROSS-REPOSITORY"}
-        title={repository ? `${repository.owner}/${repository.name}` : "Issues"}
+        eyebrow={t(repository ? "repositoryWorkspaceEyebrow" : "crossRepositoryEyebrow")}
+        title={repository ? `${repository.owner}/${repository.name}` : t("issueListTitle")}
         description={
           repository
-            ? "查看此 Repository 的 Gitea Issues。"
-            : "從單一入口管理不同 Repository 的 Gitea Issues。"
+            ? t("repositoryIssueDescription")
+            : t("crossRepositoryIssueDescription")
         }
         action={
           <a
@@ -82,7 +85,7 @@ export function IssueListPage({
                 : routePaths.issueCreate
             }
           >
-            建立 Issue
+            {t("createIssue")}
           </a>
         }
       />
@@ -114,7 +117,7 @@ export function IssueListPage({
           />
         ))}
         {!issues.length && !loading && !error && (
-          <EmptyState>沒有符合條件的 Issue</EmptyState>
+          <EmptyState>{t("noMatchingIssues")}</EmptyState>
         )}
       </div>
       {!demoIssues && (
@@ -125,16 +128,16 @@ export function IssueListPage({
             disabled={loading || page <= 1}
             onClick={() => load(filters, page - 1)}
           >
-            上一頁
+            {t("previousPage")}
           </Button>
-          <span>第 {page} 頁</span>
+          <span>{t("pageNumber", { page: formatNumber(page, i18n.language) })}</span>
           <Button
             variant="secondary"
             type="button"
             disabled={loading || !hasNext}
             onClick={() => load(filters, page + 1)}
           >
-            下一頁
+            {t("nextPage")}
           </Button>
         </div>
       )}

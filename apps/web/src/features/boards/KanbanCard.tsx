@@ -3,8 +3,14 @@ import { Badge } from "../../components/ui/Badge";
 import { IssueTypeBadge } from "../../components/ui/IssueTypeBadge";
 import { PriorityBadge } from "../../components/ui/PriorityBadge";
 import { routePaths } from "../../app/routes";
-import { ScheduleDates, scheduleAnomalyMessage } from "../issues/ScheduleDates";
+import {
+  ScheduleDates,
+  scheduleAnomalyTranslationKey,
+} from "../issues/ScheduleDates";
 import { visibleIssueLabels } from "../issues/issueLabelPresentation";
+import { useTranslation } from "react-i18next";
+import { workflowNextActionTranslationKey } from "../../i18n/workflow";
+import { workflowStateTranslationKey } from "../../i18n/workflow";
 export function KanbanCard({
   issue,
   onDragStart,
@@ -18,6 +24,8 @@ export function KanbanCard({
   onMove: (issue: BoardCard, stateKey: string) => void;
   returnTo?: string;
 }) {
+  const { t } = useTranslation("boards");
+  const { t: tIssues } = useTranslation("issues");
   const visibleLabels = visibleIssueLabels(issue.visibleLabels);
   return (
     <article
@@ -46,7 +54,7 @@ export function KanbanCard({
       <small>
         {issue.owner}/{issue.name} #{issue.number}
       </small>
-      <small>負責人：{issue.currentOwner ?? "無"}</small>
+      <small>{t("currentAssignee")}: {issue.currentOwner ?? t("noAssignee")}</small>
       <ScheduleDates
         startDate={issue.startDate}
         dueDate={issue.dueDate}
@@ -55,34 +63,34 @@ export function KanbanCard({
       />
       {issue.scheduleStatus === "invalid" && (
         <small className="schedule-anomaly" role="status">
-          {scheduleAnomalyMessage(issue.scheduleAnomaly)}
+          {tIssues(scheduleAnomalyTranslationKey(issue.scheduleAnomaly))}
         </small>
       )}
       {visibleLabels.length > 0 && (
-        <div className="labels" aria-label="Labels">
+        <div className="labels" aria-label={t("labels")}>
           {visibleLabels.map((label) => (
             <Badge key={label.name}>{label.name}</Badge>
           ))}
         </div>
       )}
       <label className="field">
-        <span className="muted">移動至狀態</span>
+        <span className="muted">{t("moveToStatus")}</span>
         <select
-          aria-label={`移動 ${issue.title} 至狀態`}
+          aria-label={t("moveIssueToStatus", { title: issue.title })}
           value=""
           onChange={(event) => {
             if (event.target.value) onMove(issue, event.target.value);
           }}
         >
-          <option value="">選擇欄位</option>
+          <option value="">{t("selectColumn")}</option>
           {destinations.map((destination) => (
             <option key={destination.stateKey} value={destination.stateKey}>
-              {destination.displayName}
+              {tIssues(workflowStateTranslationKey(destination.stateKey))}
             </option>
           ))}
         </select>
       </label>
-      <small className="kanban-next-action">下一步：{issue.nextAction}</small>
+      <small className="kanban-next-action">{t("nextAction", { action: tIssues(workflowNextActionTranslationKey(issue.nextActionKey), { ns: "issues" }) })}</small>
     </article>
   );
 }

@@ -7,13 +7,16 @@ import { IssueFilters } from "../issues/IssueFilters";
 import { IssueRow } from "../issues/IssueRow";
 import { filtersFromUrl } from "../issues/IssueListPage";
 import { useIssueListState } from "../issues/issue-list-state";
-import { api, queryBoardIssues, type Board } from "../../lib/api";
+import { api, queryBoardIssues, toUserFacingError, type Board, type UserFacingError } from "../../lib/api";
 import { Button } from "../../components/ui/Button";
 import { routePaths } from "../../app/routes";
+import { useTranslation } from "react-i18next";
+import { formatNumber } from "../../i18n/format";
 
 export function BoardIssuesPage({ boardId }: { boardId: string }) {
+  const { t, i18n } = useTranslation("boards");
   const [board, setBoard] = useState<Board>();
-  const [boardError, setBoardError] = useState<string>();
+  const [boardError, setBoardError] = useState<UserFacingError>();
   const loader = useCallback(
     (filters: Record<string, string>) => queryBoardIssues(boardId, filters),
     [boardId],
@@ -26,19 +29,19 @@ export function BoardIssuesPage({ boardId }: { boardId: string }) {
     void api<Board[]>("/api/boards")
       .then((boards) => {
         const match = boards.find((item) => item.id === boardId);
-        if (!match) throw new Error("Board 不存在或已移除");
+        if (!match) throw new Error(t("boardUnavailable"));
         if (!cancelled) setBoard(match);
       })
       .catch((cause) => {
         if (!cancelled)
           setBoardError(
-            cause instanceof Error ? cause.message : "Board 無法載入",
+            toUserFacingError(cause, t("boardLoadError")),
           );
       });
     return () => {
       cancelled = true;
     };
-  }, [boardId]);
+  }, [boardId, t]);
 
   useEffect(() => {
     void load(
@@ -52,12 +55,12 @@ export function BoardIssuesPage({ boardId }: { boardId: string }) {
   return (
     <section>
       <PageHeader
-        eyebrow="跨庫看板"
-        title={board?.name ?? "Issues"}
+        eyebrow={t("boardSettingsEyebrow")}
+        title={board?.name ?? t("issues")}
         description={
           board?.repositoryRefs
             .map((repository) => `${repository.owner}/${repository.name}`)
-            .join(" · ") ?? "載入 Board 範圍中…"
+            .join(" · ") ?? t("boardIssuesDescription")
         }
       />
       <IssueFilters
@@ -76,7 +79,7 @@ export function BoardIssuesPage({ boardId }: { boardId: string }) {
           />
         ))}
         {!issues.length && !loading && !error && (
-          <EmptyState>沒有符合條件的 Issue</EmptyState>
+          <EmptyState>{t("boardIssuesEmpty")}</EmptyState>
         )}
       </div>
       <div className="actions pagination">
@@ -86,24 +89,24 @@ export function BoardIssuesPage({ boardId }: { boardId: string }) {
           disabled={loading || page <= 1}
           onClick={() => load(filters, page - 1)}
         >
-          上一頁
+          {t("previousPage")}
         </Button>
-        <span>第 {page} 頁</span>
+        <span>{t("pageNumber", { page: formatNumber(page, i18n.language) })}</span>
         <Button
           variant="secondary"
           type="button"
           disabled={loading || !hasNext}
           onClick={() => load(filters, page + 1)}
         >
-          下一頁
+          {t("nextPage")}
         </Button>
       </div>
-      <nav className="board-view-toggle" aria-label="Board 檢視方式">
+      <nav className="board-view-toggle" aria-label={t("boardViewNavigation")}>
         <a href={routePaths.boardIssues(boardId)} aria-current="page">
-          Issues
+          {t("issues")}
         </a>
-        <a href={routePaths.boardView(boardId, "kanban")}>Kanban</a>
-        <a href={routePaths.boardView(boardId, "gantt")}>甘特圖</a>
+        <a href={routePaths.boardView(boardId, "kanban")}>{t("kanban")}</a>
+          <a href={routePaths.boardView(boardId, "gantt")}>{t("gantt")}</a>
       </nav>
     </section>
   );

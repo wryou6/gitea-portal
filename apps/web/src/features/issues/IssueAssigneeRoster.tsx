@@ -1,19 +1,21 @@
 import type { Issue } from "../../lib/api";
+import { useTranslation } from "react-i18next";
 
 export function IssueAssigneeRoster({ issue }: { issue: Issue }) {
+  const { t } = useTranslation("issues");
   const previousHandlers = issue.currentOwner
     ? issue.assignees.filter((login) => login !== issue.currentOwner)
     : issue.assignees;
   return (
-    <section className="assignee-roster" aria-label="Issue 負責人與經手人員">
+    <section className="assignee-roster" aria-label={t("issueAssignees")}>
       {issue.state === "open" && (
         <div>
-          <strong>目前負責人</strong>
-          <span>{issue.currentOwner ?? "尚未指派"}</span>
+          <strong>{t("currentAssignee")}</strong>
+          <span>{issue.currentOwner ?? t("notAssigned")}</span>
         </div>
       )}
       <div>
-        <strong>曾經手人員</strong>
+        <strong>{t("previousAssignees")}</strong>
         {issue.assignees.length ? (
           <ol>
             {issue.assignees.map((login) => (
@@ -21,11 +23,11 @@ export function IssueAssigneeRoster({ issue }: { issue: Issue }) {
             ))}
           </ol>
         ) : (
-          <span>尚無經手人員</span>
+          <span>{t("noPreviousAssignees")}</span>
         )}
       </div>
       {issue.state === "open" && previousHandlers.length > 0 && (
-        <small>名單順序依 Gitea Assignees 保留。</small>
+        <small>{t("assigneeOrderSource")}</small>
       )}
     </section>
   );

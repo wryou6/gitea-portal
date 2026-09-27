@@ -1,6 +1,6 @@
 import { FormEvent, useState } from "react";
 import type { Issue } from "../../lib/api";
-import { api } from "../../lib/api";
+import { api, toUserFacingError, type UserFacingError } from "../../lib/api";
 import { Button } from "../../components/ui/Button";
 import { Field, FieldLabel, Input, Textarea } from "../../components/ui/Field";
 import { ErrorNotice } from "../../components/feedback/ErrorNotice";
@@ -12,6 +12,7 @@ import {
 import { IssueTypeField } from "./IssueTypeField";
 import { PriorityField } from "./PriorityField";
 import { ScheduleDateFields } from "./ScheduleDateFields";
+import { useTranslation } from "react-i18next";
 
 export function IssueEditForm({
   issue,
@@ -20,6 +21,7 @@ export function IssueEditForm({
   issue: Issue;
   onSaved: () => Promise<void>;
 }) {
+  const { t } = useTranslation("issues");
   const [title, setTitle] = useState(issue.title);
   const [body, setBody] = useState(issue.body ?? "");
   const [type, setType] = useState<IssueType | "">(issue.type ?? "");
@@ -32,7 +34,9 @@ export function IssueEditForm({
         (label) =>
           !label.name.startsWith("start-date:") &&
           !label.name.startsWith("type:") &&
-          !label.name.startsWith("priority:"),
+          !label.name.startsWith("priority:") &&
+          !label.name.startsWith("workflow:") &&
+          !label.name.startsWith("workflow-action:"),
       )
       .map((label) => label.name)
       .join(", "),
@@ -40,19 +44,19 @@ export function IssueEditForm({
   const [milestone, setMilestone] = useState(issue.milestone ?? "");
   const [startDate, setStartDate] = useState(issue.startDate ?? "");
   const [dueDate, setDueDate] = useState(issue.dueDate ?? "");
-  const [error, setError] = useState<string>();
+  const [error, setError] = useState<UserFacingError>();
   const [saving, setSaving] = useState(false);
   const issueTypeStatus = issueTypeStatusFromLabels(issue.labels);
   const submit = async (event: FormEvent) => {
     event.preventDefault();
-    if (!title.trim()) return setError("Title 不可為空白");
-    if (!type) return setError("請選擇一種 Issue Type");
-    if (!priority) return setError("請選擇一級優先級");
+    if (!title.trim()) return setError(t("titleRequired"));
+    if (!type) return setError(t("typeRequired"));
+    if (!priority) return setError(t("priorityRequired"));
     if (
       labels.split(",").some((label) => label.trim().startsWith("priority:"))
     ) {
       return setError(
-        "請使用優先級欄位設定優先級，不要將 priority:* 加入一般 Labels",
+        t("priorityLabelConflict"),
       );
     }
     setSaving(true);
@@ -77,16 +81,16 @@ export function IssueEditForm({
       });
       await onSaved();
     } catch (cause) {
-      setError(cause instanceof Error ? cause.message : "更新 Issue 失敗");
+      setError(toUserFacingError(cause, t("updateIssueFailed")));
     } finally {
       setSaving(false);
     }
   };
   return (
     <form className="stack" onSubmit={submit}>
-      <h2>編輯 Issue</h2>
+      <h2>{t("editIssueTitle")}</h2>
       <Field>
-        <FieldLabel htmlFor="edit-title">Title</FieldLabel>
+        <FieldLabel htmlFor="edit-title">{t("title")}</FieldLabel>
         <Input
           id="edit-title"
           value={title}
@@ -106,7 +110,7 @@ export function IssueEditForm({
         labels={issue.labels}
       />
       <Field>
-        <FieldLabel htmlFor="edit-body">Description</FieldLabel>
+        <FieldLabel htmlFor="edit-body">{t("description")}</FieldLabel>
         <Textarea
           id="edit-body"
           value={body}
@@ -114,10 +118,10 @@ export function IssueEditForm({
         />
       </Field>
       <Field>
-        <FieldLabel htmlFor="edit-labels">Labels</FieldLabel>
+        <FieldLabel htmlFor="edit-labels">{t("labels")}</FieldLabel>
         <Input
           id="edit-labels"
-          placeholder="label-a, label-b"
+          placeholder={t("labelsPlaceholder")}
           value={labels}
           onChange={(e) => setLabels(e.target.value)}
         />
@@ -133,16 +137,16 @@ export function IssueEditForm({
         disabled={saving}
       />
       <Field>
-        <FieldLabel htmlFor="edit-milestone">Milestone</FieldLabel>
+        <FieldLabel htmlFor="edit-milestone">{t("milestone")}</FieldLabel>
         <Input
           id="edit-milestone"
-          placeholder="Milestone"
+          placeholder={t("milestone")}
           value={milestone}
           onChange={(e) => setMilestone(e.target.value)}
         />
       </Field>
       <Button disabled={saving} type="submit">
-        {saving ? "儲存中…" : "儲存變更"}
+        {saving ? t("saving") : t("saveChanges")}
       </Button>
       {error && <ErrorNotice message={error} />}
     </form>

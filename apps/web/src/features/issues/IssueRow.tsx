@@ -3,7 +3,13 @@ import { LabelList } from "./LabelList";
 import { routePaths } from "../../app/routes";
 import { IssueTypeBadge } from "../../components/ui/IssueTypeBadge";
 import { PriorityBadge } from "../../components/ui/PriorityBadge";
-import { ScheduleDates, scheduleAnomalyMessage } from "./ScheduleDates";
+import { ScheduleDates, scheduleAnomalyTranslationKey } from "./ScheduleDates";
+import { useTranslation } from "react-i18next";
+import {
+  workflowNextActionTranslationKey,
+  workflowStateTranslationKey,
+} from "../../i18n/workflow";
+import { formatDateTime } from "../../i18n/format";
 
 export function IssueRow({
   issue,
@@ -12,6 +18,7 @@ export function IssueRow({
   issue: Issue;
   returnTo?: string;
 }) {
+  const { t, i18n } = useTranslation("issues");
   return (
     <article className={`issue-row issue-row--${issue.workflowState}`}>
       <div className="issue-row-content">
@@ -41,30 +48,24 @@ export function IssueRow({
           <span
             className={`workflow-status workflow-status--${issue.workflowState}`}
           >
-            {issue.workflowState === "todo"
-              ? "待辦"
-              : issue.workflowState === "in-progress"
-                ? "處理中"
-                : issue.workflowState === "done"
-                  ? "已完成"
-                  : "狀態異常"}
+            {t(workflowStateTranslationKey(issue.workflowState))}
           </span>
-          <span>目前負責人：{issue.currentOwner ?? "無"}</span>
-          <span>下一步：{issue.nextAction}</span>
+          <span>{t("currentAssignee")}：{issue.currentOwner ?? t("notAssigned")}</span>
+          <span>{t("nextAction", { action: t(workflowNextActionTranslationKey(issue.nextActionKey)) })}</span>
           <ScheduleDates
             startDate={issue.startDate}
             dueDate={issue.dueDate}
             scheduleAnomaly={issue.scheduleAnomaly}
             className="schedule-dates--compact"
           />
-          <span>{issue.milestone ?? "未設定 Milestone"}</span>
+          <span>{issue.milestone ?? t("notSet")}</span>
           {issue.scheduleStatus === "invalid" && (
             <span className="schedule-anomaly" role="status">
-              {scheduleAnomalyMessage(issue.scheduleAnomaly)}
+              {t(scheduleAnomalyTranslationKey(issue.scheduleAnomaly))}
             </span>
           )}
           <time dateTime={issue.updatedAt}>
-            {new Date(issue.updatedAt).toLocaleString("zh-TW")}
+            {formatDateTime(issue.updatedAt, i18n.language)}
           </time>
         </div>
       </div>

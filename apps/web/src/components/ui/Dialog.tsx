@@ -1,4 +1,5 @@
 import { useEffect, useId, useRef, type ReactNode } from "react";
+import { useTranslation } from "react-i18next";
 
 export function Dialog({
   open,
@@ -29,6 +30,7 @@ function DialogContent({
   onClose: () => void;
 }) {
   const titleId = useId();
+  const { t } = useTranslation("common");
   const dialogRef = useRef<HTMLElement>(null);
   const closeRef = useRef<HTMLButtonElement>(null);
   useEffect(() => {
@@ -85,7 +87,7 @@ function DialogContent({
             className="secondary"
             onClick={onClose}
           >
-            關閉
+            {t("close")}
           </button>
         </div>
         {children}

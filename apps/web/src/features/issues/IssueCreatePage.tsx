@@ -1,5 +1,5 @@
 import { FormEvent, useEffect, useState } from "react";
-import { api, type Issue, type Repository } from "../../lib/api";
+import { api, toUserFacingError, type Issue, type Repository, type UserFacingError } from "../../lib/api";
 import { PageHeader } from "../../components/layout/PageHeader";
 import { Button } from "../../components/ui/Button";
 import { Field, FieldLabel, Input, Textarea } from "../../components/ui/Field";
@@ -10,8 +10,10 @@ import type { IssuePriority, IssueType } from "@gitea-portal/domain";
 import { IssueTypeField } from "./IssueTypeField";
 import { PriorityField } from "./PriorityField";
 import { ScheduleDateFields } from "./ScheduleDateFields";
+import { useTranslation } from "react-i18next";
 
 export function IssueCreatePage() {
+  const { t } = useTranslation("issues");
   const params = new URLSearchParams(window.location.search);
   const requestedRepository = params.get("repository") ?? "";
   const returnTo = safeReturnTo(params.get("returnTo")) ?? routePaths.issues;
@@ -26,7 +28,7 @@ export function IssueCreatePage() {
   const [milestone, setMilestone] = useState("");
   const [startDate, setStartDate] = useState("");
   const [dueDate, setDueDate] = useState("");
-  const [error, setError] = useState<string>();
+  const [error, setError] = useState<UserFacingError>();
 
   useEffect(() => {
     void api<Repository[]>("/api/repositories")
@@ -40,27 +42,27 @@ export function IssueCreatePage() {
         } else if (!requestedRepository && items[0]) {
           setRepository(items[0].fullName);
         } else if (requestedRepository) {
-          setError("目前使用者無法建立 Issue 的目標 Repository");
+          setError(t("issueRepositoryRequired"));
         }
       })
       .catch((cause) =>
         setError(
-          cause instanceof Error ? cause.message : "無法取得可用 Repository",
+          toUserFacingError(cause, t("repositoriesUnavailable")),
         ),
       );
-  }, []);
+  }, [requestedRepository, t]);
 
   const submit = async (event: FormEvent) => {
     event.preventDefault();
     const [owner, name] = repository.split("/");
     if (!owner || !name || !title.trim() || !type || !priority) {
-      setError("請選擇 Repository、輸入 Title，並選擇 Issue Type 與優先級");
+      setError(t("requiredIssueFields"));
       return;
     }
     if (
       labels.split(",").some((label) => label.trim().startsWith("priority:"))
     ) {
-      setError("請使用優先級欄位設定優先級，不要將 priority:* 加入一般 Labels");
+      setError(t("priorityLabelConflict"));
       return;
     }
     try {
@@ -91,29 +93,29 @@ export function IssueCreatePage() {
         returnTo,
       );
     } catch (cause) {
-      setError(cause instanceof Error ? cause.message : "建立 Issue 失敗");
+      setError(toUserFacingError(cause, t("createIssueFailed")));
     }
   };
 
   return (
     <section>
-      <a href={returnTo}>← 返回工作區</a>
+      <a href={returnTo}>← {t("returnToWorkspace")}</a>
       <div className="detail-card">
         <PageHeader
-          eyebrow="NEW GITEA ISSUE"
-          title="建立 Issue"
-          description="建立後這會是選定 Repository 中的正式 Gitea Issue。"
+          eyebrow={t("createIssueEyebrow")}
+          title={t("createIssue")}
+          description={t("createIssueDescription")}
         />
         <form className="stack" onSubmit={submit}>
           <Field>
-            <FieldLabel htmlFor="new-repository">Repository</FieldLabel>
+            <FieldLabel htmlFor="new-repository">{t("repository")}</FieldLabel>
             <Select
               id="new-repository"
               value={repository}
               onChange={(event) => setRepository(event.target.value)}
               required
             >
-              <option value="">選擇 Repository</option>
+              <option value="">{t("selectRepository")}</option>
               {repositories.map((item) => (
                 <option key={item.fullName} value={item.fullName}>
                   {item.fullName}
@@ -122,10 +124,10 @@ export function IssueCreatePage() {
             </Select>
           </Field>
           <Field>
-            <FieldLabel htmlFor="new-title">Title</FieldLabel>
+            <FieldLabel htmlFor="new-title">{t("title")}</FieldLabel>
             <Input
               id="new-title"
-              placeholder="Title"
+              placeholder={t("title")}
               value={title}
               onChange={(event) => setTitle(event.target.value)}
               required
@@ -138,28 +140,28 @@ export function IssueCreatePage() {
             onChange={setPriority}
           />
           <Field>
-            <FieldLabel htmlFor="new-description">Description</FieldLabel>
+            <FieldLabel htmlFor="new-description">{t("description")}</FieldLabel>
             <Textarea
               id="new-description"
-              placeholder="Description"
+              placeholder={t("description")}
               value={body}
               onChange={(event) => setBody(event.target.value)}
             />
           </Field>
           <Field>
-            <FieldLabel htmlFor="new-assignee">Assignee（可選）</FieldLabel>
+            <FieldLabel htmlFor="new-assignee">{t("assigneeOptional")}</FieldLabel>
             <Input
               id="new-assignee"
-              placeholder="Assignee login"
+              placeholder={t("assigneeLogin")}
               value={assignee}
               onChange={(event) => setAssignee(event.target.value)}
             />
           </Field>
           <Field>
-            <FieldLabel htmlFor="new-labels">Labels（可選）</FieldLabel>
+            <FieldLabel htmlFor="new-labels">{t("labelsOptional")}</FieldLabel>
             <Input
               id="new-labels"
-              placeholder="以逗號分隔"
+              placeholder={t("commaSeparated")}
               value={labels}
               onChange={(event) => setLabels(event.target.value)}
             />
@@ -173,15 +175,15 @@ export function IssueCreatePage() {
             onDueDateChange={setDueDate}
           />
           <Field>
-            <FieldLabel htmlFor="new-milestone">Milestone（可選）</FieldLabel>
+            <FieldLabel htmlFor="new-milestone">{t("milestoneOptional")}</FieldLabel>
             <Input
               id="new-milestone"
-              placeholder="Milestone title 或 ID"
+              placeholder={t("milestoneTitleOrId")}
               value={milestone}
               onChange={(event) => setMilestone(event.target.value)}
             />
           </Field>
-          <Button type="submit">建立 Issue</Button>
+          <Button type="submit">{t("createIssue")}</Button>
           {error && <ErrorNotice message={error} />}
         </form>
       </div>

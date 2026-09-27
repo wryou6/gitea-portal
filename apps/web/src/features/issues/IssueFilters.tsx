@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Button } from "../../components/ui/Button";
 import { Field, FieldLabel, Input } from "../../components/ui/Field";
 import { Select } from "../../components/ui/Select";
+import { useTranslation } from "react-i18next";
 
 export type IssueFiltersValue = {
   q: string;
@@ -21,6 +22,7 @@ export function IssueFilters({
   onSubmit: (filters: IssueFiltersValue) => void;
   showRepository?: boolean;
 }) {
+  const { t } = useTranslation("issues");
   const [filters, setFilters] = useState<IssueFiltersValue>(initial);
   const update = (key: keyof IssueFiltersValue, value: string) =>
     setFilters((current) => ({ ...current, [key]: value }));
@@ -33,66 +35,66 @@ export function IssueFilters({
       }}
     >
       <Field>
-        <FieldLabel htmlFor="issue-search">關鍵字</FieldLabel>
+        <FieldLabel htmlFor="issue-search">{t("searchKeyword")}</FieldLabel>
         <Input
           id="issue-search"
-          placeholder="搜尋 Issue"
+          placeholder={t("searchIssues")}
           value={filters.q}
           onChange={(e) => update("q", e.target.value)}
         />
       </Field>
       {showRepository && (
         <Field>
-          <FieldLabel htmlFor="issue-repository">Repository</FieldLabel>
+          <FieldLabel htmlFor="issue-repository">{t("repository")}</FieldLabel>
           <Input
             id="issue-repository"
-            placeholder="owner/repository"
+            placeholder={t("repositoryPlaceholder")}
             value={filters.repository}
             onChange={(e) => update("repository", e.target.value)}
           />
         </Field>
       )}
       <Field>
-        <FieldLabel htmlFor="issue-state">狀態</FieldLabel>
+        <FieldLabel htmlFor="issue-state">{t("stateLabel")}</FieldLabel>
         <Select
           id="issue-state"
           value={filters.state}
           onChange={(e) => update("state", e.target.value)}
         >
-          <option value="all">全部</option>
-          <option value="todo">待辦</option>
-          <option value="in-progress">處理中</option>
-          <option value="done">已完成</option>
+          <option value="all">{t("allStatuses")}</option>
+          <option value="todo">{t("workflowTodo")}</option>
+          <option value="in-progress">{t("workflowInProgress")}</option>
+          <option value="done">{t("workflowDone")}</option>
         </Select>
       </Field>
       <Field>
-        <FieldLabel htmlFor="issue-assignee">Assignee</FieldLabel>
+        <FieldLabel htmlFor="issue-assignee">{t("assignee")}</FieldLabel>
         <Input
           id="issue-assignee"
-          placeholder="Assignee"
+          placeholder={t("assignee")}
           value={filters.assignee}
           onChange={(e) => update("assignee", e.target.value)}
         />
       </Field>
       <Field>
-        <FieldLabel htmlFor="issue-label">Label</FieldLabel>
+        <FieldLabel htmlFor="issue-label">{t("label")}</FieldLabel>
         <Input
           id="issue-label"
-          placeholder="workflow 或一般分類"
+          placeholder={t("labelFilterPlaceholder")}
           value={filters.label}
           onChange={(e) => update("label", e.target.value)}
         />
       </Field>
       <Field>
-        <FieldLabel htmlFor="issue-milestone">Milestone</FieldLabel>
+        <FieldLabel htmlFor="issue-milestone">{t("milestone")}</FieldLabel>
         <Input
           id="issue-milestone"
-          placeholder="Milestone"
+          placeholder={t("milestone")}
           value={filters.milestone}
           onChange={(e) => update("milestone", e.target.value)}
         />
       </Field>
-      <Button type="submit">搜尋</Button>
+      <Button type="submit">{t("search")}</Button>
     </form>
   );
 }

@@ -1,9 +1,10 @@
 import { FormEvent, useEffect, useState } from "react";
-import { api, type Repository } from "../../lib/api";
+import { api, toUserFacingError, type Repository, type UserFacingError } from "../../lib/api";
 import type { Board } from "./types";
 import { Button } from "../../components/ui/Button";
 import { Field, FieldLabel, Input } from "../../components/ui/Field";
 import { ErrorNotice } from "../../components/feedback/ErrorNotice";
+import { useTranslation } from "react-i18next";
 
 type Props = {
   board?: Board;
@@ -18,11 +19,12 @@ export function BoardEditor({
   onSaved,
   onCancelled,
 }: Props) {
+  const { t } = useTranslation("boards");
   const [name, setName] = useState(board?.name ?? "");
   const [selectedRepositories, setSelectedRepositories] = useState<string[]>(
     board?.repositoryRefs.map((repo) => `${repo.owner}/${repo.name}`) ?? [],
   );
-  const [error, setError] = useState<string>();
+  const [error, setError] = useState<UserFacingError>();
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
@@ -41,7 +43,7 @@ export function BoardEditor({
   const submit = async (event: FormEvent) => {
     event.preventDefault();
     if (!name.trim() || selectedRepositories.length < 2) {
-      setError("請輸入跨庫看板名稱，並選擇至少兩個不同的 Repository");
+      setError(t("boardNameAndRepositoriesRequired"));
       return;
     }
     setSaving(true);
@@ -59,21 +61,21 @@ export function BoardEditor({
       });
       await onSaved();
     } catch (cause) {
-      setError(cause instanceof Error ? cause.message : "Board 儲存失敗");
+      setError(toUserFacingError(cause, t("boardSaveError")));
     } finally {
       setSaving(false);
     }
   };
 
   const remove = async () => {
-    if (!board || !window.confirm(`確定刪除跨庫看板「${board.name}」？`))
+    if (!board || !window.confirm(t("confirmDeleteBoard", { name: board.name })))
       return;
     setSaving(true);
     try {
       await api(`/api/boards/${board.id}`, { method: "DELETE" });
       await onSaved();
     } catch (cause) {
-      setError(cause instanceof Error ? cause.message : "Board 刪除失敗");
+      setError(toUserFacingError(cause, t("boardDeleteError")));
     } finally {
       setSaving(false);
     }
@@ -83,9 +85,9 @@ export function BoardEditor({
     <form className="detail-card board-form" onSubmit={submit}>
       <div className="page-heading">
         <div>
-          <h2>{board ? "編輯跨庫看板" : "建立跨庫看板"}</h2>
+          <h2>{board ? t("editBoard") : t("createBoard")}</h2>
           <p className="muted">
-            Board 設定共享保存；Issue 資料仍以 Gitea 為準。
+            {t("boardSettingsDescription")}
           </p>
         </div>
         {board && (
@@ -95,21 +97,21 @@ export function BoardEditor({
             onClick={remove}
             disabled={saving}
           >
-            刪除 Board
+            {t("deleteBoard")}
           </Button>
         )}
       </div>
       <Field>
-        <FieldLabel htmlFor="board-name">跨庫看板名稱</FieldLabel>
+        <FieldLabel htmlFor="board-name">{t("boardName")}</FieldLabel>
         <Input
           id="board-name"
-          placeholder="跨庫看板名稱"
+          placeholder={t("boardName")}
           value={name}
           onChange={(event) => setName(event.target.value)}
         />
       </Field>
       <fieldset className="repo-picker">
-        <legend>納入看板的 Repository</legend>
+        <legend>{t("includeRepositories")}</legend>
         {repositories.length ? (
           repositories.map((repository) => {
             const key = `${repository.owner}/${repository.name}`;
@@ -125,16 +127,16 @@ export function BoardEditor({
             );
           })
         ) : (
-          <small>目前沒有可讀取的 Repository。</small>
+          <small>{t("noReadableRepositories")}</small>
         )}
       </fieldset>
       <div className="actions">
         <Button type="submit" disabled={saving}>
-          {saving ? "儲存中…" : board ? "儲存跨庫看板" : "建立跨庫看板"}
+          {saving ? t("saving") : board ? t("saveBoard") : t("createBoardAction")}
         </Button>
         {board && onCancelled && (
           <Button variant="secondary" type="button" onClick={onCancelled}>
-            取消
+            {t("cancel")}
           </Button>
         )}
       </div>

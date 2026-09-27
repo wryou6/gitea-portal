@@ -1,7 +1,9 @@
 import { useEffect, useState } from "react";
 import { resolveAppRoute, routePaths, safeReturnTo } from "../../app/routes";
-import { api, type Repository } from "../../lib/api";
+import { api, toUserFacingError, type Repository, type UserFacingError } from "../../lib/api";
+import { ErrorNotice } from "../feedback/ErrorNotice";
 import type { Board } from "../../features/boards/types";
+import { useTranslation } from "react-i18next";
 
 function routeContext() {
   const route = resolveAppRoute(
@@ -32,10 +34,11 @@ export function WorkspaceSelector({
 }: {
   onCrossRepositoryBoardSelected: (selected: boolean) => void;
 }) {
+  const { t } = useTranslation("common");
   const [repositories, setRepositories] = useState<Repository[]>([]);
   const [boards, setBoards] = useState<Board[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string>();
+  const [error, setError] = useState<UserFacingError>();
 
   useEffect(() => {
     let cancelled = false;
@@ -44,12 +47,11 @@ export function WorkspaceSelector({
       api<Board[]>("/api/boards")
         .then((nextBoards) => ({
           nextBoards,
-          error: undefined as string | undefined,
+          error: undefined as UserFacingError | undefined,
         }))
         .catch((cause) => ({
           nextBoards: [] as Board[],
-          error:
-            cause instanceof Error ? cause.message : "跨庫看板清單無法載入",
+          error: toUserFacingError(cause, t("boardListLoadError")),
         })),
     ])
       .then(([nextRepositories, boardResult]) => {
@@ -60,9 +62,7 @@ export function WorkspaceSelector({
       })
       .catch((cause) => {
         if (!cancelled)
-          setError(
-            cause instanceof Error ? cause.message : "工作區清單無法載入",
-          );
+          setError(toUserFacingError(cause, t("workspaceListLoadError")));
       })
       .finally(() => {
         if (!cancelled) setLoading(false);
@@ -70,7 +70,7 @@ export function WorkspaceSelector({
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [t]);
 
   const readableRepositories = new Set(
     repositories.map((repository) => `${repository.owner}/${repository.name}`),
@@ -112,16 +112,16 @@ export function WorkspaceSelector({
 
   return (
     <div className="workspace-selector">
-      <label htmlFor="workspace-selector">工作區</label>
+      <label htmlFor="workspace-selector">{t("workspace")}</label>
       <select
         id="workspace-selector"
-        aria-label="切換工作區"
+        aria-label={t("switchWorkspace")}
         value={selected}
         onChange={(event) => navigate(event.target.value)}
       >
-        <option value="">{loading ? "載入工作區…" : "選擇工作區"}</option>
-        <option value="all">全部 Issues</option>
-        <optgroup label="Repository 工作區">
+        <option value="">{loading ? t("loadingWorkspace") : t("selectWorkspace")}</option>
+        <option value="all">{t("allIssues")}</option>
+        <optgroup label={t("repositoryWorkspace")}>
           {repositories.map((repository) => (
             <option
               key={repository.fullName}
@@ -131,7 +131,7 @@ export function WorkspaceSelector({
             </option>
           ))}
         </optgroup>
-        <optgroup label="跨庫看板">
+        <optgroup label={t("crossRepositoryBoards")}>
           {availableBoards.map((board) => (
             <option key={board.id} value={`board:${board.id}`}>
               {board.name}
@@ -139,11 +139,7 @@ export function WorkspaceSelector({
           ))}
         </optgroup>
       </select>
-      {error && (
-        <span className="workspace-selector-error" role="alert">
-          {error}
-        </span>
-      )}
+      {error && <ErrorNotice message={error} />}
     </div>
   );
 }
