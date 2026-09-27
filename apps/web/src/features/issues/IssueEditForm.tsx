@@ -9,6 +9,8 @@ import {
   issueTypeStatusFromLabels,
   type IssueType,
 } from "@gitea-portal/domain";
+import { IssueTypeField } from "./IssueTypeField";
+import { ScheduleDateFields } from "./ScheduleDateFields";
 
 export function IssueEditForm({
   issue,
@@ -81,27 +83,12 @@ export function IssueEditForm({
           onChange={(e) => setTitle(e.target.value)}
         />
       </Field>
-      <Field>
-        <FieldLabel htmlFor="edit-type">Issue Type</FieldLabel>
-        <Select
-          id="edit-type"
-          value={type}
-          onChange={(event) => setType(event.target.value as IssueType | "")}
-          required
-        >
-          <option value="">選擇 Type</option>
-          <option value="bug">Bug：既有行為錯誤或與預期不符</option>
-          <option value="feature">Feature：新增或改變產品能力</option>
-          <option value="task">Task：文件、測試、維護或部署工作</option>
-        </Select>
-        {!type && (
-          <p className="schedule-anomaly" role="status">
-            {issueTypeStatus === "missing"
-              ? "Issue 尚未設定 Type，儲存前請選擇一種。"
-              : "Issue 的 Type 有衝突，請選擇一種以修正。"}
-          </p>
-        )}
-      </Field>
+      <IssueTypeField
+        id="edit-type"
+        value={type}
+        onChange={setType}
+        status={issueTypeStatus}
+      />
       <Field>
         <FieldLabel htmlFor="edit-body">Description</FieldLabel>
         <Textarea
@@ -139,42 +126,16 @@ export function IssueEditForm({
           onChange={(e) => setLabels(e.target.value)}
         />
       </Field>
-      <Field>
-        <FieldLabel htmlFor="edit-start-date">Start date</FieldLabel>
-        <Input
-          id="edit-start-date"
-          type="date"
-          value={startDate}
-          onChange={(event) => setStartDate(event.target.value)}
-        />
-        <Button
-          type="button"
-          variant="ghost"
-          aria-label="清除 Start date"
-          disabled={saving}
-          onClick={() => setStartDate("")}
-        >
-          清除日期
-        </Button>
-      </Field>
-      <Field>
-        <FieldLabel htmlFor="edit-due-date">Due date</FieldLabel>
-        <Input
-          id="edit-due-date"
-          type="date"
-          value={dueDate}
-          onChange={(event) => setDueDate(event.target.value)}
-        />
-        <Button
-          type="button"
-          variant="ghost"
-          aria-label="清除 Due date"
-          disabled={saving}
-          onClick={() => setDueDate("")}
-        >
-          清除日期
-        </Button>
-      </Field>
+      <ScheduleDateFields
+        startDate={startDate}
+        dueDate={dueDate}
+        startDateId="edit-start-date"
+        dueDateId="edit-due-date"
+        onStartDateChange={setStartDate}
+        onDueDateChange={setDueDate}
+        showClearButtons
+        disabled={saving}
+      />
       <Field>
         <FieldLabel htmlFor="edit-milestone">Milestone</FieldLabel>
         <Input

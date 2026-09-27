@@ -16,7 +16,15 @@ const preview: Preview = {
   },
   decorators: [
     (Story, context) => (
-      <div className={context.globals.theme === "dark" ? "dark" : ""}>
+      <div
+        className={context.globals.theme === "dark" ? "dark" : ""}
+        style={{
+          minHeight: "100vh",
+          backgroundColor: "var(--background)",
+          color: "var(--foreground)",
+          colorScheme: context.globals.theme,
+        }}
+      >
         <Story />
       </div>
     ),

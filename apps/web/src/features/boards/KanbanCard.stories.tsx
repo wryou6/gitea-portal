@@ -17,6 +17,60 @@ export const Default: Story = {
     onMove: () => undefined,
   },
 };
+
+export const StartDateOnly: Story = {
+  args: {
+    ...Default.args,
+    issue: {
+      ...card,
+      dueDate: null,
+      scheduleStatus: "scheduled",
+      labels: [
+        { name: "type:feature" },
+        { name: "priority:high" },
+        { name: "start-date:2026-09-24" },
+      ],
+      visibleLabels: [
+        { name: "type:feature" },
+        { name: "priority:high" },
+        { name: "start-date:2026-09-24" },
+      ],
+    },
+  },
+};
+
+export const Unscheduled: Story = {
+  args: {
+    ...Default.args,
+    issue: {
+      ...card,
+      startDate: null,
+      dueDate: null,
+      scheduleStatus: "unscheduled",
+      labels: [{ name: "type:feature" }, { name: "team:frontend" }],
+      visibleLabels: [{ name: "type:feature" }, { name: "team:frontend" }],
+    },
+  },
+};
+
+export const InternalScheduleLabelHidden: Story = {
+  args: {
+    ...Default.args,
+    issue: {
+      ...card,
+      labels: [
+        { name: "type:feature" },
+        { name: "start-date:2026-09-24" },
+        { name: "priority:high" },
+      ],
+      visibleLabels: [
+        { name: "type:feature" },
+        { name: "start-date:2026-09-24" },
+        { name: "priority:high" },
+      ],
+    },
+  },
+};
 export const RepairFailure: Story = {
   args: {
     ...Default.args,
@@ -28,6 +82,42 @@ export const RepairFailure: Story = {
         errorCode: "WORKFLOW_CONFLICT",
         message: "請移動至有效狀態。",
       },
+    },
+  },
+};
+
+export const BugType: Story = {
+  args: {
+    ...Default.args,
+    issue: {
+      ...card,
+      type: "bug",
+      labels: [{ name: "type:bug" }, { name: "priority:high" }],
+      visibleLabels: [{ name: "type:bug" }, { name: "priority:high" }],
+    },
+  },
+};
+
+export const MissingType: Story = {
+  args: {
+    ...Default.args,
+    issue: {
+      ...card,
+      type: null,
+      labels: [{ name: "priority:high" }],
+      visibleLabels: [{ name: "priority:high" }],
+    },
+  },
+};
+
+export const ConflictingType: Story = {
+  args: {
+    ...Default.args,
+    issue: {
+      ...card,
+      type: null,
+      labels: [{ name: "type:bug" }, { name: "type:feature" }],
+      visibleLabels: [{ name: "type:bug" }, { name: "type:feature" }],
     },
   },
 };

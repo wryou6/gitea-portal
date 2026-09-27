@@ -1,6 +1,9 @@
 import type { BoardCard } from "./types";
 import { Badge } from "../../components/ui/Badge";
+import { IssueTypeBadge } from "../../components/ui/IssueTypeBadge";
 import { routePaths } from "../../app/routes";
+import { ScheduleDates, scheduleAnomalyMessage } from "../issues/ScheduleDates";
+import { visibleIssueLabels } from "../issues/issueLabelPresentation";
 export function KanbanCard({
   issue,
   onDragStart,
@@ -15,6 +18,7 @@ export function KanbanCard({
   returnTo?: string;
 }) {
   const repair = issue.workflowRepair;
+  const visibleLabels = visibleIssueLabels(issue.visibleLabels);
   return (
     <article
       className="kanban-card"
@@ -35,13 +39,27 @@ export function KanbanCard({
       >
         {issue.title}
       </a>
+      <div className="kanban-card-type">
+        <IssueTypeBadge type={issue.type} labels={issue.labels} />
+      </div>
       <small>
         {issue.owner}/{issue.name} #{issue.number}
       </small>
       <small>{issue.assignee ?? "未指派"}</small>
-      {issue.visibleLabels.length > 0 && (
+      <ScheduleDates
+        startDate={issue.startDate}
+        dueDate={issue.dueDate}
+        scheduleAnomaly={issue.scheduleAnomaly}
+        className="schedule-dates--compact"
+      />
+      {issue.scheduleStatus === "invalid" && (
+        <small className="schedule-anomaly" role="status">
+          {scheduleAnomalyMessage(issue.scheduleAnomaly)}
+        </small>
+      )}
+      {visibleLabels.length > 0 && (
         <div className="labels" aria-label="Labels">
-          {issue.visibleLabels.map((label) => (
+          {visibleLabels.map((label) => (
             <Badge key={label.name}>{label.name}</Badge>
           ))}
         </div>

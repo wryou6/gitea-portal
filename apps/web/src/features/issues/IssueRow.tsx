@@ -1,10 +1,9 @@
 import type { Issue } from "../../lib/api";
 import { LabelList } from "./LabelList";
 import { routePaths } from "../../app/routes";
-import {
-  issueTypeDisplayName,
-  issueTypeStatusFromLabels,
-} from "@gitea-portal/domain";
+import { IssueTypeBadge } from "../../components/ui/IssueTypeBadge";
+import { ScheduleDates, scheduleAnomalyMessage } from "./ScheduleDates";
+import { visibleIssueLabels } from "./issueLabelPresentation";
 
 export function IssueRow({
   issue,
@@ -13,31 +12,27 @@ export function IssueRow({
   issue: Issue;
   returnTo?: string;
 }) {
-  const typeStatus = issueTypeStatusFromLabels(issue.labels);
-  const typeText = issue.type
-    ? issueTypeDisplayName(issue.type)
-    : typeStatus === "missing"
-      ? "未設定"
-      : "衝突";
-
   return (
     <article className="issue-row">
-      <div style={{ minWidth: 0 }}>
-        <a
-          href={
-            returnTo
-              ? routePaths.issueDetailFrom(
-                  issue.owner,
-                  issue.name,
-                  issue.number,
-                  returnTo,
-                )
-              : routePaths.issueDetail(issue.owner, issue.name, issue.number)
-          }
-          className="issue-title"
-        >
-          {issue.title}
-        </a>
+      <div className="issue-row-content">
+        <div className="issue-heading">
+          <a
+            href={
+              returnTo
+                ? routePaths.issueDetailFrom(
+                    issue.owner,
+                    issue.name,
+                    issue.number,
+                    returnTo,
+                  )
+                : routePaths.issueDetail(issue.owner, issue.name, issue.number)
+            }
+            className="issue-title"
+          >
+            {issue.title}
+          </a>
+          <IssueTypeBadge type={issue.type} labels={issue.labels} />
+        </div>
         <div className="meta">
           <span>
             {issue.owner}/{issue.name} #{issue.number}
@@ -45,19 +40,17 @@ export function IssueRow({
           <span className={issue.state}>
             {issue.state === "open" ? "Open" : "Closed"}
           </span>
-          <span
-            className={issue.type ? undefined : "schedule-anomaly"}
-            role={issue.type ? undefined : "status"}
-          >
-            Type：{typeText}
-          </span>
           <span>{issue.assignee ?? "未指派"}</span>
-          <span>Start：{issue.startDate ?? "未設定"}</span>
-          <span>Due：{issue.dueDate ?? "未設定"}</span>
+          <ScheduleDates
+            startDate={issue.startDate}
+            dueDate={issue.dueDate}
+            scheduleAnomaly={issue.scheduleAnomaly}
+            className="schedule-dates--compact"
+          />
           <span>{issue.milestone ?? "未設定 Milestone"}</span>
           {issue.scheduleStatus === "invalid" && (
             <span className="schedule-anomaly" role="status">
-              排程日期異常：{issue.scheduleAnomaly}
+              {scheduleAnomalyMessage(issue.scheduleAnomaly)}
             </span>
           )}
           <time dateTime={issue.updatedAt}>
@@ -65,7 +58,7 @@ export function IssueRow({
           </time>
         </div>
       </div>
-      <LabelList labels={issue.labels} />
+      <LabelList labels={visibleIssueLabels(issue.labels)} />
     </article>
   );
 }

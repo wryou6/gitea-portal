@@ -7,6 +7,8 @@ import { Select } from "../../components/ui/Select";
 import { ErrorNotice } from "../../components/feedback/ErrorNotice";
 import { routePaths, safeReturnTo } from "../../app/routes";
 import type { IssueType } from "@gitea-portal/domain";
+import { IssueTypeField } from "./IssueTypeField";
+import { ScheduleDateFields } from "./ScheduleDateFields";
 
 export function IssueCreatePage() {
   const params = new URLSearchParams(window.location.search);
@@ -120,22 +122,7 @@ export function IssueCreatePage() {
               required
             />
           </Field>
-          <Field>
-            <FieldLabel htmlFor="new-type">Issue Type</FieldLabel>
-            <Select
-              id="new-type"
-              value={type}
-              onChange={(event) =>
-                setType(event.target.value as IssueType | "")
-              }
-              required
-            >
-              <option value="">選擇 Type</option>
-              <option value="bug">Bug：既有行為錯誤或與預期不符</option>
-              <option value="feature">Feature：新增或改變產品能力</option>
-              <option value="task">Task：文件、測試、維護或部署工作</option>
-            </Select>
-          </Field>
+          <IssueTypeField id="new-type" value={type} onChange={setType} />
           <Field>
             <FieldLabel htmlFor="new-description">Description</FieldLabel>
             <Textarea
@@ -163,24 +150,14 @@ export function IssueCreatePage() {
               onChange={(event) => setLabels(event.target.value)}
             />
           </Field>
-          <Field>
-            <FieldLabel htmlFor="new-start-date">Start date</FieldLabel>
-            <Input
-              id="new-start-date"
-              type="date"
-              value={startDate}
-              onChange={(event) => setStartDate(event.target.value)}
-            />
-          </Field>
-          <Field>
-            <FieldLabel htmlFor="new-due-date">Due date</FieldLabel>
-            <Input
-              id="new-due-date"
-              type="date"
-              value={dueDate}
-              onChange={(event) => setDueDate(event.target.value)}
-            />
-          </Field>
+          <ScheduleDateFields
+            startDate={startDate}
+            dueDate={dueDate}
+            startDateId="new-start-date"
+            dueDateId="new-due-date"
+            onStartDateChange={setStartDate}
+            onDueDateChange={setDueDate}
+          />
           <Field>
             <FieldLabel htmlFor="new-milestone">Milestone（可選）</FieldLabel>
             <Input

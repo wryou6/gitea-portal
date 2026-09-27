@@ -1,23 +1,17 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { IssueRow } from "./IssueRow";
+import { IssueDetailHeader } from "./IssueDetailHeader";
 import { demoIssue } from "../../stories/fixtures";
 
-const meta = { title: "Issues/IssueRow", component: IssueRow } satisfies Meta<
-  typeof IssueRow
->;
+const meta = {
+  title: "Issues/IssueDetailHeader",
+  component: IssueDetailHeader,
+  args: { issue: demoIssue },
+} satisfies Meta<typeof IssueDetailHeader>;
+
 export default meta;
 type Story = StoryObj<typeof meta>;
-export const Default: Story = { args: { issue: demoIssue } };
-export const NoOptionalMetadata: Story = {
-  args: {
-    issue: {
-      ...demoIssue,
-      assignee: null,
-      milestone: null,
-      labels: [{ name: "type:feature" }],
-    },
-  },
-};
+
+export const Default: Story = {};
 
 export const StartDateOnly: Story = {
   args: {
@@ -34,17 +28,6 @@ export const StartDateOnly: Story = {
   },
 };
 
-export const DueDateOnly: Story = {
-  args: {
-    issue: {
-      ...demoIssue,
-      startDate: null,
-      scheduleStatus: "scheduled",
-      labels: [{ name: "type:feature" }, { name: "priority:high" }],
-    },
-  },
-};
-
 export const Unscheduled: Story = {
   args: {
     issue: {
@@ -57,15 +40,15 @@ export const Unscheduled: Story = {
   },
 };
 
-export const ReversedDateRange: Story = {
+export const InternalScheduleLabelHidden: Story = {
   args: {
     issue: {
       ...demoIssue,
-      startDate: "2026-09-30",
-      dueDate: "2026-09-24",
-      scheduleStatus: "invalid",
-      scheduleAnomaly: "date_range_reversed",
-      labels: [{ name: "type:feature" }, { name: "priority:high" }],
+      labels: [
+        { name: "type:feature" },
+        { name: "start-date:2026-09-24" },
+        { name: "priority:high" },
+      ],
     },
   },
 };
@@ -76,16 +59,6 @@ export const Bug: Story = {
       ...demoIssue,
       type: "bug",
       labels: [{ name: "type:bug" }, { name: "priority:high" }],
-    },
-  },
-};
-
-export const Task: Story = {
-  args: {
-    issue: {
-      ...demoIssue,
-      type: "task",
-      labels: [{ name: "type:task" }, { name: "team:frontend" }],
     },
   },
 };
@@ -106,16 +79,6 @@ export const ConflictingType: Story = {
       ...demoIssue,
       type: null,
       labels: [{ name: "type:bug" }, { name: "type:feature" }],
-    },
-  },
-};
-
-export const InvalidType: Story = {
-  args: {
-    issue: {
-      ...demoIssue,
-      type: null,
-      labels: [{ name: "type:unknown" }],
     },
   },
 };

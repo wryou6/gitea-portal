@@ -3,6 +3,11 @@ import { EmptyState } from "../../components/feedback/EmptyState";
 import { ErrorNotice } from "../../components/feedback/ErrorNotice";
 import { api, type Issue } from "../../lib/api";
 import { routePaths } from "../../app/routes";
+import { GanttIssueRow } from "./GanttIssueRow";
+import {
+  formatScheduleDate,
+  scheduleAnomalyMessage,
+} from "../issues/ScheduleDates";
 
 function displayStart(issue: Issue): string | null {
   return issue.startDate ?? issue.dueDate;
@@ -129,47 +134,26 @@ export function GanttBoard({
       start && end
         ? Math.max(((dayNumber(end) - dayNumber(start)) / daySpan) * 100, 0.35)
         : 0;
+    const href =
+      detailReturnTo || returnTo
+        ? routePaths.issueDetailFrom(
+            issue.owner,
+            issue.name,
+            issue.number,
+            detailReturnTo || returnTo!,
+          )
+        : routePaths.issueDetail(issue.owner, issue.name, issue.number);
     return (
-      <article
-        className="gantt-row"
+      <GanttIssueRow
         key={`${issue.owner}/${issue.name}#${issue.number}`}
-      >
-        <div className="gantt-issue">
-          <a
-            href={
-              detailReturnTo || returnTo
-                ? routePaths.issueDetailFrom(
-                    issue.owner,
-                    issue.name,
-                    issue.number,
-                    detailReturnTo || returnTo!,
-                  )
-                : routePaths.issueDetail(issue.owner, issue.name, issue.number)
-            }
-          >
-            {issue.title}
-          </a>
-          <small>
-            {issue.owner}/{issue.name} #{issue.number} ·{" "}
-            {issue.assignee ?? "未指派"}
-          </small>
-          <small>{start && end ? `${start} — ${end}` : "沒有排程日期"}</small>
-        </div>
-        <div
-          className="gantt-track"
-          aria-label={
-            start && end ? `${issue.title}：${start} 至 ${end}` : undefined
-          }
-        >
-          {start && end && (
-            <span
-              className="gantt-bar"
-              aria-hidden="true"
-              style={{ left: `${left}%`, width: `${width}%` }}
-            />
-          )}
-        </div>
-      </article>
+        issue={issue}
+        href={href}
+        variant={showBar ? "scheduled" : "unscheduled"}
+        start={start}
+        end={end}
+        left={left}
+        width={width}
+      />
     );
   };
 
@@ -219,8 +203,12 @@ export function GanttBoard({
       {scheduledIssues.length > 0 && (
         <section className="gantt-scheduled" aria-label="已排程 Issues">
           <div className="gantt-axis" aria-hidden="true">
-            <span>{new Date(minDay).toISOString().slice(0, 10)}</span>
-            <span>{new Date(maxDay).toISOString().slice(0, 10)}</span>
+            <span>
+              {formatScheduleDate(new Date(minDay).toISOString().slice(0, 10))}
+            </span>
+            <span>
+              {formatScheduleDate(new Date(maxDay).toISOString().slice(0, 10))}
+            </span>
           </div>
           {scheduledIssues.map((issue) => renderIssueRow(issue, true))}
         </section>
@@ -246,32 +234,26 @@ export function GanttBoard({
           <h2 id="gantt-anomaly-title">
             日期異常 <span>（{anomalousIssues.length}）</span>
           </h2>
-          {anomalousIssues.map((issue) => (
-            <article
-              className="gantt-anomaly"
-              key={`${issue.owner}/${issue.name}#${issue.number}`}
-            >
-              <a
-                href={
-                  detailReturnTo || returnTo
-                    ? routePaths.issueDetailFrom(
-                        issue.owner,
-                        issue.name,
-                        issue.number,
-                        detailReturnTo || returnTo!,
-                      )
-                    : routePaths.issueDetail(
-                        issue.owner,
-                        issue.name,
-                        issue.number,
-                      )
-                }
-              >
-                {issue.owner}/{issue.name} #{issue.number} · {issue.title}
-              </a>
-              <span role="status">{issue.scheduleAnomaly ?? "日期異常"}</span>
-            </article>
-          ))}
+          {anomalousIssues.map((issue) => {
+            const href =
+              detailReturnTo || returnTo
+                ? routePaths.issueDetailFrom(
+                    issue.owner,
+                    issue.name,
+                    issue.number,
+                    detailReturnTo || returnTo!,
+                  )
+                : routePaths.issueDetail(issue.owner, issue.name, issue.number);
+            return (
+              <GanttIssueRow
+                key={`${issue.owner}/${issue.name}#${issue.number}`}
+                issue={issue}
+                href={href}
+                variant="anomaly"
+                anomaly={scheduleAnomalyMessage(issue.scheduleAnomaly)}
+              />
+            );
+          })}
         </section>
       )}
       {visibleIssues.length === 0 && (

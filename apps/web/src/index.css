@@ -18,6 +18,18 @@
   --success: oklch(0.48 0.13 155);
   --warning: oklch(0.65 0.15 78);
   --radius: 0.5rem;
+  --issue-type-bug-foreground: #842029;
+  --issue-type-bug-background: #f8d7da;
+  --issue-type-bug-border: #f1aeb5;
+  --issue-type-feature-foreground: #084298;
+  --issue-type-feature-background: #cfe2ff;
+  --issue-type-feature-border: #9ec5fe;
+  --issue-type-task-foreground: #0f5132;
+  --issue-type-task-background: #d1e7dd;
+  --issue-type-task-border: #a3cfbb;
+  --issue-type-missing-foreground: #664d03;
+  --issue-type-missing-background: #fff3cd;
+  --issue-type-missing-border: #ffda6a;
 }
 .dark {
   --background: oklch(0.16 0.02 255);
@@ -36,6 +48,18 @@
   --ring: oklch(0.72 0.12 230);
   --success: oklch(0.68 0.13 155);
   --warning: oklch(0.76 0.14 78);
+  --issue-type-bug-foreground: #f1aeb5;
+  --issue-type-bug-background: #58151c;
+  --issue-type-bug-border: #a52834;
+  --issue-type-feature-foreground: #9ec5fe;
+  --issue-type-feature-background: #052c65;
+  --issue-type-feature-border: #084298;
+  --issue-type-task-foreground: #a3cfbb;
+  --issue-type-task-background: #0a3622;
+  --issue-type-task-border: #146c43;
+  --issue-type-missing-foreground: #ffda6a;
+  --issue-type-missing-background: #332701;
+  --issue-type-missing-border: #997404;
 }
 * {
   border-color: var(--border);
@@ -391,6 +415,23 @@ textarea:focus-visible,
   display: block;
   font-weight: 700;
 }
+.issue-row-content {
+  flex: 1;
+  min-width: 0;
+}
+.issue-heading {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.45rem 0.65rem;
+}
+.issue-heading .issue-title {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.issue-detail-type {
+  margin-top: 0.5rem;
+}
 .meta {
   display: flex;
   flex-wrap: wrap;
@@ -399,6 +440,48 @@ textarea:focus-visible,
   margin-top: 0.45rem;
   color: var(--muted-foreground);
   font-size: 0.85rem;
+}
+.schedule-dates {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.3rem 0.8rem;
+  min-width: 0;
+  margin: 0;
+}
+.schedule-date {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.3rem;
+  min-width: 0;
+}
+.schedule-date dt {
+  color: var(--muted-foreground);
+  font-size: 0.75rem;
+  font-weight: 650;
+}
+.schedule-date dd {
+  min-width: 0;
+  margin: 0;
+  color: var(--foreground);
+  font-variant-numeric: tabular-nums;
+  overflow-wrap: anywhere;
+}
+.schedule-date dd time {
+  white-space: nowrap;
+}
+.schedule-dates--compact {
+  gap: 0.25rem 0.65rem;
+  font-size: 0.85rem;
+}
+.schedule-date-fields {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+}
+.schedule-date-clear {
+  justify-self: start;
 }
 .state-open,
 .open {
@@ -422,6 +505,53 @@ textarea:focus-visible,
   padding: 0.15rem 0.5rem;
   color: var(--muted-foreground);
   font-size: 0.75rem;
+}
+.issue-type-badge {
+  flex: none;
+  border-color: var(--issue-type-border);
+  background: var(--issue-type-background);
+  color: var(--issue-type-foreground);
+  font-weight: 650;
+  line-height: 1.25;
+  white-space: nowrap;
+}
+.issue-type-badge--bug {
+  --issue-type-foreground: var(--issue-type-bug-foreground);
+  --issue-type-background: var(--issue-type-bug-background);
+  --issue-type-border: var(--issue-type-bug-border);
+}
+.issue-type-badge--feature {
+  --issue-type-foreground: var(--issue-type-feature-foreground);
+  --issue-type-background: var(--issue-type-feature-background);
+  --issue-type-border: var(--issue-type-feature-border);
+}
+.issue-type-badge--task {
+  --issue-type-foreground: var(--issue-type-task-foreground);
+  --issue-type-background: var(--issue-type-task-background);
+  --issue-type-border: var(--issue-type-task-border);
+}
+.issue-type-badge--missing,
+.issue-type-badge--conflict-value {
+  --issue-type-foreground: var(--issue-type-missing-foreground);
+  --issue-type-background: var(--issue-type-missing-background);
+  --issue-type-border: var(--issue-type-missing-border);
+}
+.issue-type-badge--conflict {
+  --issue-type-foreground: var(--issue-type-bug-foreground);
+  --issue-type-background: var(--issue-type-bug-background);
+  --issue-type-border: var(--issue-type-bug-border);
+}
+.issue-type-conflict {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.25rem;
+  min-width: 0;
+}
+.issue-type-conflict-values {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
 }
 .filters {
   display: grid;
@@ -452,6 +582,32 @@ textarea {
   background: var(--card);
   color: var(--foreground);
   padding: 0.55rem 0.65rem;
+}
+.issue-type-select {
+  border-color: var(--issue-type-border);
+  background-color: var(--issue-type-background);
+  color: var(--issue-type-foreground);
+  font-weight: 650;
+}
+.issue-type-select--bug {
+  --issue-type-foreground: var(--issue-type-bug-foreground);
+  --issue-type-background: var(--issue-type-bug-background);
+  --issue-type-border: var(--issue-type-bug-border);
+}
+.issue-type-select--feature {
+  --issue-type-foreground: var(--issue-type-feature-foreground);
+  --issue-type-background: var(--issue-type-feature-background);
+  --issue-type-border: var(--issue-type-feature-border);
+}
+.issue-type-select--task {
+  --issue-type-foreground: var(--issue-type-task-foreground);
+  --issue-type-background: var(--issue-type-task-background);
+  --issue-type-border: var(--issue-type-task-border);
+}
+.issue-type-select--empty {
+  border-color: var(--input);
+  background: var(--card);
+  color: var(--foreground);
 }
 textarea {
   min-height: 9rem;
@@ -611,6 +767,11 @@ button.danger {
 .kanban-card > a {
   font-weight: 700;
 }
+.kanban-card-type {
+  display: flex;
+  justify-content: flex-start;
+  min-width: 0;
+}
 .kanban-card small {
   color: var(--muted-foreground);
 }
@@ -722,6 +883,17 @@ button.danger {
   gap: 0.15rem;
   min-width: 0;
 }
+.gantt-issue-heading {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.35rem 0.55rem;
+  min-width: 0;
+}
+.gantt-issue-heading > a {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
 .gantt-issue > a,
 .gantt-anomaly > a {
   overflow-wrap: anywhere;
@@ -760,6 +932,9 @@ button.danger {
   border-radius: var(--radius);
   background: color-mix(in oklch, var(--warning) 8%, var(--card));
   padding: 0.8rem;
+}
+.gantt-anomaly .gantt-issue {
+  width: 100%;
 }
 .schedule-anomaly {
   color: var(--destructive);
@@ -853,6 +1028,10 @@ button.danger {
   }
   .detail-grid {
     grid-template-columns: 1fr;
+  }
+  .schedule-date-fields {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0.75rem;
   }
   .kanban-board {
     grid-auto-flow: row;
