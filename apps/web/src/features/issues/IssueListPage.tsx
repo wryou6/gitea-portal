@@ -8,6 +8,7 @@ import { LoadingState } from "../../components/feedback/LoadingState";
 import { EmptyState } from "../../components/feedback/EmptyState";
 import { ErrorNotice } from "../../components/feedback/ErrorNotice";
 import { routePaths } from "../../app/routes";
+import type { Issue } from "../../lib/api";
 
 const defaults: IssueFiltersValue = {
   q: "",
@@ -29,20 +30,34 @@ export function filtersFromUrl(): IssueFiltersValue {
 
 export function IssueListPage({
   repository,
-}: { repository?: { owner: string; name: string } } = {}) {
+  demoIssues,
+}: {
+  repository?: { owner: string; name: string };
+  demoIssues?: Issue[];
+} = {}) {
   const initialFilters = filtersFromUrl();
   if (repository)
     initialFilters.repository = `${repository.owner}/${repository.name}`;
-  const { issues, filters, page, hasNext, loading, error, load } =
-    useIssueListState(initialFilters);
+  const {
+    issues: loadedIssues,
+    filters,
+    page,
+    hasNext,
+    loading: isLoading,
+    error,
+    load,
+  } = useIssueListState(initialFilters);
+  const issues = demoIssues ?? loadedIssues;
+  const loading = demoIssues ? false : isLoading;
   useEffect(() => {
+    if (demoIssues) return;
     void load(
       repository
         ? { ...filters, repository: `${repository.owner}/${repository.name}` }
         : filters,
       Number(new URLSearchParams(window.location.search).get("page") ?? 1),
     );
-  }, [repository?.owner, repository?.name]);
+  }, [repository?.owner, repository?.name, demoIssues]);
   const returnTo = `${window.location.pathname}${window.location.search}`;
   return (
     <section>
@@ -71,21 +86,23 @@ export function IssueListPage({
           </a>
         }
       />
-      <IssueFilters
-        initial={filters}
-        onSubmit={(next) =>
-          load(
-            repository
-              ? {
-                  ...next,
-                  repository: `${repository.owner}/${repository.name}`,
-                }
-              : next,
-            1,
-          )
-        }
-        showRepository={!repository}
-      />
+      {!demoIssues && (
+        <IssueFilters
+          initial={filters}
+          onSubmit={(next) =>
+            load(
+              repository
+                ? {
+                    ...next,
+                    repository: `${repository.owner}/${repository.name}`,
+                  }
+                : next,
+              1,
+            )
+          }
+          showRepository={!repository}
+        />
+      )}
       {error && <ErrorNotice message={error} />}
       {loading && <LoadingState />}
       <div className="issue-list">
@@ -100,25 +117,27 @@ export function IssueListPage({
           <EmptyState>沒有符合條件的 Issue</EmptyState>
         )}
       </div>
-      <div className="actions pagination">
-        <Button
-          variant="secondary"
-          type="button"
-          disabled={loading || page <= 1}
-          onClick={() => load(filters, page - 1)}
-        >
-          上一頁
-        </Button>
-        <span>第 {page} 頁</span>
-        <Button
-          variant="secondary"
-          type="button"
-          disabled={loading || !hasNext}
-          onClick={() => load(filters, page + 1)}
-        >
-          下一頁
-        </Button>
-      </div>
+      {!demoIssues && (
+        <div className="actions pagination">
+          <Button
+            variant="secondary"
+            type="button"
+            disabled={loading || page <= 1}
+            onClick={() => load(filters, page - 1)}
+          >
+            上一頁
+          </Button>
+          <span>第 {page} 頁</span>
+          <Button
+            variant="secondary"
+            type="button"
+            disabled={loading || !hasNext}
+            onClick={() => load(filters, page + 1)}
+          >
+            下一頁
+          </Button>
+        </div>
+      )}
     </section>
   );
 }

@@ -7,12 +7,12 @@ import type {
 } from "./types";
 import { GanttBoard } from "./GanttBoard";
 import { KanbanColumn } from "./KanbanColumn";
-import { transitionCard } from "./card-transition";
-import { transitionRepositoryCard } from "../../lib/api";
+import { transitionIssue } from "../../lib/api";
 import { ErrorNotice } from "../../components/feedback/ErrorNotice";
 import { LoadingState } from "../../components/feedback/LoadingState";
 import { PageHeader } from "../../components/layout/PageHeader";
 import { routePaths } from "../../app/routes";
+import { WorkflowTransitionDialog } from "../issues/WorkflowTransitionDialog";
 
 export function KanbanBoard({
   boardId,
@@ -31,6 +31,10 @@ export function KanbanBoard({
     () => window.matchMedia("(max-width: 720px)").matches,
   );
   const [activeColumnKey, setActiveColumnKey] = useState<string>();
+  const [pendingTransition, setPendingTransition] = useState<{
+    issue: BoardCard;
+    targetState: string;
+  }>();
 
   useEffect(() => {
     const media = window.matchMedia("(max-width: 720px)");
@@ -119,20 +123,28 @@ export function KanbanBoard({
 
   const move = async (issue: BoardCard, stateKey: string) => {
     setDragged(undefined);
+    setPendingTransition({ issue, targetState: stateKey });
+  };
+
+  const submitTransition = async (
+    actionKey: string,
+    selectedAssignee?: string,
+  ) => {
+    if (!pendingTransition) return;
     try {
-      if (repository)
-        await transitionRepositoryCard(
-          repository.owner,
-          repository.name,
-          issue,
-          stateKey,
-        );
-      else if (boardId) await transitionCard(boardId, issue, stateKey);
-      setActiveColumnKey(stateKey);
+      await transitionIssue(
+        pendingTransition.issue.owner,
+        pendingTransition.issue.name,
+        pendingTransition.issue,
+        actionKey,
+        selectedAssignee,
+      );
+      setActiveColumnKey(pendingTransition.targetState);
       await load();
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : "狀態轉換被拒絕");
       await load(false);
+      throw cause;
     }
   };
 
@@ -153,12 +165,12 @@ export function KanbanBoard({
       </a>
       {error && <ErrorNotice message={error} />}
       <PageHeader
-        eyebrow="KANBAN WORKSPACE"
+        eyebrow={viewMode === "gantt" ? "GANTT WORKSPACE" : "KANBAN WORKSPACE"}
         title={board?.name ?? repositoryView?.fullName ?? "工作區"}
         description={
-          repositoryView?.conventionId && repositoryView.conventionVersion
-            ? `${repositoryView.conventionId}@${repositoryView.conventionVersion}${viewMode === "kanban" ? ` · ${view?.columns.length ?? 0} 個狀態欄位` : ""}`
-            : `${board?.workflowConventionId ?? ""}@${board?.workflowConventionVersion ?? ""}${viewMode === "kanban" ? ` · ${view?.columns.length ?? 0} 個狀態欄位` : ""}`
+          viewMode === "gantt"
+            ? "依 Issue 排程檢視工作時間與負責人。"
+            : "依固定工作狀態追蹤 Issues；移動時選擇原因。"
         }
       />
       {viewMode === "gantt" ? (
@@ -204,6 +216,14 @@ export function KanbanBoard({
             ))}
           </div>
         </>
+      )}
+      {pendingTransition && (
+        <WorkflowTransitionDialog
+          issue={pendingTransition.issue}
+          targetState={pendingTransition.targetState}
+          onClose={() => setPendingTransition(undefined)}
+          onSubmit={submitTransition}
+        />
       )}
     </section>
   );

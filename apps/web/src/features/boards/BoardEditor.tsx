@@ -1,15 +1,13 @@
-import { FormEvent, useEffect, useMemo, useState } from "react";
-import { api, type Repository, type WorkflowConvention } from "../../lib/api";
+import { FormEvent, useEffect, useState } from "react";
+import { api, type Repository } from "../../lib/api";
 import type { Board } from "./types";
 import { Button } from "../../components/ui/Button";
 import { Field, FieldLabel, Input } from "../../components/ui/Field";
-import { Select } from "../../components/ui/Select";
 import { ErrorNotice } from "../../components/feedback/ErrorNotice";
 
 type Props = {
   board?: Board;
   repositories: Repository[];
-  conventions: WorkflowConvention[];
   onSaved: () => Promise<void>;
   onCancelled?: () => void;
 };
@@ -17,16 +15,10 @@ type Props = {
 export function BoardEditor({
   board,
   repositories,
-  conventions,
   onSaved,
   onCancelled,
 }: Props) {
   const [name, setName] = useState(board?.name ?? "");
-  const [conventionKey, setConventionKey] = useState(
-    board
-      ? `${board.workflowConventionId}@${board.workflowConventionVersion}`
-      : "",
-  );
   const [selectedRepositories, setSelectedRepositories] = useState<string[]>(
     board?.repositoryRefs.map((repo) => `${repo.owner}/${repo.name}`) ?? [],
   );
@@ -35,30 +27,10 @@ export function BoardEditor({
 
   useEffect(() => {
     setName(board?.name ?? "");
-    setConventionKey(
-      board
-        ? `${board.workflowConventionId}@${board.workflowConventionVersion}`
-        : conventions[0]
-          ? `${conventions[0].id}@${conventions[0].version}`
-          : "",
-    );
     setSelectedRepositories(
       board?.repositoryRefs.map((repo) => `${repo.owner}/${repo.name}`) ?? [],
     );
-  }, [board, conventions]);
-
-  const convention = conventions.find(
-    (item) => `${item.id}@${item.version}` === conventionKey,
-  );
-  const compatibleRepositories = useMemo(
-    () =>
-      repositories.filter(
-        (repository) =>
-          repository.conventionId === convention?.id &&
-          repository.conventionVersion === convention?.version,
-      ),
-    [convention, repositories],
-  );
+  }, [board]);
   const toggleRepository = (repository: string) =>
     setSelectedRepositories((current) =>
       current.includes(repository)
@@ -68,23 +40,17 @@ export function BoardEditor({
 
   const submit = async (event: FormEvent) => {
     event.preventDefault();
-    if (!name.trim() || !convention || selectedRepositories.length < 2) {
-      setError(
-        "請輸入跨庫看板名稱、選擇 Workflow Convention 與至少兩個不同的相容 Repository",
-      );
+    if (!name.trim() || selectedRepositories.length < 2) {
+      setError("請輸入跨庫看板名稱，並選擇至少兩個不同的 Repository");
       return;
     }
     setSaving(true);
     setError(undefined);
-    const [workflowConventionId, workflowConventionVersion] =
-      conventionKey.split("@");
     try {
       await api(`/api/boards${board ? `/${board.id}` : ""}`, {
         method: board ? "PATCH" : "POST",
         body: JSON.stringify({
           name: name.trim(),
-          workflowConventionId,
-          workflowConventionVersion,
           repositoryRefs: selectedRepositories.map((value) => {
             const [owner, repo] = value.split("/");
             return { owner, name: repo };
@@ -142,31 +108,10 @@ export function BoardEditor({
           onChange={(event) => setName(event.target.value)}
         />
       </Field>
-      <Field>
-        <FieldLabel htmlFor="board-convention">Workflow Convention</FieldLabel>
-        <Select
-          id="board-convention"
-          value={conventionKey}
-          onChange={(event) => {
-            setConventionKey(event.target.value);
-            setSelectedRepositories([]);
-          }}
-        >
-          <option value="">選擇 Workflow Convention</option>
-          {conventions.map((item) => (
-            <option
-              key={`${item.id}@${item.version}`}
-              value={`${item.id}@${item.version}`}
-            >
-              {item.name} ({item.id}@{item.version})
-            </option>
-          ))}
-        </Select>
-      </Field>
       <fieldset className="repo-picker">
-        <legend>相容 Repository</legend>
-        {compatibleRepositories.length ? (
-          compatibleRepositories.map((repository) => {
+        <legend>納入看板的 Repository</legend>
+        {repositories.length ? (
+          repositories.map((repository) => {
             const key = `${repository.owner}/${repository.name}`;
             return (
               <label key={key}>
@@ -180,7 +125,7 @@ export function BoardEditor({
             );
           })
         ) : (
-          <small>目前沒有被指定到此 Convention 的 Repository。</small>
+          <small>目前沒有可讀取的 Repository。</small>
         )}
       </fieldset>
       <div className="actions">

@@ -15,11 +15,10 @@ export function KanbanColumn({
   onDropCard: (issue: BoardCard, stateKey: string) => void;
   returnTo?: string;
 }) {
-  const canDrop =
-    column.stateKey !== "unconfigured" && column.stateKey !== "conflict";
+  const canDrop = column.stateKey !== "anomaly";
   return (
     <section
-      className={`kanban-column${canDrop ? "" : " anomaly-column"}`}
+      className={`kanban-column kanban-column--${column.stateKey}${canDrop ? "" : " anomaly-column"}`}
       onDragOver={(event) => {
         if (canDrop) event.preventDefault();
       }}

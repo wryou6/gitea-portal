@@ -5,7 +5,6 @@ import { IssueCreatePage } from "../features/issues/IssueCreatePage";
 import { BoardListPage } from "../features/boards/BoardListPage";
 import { KanbanBoard } from "../features/boards/KanbanBoard";
 import { BoardIssuesPage } from "../features/boards/BoardIssuesPage";
-import { LegacyBoardNoticePage } from "../features/boards/LegacyBoardNoticePage";
 import { SettingsPage } from "../features/settings/SettingsPage";
 import type { Board } from "../features/boards/types";
 import { RepositoryWorkspacePage } from "../features/repositories/RepositoryWorkspacePage";
@@ -49,8 +48,6 @@ function BoardRoutePage({
 
   if (error) return <ErrorNotice message={error} />;
   if (!board) return <LoadingState />;
-  if (board.repositoryRefs.length === 1)
-    return <LegacyBoardNoticePage board={board} />;
   if (view === "issues")
     return <BoardIssuesPage key={boardId} boardId={boardId} />;
   return <KanbanBoard key={boardId} boardId={boardId} viewMode={view} />;

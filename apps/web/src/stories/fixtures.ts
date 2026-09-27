@@ -21,5 +21,9 @@ export const demoIssue: Issue = {
   scheduleStatus: "scheduled",
   updatedAt: "2026-09-24T08:00:00.000Z",
   htmlUrl: "https://gitea.invalid/demo/frontend/issues/42",
-  workflowState: "wip",
+  assignees: ["engineer"],
+  currentOwner: "engineer",
+  workflowState: "in-progress",
+  lastActionKey: "start-work",
+  nextAction: "開始實作",
 };

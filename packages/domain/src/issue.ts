@@ -1,6 +1,7 @@
 import type { RepositoryRef } from "./repository.js";
 import type { IssueType } from "./issue-type.js";
 import type { IssuePriority } from "./issue-priority.js";
+import type { FixedWorkflowStateKey } from "./workflow.js";
 
 export type IssueState = "open" | "closed";
 export type IssueIdentity = RepositoryRef & { number: number };
@@ -18,32 +19,24 @@ export type IssueSchedule = {
   scheduleStatus: IssueScheduleStatus;
   scheduleAnomaly?: IssueScheduleAnomaly;
 };
-export type WorkflowRepairErrorCode =
-  | "permission_denied"
-  | "missing_label"
-  | "concurrent_change"
-  | "external_unavailable"
-  | "persist_failed"
-  | "unknown";
-
-export type WorkflowRepair = {
-  outcome: "repaired" | "failed";
-  sourceState: "unconfigured" | "conflict";
-  errorCode?: WorkflowRepairErrorCode;
-  message?: string;
-};
-
 export type IssueSummary = IssueIdentity &
   IssueSchedule & {
     title: string;
     state: IssueState;
     assignee: string | null;
+    assignees: string[];
+    currentOwner: string | null;
     type: IssueType | null;
     priority: IssuePriority | null;
     labels: IssueLabel[];
     milestone: string | null;
     updatedAt: string;
     htmlUrl: string;
-    workflowState: string;
-    workflowRepair?: WorkflowRepair;
+    workflowState: FixedWorkflowStateKey | "anomaly";
+    workflowAnomaly?: {
+      reason: string;
+      labels: string[];
+    };
+    lastActionKey: string | null;
+    nextAction: string;
   };

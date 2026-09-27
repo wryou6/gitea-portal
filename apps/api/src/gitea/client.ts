@@ -28,6 +28,7 @@ type GiteaApiIssue = {
   body?: string;
   state?: string;
   assignee?: GiteaApiUser | null;
+  assignees?: GiteaApiUser[];
   labels?: GiteaApiLabel[];
   milestone?: { id?: number; title?: string } | null;
   due_date?: string | null;
@@ -102,6 +103,9 @@ function normalizeIssue(value: GiteaApiIssue): GiteaIssue {
     body: value.body ?? "",
     state: value.state === "closed" ? "closed" : "open",
     assignee: user(value.assignee),
+    assignees: (value.assignees ?? (value.assignee ? [value.assignee] : []))
+      .map((assignee) => user(assignee))
+      .filter((assignee): assignee is GiteaUser => assignee !== null),
     labels,
     ...schedule,
     milestone:
@@ -355,6 +359,14 @@ export class GiteaClient {
     );
   }
 
+  updateAssignees(
+    repository: RepositoryRef,
+    number: number,
+    assignees: string[],
+  ): Promise<GiteaIssue> {
+    return this.updateIssue(repository, number, { assignees });
+  }
+
   async createComment(
     repository: RepositoryRef,
     number: number,
@@ -391,6 +403,36 @@ export class GiteaClient {
       `/repos/${encodeURIComponent(repository.owner)}/${encodeURIComponent(repository.name)}/labels`,
       { method: "POST", body: JSON.stringify(input) },
     );
+  }
+
+  async ensureLabel(
+    repository: RepositoryRef,
+    name: string,
+    color = "4f46e5",
+    description?: string,
+  ): Promise<{ id: number; name: string; color: string }> {
+    const existing = (await this.labels(repository)).find(
+      (label) => label.name === name,
+    );
+    if (existing) return existing;
+    try {
+      return await this.createLabel(repository, { name, color, description });
+    } catch (error) {
+      const concurrent = (await this.labels(repository)).find(
+        (label) => label.name === name,
+      );
+      if (concurrent) return concurrent;
+      throw error;
+    }
+  }
+
+  async assignees(repository: RepositoryRef): Promise<GiteaUser[]> {
+    const users = await this.request<GiteaApiUser[]>(
+      `/repos/${encodeURIComponent(repository.owner)}/${encodeURIComponent(repository.name)}/assignees`,
+    );
+    return users
+      .map((candidate) => user(candidate))
+      .filter((candidate): candidate is GiteaUser => candidate !== null);
   }
 
   async milestones(

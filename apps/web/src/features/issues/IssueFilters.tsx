@@ -60,8 +60,9 @@ export function IssueFilters({
           onChange={(e) => update("state", e.target.value)}
         >
           <option value="all">全部</option>
-          <option value="open">Open</option>
-          <option value="closed">Closed</option>
+          <option value="todo">待辦</option>
+          <option value="in-progress">處理中</option>
+          <option value="done">已完成</option>
         </Select>
       </Field>
       <Field>

@@ -4,8 +4,12 @@ import { Badge } from "../../components/ui/Badge";
 import { IssueTypeBadge } from "../../components/ui/IssueTypeBadge";
 import { PriorityBadge } from "../../components/ui/PriorityBadge";
 import { ScheduleDates, scheduleAnomalyMessage } from "./ScheduleDates";
-import { visibleIssueLabels } from "./issueLabelPresentation";
+import { WORKFLOW_ACTIONS } from "@gitea-portal/domain";
+import { IssueAssigneeRoster } from "./IssueAssigneeRoster";
 export function IssueDetailHeader({ issue }: { issue: Issue }) {
+  const action = WORKFLOW_ACTIONS.find(
+    (candidate) => candidate.key === issue.lastActionKey,
+  );
   return (
     <>
       <p className="eyebrow">
@@ -17,10 +21,17 @@ export function IssueDetailHeader({ issue }: { issue: Issue }) {
         <PriorityBadge priority={issue.priority} labels={issue.labels} />
       </div>
       <div className="meta">
-        <Badge className={issue.state}>
-          {issue.state === "open" ? "Open" : "Closed"}
+        <Badge className={`workflow-status--${issue.workflowState}`}>
+          {issue.workflowState === "todo"
+            ? "待辦"
+            : issue.workflowState === "in-progress"
+              ? "處理中"
+              : issue.workflowState === "done"
+                ? "已完成"
+                : "狀態異常"}
         </Badge>
-        <span>Assignee：{issue.assignee ?? "未指派"}</span>
+        <span>下一步：{issue.nextAction}</span>
+        {action && <span>最後原因：{action.reasonLabel}</span>}
         <ScheduleDates
           startDate={issue.startDate}
           dueDate={issue.dueDate}
@@ -37,7 +48,8 @@ export function IssueDetailHeader({ issue }: { issue: Issue }) {
           {scheduleAnomalyMessage(issue.scheduleAnomaly)}
         </p>
       )}
-      <LabelList labels={visibleIssueLabels(issue.labels)} />
+      <IssueAssigneeRoster issue={issue} />
+      <LabelList labels={issue.labels} />
     </>
   );
 }

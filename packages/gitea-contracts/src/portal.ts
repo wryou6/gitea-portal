@@ -5,8 +5,6 @@ import type {
   BoardGanttView as DomainBoardGanttView,
   IssueSummary,
   RepositoryWorkspace,
-  WorkflowConvention,
-  WorkflowRepair,
 } from "@gitea-portal/domain";
 import type { GiteaRepository } from "./gitea.js";
 
@@ -16,7 +14,6 @@ export type IssuePage = {
   limit: number;
   hasNext: boolean;
 };
-export type WorkflowRepairView = WorkflowRepair;
 export type BoardCard = DomainBoardCard;
 export type BoardView = {
   board: Board;
@@ -30,18 +27,18 @@ export type BoardIssuePage = {
   limit: number;
   hasNext: boolean;
 };
-export type RepositoryWorkspaceView = GiteaRepository &
-  Pick<RepositoryWorkspace, "conventionId" | "conventionVersion">;
+export type RepositoryWorkspaceView = GiteaRepository;
 export type RepositoryKanbanView = {
   repository: RepositoryWorkspaceView;
-  conventionId: string;
-  conventionVersion: string;
   columns: BoardColumn[];
 };
 export type RepositoryGanttView = {
   repository: RepositoryWorkspaceView;
   issues: IssueSummary[];
 };
-export type WorkflowTransitionInput = { stateKey: string };
+export type WorkflowTransitionInput = {
+  actionKey: string;
+  selectedAssignee?: string;
+  expectedUpdatedAt: string;
+};
 export type Session = { login: string; displayName?: string };
-export type WorkflowConventionView = WorkflowConvention;

@@ -3,7 +3,6 @@ import type { Issue } from "../../lib/api";
 import { api } from "../../lib/api";
 import { Button } from "../../components/ui/Button";
 import { Field, FieldLabel, Input, Textarea } from "../../components/ui/Field";
-import { Select } from "../../components/ui/Select";
 import { ErrorNotice } from "../../components/feedback/ErrorNotice";
 import {
   issueTypeStatusFromLabels,
@@ -27,7 +26,6 @@ export function IssueEditForm({
   const [priority, setPriority] = useState<IssuePriority | "">(
     issue.priority ?? "",
   );
-  const [assignee, setAssignee] = useState(issue.assignee ?? "");
   const [labels, setLabels] = useState(
     issue.labels
       .filter(
@@ -42,7 +40,6 @@ export function IssueEditForm({
   const [milestone, setMilestone] = useState(issue.milestone ?? "");
   const [startDate, setStartDate] = useState(issue.startDate ?? "");
   const [dueDate, setDueDate] = useState(issue.dueDate ?? "");
-  const [state, setState] = useState(issue.state);
   const [error, setError] = useState<string>();
   const [saving, setSaving] = useState(false);
   const issueTypeStatus = issueTypeStatusFromLabels(issue.labels);
@@ -69,8 +66,6 @@ export function IssueEditForm({
           type,
           priority,
           body,
-          state,
-          assignee: assignee || null,
           labels: labels
             .split(",")
             .map((item) => item.trim())
@@ -116,26 +111,6 @@ export function IssueEditForm({
           id="edit-body"
           value={body}
           onChange={(e) => setBody(e.target.value)}
-        />
-      </Field>
-      <Field>
-        <FieldLabel htmlFor="edit-state">State</FieldLabel>
-        <Select
-          id="edit-state"
-          value={state}
-          onChange={(e) => setState(e.target.value as Issue["state"])}
-        >
-          <option value="open">Open</option>
-          <option value="closed">Closed</option>
-        </Select>
-      </Field>
-      <Field>
-        <FieldLabel htmlFor="edit-assignee">Assignee</FieldLabel>
-        <Input
-          id="edit-assignee"
-          placeholder="Assignee login"
-          value={assignee}
-          onChange={(e) => setAssignee(e.target.value)}
         />
       </Field>
       <Field>

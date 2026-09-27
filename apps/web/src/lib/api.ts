@@ -1,11 +1,5 @@
 import type { IssuePriority, IssueType } from "@gitea-portal/domain";
 
-export type WorkflowRepair = {
-  outcome: "repaired" | "failed";
-  sourceState: "unconfigured" | "conflict";
-  errorCode?: string;
-  message?: string;
-};
 export type Issue = {
   owner: string;
   name: string;
@@ -16,6 +10,8 @@ export type Issue = {
   priority: IssuePriority | null;
   body?: string;
   assignee: string | null;
+  assignees: string[];
+  currentOwner: string | null;
   labels: Array<{ name: string }>;
   startDate: string | null;
   dueDate: string | null;
@@ -28,35 +24,43 @@ export type Issue = {
   milestone: string | null;
   updatedAt: string;
   htmlUrl: string;
-  workflowState: string;
-  workflowRepair?: WorkflowRepair;
+  workflowState: "todo" | "in-progress" | "done" | "anomaly";
+  workflowAnomaly?: { reason: string; labels: string[] };
+  lastActionKey: string | null;
+  nextAction: string;
 };
 export type Repository = {
   owner: string;
   name: string;
   fullName: string;
   htmlUrl: string;
-  conventionId?: string | null;
-  conventionVersion?: string | null;
 };
-export type WorkflowConvention = {
-  id: string;
-  version: string;
-  name: string;
+export type WorkflowDefinition = {
   states: Array<{
-    key: string;
-    labelName: string;
+    key: "todo" | "in-progress" | "done";
+    labelName: string | null;
     displayName: string;
     order: number;
+    giteaState: "open" | "closed";
   }>;
-  repositories?: string[];
+  actions: Array<{
+    key: string;
+    fromState: "todo" | "in-progress" | "done";
+    toState: "todo" | "in-progress" | "done";
+    reasonLabel: string;
+    nextAction: string;
+    assigneePolicy:
+      | "required-handoff"
+      | "optional-reviewer"
+      | "keep-current"
+      | "require-if-unassigned";
+    labelName: string;
+  }>;
 };
 export type Board = {
   id: string;
   name: string;
   repositoryRefs: Array<{ owner: string; name: string }>;
-  workflowConventionId: string;
-  workflowConventionVersion: string;
   createdAt: string;
   updatedAt: string;
 };
@@ -69,8 +73,6 @@ export type IssuePage = {
 export type BoardIssuePage = IssuePage & { board: Board };
 export type RepositoryKanbanView = {
   repository: Repository;
-  conventionId: string;
-  conventionVersion: string;
   columns: Array<{
     stateKey: string;
     displayName: string;
@@ -152,17 +154,22 @@ export function queryRepositoryGantt(
   );
 }
 
-export function transitionRepositoryCard(
+export function transitionIssue(
   owner: string,
   repo: string,
   issue: Issue,
-  stateKey: string,
+  actionKey: string,
+  selectedAssignee?: string,
 ): Promise<Issue> {
   return api(
-    `/api/repositories/${encodeURIComponent(owner)}/${encodeURIComponent(repo)}/issues/${issue.number}/transition`,
+    `/api/issues/${encodeURIComponent(owner)}/${encodeURIComponent(repo)}/${issue.number}/transition`,
     {
       method: "POST",
-      body: JSON.stringify({ stateKey }),
+      body: JSON.stringify({
+        actionKey,
+        selectedAssignee,
+        expectedUpdatedAt: issue.updatedAt,
+      }),
     },
   );
 }

@@ -1,51 +1,88 @@
-import type { IssueLabel } from './issue.js';
-import type { WorkflowConvention, WorkflowState } from './workflow.js';
+import type { IssueLabel, IssueState } from "./issue.js";
+import {
+  FIXED_WORKFLOW_STATES,
+  type FixedWorkflowStateKey,
+} from "./workflow.js";
 
-export type ResolvedWorkflowState =
-  | { kind: 'unconfigured' }
-  | { kind: 'conflict'; labels: string[] }
-  | { kind: 'state'; key: string; displayName: string; order: number };
+export type FixedWorkflowAnomaly =
+  | "missing-state-label"
+  | "conflicting-state-labels"
+  | "unknown-state-label"
+  | "state-mismatch";
 
-export function validateWorkflowConvention(convention: WorkflowConvention): void {
-  if (!convention.states?.length) {
-    throw new Error(`Workflow Convention ${convention.id}@${convention.version} must define at least one state`);
-  }
-  const keys = new Set<string>();
-  const labels = new Set<string>();
-  const orders = new Set<number>();
-  for (const state of convention.states) {
-    if (!state.key || !state.labelName || state.order < 0) {
-      throw new Error(`Invalid Workflow state in ${convention.id}@${convention.version}`);
+export type ResolvedFixedWorkflowState =
+  | {
+      kind: "state";
+      key: FixedWorkflowStateKey;
+      displayName: string;
+      order: number;
     }
-    if (keys.has(state.key) || labels.has(state.labelName) || orders.has(state.order)) {
-      throw new Error(`Invalid duplicate Workflow state in ${convention.id}@${convention.version}`);
-    }
-    keys.add(state.key);
-    labels.add(state.labelName);
-    orders.add(state.order);
-  }
-}
+  | { kind: "anomaly"; anomaly: FixedWorkflowAnomaly; labels: string[] };
 
-export function getDefaultWorkflowState(convention: WorkflowConvention): WorkflowState {
-  validateWorkflowConvention(convention);
-  return convention.states.reduce((minimum, state) => state.order < minimum.order ? state : minimum);
-}
-
-export function resolveWorkflowState(
+export function resolveFixedWorkflowState(
+  state: IssueState,
   labels: IssueLabel[],
-  convention: WorkflowConvention,
-): ResolvedWorkflowState {
-  validateWorkflowConvention(convention);
-  const workflowLabels = labels.filter((label) =>
-    convention.states.some((state) => state.labelName === label.name),
+): ResolvedFixedWorkflowState {
+  const statusLabels = labels.filter((label) =>
+    label.name.startsWith("workflow:"),
   );
-  if (workflowLabels.length === 0) return { kind: 'unconfigured' };
-  if (workflowLabels.length > 1) {
-    return { kind: 'conflict', labels: workflowLabels.map((label) => label.name) };
+  const knownLabels = FIXED_WORKFLOW_STATES.filter(
+    (candidate) => candidate.labelName !== null,
+  );
+  const selected = statusLabels.filter((label) =>
+    knownLabels.some((candidate) => candidate.labelName === label.name),
+  );
+
+  if (statusLabels.length > 1) {
+    return {
+      kind: "anomaly",
+      anomaly: "conflicting-state-labels",
+      labels: statusLabels.map((label) => label.name),
+    };
   }
-  const state = convention.states.find(
-    (candidate) => candidate.labelName === workflowLabels[0]?.name,
+  if (statusLabels.length === 1 && selected.length === 0) {
+    return {
+      kind: "anomaly",
+      anomaly: "unknown-state-label",
+      labels: statusLabels.map((label) => label.name),
+    };
+  }
+  if (state === "closed") {
+    if (statusLabels.length > 0) {
+      return {
+        kind: "anomaly",
+        anomaly: "state-mismatch",
+        labels: statusLabels.map((label) => label.name),
+      };
+    }
+    const done = FIXED_WORKFLOW_STATES.find(
+      (candidate) => candidate.key === "done",
+    );
+    if (!done) throw new Error("Fixed workflow is missing the done state");
+    return {
+      kind: "state",
+      key: done.key,
+      displayName: done.displayName,
+      order: done.order,
+    };
+  }
+  if (statusLabels.length === 0) {
+    return { kind: "anomaly", anomaly: "missing-state-label", labels: [] };
+  }
+  const workflowState = knownLabels.find(
+    (candidate) => candidate.labelName === statusLabels[0]?.name,
   );
-  if (!state) return { kind: 'unconfigured' };
-  return { kind: 'state', key: state.key, displayName: state.displayName, order: state.order };
+  if (!workflowState || workflowState.giteaState !== state) {
+    return {
+      kind: "anomaly",
+      anomaly: "state-mismatch",
+      labels: statusLabels.map((label) => label.name),
+    };
+  }
+  return {
+    kind: "state",
+    key: workflowState.key,
+    displayName: workflowState.displayName,
+    order: workflowState.order,
+  };
 }

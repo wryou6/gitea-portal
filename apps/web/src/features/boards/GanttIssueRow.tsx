@@ -33,10 +33,24 @@ export function GanttIssueRow({
   );
   const details = (
     <>
-      <small>
-        {issue.owner}/{issue.name} #{issue.number} ·{" "}
-        {issue.assignee ?? "未指派"}
+      <small className="gantt-issue-meta">
+        <span>
+          {issue.owner}/{issue.name} #{issue.number}
+        </span>
+        <span
+          className={`workflow-status workflow-status--${issue.workflowState}`}
+        >
+          {issue.workflowState === "todo"
+            ? "待辦"
+            : issue.workflowState === "in-progress"
+              ? "處理中"
+              : issue.workflowState === "done"
+                ? "已完成"
+                : "狀態異常"}
+        </span>
+        <span>目前負責人：{issue.currentOwner ?? "無"}</span>
       </small>
+      <small className="gantt-next-action">下一步：{issue.nextAction}</small>
       <ScheduleDates
         startDate={issue.startDate}
         dueDate={issue.dueDate}

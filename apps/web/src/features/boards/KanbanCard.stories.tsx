@@ -71,21 +71,6 @@ export const InternalScheduleLabelHidden: Story = {
     },
   },
 };
-export const RepairFailure: Story = {
-  args: {
-    ...Default.args,
-    issue: {
-      ...card,
-      workflowRepair: {
-        outcome: "failed",
-        sourceState: "conflict",
-        errorCode: "WORKFLOW_CONFLICT",
-        message: "請移動至有效狀態。",
-      },
-    },
-  },
-};
-
 export const BugType: Story = {
   args: {
     ...Default.args,

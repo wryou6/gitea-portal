@@ -9,6 +9,7 @@ import { LoadingState } from "../../components/feedback/LoadingState";
 import { ErrorNotice } from "../../components/feedback/ErrorNotice";
 import { Button } from "../../components/ui/Button";
 import { routePaths, safeReturnTo } from "../../app/routes";
+import { WorkflowTransitionDialog } from "./WorkflowTransitionDialog";
 
 export function IssueDetailPage({
   owner,
@@ -26,6 +27,7 @@ export function IssueDetailPage({
   const [comments, setComments] = useState<Comment[]>([]);
   const [error, setError] = useState<string>();
   const [editing, setEditing] = useState(false);
+  const [transitionOpen, setTransitionOpen] = useState(false);
   const load = useCallback(async () => {
     setError(undefined);
     try {
@@ -80,6 +82,14 @@ export function IssueDetailPage({
             >
               {editing ? "取消編輯" : "編輯 Issue"}
             </Button>
+            <Button
+              variant="secondary"
+              type="button"
+              onClick={() => setTransitionOpen(true)}
+              disabled={issue.workflowState === "anomaly"}
+            >
+              記錄狀態動作
+            </Button>
           </div>
           {editing && (
             <div style={{ marginTop: "1.5rem" }}>
@@ -104,6 +114,26 @@ export function IssueDetailPage({
           />
         </aside>
       </div>
+      {transitionOpen && (
+        <WorkflowTransitionDialog
+          issue={issue}
+          onClose={() => setTransitionOpen(false)}
+          onSubmit={async (actionKey, selectedAssignee) => {
+            await api(
+              `/api/issues/${encodeURIComponent(owner)}/${encodeURIComponent(repo)}/${number}/transition`,
+              {
+                method: "POST",
+                body: JSON.stringify({
+                  actionKey,
+                  selectedAssignee,
+                  expectedUpdatedAt: issue.updatedAt,
+                }),
+              },
+            );
+            await load();
+          }}
+        />
+      )}
     </section>
   );
 }

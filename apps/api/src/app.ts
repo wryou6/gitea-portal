@@ -4,18 +4,16 @@ import { BoardRepository } from "./persistence/board-repository.js";
 import { registerErrorHandler } from "./http/error-handler.js";
 import { registerIssueRoutes } from "./issues/issue-routes.js";
 import { registerBoardRoutes } from "./boards/board-routes.js";
-import { loadConventions } from "./workflows/convention-loader.js";
 import { registerHttpRoutes } from "./http/routes.js";
 import { registerAuthMiddleware } from "./http/auth-middleware.js";
-import { registerWorkflowConventionRoutes } from "./http/workflow-convention-routes.js";
 import { registerRequestMetrics } from "./telemetry/request-metrics.js";
 import { registerRepositoryRoutes } from "./repositories/repository-routes.js";
+import { registerWorkflowDefinitionRoutes } from "./http/workflow-definition-routes.js";
 
 export async function buildApp(config: AppConfig) {
   const app = Fastify({ logger: true });
   const boards = new BoardRepository(config.boardStorePath);
   await boards.initialize();
-  const conventions = await loadConventions(config.workflowConfigPath);
   registerErrorHandler(app);
   registerRequestMetrics(app);
   registerHttpRoutes(app, config);
@@ -23,8 +21,8 @@ export async function buildApp(config: AppConfig) {
   app.get("/", async (_request, reply) => reply.redirect(config.webOrigin));
   app.get("/health", async () => ({ ok: true }));
   await registerIssueRoutes(app, config);
-  registerRepositoryRoutes(app, config, conventions);
-  registerBoardRoutes(app, config, boards, conventions);
-  registerWorkflowConventionRoutes(app, conventions);
+  registerRepositoryRoutes(app, config);
+  registerBoardRoutes(app, config, boards);
+  registerWorkflowDefinitionRoutes(app);
   return app;
 }

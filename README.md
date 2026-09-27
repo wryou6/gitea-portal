@@ -34,25 +34,24 @@ API 會讀取專案根目錄的 `.env`。API 與 Web 分開啟動時，Web Vite 
 
 ## 環境變數
 
-| 變數 | 必填 | 用途 |
-| --- | --- | --- |
-| `GITEA_BASE_URL` | 是 | 內網 Gitea URL，例如 `http://localhost:3000` |
-| `GITEA_OAUTH_CLIENT_ID` | 是 | Gitea OAuth Application Client ID |
-| `GITEA_OAUTH_CLIENT_SECRET` | 是 | Gitea OAuth Application Client Secret，只供 API 使用 |
-| `GITEA_OAUTH_REDIRECT_URI` | 是 | Gitea OAuth callback，預設 `http://localhost:3001/auth/callback` |
-| `GITEA_OAUTH_SCOPE` | 否 | OAuth scope；預設為 `read:user read:repository read:issue write:issue` |
-| `GITEA_API_TIMEOUT_MS` | 否 | Gitea API timeout，預設 `10000` |
-| `PORTAL_SESSION_SECRET` | 是 | Portal session signing secret；不要使用 `replace-me` |
-| `BOARD_STORE_PATH` | 否 | Board JSON 路徑，預設 `data/boards.json` |
-| `WORKFLOW_CONFIG_PATH` | 否 | Workflow Convention YAML 路徑，預設 `config/workflows/conventions.yaml` |
-| `API_PORT` | 否 | API port，預設 `3001` |
-| `WEB_ORIGIN` | 否 | Web origin，預設 `http://localhost:5173` |
+| 變數                        | 必填 | 用途                                                                   |
+| --------------------------- | ---- | ---------------------------------------------------------------------- |
+| `GITEA_BASE_URL`            | 是   | 內網 Gitea URL，例如 `http://localhost:3000`                           |
+| `GITEA_OAUTH_CLIENT_ID`     | 是   | Gitea OAuth Application Client ID                                      |
+| `GITEA_OAUTH_CLIENT_SECRET` | 是   | Gitea OAuth Application Client Secret，只供 API 使用                   |
+| `GITEA_OAUTH_REDIRECT_URI`  | 是   | Gitea OAuth callback，預設 `http://localhost:3001/auth/callback`       |
+| `GITEA_OAUTH_SCOPE`         | 否   | OAuth scope；預設為 `read:user read:repository read:issue write:issue` |
+| `GITEA_API_TIMEOUT_MS`      | 否   | Gitea API timeout，預設 `10000`                                        |
+| `PORTAL_SESSION_SECRET`     | 是   | Portal session signing secret；不要使用 `replace-me`                   |
+| `BOARD_STORE_PATH`          | 否   | Board JSON 路徑，預設 `data/boards.json`                               |
+| `API_PORT`                  | 否   | API port，預設 `3001`                                                  |
+| `WEB_ORIGIN`                | 否   | Web origin，預設 `http://localhost:5173`                               |
 
 不要將 `.env`、OAuth secret、access token 或 session secret commit 到 repository。
 
 ## Board 與 Workflow Convention
 
-Workflow Convention 定義於 [`config/workflows/conventions.yaml`](config/workflows/conventions.yaml)。每個 state 以 `key`、`labelName`、`displayName` 與 `order` 定義；Repository 必須使用與 Board 完全相同的 Convention ID 與 version 才能加入 Board。
+所有 Repository 共用固定三狀態 workflow：Todo、In Progress、Done。Todo 與 In Progress 由 Gitea Labels 表示；Done 使用 Gitea Closed 狀態。轉換原因以 `workflow-action:<key>` Label 記錄，Portal 依固定定義顯示繁體中文原因與下一步動作。
 
 Board 設定預設保存於 `data/boards.json`。JSON store 具備：
 

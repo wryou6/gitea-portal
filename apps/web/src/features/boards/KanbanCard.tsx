@@ -18,7 +18,6 @@ export function KanbanCard({
   onMove: (issue: BoardCard, stateKey: string) => void;
   returnTo?: string;
 }) {
-  const repair = issue.workflowRepair;
   const visibleLabels = visibleIssueLabels(issue.visibleLabels);
   return (
     <article
@@ -47,7 +46,7 @@ export function KanbanCard({
       <small>
         {issue.owner}/{issue.name} #{issue.number}
       </small>
-      <small>{issue.assignee ?? "未指派"}</small>
+      <small>負責人：{issue.currentOwner ?? "無"}</small>
       <ScheduleDates
         startDate={issue.startDate}
         dueDate={issue.dueDate}
@@ -83,20 +82,7 @@ export function KanbanCard({
           ))}
         </select>
       </label>
-      {repair?.outcome === "repaired" && (
-        <small className="repair-success" role="status">
-          已自動修復 Workflow 狀態
-        </small>
-      )}
-      {repair?.outcome === "failed" && (
-        <div className="repair-failure" role="alert">
-          <strong>Workflow 狀態修復失敗</strong>
-          <small>
-            {repair.errorCode}: {repair.message}
-          </small>
-          <small>可拖曳至有效狀態欄位重試</small>
-        </div>
-      )}
+      <small className="kanban-next-action">下一步：{issue.nextAction}</small>
     </article>
   );
 }

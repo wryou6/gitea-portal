@@ -24,9 +24,11 @@ function dayNumber(value: string): number {
 export function GanttBoard({
   issues,
   returnTo,
+  demo = false,
 }: {
   issues: Issue[];
   returnTo?: string;
+  demo?: boolean;
 }) {
   const initialQuery = new URLSearchParams(window.location.search);
   const [login, setLogin] = useState<string>();
@@ -42,6 +44,10 @@ export function GanttBoard({
   );
 
   useEffect(() => {
+    if (demo) {
+      setLogin("engineer");
+      return;
+    }
     let cancelled = false;
     void api<{ login: string }>("/api/session")
       .then((session) => {
@@ -56,7 +62,7 @@ export function GanttBoard({
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [demo]);
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -79,7 +85,7 @@ export function GanttBoard({
       [
         ...new Set(
           issues
-            .map((issue) => issue.assignee)
+            .map((issue) => issue.currentOwner)
             .filter((value): value is string => Boolean(value)),
         ),
       ].sort((a, b) => a.localeCompare(b)),
@@ -89,10 +95,10 @@ export function GanttBoard({
     const assigneeMatches =
       assignee === "all" ||
       (assignee === "self"
-        ? Boolean(login && issue.assignee === login)
+        ? Boolean(login && issue.currentOwner === login)
         : assignee === "unassigned"
-          ? issue.assignee === null
-          : issue.assignee === assignee);
+          ? issue.currentOwner === null
+          : issue.currentOwner === assignee);
     const stateMatches = issue.state === "open" ? showOpen : showClosed;
     return assigneeMatches && stateMatches;
   });
@@ -161,7 +167,7 @@ export function GanttBoard({
     <section className="gantt-view" aria-label="工作區甘特圖">
       <div className="gantt-filters">
         <label className="field" htmlFor="gantt-assignee">
-          <span>Assignee</span>
+          <span>目前負責人</span>
           <select
             id="gantt-assignee"
             value={assignee}

@@ -1,14 +1,246 @@
-export type WorkflowState = {
+import type { IssueState } from "./issue.js";
+
+export const FIXED_WORKFLOW_STATES = [
+  {
+    key: "todo",
+    labelName: "workflow:todo",
+    displayName: "待辦",
+    order: 0,
+    giteaState: "open",
+  },
+  {
+    key: "in-progress",
+    labelName: "workflow:in-progress",
+    displayName: "處理中",
+    order: 1,
+    giteaState: "open",
+  },
+  {
+    key: "done",
+    labelName: null,
+    displayName: "已完成",
+    order: 2,
+    giteaState: "closed",
+  },
+] as const satisfies readonly {
   key: string;
-  labelName: string;
+  labelName: string | null;
   displayName: string;
   order: number;
-};
+  giteaState: IssueState;
+}[];
 
-export type WorkflowConvention = {
-  id: string;
-  version: string;
-  name: string;
-  states: WorkflowState[];
-  repositories?: string[];
-};
+export type FixedWorkflowState = (typeof FIXED_WORKFLOW_STATES)[number];
+export type FixedWorkflowStateKey = FixedWorkflowState["key"];
+export type AssigneePolicy =
+  | "required-handoff"
+  | "optional-reviewer"
+  | "keep-current"
+  | "require-if-unassigned";
+
+export const WORKFLOW_ACTIONS = [
+  {
+    key: "reassign-owner",
+    fromState: "todo",
+    toState: "todo",
+    reasonLabel: "重新指派負責人",
+    nextAction: "開始處理",
+    assigneePolicy: "required-handoff",
+  },
+  {
+    key: "clarify-requirements",
+    fromState: "todo",
+    toState: "todo",
+    reasonLabel: "釐清或補充需求",
+    nextAction: "釐清需求",
+    assigneePolicy: "keep-current",
+  },
+  {
+    key: "wait-external-response-todo",
+    fromState: "todo",
+    toState: "todo",
+    reasonLabel: "等待外部回覆",
+    nextAction: "內部跟進",
+    assigneePolicy: "keep-current",
+  },
+  {
+    key: "reschedule-todo",
+    fromState: "todo",
+    toState: "todo",
+    reasonLabel: "重新排期",
+    nextAction: "重新排期",
+    assigneePolicy: "keep-current",
+  },
+  {
+    key: "start-work",
+    fromState: "todo",
+    toState: "in-progress",
+    reasonLabel: "開始處理",
+    nextAction: "開始實作",
+    assigneePolicy: "require-if-unassigned",
+  },
+  {
+    key: "duplicate-todo",
+    fromState: "todo",
+    toState: "done",
+    reasonLabel: "重複 Issue",
+    nextAction: "查看既有 Issue",
+    assigneePolicy: "keep-current",
+  },
+  {
+    key: "wont-do-todo",
+    fromState: "todo",
+    toState: "done",
+    reasonLabel: "不處理",
+    nextAction: "無後續動作",
+    assigneePolicy: "keep-current",
+  },
+  {
+    key: "completed-elsewhere-todo",
+    fromState: "todo",
+    toState: "done",
+    reasonLabel: "已在其他地方完成",
+    nextAction: "確認完成結果",
+    assigneePolicy: "keep-current",
+  },
+  {
+    key: "pause-and-requeue",
+    fromState: "in-progress",
+    toState: "todo",
+    reasonLabel: "暫停並重新排入待辦",
+    nextAction: "開始實作",
+    assigneePolicy: "keep-current",
+  },
+  {
+    key: "wait-external-response-in-progress",
+    fromState: "in-progress",
+    toState: "todo",
+    reasonLabel: "等待外部回覆",
+    nextAction: "內部跟進",
+    assigneePolicy: "keep-current",
+  },
+  {
+    key: "reschedule-in-progress",
+    fromState: "in-progress",
+    toState: "todo",
+    reasonLabel: "重新排期",
+    nextAction: "重新排期",
+    assigneePolicy: "keep-current",
+  },
+  {
+    key: "clarify-requirements-in-progress",
+    fromState: "in-progress",
+    toState: "todo",
+    reasonLabel: "釐清或補充需求",
+    nextAction: "釐清需求",
+    assigneePolicy: "keep-current",
+  },
+  {
+    key: "submit-for-review",
+    fromState: "in-progress",
+    toState: "in-progress",
+    reasonLabel: "送交審查",
+    nextAction: "審查 Issue",
+    assigneePolicy: "optional-reviewer",
+  },
+  {
+    key: "review-request-changes",
+    fromState: "in-progress",
+    toState: "in-progress",
+    reasonLabel: "審查退回修改",
+    nextAction: "修改並重新送審",
+    assigneePolicy: "keep-current",
+  },
+  {
+    key: "work-complete",
+    fromState: "in-progress",
+    toState: "done",
+    reasonLabel: "工作完成",
+    nextAction: "確認完成結果",
+    assigneePolicy: "keep-current",
+  },
+  {
+    key: "duplicate-in-progress",
+    fromState: "in-progress",
+    toState: "done",
+    reasonLabel: "重複 Issue",
+    nextAction: "查看既有 Issue",
+    assigneePolicy: "keep-current",
+  },
+  {
+    key: "wont-do-in-progress",
+    fromState: "in-progress",
+    toState: "done",
+    reasonLabel: "不處理",
+    nextAction: "無後續動作",
+    assigneePolicy: "keep-current",
+  },
+  {
+    key: "superseded",
+    fromState: "in-progress",
+    toState: "done",
+    reasonLabel: "已被其他工作取代",
+    nextAction: "查看取代項目",
+    assigneePolicy: "keep-current",
+  },
+  {
+    key: "re-evaluate",
+    fromState: "done",
+    toState: "todo",
+    reasonLabel: "重新評估",
+    nextAction: "釐清需求",
+    assigneePolicy: "keep-current",
+  },
+  {
+    key: "scope-changed",
+    fromState: "done",
+    toState: "todo",
+    reasonLabel: "需求變更，需釐清",
+    nextAction: "釐清需求",
+    assigneePolicy: "keep-current",
+  },
+  {
+    key: "resume-work",
+    fromState: "done",
+    toState: "in-progress",
+    reasonLabel: "恢復處理",
+    nextAction: "開始實作",
+    assigneePolicy: "keep-current",
+  },
+  {
+    key: "acceptance-failed",
+    fromState: "done",
+    toState: "in-progress",
+    reasonLabel: "驗收未通過",
+    nextAction: "修正後重新驗收",
+    assigneePolicy: "keep-current",
+  },
+  {
+    key: "regression-found",
+    fromState: "done",
+    toState: "in-progress",
+    reasonLabel: "發現回歸問題",
+    nextAction: "修正問題",
+    assigneePolicy: "keep-current",
+  },
+  {
+    key: "correct-close-reason",
+    fromState: "done",
+    toState: "done",
+    reasonLabel: "修正結案原因",
+    nextAction: "確認結案資訊",
+    assigneePolicy: "keep-current",
+  },
+] as const satisfies readonly {
+  key: string;
+  fromState: FixedWorkflowStateKey;
+  toState: FixedWorkflowStateKey;
+  reasonLabel: string;
+  nextAction: string;
+  assigneePolicy: AssigneePolicy;
+}[];
+
+export type WorkflowAction = (typeof WORKFLOW_ACTIONS)[number];
+export type WorkflowActionKey = WorkflowAction["key"];
+export const workflowActionLabel = (key: WorkflowActionKey): string =>
+  `workflow-action:${key}`;

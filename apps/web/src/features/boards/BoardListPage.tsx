@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import { api, type Repository, type WorkflowConvention } from "../../lib/api";
+import { api, type Repository } from "../../lib/api";
 import { BoardEditor } from "./BoardEditor";
 import type { Board } from "./types";
 import { PageHeader } from "../../components/layout/PageHeader";
@@ -16,22 +16,17 @@ export function BoardListPage({
 }) {
   const [boards, setBoards] = useState<Board[]>([]);
   const [repositories, setRepositories] = useState<Repository[]>([]);
-  const [conventions, setConventions] = useState<WorkflowConvention[]>([]);
   const [editing, setEditing] = useState<Board>();
   const [error, setError] = useState<string>();
   const [loading, setLoading] = useState(true);
   const load = useCallback(async () => {
     try {
-      const [nextBoards, nextRepositories, nextConventions] = await Promise.all(
-        [
-          api<Board[]>("/api/boards"),
-          api<Repository[]>("/api/repositories"),
-          api<WorkflowConvention[]>("/api/workflow-conventions"),
-        ],
-      );
+      const [nextBoards, nextRepositories] = await Promise.all([
+        api<Board[]>("/api/boards"),
+        api<Repository[]>("/api/repositories"),
+      ]);
       setBoards(nextBoards);
       setRepositories(nextRepositories);
-      setConventions(nextConventions);
       setError(undefined);
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : "Board 無法載入");
@@ -74,7 +69,6 @@ export function BoardListPage({
           key={editing?.id ?? "new"}
           board={editing}
           repositories={repositories}
-          conventions={conventions}
           onSaved={async () => {
             setEditing(undefined);
             await load();
@@ -92,9 +86,6 @@ export function BoardListPage({
                   .map((repo) => `${repo.owner}/${repo.name}`)
                   .join(" · ")}
               </p>
-              <small>
-                {board.workflowConventionId}@{board.workflowConventionVersion}
-              </small>
             </a>
             {!viewIntent && (
               <>
