@@ -18,15 +18,26 @@ import {
 } from "../features/settings/theme-preference";
 import { saveLocalePreference } from "../features/settings/locale-preference";
 import { resolveAppRoute } from "./routes";
+import { safeReturnTo } from "./routes";
+import { LoginPage } from "../features/auth/LoginPage";
+import { SessionExpiredNotice } from "../features/auth/SessionExpiredNotice";
+import { SessionUnavailable } from "../features/auth/SessionUnavailable";
+import type { SessionBootstrapState } from "../features/auth/session-state";
 
 export function App({
   login,
+  sessionState = login
+    ? { status: "authenticated", login }
+    : { status: "anonymous" },
   initialTheme = "system",
   initialLocale = "zh-TW",
+  sessionExpiredNotice = false,
 }: {
   login?: string;
+  sessionState?: SessionBootstrapState;
   initialTheme?: ThemeMode;
   initialLocale?: Locale;
+  sessionExpiredNotice?: boolean;
 } = {}) {
   const { i18n: currentI18n } = useTranslation();
   const [themeMode, setThemeMode] = useState<ThemeMode>(initialTheme);
@@ -51,6 +62,21 @@ export function App({
     window.location.pathname,
     window.location.search,
   );
+  if (sessionState.status === "anonymous") {
+    const returnTo = safeReturnTo(
+      `${window.location.pathname}${window.location.search}`,
+    );
+    return (
+      <LoginPage
+        returnTo={returnTo ?? "/"}
+        error={sessionState.error}
+        sessionExpired={sessionExpiredNotice}
+      />
+    );
+  }
+  if (sessionState.status === "unavailable")
+    return <SessionUnavailable onRetry={() => window.location.reload()} />;
+
   const content = (() => {
     switch (route.type) {
       case "dashboard":
@@ -91,5 +117,10 @@ export function App({
         return <main><h1>404</h1></main>;
     }
   })();
-  return <AppShell login={login}>{content}</AppShell>;
+  return (
+    <AppShell login={login}>
+      {sessionExpiredNotice && <SessionExpiredNotice />}
+      {content}
+    </AppShell>
+  );
 }

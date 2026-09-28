@@ -20,6 +20,10 @@ export class PortalApiError extends Error {
 
 export type UserFacingError = string | PortalApiError;
 
+const SESSION_PATH = "/api/session";
+const SESSION_EXPIRED_KEY = "gitea-portal:session-expired";
+let authReloadScheduled = false;
+
 function isErrorParams(value: unknown): value is PortalApiErrorParams {
   return (
     typeof value === "object" &&
@@ -155,16 +159,30 @@ export async function api<T>(path: string, init?: RequestInit): Promise<T> {
         typeof payload?.error === "string" ? payload.error : "";
       const upstreamDetail =
         typeof payload?.detail === "string" ? payload.detail : "";
-      throw new PortalApiError(
+      const portalError = new PortalApiError(
         isPortalApiErrorCode(payload?.code)
           ? payload.code
           : "server.internal_error",
         legacyMessage,
         isErrorParams(payload?.params) ? payload.params : undefined,
         [upstreamDetail, payload?.code && !isPortalApiErrorCode(payload.code) ? `Unknown error code: ${String(payload.code)}` : "", !payload ? text || `Request failed with status ${response.status}` : ""]
-          .filter(Boolean)
-          .join("\n\n") || undefined,
+        .filter(Boolean)
+        .join("\n\n") || undefined,
       );
+      if (
+        portalError.code === "auth.required" &&
+        new URL(path, window.location.origin).pathname !== SESSION_PATH &&
+        !authReloadScheduled
+      ) {
+        authReloadScheduled = true;
+        try {
+          window.sessionStorage.setItem(SESSION_EXPIRED_KEY, "1");
+        } catch {
+          // Reload still moves the user to the anonymous login experience.
+        }
+        window.location.reload();
+      }
+      throw portalError;
     }
     return response.status === 204
       ? (undefined as T)

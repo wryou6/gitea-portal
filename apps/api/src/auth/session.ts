@@ -36,5 +36,10 @@ export function setSession(reply: FastifyReply, session: PortalSession, config: 
   reply.header('Set-Cookie', [`${COOKIE}=${encodeSession({ ...session, csrfToken }, config.sessionSecret)}; HttpOnly; SameSite=Lax; Path=/`, `portal_csrf=${csrfToken}; SameSite=Lax; Path=/`]);
 }
 
-export function clearSession(reply: FastifyReply): void { reply.header('Set-Cookie', `${COOKIE}=; HttpOnly; SameSite=Lax; Max-Age=0; Path=/`); }
+export function clearSession(reply: FastifyReply): void {
+  reply.header('Set-Cookie', [
+    `${COOKIE}=; HttpOnly; SameSite=Lax; Max-Age=0; Path=/`,
+    'portal_csrf=; SameSite=Lax; Max-Age=0; Path=/',
+  ]);
+}
 export function sessionState(): PortalSession { return { login: '', accessToken: randomBytes(32).toString('hex'), expiresAt: Date.now() + 8 * 60 * 60 * 1000 }; }

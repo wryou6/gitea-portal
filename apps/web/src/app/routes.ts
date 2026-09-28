@@ -85,17 +85,20 @@ export function resolveAppRoute(pathname: string, _search = ""): AppRoute {
 export function safeReturnTo(
   value: string | null | undefined,
 ): string | undefined {
-  if (!value?.startsWith("/") || value.startsWith("//") || value.includes("\\"))
+  if (
+    !value?.startsWith("/") ||
+    value.startsWith("//") ||
+    value.includes("\\") ||
+    value.length > 2048
+  )
     return undefined;
   try {
     const url = new URL(value, window.location.origin);
     if (url.origin !== window.location.origin) return undefined;
     const path = url.pathname.replace(/\/+$/, "") || "/";
-    const knownRoute =
-      path === "/" || path === "/issues" || path === "/kanban" || path === "/gantt" ||
-      /^\/repositories\/[^/]+\/[^/]+\/(issues|kanban|gantt)$/.test(path) ||
-      path === "/dashboard";
-    return knownRoute ? `${path}${url.search}` : undefined;
+    if (resolveAppRoute(path).type === "not-found") return undefined;
+    url.searchParams.delete("portalAuthError");
+    return `${path}${url.search}`;
   } catch {
     return undefined;
   }

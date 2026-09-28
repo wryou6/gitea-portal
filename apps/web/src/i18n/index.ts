@@ -8,12 +8,14 @@ import { dashboard } from "./resources/dashboard";
 import { feedback } from "./resources/feedback";
 import { issues } from "./resources/issues";
 import { settings } from "./resources/settings";
+import { auth } from "./resources/auth";
 
 export const resources = {
   "zh-TW": {
     common: common["zh-TW"],
     dashboard: dashboard["zh-TW"],
     settings: settings["zh-TW"],
+    auth: auth["zh-TW"],
     issues: issues["zh-TW"],
     "work-views": workViews["zh-TW"],
     feedback: feedback["zh-TW"],
@@ -23,6 +25,7 @@ export const resources = {
     common: common.en,
     dashboard: dashboard.en,
     settings: settings.en,
+    auth: auth.en,
     issues: issues.en,
     "work-views": workViews.en,
     feedback: feedback.en,
@@ -32,6 +35,7 @@ export const resources = {
     common: common.ja,
     dashboard: dashboard.ja,
     settings: settings.ja,
+    auth: auth.ja,
     issues: issues.ja,
     "work-views": workViews.ja,
     feedback: feedback.ja,
@@ -46,7 +50,7 @@ void i18n.use(initReactI18next).init({
   lng: defaultLocale,
   fallbackLng: defaultLocale,
   defaultNS: "common",
-  ns: ["common", "dashboard", "settings", "issues", "work-views", "feedback", "api-errors"],
+  ns: ["common", "dashboard", "settings", "auth", "issues", "work-views", "feedback", "api-errors"],
   interpolation: { escapeValue: false },
   initAsync: false,
 });

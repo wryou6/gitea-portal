@@ -6,6 +6,7 @@ declare module "i18next" {
       common: Record<string, string>;
       dashboard: Record<string, string>;
       settings: Record<string, string>;
+      auth: Record<string, string>;
       issues: Record<string, string>;
       "work-views": Record<string, string>;
       feedback: Record<string, string>;

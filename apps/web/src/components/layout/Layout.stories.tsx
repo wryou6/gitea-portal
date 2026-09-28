@@ -11,6 +11,7 @@ type Story = StoryObj<typeof meta>;
 export const PageComposition: Story = {
   render: () => (
     <AppShell
+      login="admin"
       routePathname="/issues"
       workspaceRepositories={[
         { owner: "engineering", name: "portal", fullName: "engineering/portal", htmlUrl: "#" },

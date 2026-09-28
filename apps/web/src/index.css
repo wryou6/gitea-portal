@@ -142,6 +142,148 @@ textarea:focus-visible,
 .app-shell {
   min-height: 100vh;
 }
+.auth-page {
+  display: grid;
+  min-height: 100vh;
+  place-items: center;
+  padding: clamp(1rem, 4vw, 3rem);
+  background:
+    radial-gradient(ellipse at 50% 0%, color-mix(in oklch, var(--primary) 12%, transparent), transparent 58%),
+    var(--background);
+}
+.auth-card {
+  display: grid;
+  width: min(100%, 28rem);
+  gap: 1.65rem;
+  border: 1px solid var(--border);
+  border-radius: calc(var(--radius) + 0.35rem);
+  background: var(--card);
+  box-shadow: 0 1.5rem 4rem color-mix(in oklch, var(--foreground) 9%, transparent);
+  padding: clamp(1.4rem, 5vw, 2.25rem);
+}
+.auth-brand {
+  display: inline-flex;
+  align-items: center;
+  justify-self: start;
+  gap: 0.65rem;
+  color: var(--foreground);
+  font-size: 1rem;
+  font-weight: 750;
+  letter-spacing: -0.02em;
+}
+.auth-brand img {
+  width: 2rem;
+  height: 2rem;
+}
+.auth-copy {
+  display: grid;
+  gap: 0.55rem;
+}
+.auth-copy h1 {
+  margin: 0;
+  color: var(--foreground);
+  font-size: clamp(1.45rem, 5vw, 1.85rem);
+  line-height: 1.2;
+  letter-spacing: -0.035em;
+}
+.auth-copy p {
+  margin: 0;
+  color: var(--muted-foreground);
+}
+.auth-eyebrow {
+  color: var(--primary) !important;
+  font-size: 0.76rem;
+  font-weight: 750;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+}
+.auth-login-action {
+  display: flex;
+  min-height: 3.25rem;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  border: 1px solid color-mix(in oklch, var(--primary) 30%, var(--border));
+  border-radius: var(--radius);
+  background: var(--primary);
+  color: var(--primary-foreground);
+  cursor: pointer;
+  font: inherit;
+  font-weight: 700;
+  padding: 0.75rem 1rem;
+  text-align: left;
+  text-decoration: none;
+  transition: filter 120ms ease, transform 120ms ease;
+}
+.auth-login-action:hover {
+  filter: brightness(1.08);
+  text-decoration: none;
+}
+.auth-login-action:active {
+  transform: translateY(1px);
+}
+.auth-gitea-mark,
+.auth-status-icon {
+  display: grid;
+  width: 1.65rem;
+  height: 1.65rem;
+  flex: none;
+  place-items: center;
+  border-radius: 50%;
+  background: color-mix(in oklch, var(--primary-foreground) 18%, transparent);
+  font-size: 0.92rem;
+  font-weight: 800;
+}
+.auth-action-arrow {
+  margin-left: auto;
+  font-size: 1.25rem;
+  line-height: 1;
+}
+.auth-message {
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 0.8rem 0.9rem;
+  overflow-wrap: anywhere;
+}
+.auth-message p {
+  margin: 0;
+}
+.auth-message p + p {
+  margin-top: 0.35rem;
+}
+.auth-message--notice {
+  border-color: color-mix(in oklch, var(--warning) 45%, var(--border));
+  background: color-mix(in oklch, var(--warning) 10%, var(--card));
+  color: var(--foreground);
+}
+.auth-message--error {
+  border-color: color-mix(in oklch, var(--destructive) 40%, var(--border));
+  background: color-mix(in oklch, var(--destructive) 9%, var(--card));
+  color: var(--foreground);
+}
+.auth-card--unavailable {
+  gap: 1rem;
+}
+.auth-status-icon {
+  width: 2.1rem;
+  height: 2.1rem;
+  background: color-mix(in oklch, var(--warning) 18%, var(--card));
+  color: var(--warning);
+  font-size: 1.1rem;
+}
+.auth-expired-notice {
+  display: grid;
+  gap: 0.2rem;
+  margin-bottom: 1rem;
+  border: 1px solid color-mix(in oklch, var(--warning) 45%, var(--border));
+  border-radius: var(--radius);
+  background: color-mix(in oklch, var(--warning) 10%, var(--card));
+  padding: 0.8rem 1rem;
+  overflow-wrap: anywhere;
+}
+.auth-expired-notice span {
+  color: var(--muted-foreground);
+}
 .topbar {
   position: sticky;
   top: 0;
@@ -297,17 +439,36 @@ textarea:focus-visible,
 .account-menu-panel[hidden] {
   display: none;
 }
-.account-menu-panel a {
+.account-menu-panel a,
+.account-menu-panel button {
   display: flex;
   align-items: center;
   min-height: 2.5rem;
+  width: 100%;
   border-radius: calc(var(--radius) - 2px);
   padding: 0.5rem 0.65rem;
   color: var(--foreground);
 }
-.account-menu-panel a:hover {
+.account-menu-panel button {
+  border: 0;
+  background: transparent;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+.account-menu-panel a:hover,
+.account-menu-panel button:not(:disabled):hover {
   background: var(--muted);
   text-decoration: none;
+}
+.account-menu-panel button:disabled {
+  cursor: wait;
+  opacity: 0.65;
+}
+.account-menu-error {
+  margin: 0.35rem 0.5rem 0.25rem;
+  color: var(--destructive);
+  font-size: 0.875rem;
 }
 .workspace-notice {
   margin: 0 0 1rem;
@@ -1222,6 +1383,15 @@ button.danger {
   }
 }
 @media (max-width: 720px) {
+  .auth-page {
+    padding: 1rem;
+  }
+  .auth-card {
+    gap: 1.3rem;
+  }
+  .auth-expired-notice {
+    padding: 0.75rem;
+  }
   .app-shell--expanded .app-layout {
     grid-template-columns: minmax(8.5rem, min(40vw, 13rem)) minmax(0, 1fr);
   }

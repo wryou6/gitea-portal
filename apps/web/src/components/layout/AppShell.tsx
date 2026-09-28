@@ -3,6 +3,7 @@ import { resolveAppRoute, routePaths, safeReturnTo } from "../../app/routes";
 import { WorkspaceSelector } from "./WorkspaceSelector";
 import { useTranslation } from "react-i18next";
 import type { Repository } from "../../lib/api";
+import { api } from "../../lib/api";
 
 const SIDEBAR_STATE_KEY = "gitea-portal:sidebar-expanded";
 
@@ -61,6 +62,7 @@ export function AppShell({
   workspaceRepositories?: Repository[];
 }) {
   const { t } = useTranslation("common");
+  const { t: authT } = useTranslation("auth");
   const pathname = routePathname ?? window.location.pathname;
   const search = routeSearch ?? window.location.search;
   const route = resolveAppRoute(
@@ -87,6 +89,8 @@ export function AppShell({
     (contextRoute.type === "repository-view" && contextRoute.view === "issues");
   const onDashboard = route.type === "dashboard";
   const [accountMenuOpen, setAccountMenuOpen] = useState(false);
+  const [logoutPending, setLogoutPending] = useState(false);
+  const [logoutFailed, setLogoutFailed] = useState(false);
   const accountMenuRef = useRef<HTMLDivElement>(null);
   const accountTriggerRef = useRef<HTMLButtonElement>(null);
   const [expanded, setExpanded] = useState(() => {
@@ -110,6 +114,19 @@ export function AppShell({
       }
       return next;
     });
+  };
+
+  const logout = async () => {
+    if (logoutPending) return;
+    setLogoutPending(true);
+    setLogoutFailed(false);
+    try {
+      await api<void>("/auth/logout", { method: "POST" });
+      window.location.assign("/");
+    } catch {
+      setLogoutFailed(true);
+      setLogoutPending(false);
+    }
   };
 
   useEffect(() => {
@@ -222,13 +239,17 @@ export function AppShell({
               <span className="account-menu-login">{login}</span>
               <span aria-hidden="true">▾</span>
             </button>
-            <nav
+      <nav
               id="account-menu-panel"
               className="account-menu-panel"
               aria-label={t("userMenu")}
               hidden={!accountMenuOpen}
             >
               <a href={routePaths.settings}>{t("settings")}</a>
+              <button type="button" onClick={() => void logout()} disabled={logoutPending}>
+                {t(logoutPending ? "loggingOut" : "logout")}
+              </button>
+              {logoutFailed && <p className="account-menu-error" role="alert">{authT("logoutFailed")}</p>}
             </nav>
           </div>
         )}

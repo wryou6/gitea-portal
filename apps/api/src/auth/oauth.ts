@@ -1,5 +1,4 @@
 import type { AppConfig } from '../config/env.js';
-import { randomBytes } from 'node:crypto';
 import type { FastifyReply } from 'fastify';
 import { setSession } from './session.js';
 
@@ -26,5 +25,3 @@ export async function exchangeOAuthCode(config: AppConfig, code: string, reply: 
   const user = await identity.json() as { login: string };
   setSession(reply, { login: user.login, accessToken: token.access_token, expiresAt: Date.now() + (token.expires_in ?? 28800) * 1000 }, config);
 }
-
-export function oauthState(): string { return randomBytes(24).toString('base64url'); }
