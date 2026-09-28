@@ -4,18 +4,18 @@ import { Badge } from "../../components/ui/Badge";
 import { IssueTypeBadge } from "../../components/ui/IssueTypeBadge";
 import { PriorityBadge } from "../../components/ui/PriorityBadge";
 import { ScheduleDates, scheduleAnomalyTranslationKey } from "./ScheduleDates";
-import { WORKFLOW_ACTIONS } from "@gitea-portal/domain";
+import { STATUS_ACTIONS } from "@gitea-portal/domain";
 import { IssueAssigneeRoster } from "./IssueAssigneeRoster";
 import { useTranslation } from "react-i18next";
 import {
-  workflowNextActionTranslationKey,
-  workflowReasonTranslationKey,
-  workflowStateTranslationKey,
-} from "../../i18n/workflow";
+  statusNextActionTranslationKey,
+  statusReasonTranslationKey,
+  issueStatusTranslationKey,
+} from "../../i18n/status";
 import { formatDateTime } from "../../i18n/format";
 export function IssueDetailHeader({ issue }: { issue: Issue }) {
   const { t, i18n } = useTranslation("issues");
-  const action = WORKFLOW_ACTIONS.find(
+  const action = STATUS_ACTIONS.find(
     (candidate) => candidate.key === issue.lastActionKey,
   );
   return (
@@ -29,11 +29,11 @@ export function IssueDetailHeader({ issue }: { issue: Issue }) {
         <PriorityBadge priority={issue.priority} labels={issue.labels} />
       </div>
       <div className="meta">
-        <Badge className={`workflow-status--${issue.workflowState}`}>
-          {t(workflowStateTranslationKey(issue.workflowState))}
+        <Badge className={`issue-status--${issue.status}`}>
+          {t(issueStatusTranslationKey(issue.status))}
         </Badge>
-        <span>{t("nextAction", { action: t(workflowNextActionTranslationKey(issue.nextActionKey)) })}</span>
-        {action && <span>{t("lastReason")}：{t(workflowReasonTranslationKey(action.key))}</span>}
+        <span>{t("nextAction", { action: t(statusNextActionTranslationKey(issue.nextActionKey)) })}</span>
+        {action && <span>{t("lastReason")}：{t(statusReasonTranslationKey(action.key))}</span>}
         <ScheduleDates
           startDate={issue.startDate}
           dueDate={issue.dueDate}

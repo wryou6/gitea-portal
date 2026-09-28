@@ -5,6 +5,8 @@ import {
   type PortalApiErrorCode,
   type PortalApiErrorParams,
 } from "@gitea-portal/domain";
+import type { IssueSortField, SortDirection } from "@gitea-portal/domain";
+export type { IssueSortField, SortDirection } from "@gitea-portal/domain";
 
 export class PortalApiError extends Error {
   constructor(
@@ -54,6 +56,8 @@ export type Issue = {
   name: string;
   number: number;
   title: string;
+  author: string;
+  createdAt: string;
   state: "open" | "closed";
   type: IssueType | null;
   priority: IssuePriority | null;
@@ -73,8 +77,8 @@ export type Issue = {
   milestone: string | null;
   updatedAt: string;
   htmlUrl: string;
-  workflowState: "todo" | "in-progress" | "done" | "anomaly";
-  workflowAnomaly?: { reason: string; labels: string[] };
+  status: "todo" | "in-progress" | "done" | "anomaly";
+  statusAnomaly?: { reason: string; labels: string[] };
   lastActionKey: string | null;
   nextAction: string;
   nextActionKey: string;
@@ -85,7 +89,7 @@ export type Repository = {
   fullName: string;
   htmlUrl: string;
 };
-export type WorkflowDefinition = {
+export type StatusDefinition = {
   states: Array<{
     key: "todo" | "in-progress" | "done";
     labelName: string | null;
@@ -113,6 +117,34 @@ export type IssuePage = {
   page: number;
   limit: number;
   hasNext: boolean;
+  sort: IssueSortField;
+  direction: SortDirection;
+};
+export type StatusLabelMigrationReport = {
+  repositories: number;
+  issuesScanned: number;
+  migrated: number;
+  unchanged: number;
+  successfulIssues: Array<{
+    owner: string;
+    repository: string;
+    issueNumber: number;
+    outcome: "migrated" | "unchanged";
+  }>;
+  resolvedConflicts: Array<{
+    owner: string;
+    repository: string;
+    issueNumber: number;
+    removedLegacyLabels: string[];
+    retainedStatusLabels: string[];
+  }>;
+  failures: Array<{
+    owner: string;
+    repository: string;
+    issueNumber?: number;
+    reason: string;
+  }>;
+  verified: boolean;
 };
 export type RepositoryKanbanView = {
   repository: Repository;

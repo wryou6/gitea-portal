@@ -1,27 +1,29 @@
 import type {
   RepositoryRef,
-  WorkflowColumn,
-  WorkflowViewCard,
+  StatusColumn,
+  StatusViewCard,
 } from "@gitea-portal/domain";
-import { FIXED_WORKFLOW_STATES } from "@gitea-portal/domain";
+import { FIXED_ISSUE_STATUSES } from "@gitea-portal/domain";
 import { GiteaClient } from "../gitea/client.js";
 import { mapIssue } from "../issues/issue-service.js";
 
-function workflowViewCard(card: WorkflowViewCard): WorkflowViewCard {
+function statusViewCard(card: StatusViewCard): StatusViewCard {
   return {
     ...card,
     visibleLabels: card.labels.filter(
       (label) =>
+        !label.name.startsWith("status:") &&
+        !label.name.startsWith("status-action:") &&
         !label.name.startsWith("workflow:") &&
         !label.name.startsWith("workflow-action:"),
     ),
   };
 }
 
-export async function getWorkflowColumns(
+export async function getStatusColumns(
   client: GiteaClient,
   repositories: RepositoryRef[],
-): Promise<WorkflowColumn[]> {
+): Promise<StatusColumn[]> {
   const issueGroups = await Promise.all(
     repositories.map((repository) =>
       client.repositoryIssuesAllPages(repository, {
@@ -32,7 +34,7 @@ export async function getWorkflowColumns(
   );
   const cards = issueGroups.flatMap((issues) =>
     issues.map(mapIssue).map((issue) =>
-      workflowViewCard({ ...issue, visibleLabels: issue.labels }),
+      statusViewCard({ ...issue, visibleLabels: issue.labels }),
     ),
   );
   cards.sort((left, right) =>
@@ -41,17 +43,15 @@ export async function getWorkflowColumns(
     left.name.localeCompare(right.name) ||
     left.number - right.number,
   );
-  const anomalyCards = cards.filter(
-    (card) => card.workflowState === "anomaly",
-  );
-  const stateColumns = FIXED_WORKFLOW_STATES.map((state) => ({
-    stateKey: state.key,
-    displayName: state.displayName,
-    cards: cards.filter((card) => card.workflowState === state.key),
+  const anomalyCards = cards.filter((card) => card.status === "anomaly");
+  const statusColumns = FIXED_ISSUE_STATUSES.map((status) => ({
+    stateKey: status.key,
+    displayName: status.displayName,
+    cards: cards.filter((card) => card.status === status.key),
   }));
-  if (anomalyCards.length === 0) return stateColumns;
+  if (anomalyCards.length === 0) return statusColumns;
   return [
     { stateKey: "anomaly", displayName: "狀態異常", cards: anomalyCards },
-    ...stateColumns,
+    ...statusColumns,
   ];
 }

@@ -18,12 +18,12 @@ export async function replaceIssueLabelsAtomically(
 ): Promise<GiteaIssue> {
   const latest = await client.issue(repository, number);
   if (latest.updatedAt !== originalUpdatedAt || labelNames(latest.labels) .join('\u0000') !== labelNames(currentLabelNames.map((name) => ({ name }))).join('\u0000')) {
-    throw new PortalError(409, 'Issue changed in Gitea; reload before changing its workflow state');
+    throw new PortalError(409, 'Issue changed in Gitea; reload before changing its Status');
   }
   await client.replaceIssueLabels(repository, number, nextLabelIds);
   const updated = await client.issue(repository, number);
   if (labelNames(updated.labels).join('\u0000') !== labelNames(nextLabelNames.map((name) => ({ name }))).join('\u0000')) {
-    throw new PortalError(409, 'Gitea did not persist the requested workflow labels');
+    throw new PortalError(409, 'Gitea did not persist the requested Status labels');
   }
   return updated;
 }

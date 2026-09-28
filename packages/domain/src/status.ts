@@ -1,16 +1,16 @@
 import type { IssueState } from "./issue.js";
 
-export const FIXED_WORKFLOW_STATES = [
+export const FIXED_ISSUE_STATUSES = [
   {
     key: "todo",
-    labelName: "workflow:todo",
+    labelName: "status:todo",
     displayName: "待辦",
     order: 0,
     giteaState: "open",
   },
   {
     key: "in-progress",
-    labelName: "workflow:in-progress",
+    labelName: "status:in-progress",
     displayName: "處理中",
     order: 1,
     giteaState: "open",
@@ -30,15 +30,15 @@ export const FIXED_WORKFLOW_STATES = [
   giteaState: IssueState;
 }[];
 
-export type FixedWorkflowState = (typeof FIXED_WORKFLOW_STATES)[number];
-export type FixedWorkflowStateKey = FixedWorkflowState["key"];
+export type FixedIssueStatus = (typeof FIXED_ISSUE_STATUSES)[number];
+export type FixedIssueStatusKey = FixedIssueStatus["key"];
 export type AssigneePolicy =
   | "required-handoff"
   | "optional-reviewer"
   | "keep-current"
   | "require-if-unassigned";
 
-export const WORKFLOW_ACTIONS = [
+export const STATUS_ACTIONS = [
   {
     key: "reassign-owner",
     fromState: "todo",
@@ -257,15 +257,15 @@ export const WORKFLOW_ACTIONS = [
   },
 ] as const satisfies readonly {
   key: string;
-  fromState: FixedWorkflowStateKey;
-  toState: FixedWorkflowStateKey;
+  fromState: FixedIssueStatusKey;
+  toState: FixedIssueStatusKey;
   reasonLabel: string;
   nextAction: string;
   nextActionKey: string;
   assigneePolicy: AssigneePolicy;
 }[];
 
-export type WorkflowAction = (typeof WORKFLOW_ACTIONS)[number];
-export type WorkflowActionKey = WorkflowAction["key"];
-export const workflowActionLabel = (key: WorkflowActionKey): string =>
-  `workflow-action:${key}`;
+export type StatusAction = (typeof STATUS_ACTIONS)[number];
+export type StatusActionKey = StatusAction["key"];
+export const statusActionLabel = (key: StatusActionKey): string =>
+  `status-action:${key}`;

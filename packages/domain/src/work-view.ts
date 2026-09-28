@@ -1,8 +1,8 @@
 import type { IssueLabel, IssueSummary } from "./issue.js";
 
-export type WorkflowViewCard = IssueSummary & { visibleLabels: IssueLabel[] };
-export type WorkflowColumn = {
+export type StatusViewCard = IssueSummary & { visibleLabels: IssueLabel[] };
+export type StatusColumn = {
   stateKey: string;
   displayName: string;
-  cards: WorkflowViewCard[];
+  cards: StatusViewCard[];
 };

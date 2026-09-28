@@ -1,10 +1,15 @@
 import type { RepositoryRef } from "./repository.js";
 import type { IssueType } from "./issue-type.js";
 import type { IssuePriority } from "./issue-priority.js";
-import type { FixedWorkflowStateKey } from "./workflow.js";
+import type { FixedIssueStatusKey } from "./status.js";
 
 export type IssueState = "open" | "closed";
 export type IssueIdentity = RepositoryRef & { number: number };
+export const ISSUE_SORT_FIELDS = [
+  "type", "key", "title", "assignee", "status", "priority", "createdAt", "startDate", "dueDate", "author",
+] as const;
+export type IssueSortField = (typeof ISSUE_SORT_FIELDS)[number];
+export type SortDirection = "asc" | "desc";
 
 export type IssueLabel = { name: string; color?: string };
 export type IssueScheduleStatus = "scheduled" | "unscheduled" | "invalid";
@@ -22,6 +27,8 @@ export type IssueSchedule = {
 export type IssueSummary = IssueIdentity &
   IssueSchedule & {
     title: string;
+    author: string;
+    createdAt: string;
     state: IssueState;
     assignee: string | null;
     assignees: string[];
@@ -32,8 +39,8 @@ export type IssueSummary = IssueIdentity &
     milestone: string | null;
     updatedAt: string;
     htmlUrl: string;
-    workflowState: FixedWorkflowStateKey | "anomaly";
-    workflowAnomaly?: {
+    status: FixedIssueStatusKey | "anomaly";
+    statusAnomaly?: {
       reason: string;
       labels: string[];
     };

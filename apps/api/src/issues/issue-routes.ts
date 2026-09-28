@@ -2,15 +2,16 @@ import type { FastifyInstance } from "fastify";
 import type { AppConfig } from "../config/env.js";
 import { giteaFor } from "../gitea/request.js";
 import { getIssue } from "./issue-service.js";
-import { searchIssuesReadThrough } from "./issue-search-service.js";
+import { isIssueSortField, searchIssuesReadThrough } from "./issue-search-service.js";
 import { getIssueComments } from "./comment-query-service.js";
 import { addIssueComment } from "./comment-command-service.js";
 import { listRepositories } from "../repositories/repository-service.js";
 import { canAccessRepository } from "../auth/permissions.js";
 import { createIssue, updateIssue } from "./issue-command-service.js";
 import { validateComment } from "./issue-validation.js";
-import { transitionIssue } from "./workflow-transition-service.js";
+import { transitionIssue } from "./status-transition-service.js";
 import { apiErrorResponse } from "../errors.js";
+import { PortalError } from "../errors.js";
 
 export async function registerIssueRoutes(
   app: FastifyInstance,
@@ -21,6 +22,10 @@ export async function registerIssueRoutes(
   );
   app.get("/api/issues", async (request) => {
     const query = request.query as Record<string, string | undefined>;
+    const sort = query.sort ?? "key";
+    const direction = query.direction ?? "asc";
+    if (!isIssueSortField(sort)) throw new PortalError(422, "Invalid issue sort field");
+    if (direction !== "asc" && direction !== "desc") throw new PortalError(422, "Invalid sort direction");
     return searchIssuesReadThrough(
       giteaFor(request, config.giteaBaseUrl, config),
       {
@@ -32,18 +37,18 @@ export async function registerIssueRoutes(
             : query.state === "done"
               ? "closed"
               : (query.state as "open" | "closed" | "all" | undefined),
+        portalStatus: query.state === "todo" || query.state === "in-progress" || query.state === "done"
+          ? query.state
+          : undefined,
         assignee: query.assignee,
         milestone: query.milestone,
         labels: [
           ...(query.label?.split(",").filter(Boolean) ?? []),
-          ...(query.state === "todo"
-            ? ["workflow:todo"]
-            : query.state === "in-progress"
-              ? ["workflow:in-progress"]
-              : []),
         ],
         page: Number(query.page ?? 1),
         limit: Number(query.limit ?? 50),
+        sort,
+        direction,
       },
     );
   });

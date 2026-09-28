@@ -62,9 +62,9 @@ export function IssueFilters({
           onChange={(e) => update("state", e.target.value)}
         >
           <option value="all">{t("allStatuses")}</option>
-          <option value="todo">{t("workflowTodo")}</option>
-          <option value="in-progress">{t("workflowInProgress")}</option>
-          <option value="done">{t("workflowDone")}</option>
+          <option value="todo">{t("statusTodo")}</option>
+          <option value="in-progress">{t("statusInProgress")}</option>
+          <option value="done">{t("statusDone")}</option>
         </Select>
       </Field>
       <Field>

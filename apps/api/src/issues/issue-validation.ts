@@ -67,10 +67,11 @@ function validateIssueInput(
     value.labels !== undefined &&
     (value.labels as string[]).some(
       (label) =>
+        label.startsWith("status:") || label.startsWith("status-action:") ||
         label.startsWith("workflow:") || label.startsWith("workflow-action:"),
     )
   )
-    throw new PortalError(422, "Workflow Labels 由 Portal 工作流操作管理");
+    throw new PortalError(422, "Status Labels 由 Portal Status 操作管理");
   if (!isIssueType(value.type))
     throw new PortalError(422, "Issue Type 必須是 Bug、Feature 或 Task");
   if (!isIssuePriority(value.priority))

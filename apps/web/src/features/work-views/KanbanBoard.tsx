@@ -8,7 +8,7 @@ import { ErrorNotice } from "../../components/feedback/ErrorNotice";
 import { EmptyState } from "../../components/feedback/EmptyState";
 import { LoadingState } from "../../components/feedback/LoadingState";
 import { PageHeader } from "../../components/layout/PageHeader";
-import { WorkflowTransitionDialog } from "../issues/WorkflowTransitionDialog";
+import { StatusTransitionDialog } from "../issues/StatusTransitionDialog";
 import { useTranslation } from "react-i18next";
 import { formatNumber } from "../../i18n/format";
 
@@ -199,7 +199,7 @@ export function KanbanBoard({
         </>
       )}
       {pendingTransition && (
-        <WorkflowTransitionDialog
+        <StatusTransitionDialog
           issue={pendingTransition.issue}
           targetState={pendingTransition.targetState}
           onClose={() => setPendingTransition(undefined)}

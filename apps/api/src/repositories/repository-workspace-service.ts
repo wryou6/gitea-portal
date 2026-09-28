@@ -3,7 +3,7 @@ import type { GiteaRepository } from "@gitea-portal/gitea-contracts";
 import { canAccessRepository } from "../auth/permissions.js";
 import { PortalError } from "../errors.js";
 import { GiteaClient } from "../gitea/client.js";
-import { getWorkflowColumns } from "../work-views/kanban-service.js";
+import { getStatusColumns } from "../work-views/kanban-service.js";
 import { mapIssue } from "../issues/issue-service.js";
 
 export type RepositoryWorkspaceView = GiteaRepository;
@@ -26,7 +26,7 @@ export async function getRepositoryKanban(
   client: GiteaClient,
   repository: RepositoryWorkspaceView,
 ) {
-  const columns = await getWorkflowColumns(client, [repository]);
+  const columns = await getStatusColumns(client, [repository]);
   return {
     repository,
     columns,

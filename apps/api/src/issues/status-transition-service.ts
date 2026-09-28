@@ -1,10 +1,10 @@
 import type { GiteaIssue } from "@gitea-portal/gitea-contracts";
 import {
-  FIXED_WORKFLOW_STATES,
-  WORKFLOW_ACTIONS,
-  resolveFixedWorkflowState,
-  workflowActionLabel,
-  type WorkflowAction,
+  FIXED_ISSUE_STATUSES,
+  STATUS_ACTIONS,
+  resolveIssueStatus,
+  statusActionLabel,
+  type StatusAction,
 } from "@gitea-portal/domain";
 import type { RepositoryRef } from "@gitea-portal/domain";
 import { canAccessRepository } from "../auth/permissions.js";
@@ -31,7 +31,7 @@ function assigneeLogins(issue: GiteaIssue): string[] {
 }
 
 function targetRoster(
-  action: WorkflowAction,
+  action: StatusAction,
   current: string[],
   selected?: string,
 ): string[] {
@@ -136,18 +136,18 @@ export async function transitionIssue(
   if (!input.actionKey || !input.expectedUpdatedAt)
     throw new PortalError(422, "actionKey 與 expectedUpdatedAt 為必填欄位");
 
-  const action = WORKFLOW_ACTIONS.find(
+  const action = STATUS_ACTIONS.find(
     (candidate) => candidate.key === input.actionKey,
   );
-  if (!action) throw new PortalError(422, "未定義的 Workflow action");
+  if (!action) throw new PortalError(422, "未定義的 Status 動作");
   const original = await client.issue(repository, number);
   if (original.updatedAt !== input.expectedUpdatedAt)
     throw new PortalError(409, "Issue 已在 Gitea 更新，請重新載入");
-  const resolved = resolveFixedWorkflowState(original.state, original.labels);
-  if (resolved.kind !== "state")
+  const resolved = resolveIssueStatus(original.state, original.labels);
+  if (resolved.kind !== "status")
     throw new PortalError(
       409,
-      "Issue Workflow 狀態異常，請先修正 Gitea Labels",
+      "Issue Status 異常，請先修正 Gitea Labels",
     );
   if (resolved.key !== action.fromState)
     throw new PortalError(409, "此原因不適用於 Issue 目前狀態，請重新載入");
@@ -166,17 +166,17 @@ export async function transitionIssue(
       throw new PortalError(422, "所選使用者目前不可指派至此 Repository");
   }
 
-  const targetState = FIXED_WORKFLOW_STATES.find(
+  const targetState = FIXED_ISSUE_STATUSES.find(
     (state) => state.key === action.toState,
   );
   if (!targetState)
-    throw new PortalError(422, "Workflow action 的目標狀態不存在");
-  const actionName = workflowActionLabel(action.key);
+    throw new PortalError(422, "Status 動作的目標狀態不存在");
+  const actionName = statusActionLabel(action.key);
   await client.ensureLabel(
     repository,
     actionName,
     "#2563eb",
-    `Portal workflow action: ${action.reasonLabel}`,
+    `Portal status action: ${action.reasonLabel}`,
   );
   const targetStatusName = targetState.labelName;
   if (targetStatusName)
@@ -184,7 +184,7 @@ export async function transitionIssue(
       repository,
       targetStatusName,
       "#1e3a5f",
-      `Portal workflow state: ${targetState.displayName}`,
+      `Portal Issue Status: ${targetState.displayName}`,
     );
 
   let current = original;
@@ -205,6 +205,8 @@ export async function transitionIssue(
     const preserved = current.labels
       .filter(
         (label) =>
+          !label.name.startsWith("status:") &&
+          !label.name.startsWith("status-action:") &&
           !label.name.startsWith("workflow:") &&
           !label.name.startsWith("workflow-action:"),
       )

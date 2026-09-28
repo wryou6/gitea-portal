@@ -9,7 +9,10 @@ import {
   issueScheduleFromLabels,
   isCalendarDate,
   type IssueState,
+  type IssueSortField,
   type RepositoryRef,
+  type SortDirection,
+  type FixedIssueStatusKey,
 } from "@gitea-portal/domain";
 import { GiteaError, mapGiteaError } from "./errors.js";
 
@@ -26,12 +29,14 @@ type GiteaApiIssue = {
   number?: number;
   title?: string;
   body?: string;
+  user?: GiteaApiUser | null;
   state?: string;
   assignee?: GiteaApiUser | null;
   assignees?: GiteaApiUser[];
   labels?: GiteaApiLabel[];
   milestone?: { id?: number; title?: string } | null;
   due_date?: string | null;
+  created_at?: string;
   updated_at?: string;
   html_url?: string;
 };
@@ -71,6 +76,8 @@ function normalizeIssue(value: GiteaApiIssue): GiteaIssue {
     value.number === undefined ||
     !value.title ||
     !value.state ||
+    !value.user?.login ||
+    !value.created_at ||
     !value.updated_at ||
     !value.html_url
   )
@@ -101,6 +108,7 @@ function normalizeIssue(value: GiteaApiIssue): GiteaIssue {
     number: value.number,
     title: value.title,
     body: value.body ?? "",
+    author: user(value.user),
     state: value.state === "closed" ? "closed" : "open",
     assignee: user(value.assignee),
     assignees: (value.assignees ?? (value.assignee ? [value.assignee] : []))
@@ -112,6 +120,7 @@ function normalizeIssue(value: GiteaApiIssue): GiteaIssue {
       value.milestone?.title && value.milestone.id !== undefined
         ? { id: value.milestone.id, title: value.milestone.title }
         : null,
+    createdAt: value.created_at,
     updatedAt: value.updated_at,
     htmlUrl: value.html_url,
   };
@@ -146,12 +155,15 @@ export type IssueQuery = {
   q?: string;
   repository?: string;
   state?: IssueState | "all";
+  portalStatus?: FixedIssueStatusKey;
   type?: "issues" | "pulls";
   page?: number;
   limit?: number;
   labels?: string[];
   assignee?: string;
   milestone?: string;
+  sort?: IssueSortField;
+  direction?: SortDirection;
 };
 
 export class GiteaClient {

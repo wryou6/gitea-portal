@@ -40,9 +40,9 @@ export async function updateIssue(
 ) {
   validateIssueUpdate(input);
   if (Object.hasOwn(input as object, "assignee"))
-    throw new PortalError(422, "Assignee 必須透過 Workflow 轉換原因改派");
+    throw new PortalError(422, "Assignee 必須透過 Status 動作原因改派");
   if (Object.hasOwn(input as object, "state"))
-    throw new PortalError(422, "Issue 狀態必須透過 Workflow 轉換原因變更");
+    throw new PortalError(422, "Issue Status 必須透過 Status 動作原因變更");
   const labels = input.labels;
   const current = await client.issue(repository, number);
   if (input.expectedUpdatedAt !== current.updatedAt)

@@ -9,7 +9,7 @@ import { LoadingState } from "../../components/feedback/LoadingState";
 import { ErrorNotice } from "../../components/feedback/ErrorNotice";
 import { Button } from "../../components/ui/Button";
 import { routePaths, safeReturnTo } from "../../app/routes";
-import { WorkflowTransitionDialog } from "./WorkflowTransitionDialog";
+import { StatusTransitionDialog } from "./StatusTransitionDialog";
 import { useTranslation } from "react-i18next";
 
 export function IssueDetailPage({
@@ -84,9 +84,9 @@ export function IssueDetailPage({
               variant="secondary"
               type="button"
               onClick={() => setTransitionOpen(true)}
-              disabled={issue.workflowState === "anomaly"}
+              disabled={issue.status === "anomaly"}
             >
-              {t("recordWorkflowAction")}
+              {t("recordStatusAction")}
             </Button>
           </div>
           {editing && (
@@ -113,7 +113,7 @@ export function IssueDetailPage({
         </aside>
       </div>
       {transitionOpen && (
-        <WorkflowTransitionDialog
+        <StatusTransitionDialog
           issue={issue}
           onClose={() => setTransitionOpen(false)}
           onSubmit={async (actionKey, selectedAssignee) => {

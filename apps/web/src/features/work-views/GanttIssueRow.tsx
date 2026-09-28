@@ -4,9 +4,9 @@ import { PriorityBadge } from "../../components/ui/PriorityBadge";
 import { ScheduleDates } from "../issues/ScheduleDates";
 import { useTranslation } from "react-i18next";
 import {
-  workflowNextActionTranslationKey,
-  workflowStateTranslationKey,
-} from "../../i18n/workflow";
+  statusNextActionTranslationKey,
+  issueStatusTranslationKey,
+} from "../../i18n/status";
 
 export type GanttIssueRowVariant = "scheduled" | "unscheduled" | "anomaly";
 
@@ -45,13 +45,13 @@ export function GanttIssueRow({
           {issue.owner}/{issue.name} #{issue.number}
         </span>
         <span
-          className={`workflow-status workflow-status--${issue.workflowState}`}
+          className={`issue-status issue-status--${issue.status}`}
         >
-          {tIssues(workflowStateTranslationKey(issue.workflowState))}
+          {tIssues(issueStatusTranslationKey(issue.status))}
         </span>
         <span>{t("currentAssignee")}: {issue.currentOwner ?? t("noAssignee")}</span>
       </small>
-      <small className="gantt-next-action">{t("nextAction", { action: tIssues(workflowNextActionTranslationKey(issue.nextActionKey)) })}</small>
+      <small className="gantt-next-action">{t("nextAction", { action: tIssues(statusNextActionTranslationKey(issue.nextActionKey)) })}</small>
       <ScheduleDates
         startDate={issue.startDate}
         dueDate={issue.dueDate}

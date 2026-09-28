@@ -5,7 +5,7 @@ import type {
   RepositoryRef,
 } from "@gitea-portal/domain";
 import {
-  FIXED_WORKFLOW_STATES,
+  FIXED_ISSUE_STATUSES,
   isIssuePriorityLabelName,
   isIssueTypeLabelName,
   issuePriorityFromLabels,
@@ -158,15 +158,15 @@ export async function issueCreateLabelIds(
       "Start date Labels must be set with the startDate field",
     );
   const names = [...new Set(requestedNames)];
-  const todoLabel = FIXED_WORKFLOW_STATES.find(
+  const todoLabel = FIXED_ISSUE_STATUSES.find(
     (state) => state.key === "todo",
   )?.labelName;
-  if (!todoLabel) throw new Error("Todo workflow label is not configured");
+  if (!todoLabel) throw new Error("Todo Status label is not configured");
   await client.ensureLabel(
     repository,
     todoLabel,
     "#2563eb",
-    "Portal fixed workflow state: Todo",
+    "Portal fixed Issue Status: Todo",
   );
   names.push(todoLabel);
   names.push((await issueTypeLabel(client, repository, type)).name);
@@ -196,9 +196,11 @@ export async function updateIssueLabelsAndSchedule(
   const existingDateLabels = issue.labels.filter((label) =>
     isStartDateLabel(label.name),
   );
-  const workflowLabels = issue.labels
+  const statusLabels = issue.labels
     .filter(
       (label) =>
+        label.name.startsWith("status:") ||
+        label.name.startsWith("status-action:") ||
         label.name.startsWith("workflow:") ||
         label.name.startsWith("workflow-action:"),
     )
@@ -229,7 +231,7 @@ export async function updateIssueLabelsAndSchedule(
   }
   const nextNames = [
     ...normalNames,
-    ...workflowLabels,
+    ...statusLabels,
     ...dateNames,
     selectedTypeLabel.name,
     selectedPriorityLabel.name,

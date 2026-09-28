@@ -1,6 +1,9 @@
 import type { ThemeMode } from "./theme-preference";
 import { useTranslation } from "react-i18next";
 import { supportedLocales, type Locale } from "../../i18n/locales";
+import { useState } from "react";
+import { api, type StatusLabelMigrationReport } from "../../lib/api";
+import { Button } from "../../components/ui/Button";
 
 const themeLabelKeys: Record<ThemeMode, "light" | "dark" | "system"> = {
   light: "light",
@@ -28,6 +31,21 @@ export function SettingsPage({
   onLocaleChange: (locale: Locale) => void;
 }) {
   const { t } = useTranslation("settings");
+  const [migrationRunning, setMigrationRunning] = useState(false);
+  const [migrationError, setMigrationError] = useState<string | null>(null);
+  const [migrationReport, setMigrationReport] = useState<StatusLabelMigrationReport | null>(null);
+
+  async function runStatusMigration() {
+    setMigrationRunning(true);
+    setMigrationError(null);
+    try {
+      setMigrationReport(await api<StatusLabelMigrationReport>("/api/admin/status-label-migration", { method: "POST" }));
+    } catch (cause) {
+      setMigrationError(cause instanceof Error ? cause.message : t("statusMigrationFailed"));
+    } finally {
+      setMigrationRunning(false);
+    }
+  }
 
   return (
     <section className="settings-page">
@@ -81,6 +99,64 @@ export function SettingsPage({
           ))}
         </fieldset>
       </section>
+      {login === "admin" && (
+        <section className="settings-card" aria-labelledby="settings-status-migration">
+          <h2 id="settings-status-migration">{t("statusMigrationTitle")}</h2>
+          <p>{t("statusMigrationDescription")}</p>
+          <Button type="button" disabled={migrationRunning} onClick={() => void runStatusMigration()}>
+            {migrationRunning ? t("statusMigrationRunning") : t("statusMigrationStart")}
+          </Button>
+          {migrationError && <p className="error-text" role="alert">{migrationError}</p>}
+          {migrationReport && (
+            <div className="status-migration-report" aria-live="polite">
+              <p className={migrationReport.verified ? "success-text" : "error-text"}>
+                {migrationReport.verified ? t("statusMigrationVerified") : t("statusMigrationIncomplete")}
+              </p>
+              <ul>
+                <li>{t("statusMigrationCounts", {
+                  repositories: migrationReport.repositories,
+                  issues: migrationReport.issuesScanned,
+                  migrated: migrationReport.migrated,
+                  unchanged: migrationReport.unchanged,
+                })}</li>
+              </ul>
+              {migrationReport.successfulIssues.length > 0 && (
+                <details>
+                  <summary>{t("statusMigrationSuccesses", { count: migrationReport.successfulIssues.length })}</summary>
+                  <ul>{migrationReport.successfulIssues.map((item) => (
+                    <li key={`${item.owner}/${item.repository}#${item.issueNumber}`}>
+                      {item.owner}/{item.repository}#{item.issueNumber}: {t(item.outcome === "migrated" ? "statusMigrationIssueMigrated" : "statusMigrationIssueUnchanged")}
+                    </li>
+                  ))}</ul>
+                </details>
+              )}
+              {migrationReport.resolvedConflicts.length > 0 && (
+                <section>
+                  <h3>{t("statusMigrationConflicts")}</h3>
+                  <ul>{migrationReport.resolvedConflicts.map((item) => (
+                    <li key={`${item.owner}/${item.repository}#${item.issueNumber}`}>
+                      {item.owner}/{item.repository}#{item.issueNumber}: {t("statusMigrationConflictValues", {
+                        removed: item.removedLegacyLabels.join(", "),
+                        retained: item.retainedStatusLabels.join(", "),
+                      })}
+                    </li>
+                  ))}</ul>
+                </section>
+              )}
+              {migrationReport.failures.length > 0 && (
+                <section>
+                  <h3>{t("statusMigrationFailures")}</h3>
+                  <ul>{migrationReport.failures.map((item, index) => (
+                    <li key={`${item.owner}/${item.repository}#${item.issueNumber ?? index}`}>
+                      {item.owner && `${item.owner}/${item.repository}${item.issueNumber ? `#${item.issueNumber}` : ""}: `}{item.reason}
+                    </li>
+                  ))}</ul>
+                </section>
+              )}
+            </div>
+          )}
+        </section>
+      )}
     </section>
   );
 }

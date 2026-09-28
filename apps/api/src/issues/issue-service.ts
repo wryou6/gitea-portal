@@ -2,55 +2,41 @@ import type { IssueSummary, RepositoryRef } from "@gitea-portal/domain";
 import {
   issuePriorityFromLabels,
   issueTypeFromLabels,
-  resolveFixedWorkflowState,
-  WORKFLOW_ACTIONS,
+  resolveIssueStatus,
+  STATUS_ACTIONS,
 } from "@gitea-portal/domain";
 import type { GiteaIssue } from "@gitea-portal/gitea-contracts";
 import { GiteaClient } from "../gitea/client.js";
 
 export function mapIssue(issue: GiteaIssue): IssueSummary {
-  const resolvedWorkflow = resolveFixedWorkflowState(issue.state, issue.labels);
-  const actionLabels = issue.labels.filter((label) =>
-    label.name.startsWith("workflow-action:"),
-  );
-  const actionKey =
-    actionLabels.length === 1
-      ? actionLabels[0]?.name.slice("workflow-action:".length)
-      : undefined;
-  const action = WORKFLOW_ACTIONS.find(
-    (candidate) => candidate.key === actionKey,
-  );
+  const resolvedStatus = resolveIssueStatus(issue.state, issue.labels);
+  const currentActionLabels = issue.labels.filter((label) => label.name.startsWith("status-action:"));
+  const legacyActionLabels = issue.labels.filter((label) => label.name.startsWith("workflow-action:"));
+  const actionLabels = currentActionLabels.length > 0 ? currentActionLabels : legacyActionLabels;
+  const actionKey = actionLabels.length === 1
+    ? actionLabels[0]?.name.slice(currentActionLabels.length > 0 ? "status-action:".length : "workflow-action:".length)
+    : undefined;
+  const action = STATUS_ACTIONS.find((candidate) => candidate.key === actionKey);
   const assignees = issue.assignees.map((assignee) => assignee.login);
-  const workflowState =
-    resolvedWorkflow.kind === "state" ? resolvedWorkflow.key : "anomaly";
+  const status = resolvedStatus.kind === "status" ? resolvedStatus.key : "anomaly";
   const nextAction =
-    action &&
-    resolvedWorkflow.kind === "state" &&
-    action.toState === resolvedWorkflow.key
+    action && resolvedStatus.kind === "status" && action.toState === resolvedStatus.key
       ? action.nextAction
-      : resolvedWorkflow.kind === "state" && resolvedWorkflow.key === "todo"
-        ? assignees.length > 0
-          ? "開始處理"
-          : "指派負責人"
-        : resolvedWorkflow.kind === "state" &&
-            resolvedWorkflow.key === "in-progress"
+      : resolvedStatus.kind === "status" && resolvedStatus.key === "todo"
+        ? assignees.length > 0 ? "開始處理" : "指派負責人"
+        : resolvedStatus.kind === "status" && resolvedStatus.key === "in-progress"
           ? "開始實作"
-          : resolvedWorkflow.kind === "state" && resolvedWorkflow.key === "done"
+          : resolvedStatus.kind === "status" && resolvedStatus.key === "done"
             ? "無後續動作"
             : "狀態資料異常";
   const nextActionKey =
-    action &&
-    resolvedWorkflow.kind === "state" &&
-    action.toState === resolvedWorkflow.key
+    action && resolvedStatus.kind === "status" && action.toState === resolvedStatus.key
       ? action.nextActionKey
-      : resolvedWorkflow.kind === "state" && resolvedWorkflow.key === "todo"
-        ? assignees.length > 0
-          ? "begin-work"
-          : "assign-owner"
-        : resolvedWorkflow.kind === "state" &&
-            resolvedWorkflow.key === "in-progress"
+      : resolvedStatus.kind === "status" && resolvedStatus.key === "todo"
+        ? assignees.length > 0 ? "begin-work" : "assign-owner"
+        : resolvedStatus.kind === "status" && resolvedStatus.key === "in-progress"
           ? "implement"
-          : resolvedWorkflow.kind === "state" && resolvedWorkflow.key === "done"
+          : resolvedStatus.kind === "status" && resolvedStatus.key === "done"
             ? "no-follow-up"
             : "anomaly";
   return {
@@ -58,6 +44,8 @@ export function mapIssue(issue: GiteaIssue): IssueSummary {
     name: issue.repository.name,
     number: issue.number,
     title: issue.title,
+    author: issue.author?.login ?? "",
+    createdAt: issue.createdAt,
     state: issue.state,
     assignee: issue.assignee?.login ?? assignees[0] ?? null,
     assignees,
@@ -72,10 +60,10 @@ export function mapIssue(issue: GiteaIssue): IssueSummary {
     scheduleAnomaly: issue.scheduleAnomaly,
     updatedAt: issue.updatedAt,
     htmlUrl: issue.htmlUrl,
-    workflowState,
-    workflowAnomaly:
-      resolvedWorkflow.kind === "anomaly"
-        ? { reason: resolvedWorkflow.anomaly, labels: resolvedWorkflow.labels }
+    status,
+    statusAnomaly:
+      resolvedStatus.kind === "anomaly"
+        ? { reason: resolvedStatus.anomaly, labels: resolvedStatus.labels }
         : undefined,
     lastActionKey: action?.key ?? null,
     nextAction,

@@ -9,8 +9,7 @@ import {
 } from "../issues/ScheduleDates";
 import { visibleIssueLabels } from "../issues/issueLabelPresentation";
 import { useTranslation } from "react-i18next";
-import { workflowNextActionTranslationKey } from "../../i18n/workflow";
-import { workflowStateTranslationKey } from "../../i18n/workflow";
+import { statusNextActionTranslationKey, issueStatusTranslationKey } from "../../i18n/status";
 export function KanbanCard({
   issue,
   onDragStart,
@@ -85,12 +84,12 @@ export function KanbanCard({
           <option value="">{t("selectColumn")}</option>
           {destinations.map((destination) => (
             <option key={destination.stateKey} value={destination.stateKey}>
-              {tIssues(workflowStateTranslationKey(destination.stateKey))}
+              {tIssues(issueStatusTranslationKey(destination.stateKey))}
             </option>
           ))}
         </select>
       </label>
-      <small className="kanban-next-action">{t("nextAction", { action: tIssues(workflowNextActionTranslationKey(issue.nextActionKey), { ns: "issues" }) })}</small>
+      <small className="kanban-next-action">{t("nextAction", { action: tIssues(statusNextActionTranslationKey(issue.nextActionKey), { ns: "issues" }) })}</small>
     </article>
   );
 }

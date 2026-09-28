@@ -48,22 +48,21 @@ API 會讀取專案根目錄的 `.env`。API 與 Web 分開啟動時，Web Vite 
 
 不要將 `.env`、OAuth secret、access token 或 session secret commit 到 repository。
 
-## 工作區與 Workflow
+## 工作區與 Issue Status
 
-所有 Repository 共用固定三狀態 workflow：Todo、In Progress、Done。Todo 與 In Progress 由 Gitea Labels 表示；Done 使用 Gitea Closed 狀態。轉換原因以 `workflow-action:<key>` Label 記錄，Portal 依固定定義顯示繁體中文原因與下一步動作。
+所有 Repository 共用固定三種 Issue Status：Todo、In Progress、Done。Todo 與 In Progress 由 Gitea `status:<key>` Labels 表示；Done 使用 Gitea Closed 狀態。轉換原因以 `status-action:<key>` Label 記錄，Portal 依固定定義顯示繁體中文原因與下一步動作。
 
 All repos 只彙整目前登入者有讀取權限的 Repository；任何必要 Repository 或 Issue 頁面讀取失敗時，整個彙整請求失敗，不顯示部分結果。Repository 工作區只顯示該 Repository 的資料。Portal 不保存工作區或 Issue 的副本。
 
-Kanban 的工作狀態使用 Gitea Workflow Labels 保存。狀態轉移必須透過可驗證的 atomic Label replacement；無法保證時，Portal 會在修改前拒絕操作，不使用 remove-then-add fallback。
+Kanban 的 Issue Status 使用 Gitea Status Labels 保存。狀態轉移必須透過可驗證的 atomic Label replacement；無法保證時，Portal 會在修改前拒絕操作，不使用 remove-then-add fallback。
 
 ## 專案結構
 
 ```text
 apps/api/                 Fastify API、Gitea adapter、OAuth、Issue 與工作檢視服務
 apps/web/                 React/Vite Web UI
-packages/domain/          Issue、Workflow 等共用 domain types
+packages/domain/          Issue、Status 等共用 domain types
 packages/gitea-contracts/ API response 與 Gitea contract types
-config/workflows/         Workflow Convention 設定
 specs/                    Spec Kit feature specification、plan、tasks 與 checklist
 ```
 

@@ -9,14 +9,14 @@ import { demoIssue } from "../../stories/fixtures";
 
 const todo: WorkViewCard = {
   ...demoIssue,
-  workflowState: "todo",
+  status: "todo",
   nextAction: "釐清需求",
   lastActionKey: "clarify-requirements",
   visibleLabels: demoIssue.labels,
 };
 const inProgress: WorkViewCard = {
   ...demoIssue,
-  workflowState: "in-progress",
+  status: "in-progress",
   nextAction: "開始實作",
   visibleLabels: demoIssue.labels,
 };
@@ -25,7 +25,7 @@ const done: WorkViewCard = {
   number: 63,
   title: "完成第一輪需求驗收",
   state: "closed",
-  workflowState: "done",
+  status: "done",
   currentOwner: null,
   nextAction: "確認完成結果",
   visibleLabels: demoIssue.labels,

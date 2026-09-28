@@ -675,6 +675,138 @@ textarea:focus-visible,
   display: grid;
   gap: 0.7rem;
 }
+.table-scroll-region {
+  max-width: 100%;
+  overflow-x: auto;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--card);
+}
+.table-scroll-region:focus-visible {
+  outline: 3px solid color-mix(in oklch, var(--primary) 42%, transparent);
+  outline-offset: 3px;
+}
+.issues-table {
+  width: 100%;
+  min-width: 1160px;
+  border-collapse: separate;
+  border-spacing: 0;
+  text-align: left;
+}
+.issues-table th {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  border-bottom: 1px solid var(--border);
+  background: var(--muted);
+  color: var(--muted-foreground);
+  font-size: 0.75rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+.issues-table-sort {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  min-height: 2.75rem;
+  width: 100%;
+  padding: 0.55rem 0.65rem;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+.issues-table-sort:hover {
+  color: var(--foreground);
+}
+.issues-table-sort:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: -3px;
+  border-radius: 0.2rem;
+}
+.sort-indicator {
+  color: var(--primary);
+  font-size: 0.95rem;
+}
+.issues-table td {
+  padding: 0.65rem;
+  border-bottom: 1px solid var(--border);
+  color: var(--foreground);
+  font-size: 0.82rem;
+  vertical-align: middle;
+}
+.issues-table tbody tr:last-child td {
+  border-bottom: 0;
+}
+.issue-table-row:hover {
+  background: color-mix(in oklch, var(--muted) 45%, var(--card));
+}
+.issue-key {
+  color: var(--muted-foreground);
+  font-size: 0.78rem;
+  white-space: nowrap;
+}
+.issue-table-title-cell {
+  min-width: 16rem;
+  max-width: 32rem;
+}
+.issue-title {
+  color: var(--foreground);
+  font-weight: 650;
+  text-decoration: none;
+}
+.issue-title:hover,
+.issue-key:hover {
+  color: var(--primary);
+  text-decoration: underline;
+}
+.issue-status {
+  display: inline-flex;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 0.16rem 0.55rem;
+  font-size: 0.73rem;
+  font-weight: 700;
+  line-height: 1.4;
+  white-space: nowrap;
+}
+.issue-status--todo {
+  background: color-mix(in oklch, var(--primary) 9%, var(--card));
+}
+.issue-status--in-progress {
+  background: color-mix(in oklch, var(--warning) 14%, var(--card));
+}
+.issue-status--done {
+  background: color-mix(in oklch, var(--success) 12%, var(--card));
+}
+.issue-status--anomaly {
+  background: color-mix(in oklch, var(--destructive) 12%, var(--card));
+}
+.issue-table-anomaly {
+  display: block;
+  margin-top: 0.2rem;
+  color: var(--destructive);
+  font-size: 0.72rem;
+}
+.due-date-overdue {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.28rem;
+  color: var(--destructive);
+  font-weight: 750;
+  white-space: nowrap;
+}
+.due-date-overdue svg {
+  width: 0.9rem;
+  height: 0.9rem;
+  fill: currentColor;
+}
+.issues-table-empty {
+  padding: 1.5rem !important;
+  text-align: center;
+}
 .issue-row {
   display: flex;
   align-items: flex-start;
@@ -725,7 +857,7 @@ textarea:focus-visible,
   min-width: 0;
   overflow-wrap: anywhere;
 }
-.workflow-status {
+.issue-status {
   display: inline-flex;
   align-items: center;
   border: 1px solid var(--border);
@@ -735,16 +867,16 @@ textarea:focus-visible,
   font-weight: 700;
   line-height: 1.4;
 }
-.workflow-status--todo {
+.issue-status--todo {
   background: color-mix(in oklch, var(--primary) 9%, var(--card));
 }
-.workflow-status--in-progress {
+.issue-status--in-progress {
   background: color-mix(in oklch, var(--warning) 14%, var(--card));
 }
-.workflow-status--done {
+.issue-status--done {
   background: color-mix(in oklch, var(--success) 12%, var(--card));
 }
-.workflow-status--anomaly {
+.issue-status--anomaly {
   background: color-mix(in oklch, var(--destructive) 12%, var(--card));
 }
 .issue-row .meta {

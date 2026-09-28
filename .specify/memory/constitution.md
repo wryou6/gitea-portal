@@ -25,11 +25,12 @@ Portal 對 Repository、Issue 及其相關資料的讀取與寫入 MUST 受目�
 時，Portal MUST 回報錯誤，不得將部分結果呈現為完整結果。載入、無資料與錯誤狀態
 MUST 能清楚區分。
 
-### V. 所有 Repository 共用固定 Workflow 語意
+### V. 所有 Repository 共用固定 Issue Status 語意
 
-Kanban MUST 使用 Portal 統一的固定 Workflow，使不同 Repository 的狀態具有一致語意。
-Workflow 狀態 MUST 保存在 Gitea 支援的資料欄位中。狀態缺漏或衝突 MUST 明確呈現，
-不得默默推測或覆寫來源資料。
+All Issue views MUST use the Portal's fixed Issue Status values so that the same values have
+consistent meaning across Repositories. Issue Status MUST be stored in Gitea-supported fields.
+Missing or conflicting Status values MUST be shown clearly and MUST NOT be inferred or silently
+overwritten.
 
 ### VI. 工作範圍與資料來源必須清楚可辨
 
@@ -50,7 +51,7 @@ Workflow 狀態 MUST 保存在 Gitea 支援的資料欄位中。狀態缺漏或�
 - Delegated credentials MUST NOT 進入前端 bundle、Portal 持久資料或日誌。
 - 共用 API contract 變更 MUST 同步檢查 domain、Gitea contracts、API 與 Web 型別一致性。
 
-## Development Workflow
+## Development Process
 
 - 改變使用者可見行為或資料契約的功能 MUST 維護對應的 Spec Kit 規格與任務文件。
 - 功能實作前 MUST 完成 spec、plan、tasks 與跨文件分析；只有存在阻塞歧義時才進行
@@ -68,4 +69,4 @@ Workflow 狀態 MUST 保存在 Gitea 支援的資料欄位中。狀態缺漏或�
 規則遞增：移除或重新定義既有原則為 MAJOR；新增原則或實質擴充規範為 MINOR；不改變
 規範意義的澄清與修正文句為 PATCH。
 
-**Version**: 1.0.0 | **Ratified**: 2026-09-28 | **Last Amended**: 2026-09-28
+**Version**: 1.0.1 | **Ratified**: 2026-09-28 | **Last Amended**: 2026-09-28

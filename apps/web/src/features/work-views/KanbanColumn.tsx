@@ -2,7 +2,7 @@ import { KanbanCard } from "./KanbanCard";
 import type { WorkViewCard } from "./types";
 import { useTranslation } from "react-i18next";
 import { formatNumber } from "../../i18n/format";
-import { workflowStateTranslationKey } from "../../i18n/workflow";
+import { issueStatusTranslationKey } from "../../i18n/status";
 export function KanbanColumn({
   column,
   destinations,
@@ -31,7 +31,7 @@ export function KanbanColumn({
       }}
     >
       <h2>
-        {t(workflowStateTranslationKey(column.stateKey))}
+        {t(issueStatusTranslationKey(column.stateKey))}
         <span>{formatNumber(column.cards.length, i18n.language)}</span>
       </h2>
       {column.cards.map((issue) => (

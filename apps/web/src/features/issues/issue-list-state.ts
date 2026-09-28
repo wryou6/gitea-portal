@@ -1,5 +1,5 @@
 import { useCallback, useState } from "react";
-import { queryIssues, toUserFacingError, type Issue, type UserFacingError } from "../../lib/api";
+import { queryIssues, toUserFacingError, type Issue, type IssueSortField, type SortDirection, type UserFacingError } from "../../lib/api";
 import type { IssuePage } from "../../lib/api";
 import { useTranslation } from "react-i18next";
 
@@ -16,30 +16,38 @@ export type IssuePageLoader = (
 ) => Promise<IssuePage>;
 export function useIssueListState(
   initial: IssueFiltersValue,
+  initialSort: IssueSortField = "key",
+  initialDirection: SortDirection = "asc",
   loader: IssuePageLoader = queryIssues,
 ): {
   issues: Issue[];
   filters: IssueFiltersValue;
   page: number;
+  sort: IssueSortField;
+  direction: SortDirection;
   hasNext: boolean;
   loading: boolean;
   error?: UserFacingError;
-  load: (next?: IssueFiltersValue, page?: number) => Promise<void>;
+  load: (next?: IssueFiltersValue, page?: number, sort?: IssueSortField, direction?: SortDirection) => Promise<void>;
 } {
   const { t } = useTranslation("issues");
   const [issues, setIssues] = useState<Issue[]>([]);
   const [filters, setFilters] = useState(initial);
   const [page, setPage] = useState(1);
+  const [sort, setSort] = useState<IssueSortField>(initialSort);
+  const [direction, setDirection] = useState<SortDirection>(initialDirection);
   const [hasNext, setHasNext] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<UserFacingError>();
   const load = useCallback(
-    async (next = filters, requestedPage = 1) => {
+    async (next = filters, requestedPage = 1, requestedSort = sort, requestedDirection = direction) => {
       setFilters(next);
+      setSort(requestedSort);
+      setDirection(requestedDirection);
       setLoading(true);
       setError(undefined);
       try {
-        const result = await loader({ ...next, page: String(requestedPage) });
+        const result = await loader({ ...next, page: String(requestedPage), sort: requestedSort, direction: requestedDirection, limit: "50" });
         setIssues(result.items);
         setPage(result.page);
         setHasNext(result.hasNext);
@@ -47,6 +55,8 @@ export function useIssueListState(
           Object.entries(next).filter(([, value]) => value),
         );
         params.set("page", String(result.page));
+        params.set("sort", result.sort);
+        params.set("direction", result.direction);
         window.history.replaceState(
           {},
           "",
@@ -60,7 +70,7 @@ export function useIssueListState(
         setLoading(false);
       }
     },
-    [filters, loader, t],
+    [direction, filters, loader, sort, t],
   );
-  return { issues, filters, page, hasNext, loading, error, load };
+  return { issues, filters, page, sort, direction, hasNext, loading, error, load };
 }

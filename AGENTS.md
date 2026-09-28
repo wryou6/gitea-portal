@@ -16,8 +16,8 @@
 
 - 維持目前的 pnpm workspace：`apps/api`、`apps/web`、`packages/domain`、`packages/gitea-contracts`。
 - Gitea API 操作必須遵守目前使用者權限；Portal 不得用較高權限的後端身份替使用者繞過 Gitea authorization。
-- 工作流程使用 `config/workflows/conventions.yaml` 定義的固定狀態。
-- Kanban 狀態要保存為 Gitea 支援的 Workflow Label；不得把工作狀態只保存於 Portal。
+- 所有 Repository 共用固定的 Issue Status 定義；`Todo`、`In Progress` 以 Gitea Label 保存，`Done` 對應 Gitea Closed。
+- Kanban 狀態必須保存於 Gitea 支援的 `status:` Label；不得把工作狀態只保存於 Portal。
 - Issue list/detail 顯示完整 Labels；Kanban Card 可隱藏工作流程 Labels。
 
 ## 常用指令
@@ -37,13 +37,13 @@ API 預設使用 `http://localhost:3001`，Web 預設使用 `http://localhost:51
 ## 修改與驗證
 
 - 新增或修改 API contract 時，同步檢查 `packages/domain`、`packages/gitea-contracts`、`apps/api` 與 `apps/web` 的型別。
-- 修改 Gitea Label 或 Workflow state 時，確認 atomic replacement 與 optimistic concurrency 行為未被破壞；不得改回 remove-then-add fallback。
+- 修改 Gitea Label 或 Issue Status 時，確認 atomic replacement 與 optimistic concurrency 行為未被破壞；不得改回 remove-then-add fallback。
 - 修改 Kanban/Gantt view 時，確認沒有新的 Issue persistence mutation，且 repair annotation、error、anomaly column、drag transition 仍可辨識。
 - 修改 UI 後至少執行 `pnpm.cmd typecheck` 與 `pnpm.cmd build`；若涉及 feature spec，更新對應 `specs/<feature>/` 文件與 tasks。
 - 使用 `apply_patch` 編輯檔案；不要用 shell redirect 或腳本覆寫檔案。
 
 ## Git
 
-- Commit 使用 Conventional Commits，例如 `feat(work-views): hide workflow labels on kanban cards`。
+- Commit 使用 Conventional Commits，例如 `feat(work-views): hide status labels on kanban cards`。
 - Commit 前確認 staged diff 只包含本次工作，執行 `git diff --cached --check`。
 - 不要跳過 hooks，也不要修改 Git global config。

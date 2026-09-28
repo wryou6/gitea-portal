@@ -15,11 +15,13 @@ export type GiteaIssue = IssueSchedule & {
   number: number;
   title: string;
   body: string;
+  author: GiteaUser | null;
   state: IssueState;
   assignee: GiteaUser | null;
   assignees: GiteaUser[];
   labels: IssueLabel[];
   milestone: { id: number; title: string } | null;
+  createdAt: string;
   updatedAt: string;
   htmlUrl: string;
 };

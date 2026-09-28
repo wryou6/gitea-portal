@@ -1,8 +1,10 @@
 import type {
   IssueSummary,
+  IssueSortField,
   RepositoryWorkspace,
-  WorkflowColumn,
-  WorkflowViewCard,
+  SortDirection,
+  StatusColumn,
+  StatusViewCard,
 } from "@gitea-portal/domain";
 import type { GiteaRepository } from "./gitea.js";
 
@@ -11,11 +13,13 @@ export type IssuePage = {
   page: number;
   limit: number;
   hasNext: boolean;
+  sort: IssueSortField;
+  direction: SortDirection;
 };
 export type RepositoryWorkspaceView = GiteaRepository;
 export type RepositoryKanbanView = {
   repository: RepositoryWorkspaceView;
-  columns: WorkflowColumn[];
+  columns: StatusColumn[];
 };
 export type RepositoryGanttView = {
   repository: RepositoryWorkspaceView;
@@ -23,7 +27,7 @@ export type RepositoryGanttView = {
 };
 export type AllRepositoriesKanbanView = {
   repositories: RepositoryWorkspaceView[];
-  columns: WorkflowColumn[];
+  columns: StatusColumn[];
 };
 export type AllRepositoriesGanttView = {
   repositories: RepositoryWorkspaceView[];
@@ -35,10 +39,36 @@ export type WorkspaceKanbanView =
 export type WorkspaceGanttView =
   | RepositoryGanttView
   | AllRepositoriesGanttView;
-export type IssueViewCard = WorkflowViewCard;
-export type WorkflowTransitionInput = {
+export type IssueViewCard = StatusViewCard;
+export type StatusTransitionInput = {
   actionKey: string;
   selectedAssignee?: string;
   expectedUpdatedAt: string;
+};
+export type StatusLabelMigrationReport = {
+  repositories: number;
+  issuesScanned: number;
+  migrated: number;
+  unchanged: number;
+  successfulIssues: Array<{
+    owner: string;
+    repository: string;
+    issueNumber: number;
+    outcome: "migrated" | "unchanged";
+  }>;
+  resolvedConflicts: Array<{
+    owner: string;
+    repository: string;
+    issueNumber: number;
+    removedLegacyLabels: string[];
+    retainedStatusLabels: string[];
+  }>;
+  failures: Array<{
+    owner: string;
+    repository: string;
+    issueNumber?: number;
+    reason: string;
+  }>;
+  verified: boolean;
 };
 export type Session = { login: string; displayName?: string };

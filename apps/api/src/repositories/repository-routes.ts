@@ -12,7 +12,7 @@ import {
 } from "./repository-workspace-service.js";
 import { canAccessRepository } from "../auth/permissions.js";
 import { PortalError } from "../errors.js";
-import { getWorkflowColumns } from "../work-views/kanban-service.js";
+import { getStatusColumns } from "../work-views/kanban-service.js";
 import { mapIssue } from "../issues/issue-service.js";
 
 export function registerRepositoryRoutes(
@@ -22,7 +22,7 @@ export function registerRepositoryRoutes(
   app.get("/api/repositories/kanban", async (request) => {
     const client = giteaFor(request, config.giteaBaseUrl, config);
     const repositories = await client.repositories();
-    const columns = await getWorkflowColumns(client, repositories);
+    const columns = await getStatusColumns(client, repositories);
     return { repositories, columns } satisfies AllRepositoriesKanbanView;
   });
 

@@ -1,10 +1,13 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { IssueRow } from "./IssueRow";
 import { demoIssue } from "../../stories/fixtures";
+import { Table } from "../../components/ui/Table";
 
-const meta = { title: "Issues/IssueRow", component: IssueRow } satisfies Meta<
-  typeof IssueRow
->;
+const meta = {
+  title: "Issues/IssueRow",
+  component: IssueRow,
+  render: (args) => <Table className="issues-table"><tbody><IssueRow {...args} /></tbody></Table>,
+} satisfies Meta<typeof IssueRow>;
 export default meta;
 type Story = StoryObj<typeof meta>;
 export const Default: Story = { args: { issue: demoIssue } };
@@ -123,7 +126,7 @@ export const InvalidType: Story = {
 export const AllPriorityLevels: Story = {
   args: { issue: demoIssue },
   render: () => (
-    <div className="stack">
+    <Table className="issues-table"><tbody>
       {(["critical", "high", "medium", "low"] as const).map((priority) => (
         <IssueRow
           key={priority}
@@ -137,7 +140,7 @@ export const AllPriorityLevels: Story = {
           }}
         />
       ))}
-    </div>
+    </tbody></Table>
   ),
 };
 

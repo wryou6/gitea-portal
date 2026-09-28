@@ -1,18 +1,18 @@
 import { useEffect, useState } from "react";
-import { api, toUserFacingError, type Issue, type UserFacingError, type WorkflowDefinition } from "../../lib/api";
+import { api, toUserFacingError, type Issue, type UserFacingError, type StatusDefinition } from "../../lib/api";
 import { Button } from "../../components/ui/Button";
 import { Dialog } from "../../components/ui/Dialog";
 import { ErrorNotice } from "../../components/feedback/ErrorNotice";
 import { useTranslation } from "react-i18next";
 import {
-  workflowNextActionTranslationKey,
-  workflowReasonTranslationKey,
-  workflowStateTranslationKey,
-} from "../../i18n/workflow";
+  statusNextActionTranslationKey,
+  statusReasonTranslationKey,
+  issueStatusTranslationKey,
+} from "../../i18n/status";
 
 type Assignee = { login: string; fullName?: string };
 
-export function WorkflowTransitionDialog({
+export function StatusTransitionDialog({
   issue,
   targetState,
   onClose,
@@ -24,7 +24,7 @@ export function WorkflowTransitionDialog({
   onSubmit: (actionKey: string, selectedAssignee?: string) => Promise<void>;
 }) {
   const { t } = useTranslation("issues");
-  const [definition, setDefinition] = useState<WorkflowDefinition>();
+  const [definition, setDefinition] = useState<StatusDefinition>();
   const [assignees, setAssignees] = useState<Assignee[]>([]);
   const [actionKey, setActionKey] = useState("");
   const [selectedAssignee, setSelectedAssignee] = useState("");
@@ -33,11 +33,11 @@ export function WorkflowTransitionDialog({
   const actions =
     definition?.actions.filter(
       (action) =>
-        action.fromState === issue.workflowState &&
+        action.fromState === issue.status &&
         (!targetState || action.toState === targetState),
     ) ?? [];
   const selectedAction = actions.find((action) => action.key === actionKey);
-  const currentStateName = t(workflowStateTranslationKey(issue.workflowState));
+  const currentStatusName = t(issueStatusTranslationKey(issue.status));
   const requiresAssignee =
     selectedAction?.assigneePolicy === "required-handoff" ||
     (selectedAction?.assigneePolicy === "require-if-unassigned" &&
@@ -48,30 +48,30 @@ export function WorkflowTransitionDialog({
   useEffect(() => {
     let active = true;
     void Promise.all([
-      api<WorkflowDefinition>("/api/workflow-definition"),
+      api<StatusDefinition>("/api/status-definition"),
       api<Assignee[]>(
         `/api/repositories/${encodeURIComponent(issue.owner)}/${encodeURIComponent(issue.name)}/assignees`,
       ),
     ])
-      .then(([workflow, repositoryAssignees]) => {
+      .then(([statusDefinition, repositoryAssignees]) => {
         if (!active) return;
-        setDefinition(workflow);
+        setDefinition(statusDefinition);
         setAssignees(repositoryAssignees);
-        const applicable = workflow.actions.filter(
+        const applicable = statusDefinition.actions.filter(
           (action) =>
-            action.fromState === issue.workflowState &&
+            action.fromState === issue.status &&
             action.toState === targetState,
         );
         if (applicable.length === 1) setActionKey(applicable[0]!.key);
       })
       .catch((cause) => {
         if (active)
-          setError(toUserFacingError(cause, t("workflowDefinitionLoadError")));
+          setError(toUserFacingError(cause, t("statusDefinitionLoadError")));
       });
     return () => {
       active = false;
     };
-  }, [issue.name, issue.owner, issue.workflowState, targetState, t]);
+  }, [issue.name, issue.owner, issue.status, targetState, t]);
 
   const submit = async () => {
     if (!selectedAction || (requiresAssignee && !selectedAssignee)) {
@@ -88,7 +88,7 @@ export function WorkflowTransitionDialog({
       await onSubmit(selectedAction.key, selectedAssignee || undefined);
       onClose();
     } catch (cause) {
-      setError(toUserFacingError(cause, t("workflowTransitionFailed")));
+      setError(toUserFacingError(cause, t("statusTransitionFailed")));
     } finally {
       setSaving(false);
     }
@@ -99,8 +99,8 @@ export function WorkflowTransitionDialog({
       <p>
         {issue.title}
         {targetState
-          ? ` · ${currentStateName} → ${targetState ? t(workflowStateTranslationKey(targetState)) : ""}`
-          : ` · ${t("currentWorkflowState", { state: currentStateName })}`}
+          ? ` · ${currentStatusName} → ${targetState ? t(issueStatusTranslationKey(targetState)) : ""}`
+          : ` · ${t("currentIssueStatus", { status: currentStatusName })}`}
       </p>
       {actions.length ? (
         <label className="field">
@@ -116,8 +116,8 @@ export function WorkflowTransitionDialog({
             <option value="">{t("chooseReason")}</option>
             {actions.map((action) => (
               <option key={action.key} value={action.key}>
-                {t(workflowReasonTranslationKey(action.key))} · {t(workflowStateTranslationKey(action.toState))} · {t("nextAction", {
-                  action: t(workflowNextActionTranslationKey(action.nextActionKey)),
+                {t(statusReasonTranslationKey(action.key))} · {t(issueStatusTranslationKey(action.toState))} · {t("nextAction", {
+                  action: t(statusNextActionTranslationKey(action.nextActionKey)),
                 })}
               </option>
             ))}
