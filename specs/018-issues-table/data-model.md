@@ -24,10 +24,21 @@
 - Filters: 現有 `q`, `repository`, native/Portal `state`, `assignee`, `label`, `milestone`。
 - Sort field: `type | key | title | assignee | status | priority | createdAt | startDate | dueDate | author`。
 - Direction: `asc | desc`。
-- Defaults: `sort=key`, `direction=asc`, `page=1`, `limit=50`。
+- Defaults without a valid URL sort or saved account preference: `sort=key`, `direction=asc`, `page=1`, `limit=50`。
 - Validation: 未知 sort/direction rejected as invalid query; page is at least 1; limit is clamped to 1–50.
 - Ordering: null values last regardless of direction; selected field ordering then Key ascending deterministic tie-breaker.
 - Pagination: filters and ordering run over the full query result before slicing; `hasNext` means at least one item remains after the page.
+
+## Issues table preference
+
+- Account identity: authenticated Gitea login supplied by the existing app session bootstrap.
+- Visible fields: subset of all ten sortable fields; `key` and `title` MUST always be visible.
+- Default column order: all ten sortable fields exactly once, including currently hidden fields. Initial order is `type, key, title, assignee, status, priority, startDate, dueDate, createdAt, author`.
+- Default sort: one sortable field and `asc | desc`; initial value is `key`, `asc`.
+- Persistence: one versioned cookie per login; preference is not Issue data and contains no credential or Gitea record.
+- URL resolution: a valid URL sort plus direction overrides the saved default; otherwise load the saved default.
+- Runtime header drag: dragging a heading's text changes only the current table order; when that order differs from the saved default, the toolbar offers an action to save it as the new account default.
+- Validation: accept only known unique fields, a complete order permutation and supported direction; force `key` and `title` visible. Invalid/missing values fall back to the default preference.
 
 ## Status label migration item
 

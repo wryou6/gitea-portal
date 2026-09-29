@@ -6,15 +6,17 @@ export function Dialog({
   title,
   children,
   onClose,
+  className,
 }: {
   open: boolean;
   title: string;
   children: ReactNode;
   onClose: () => void;
+  className?: string;
 }) {
   if (!open) return null;
   return (
-    <DialogContent title={title} onClose={onClose}>
+    <DialogContent title={title} onClose={onClose} className={className}>
       {children}
     </DialogContent>
   );
@@ -24,19 +26,25 @@ function DialogContent({
   title,
   children,
   onClose,
+  className,
 }: {
   title: string;
   children: ReactNode;
   onClose: () => void;
+  className?: string;
 }) {
   const titleId = useId();
   const { t } = useTranslation("common");
   const dialogRef = useRef<HTMLElement>(null);
   const closeRef = useRef<HTMLButtonElement>(null);
+  const onCloseRef = useRef(onClose);
+  useEffect(() => {
+    onCloseRef.current = onClose;
+  }, [onClose]);
   useEffect(() => {
     closeRef.current?.focus();
     const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape") onClose();
+      if (event.key === "Escape") onCloseRef.current();
       if (event.key !== "Tab" || !dialogRef.current) return;
       const focusable = Array.from(
         dialogRef.current.querySelectorAll<HTMLElement>(
@@ -56,7 +64,7 @@ function DialogContent({
     };
     document.addEventListener("keydown", handleKeyDown);
     return () => document.removeEventListener("keydown", handleKeyDown);
-  }, [onClose]);
+  }, []);
   return (
     <div
       role="presentation"
@@ -76,7 +84,7 @@ function DialogContent({
         role="dialog"
         aria-modal="true"
         aria-labelledby={titleId}
-        className="detail-card"
+        className={`detail-card${className ? ` ${className}` : ""}`}
         onClick={(event) => event.stopPropagation()}
       >
         <div className="page-heading">

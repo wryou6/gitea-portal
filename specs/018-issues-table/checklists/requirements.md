@@ -1,7 +1,7 @@
-# Specification Quality Checklist: Issues 可排序表格
+# Specification Quality Checklist: Issues 表格與 View Options
 
 **Purpose**: Validate specification completeness and quality before proceeding to planning
-**Created**: 2026-09-28
+**Created**: 2026-09-29
 **Feature**: [spec.md](../spec.md)
 
 ## Content Quality
@@ -31,4 +31,4 @@
 
 ## Notes
 
-- No blocking requirement-quality issues found. `$speckit-clarify` will perform an independent ambiguity scan before planning.
+- View Options scope, account separation, URL sort precedence, persistence, toolbar default-sort save, restore-all-defaults, full-header drag, and active-sort-only arrows are specified.

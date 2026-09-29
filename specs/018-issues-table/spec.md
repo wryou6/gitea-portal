@@ -6,7 +6,7 @@
 
 **Status**: Draft
 
-**Input**: User description: 將 Issues 頁面重新設計為 table，顯示 Issue Type、Key、Subject、Assignee、Status、Priority、Created、Start Date、Due Date、Registered by；所有欄位可排序，預設依 Key 排序，每頁最多 50 筆，逾期日期醒目呈現，並以 Storybook 設計與檢視。
+**Input**: User description: 將 Issues 頁面重新設計為 table，顯示 Issue Type、Key、Subject、Assignee、Status、Priority、Created、Start Date、Due Date、Registered by；所有欄位可排序，預設依 Key 排序，每頁最多 50 筆，逾期日期醒目呈現，並以 Storybook 設計與檢視。View Options 設定欄位顯示與單欄位預設排序，表格欄序可直接拖曳表頭欄位名稱調整，並以表格上方按鈕保存為預設；偏好記錄於 cookie。
 
 ## Clarifications
 
@@ -20,6 +20,21 @@
 - Q: 若使用者能讀取某 Repository、但無權修改其 Issue Labels，遷移應如何完成？ → A: 遷移範圍內沒有此類唯讀 Issue；直接遷移全部目標 Issue，全部成功後移除舊 Label 相容支援。
 - Q: 遷移要由哪種操作者與入口涵蓋全部目標 Repository？ → A: 使用 Gitea `admin` 帳號作為唯一操作者，從 Portal 管理入口啟動、續跑及驗證；範圍是該帳號可完整列舉並具寫入權的所有目標 Repository。憑證不寫入 Portal 程式或文件。
 - Q: 如果同一個 Issue 同時有舊 Label 和對應的新 Label，遷移要怎麼處理？ → A: 新 Label 優先；刪除舊 prefix Label，即使兩者代表的 Status 或動作原因不同也不覆蓋新值。
+
+### Session 2026-09-29
+
+- Q: View Options 的欄位顯示、預設欄序與預設排序要套用到哪些 Issues table？ → A: All repos 與所有 Repository Issues table 共用同一登入帳號的設定。
+- Q: Issues URL 已明確包含排序時，應採用 URL 還是 cookie 的預設排序？ → A: URL 明確指定排序時以 URL 為準；缺少排序參數時才採用 cookie 預設值。
+- Q: View Options 設定要如何區分不同登入帳號？ → A: 依目前登入帳號區分；切換帳號時使用該帳號自己的設定。
+- Q: View Options 的 cookie 設定要在關閉瀏覽器後仍保留嗎？ → A: 保留設定；關閉並重新開啟瀏覽器後仍套用該帳號的偏好。
+- 決策：表頭欄位名稱可直接拖曳，不顯示專用拖曳按鈕；欄序不同於已保存順序時，於 View Options 左側顯示「設為預設欄位順序」按鈕，點擊後保存 cookie。View Options 不再編輯欄序。
+- 決策：View Options 開啟時先顯示欄位顯示與預設排序兩項入口，選取後再顯示該項設定頁。
+
+### Session 2026-09-29 - Table toolbar behavior (supersedes prior default-sort menu decision)
+
+- 決策：整個表頭欄位區域（包含欄名周圍空白）都可拖曳；未排序欄位不顯示箭頭；View Options 只提供欄位顯示。
+- 決策：從表頭更改排序後，若目前欄位或方向不同於已保存預設，工具列顯示「設為預設排序」按鈕。
+- 決策：「恢復預設」一次還原欄位顯示、預設欄序、預設排序與目前排序至產品初始值，並同步更新 URL。保存欄序與排序的按鈕小型醒目、可同時顯示，窄視窗可換行。
 
 ## User Scenarios & Testing *(mandatory)*
 
@@ -48,12 +63,33 @@
 
 **Acceptance Scenarios**:
 
-1. **Given** 使用者首次開啟 Issues 頁面，**When** 結果載入，**Then** 所有結果依 Key 遞增排序。
+1. **Given** 使用者首次開啟 Issues 頁面且沒有已保存的個人預設排序，**When** 結果載入，**Then** 所有結果依 Key 遞增排序。
 2. **Given** 表格已載入，**When** 使用者啟用任一欄位的排序，**Then** 完整篩選結果依該欄位排序後再分頁，表頭指出目前排序欄位與方向。
 3. **Given** 使用者選擇一個排序欄位，**When** 再次啟用該欄位，**Then** 排序方向切換；選擇其他欄位時以遞增方向開始。
 4. **Given** 有超過 50 筆符合條件的結果，**When** 使用者瀏覽任一頁，**Then** 該頁最多顯示 50 筆，並可前往有資料的前頁或後頁。
 5. **Given** 使用者已設定篩選、排序或頁碼，**When** 重新載入或分享目前頁面 URL，**Then** 相同檢視狀態可還原。
 6. **Given** 使用者調整搜尋或篩選條件，**When** 新條件提交，**Then** 結果回到第一頁並套用目前排序。
+
+### User Story 6 - 自訂 Issues 表格檢視 (Priority: P1)
+
+工程師可在 Issues table 右上方開啟 View Options 選擇顯示欄位；直接拖曳整個表頭欄位區域調整目前欄序，並透過工具列按鈕分別保存預設欄序與目前排序。偏好依登入帳號保存，並套用於 All repos 與各 Repository Issues table。
+
+**Why this priority**: 使用者能按自己的工作方式閱讀 Issues，並在之後進入任一 Issues 工作區時保留相同檢視偏好。
+
+**Independent Test**: 修改欄位顯示、欄序與目前排序，分別保存預設欄序及排序，操作恢復預設後檢查 table、URL、cookie，並切換登入帳號確認偏好互相隔離。
+
+**Acceptance Scenarios**:
+
+1. **Given** 使用者在 All repos 或 Repository Issues table，**When** 開啟右上方 View Options，**Then** 顯示欄位顯示設定；Key 與 Title 固定顯示，其餘欄位可切換。
+2. **Given** 使用者保存欄位顯示設定，**When** 檢視 table，**Then** Key 與 Title 保持顯示，其他欄位可各自隱藏或顯示。
+3. **Given** 使用者拖曳表頭欄位區域（包含欄名周圍空白），**When** 欄序改變，**Then** 只改變目前 table 欄序；新欄序不同於保存值時，工具列顯示「設為預設欄位順序」按鈕，按下後保存此欄序。
+4. **Given** 使用者透過表頭變更目前排序，**When** 排序欄位或方向不同於已保存預設，**Then** 工具列顯示「設為預設排序」按鈕，按下後保存目前欄位與方向。
+5. **Given** 欄序及排序都尚未保存，**When** 使用者查看工具列，**Then** 兩個保存按鈕都可見且醒目；窄視窗下按鈕可換行、不互相遮擋，並比 View Options 按鈕小。
+6. **Given** 使用者已自訂欄位顯示、欄序或預設排序，**When** 按下「恢復預設」，**Then** 欄位全部顯示、欄序還原初始值、預設與目前排序還原為 Key 升冪，且 URL 同步為該排序。
+7. **Given** 使用者在 All repos 或任一 Repository Issues table 修改設定，**When** 進入另一個 Issues 工作區，**Then** 兩處都使用同一帳號的設定。
+8. **Given** 使用者切換 Portal 登入帳號，**When** 查看 Issues table，**Then** 套用目前帳號自己的設定。
+9. **Given** Issues URL 明確包含排序欄位與方向，**When** 頁面載入，**Then** URL 排序優先於 cookie 預設排序；URL 未指定排序時使用 cookie 預設排序。
+10. **Given** 使用者直接拖曳 table 表頭欄位區域，**When** 欄位位置改變，**Then** 只改變目前頁面的欄序；保存前重新載入或進入其他 Issues 工作區時仍依已保存預設欄序呈現。
 
 ### User Story 3 - 辨認逾期排程 (Priority: P2)
 
@@ -81,6 +117,7 @@
 
 1. **Given** 審查者開啟 Storybook，**When** 選擇 Issues 表格頁面，**Then** 可檢視代表性資料、排序狀態、逾期提示與空／載入／錯誤狀態。
 2. **Given** 審查者調整窄視窗尺寸，**When** 表格寬度超過可用區域，**Then** 欄位仍可透過水平捲動閱讀，且頁面主要內容不被裁切或破版。
+3. **Given** 審查者開啟 View Options 與 table toolbar 案例，**When** 檢視欄位顯示、欄序待保存、排序待保存、同時待保存及窄版面，**Then** 可檢視各狀態；欄位重排可拖曳表頭任一處或使用鍵盤完成。
 
 ### User Story 5 - 在各檢視使用一致的 Status 語意 (Priority: P1)
 
@@ -108,17 +145,19 @@
 - 空結果、載入中及讀取失敗須分別呈現；All repos 的必要 Repository 或 Issue 讀取失敗時，不得將部分結果呈現為完整清單。
 - 排序、篩選或分頁期間發生讀取錯誤時，使用者可辨認錯誤並重試。
 - 表格在窄視窗下可以水平捲動；欄位仍可讀取，不以隱藏必要資訊取代。
+- 隱藏欄位時 Key 與 Title 仍固定顯示；欄序、欄位顯示或預設排序偏好無效或缺漏時，使用者仍可載入預設 Issues table。
+- 使用者可直接拖曳表頭欄位名稱調整欄序；鍵盤使用者在排序表頭按鈕上以 Shift+Space 抓取、左右方向鍵移動、Space 放下，或按 Esc 取消。互動狀態須有明確焦點、位置回饋與重排動態效果，並尊重減少動態效果偏好。
 
 ## Requirements *(mandatory)*
 
 ### Functional Requirements
 
 - **FR-001**: Issues 清單 MUST 在 All repos 與 Repository 工作區以表格呈現。
-- **FR-002**: 表格 MUST 依序提供 Type、Key、Title、Assignee、Status、Priority、Created at、Start Date、Due Date、Author 欄位。`Author` MUST 表示建立 Issue 的 Gitea 使用者；`Title` MUST 表示 Issue 標題。
+- **FR-002**: 表格 MUST 提供 Type、Key、Title、Assignee、Status、Priority、Created at、Start Date、Due Date、Author 欄位。首次載入的預設欄序 MUST 為 Type、Key、Title、Assignee、Status、Priority、Start Date、Due Date、Created at、Author。Type、Status 與 Priority 欄的表頭及資料內容 MUST 水平置中。`Author` MUST 表示建立 Issue 的 Gitea 使用者；`Title` MUST 表示 Issue 標題。
 - **FR-003**: Key MUST 以 `owner/repo#number` 呈現，並可用於識別與開啟對應 Issue。
 - **FR-004**: 表格 MUST 顯示 Gitea Issue 資料及由既有 Gitea 資料推導的 Type、Priority、Status 與 Start Date；Status MUST 顯示 Portal 固定三態 Todo、In Progress 或 Done；Gitea MUST 維持唯一資料來源。
 - **FR-005**: 使用者 MUST 能依任一表格欄位排序完整的符合條件結果，並能在目前欄位切換遞增與遞減方向。
-- **FR-006**: 初次載入或選擇新的排序欄位時 MUST 以遞增方向排序；初次載入的預設排序欄位 MUST 為 Key。
+- **FR-006**: 選擇新的排序欄位時 MUST 以遞增方向排序；未設定個人偏好時，Issues table 的預設排序 MUST 為 Key 遞增。使用者 MUST 能以目前 table 的欄位與方向保存單一預設排序。
 - **FR-007**: 排序值相同時 MUST 以 Key 遞增作為穩定次排序；未設定值 MUST 排在有值項目之後，不因排序方向而改變此規則。
 - **FR-008**: 篩選與排序 MUST 在分頁前套用；每頁 MUST 最多顯示 50 筆，且提供可操作的前後頁導覽。
 - **FR-009**: 搜尋、篩選、排序欄位、方向及目前頁碼 MUST 保留於可分享的頁面 URL；條件變更 MUST 回到第一頁。
@@ -129,6 +168,16 @@
 - **FR-014**: Issues 表格 MUST 提供 Storybook 案例，涵蓋主要內容、排序方向、日期標記、缺漏或異常、空結果、載入中、讀取錯誤及窄視窗呈現。
 - **FR-015**: 頁面 MUST 保留現有搜尋、篩選、建立 Issue、Issue 詳情導覽與分頁能力。
 - **FR-016**: 新增或修改的使用者可見文字 MUST 支援所有現有語系。
+- **FR-024**: All repos 與所有 Repository Issues table MUST 在表格右上方提供 View Options；開啟後提供欄位可見性設定。
+- **FR-025**: View Options MUST 固定顯示 Key 與 Title，並允許使用者隱藏或顯示其餘欄位。使用者 MUST 能直接拖曳 table 整個表頭欄位區域調整目前欄序，並以表格上方的「設為預設欄位順序」按鈕保存所有欄位的預設順序。
+- **FR-026**: View Options 設定 MUST 依目前登入帳號保存，並在該帳號的 All repos 與各 Repository Issues table 共用。
+- **FR-027**: URL 明確提供排序欄位與方向時 MUST 優先還原 URL 的排序狀態；URL 沒有有效排序時 MUST 套用 cookie 中已保存的預設排序。
+- **FR-028**: View Options 設定 MUST 記錄在 cookie；使用者重新載入頁面後 MUST 還原有效設定。
+- **FR-029**: View Options cookie MUST 在關閉並重新開啟瀏覽器後保留有效設定，並依目前登入帳號載入對應偏好。
+- **FR-030**: View Options 及新增的表格呈現文字 MUST 支援繁體中文、英文與日文；若 Gitea 對應介面提供相同語意的用字，各語系 MUST 沿用該用字。
+- **FR-031**: 欄序重排 MUST 可從整個表頭欄位區域（含欄名周圍空白）拖曳啟動，不得要求專用拖曳按鈕；拖曳後只變更目前欄序，不得自動覆寫保存值。鍵盤替代操作 MUST 在表頭排序按鈕上以 Shift+Space 抓取、左右方向鍵移動、Space 放下、Esc 取消。重排 MUST 使用尊重 `prefers-reduced-motion` 的動畫，不得顯示方向移動按鈕。
+- **FR-032**: 只有目前排序欄位 MUST 顯示升冪或降冪箭頭；未排序欄位不得顯示排序箭頭。當目前 table 排序不同於保存的預設排序時 MUST 顯示「設為預設排序」按鈕。
+- **FR-033**: 欄序或排序待保存時的工具列按鈕 MUST 使用小型且醒目的樣式；多個待保存按鈕 MUST 可同時顯示並在窄視窗換行。偏好偏離產品初始值時 MUST 提供「恢復預設」按鈕，重設欄位顯示、欄序、預設排序與目前 table 排序，並同步更新 URL。
 - **FR-017**: Portal MUST 將 Todo、In Progress、Done 這組 Issue Status 作為唯一產品概念名稱；程式識別字、API 契約、設定、翻譯、樣式及維護中的文件 MUST 使用 Status 命名，不得保留舊概念名稱。
 - **FR-018**: Gitea MUST 繼續作為 Issue Status 的唯一來源；Todo 與 In Progress 的 Gitea Label 前綴 MUST 使用 `status:`，Done MUST 維持以 Gitea Closed state 表示。
 - **FR-019**: Issue Status MUST 與 Gitea 原生 Open／Closed state 分開表示；Portal MUST 保留 Todo／In Progress 對應 Open、Done 對應 Closed 的既有規則。
@@ -141,6 +190,7 @@
 
 - **Issue 列**：Gitea Issue 在表格中的呈現資料，包含 Repository 身分、number、標題、建立時間、建立者、指派對象、Gitea state、Labels 衍生值與排程日期。
 - **排序狀態**：目前排序欄位及遞增／遞減方向；預設為 Key 遞增，並與篩選、頁碼共同識別可分享的清單檢視。
+- **Issues table 偏好**：依登入帳號保存的欄位可見性、預設欄序，以及單一預設排序欄位和方向；Key 與 Title 為固定可見欄位。
 - **分頁結果**：依篩選及排序後的 Issue 集合，以每頁最多 50 筆呈現的連續頁面。
 
 ## Success Criteria *(mandatory)*
@@ -154,13 +204,20 @@
 - **SC-005**: 在窄視窗中，全部 10 欄仍可藉由表格區域水平捲動讀取及操作。
 - **SC-006**: 頁面重載或分享 URL 後，篩選、排序及頁碼與 URL 記錄一致。
 - **SC-007**: 遷移完成後，所有可寫入 Issue 的狀態及轉換原因均使用新 Label prefix，且 Portal 的維護中程式、契約、設定、翻譯及文件一致使用 Status 名稱。
+- **SC-008**: 使用者可在 View Options 設定其餘 8 欄的可見性，並由 table toolbar 保存預設欄序及目前欄位排序；設定重新載入後仍能還原。
+- **SC-009**: 同一登入帳號的設定在 All repos 與所有 Repository Issues table 一致；切換帳號後不會套用其他帳號的偏好。
+- **SC-010**: View Options 的所有新增文字均能在三種支援語系中顯示，且與 Gitea 相同語意的介面用字一致。
+- **SC-011**: 欄序與排序同時待保存時兩個操作按鈕皆可見；恢復預設後 table、URL 與 cookie 設定一致。
 
 ## Assumptions
 
 - `Status` 欄顯示 Portal 固定三態 Todo、In Progress、Done；不顯示 Gitea Open／Closed state。
 - 全域 Status 改名及既有 Gitea Label 遷移屬於本功能範圍；舊 feature 規格保留作為歷史記錄。
 - `Author` 欄表示建立 Issue 的 Gitea 使用者；`Created at` 顯示 Issue 建立時間。
-- Key 使用 `owner/repo#number`，字典序遞增為預設排序。
+- Key 使用 `owner/repo#number`，字典序遞增為未設定個人偏好時的預設排序。
+- View Options 偏好由登入帳號區分，All repos 與 Repository Issues table 共用；明確的 URL 排序狀態優先於偏好中的預設排序。
+- View Options cookie 跨瀏覽器重新啟動保留；表頭欄位名稱可直接拖曳排序並提供鍵盤操作替代；欄序不同於預設時顯示保存按鈕，重排動畫尊重減少動態效果設定。
+- View Options 的 UI 設計採用 `$ui-styling` 與 `$ui-ux-pro-max`，並以 Storybook 檢視和驗收主要互動狀態。
 - 逾期判斷採使用者所在地的日曆日期；已關閉 Issue 不視為逾期。
 - 狀態遷移只修改指定的狀態與轉換原因 Labels；一般 Labels、Assignee、Milestone、Gitea Open／Closed state 及其他 Issue 資料均保留。
 - 遷移使用目前登入者的 Gitea 權限，不使用較高權限的服務身份；範圍內所有目標 Issue 均可由目前使用者更新。技術失敗可重試，全部遷移成功前不得移除舊 Label 相容支援。

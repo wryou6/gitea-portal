@@ -184,3 +184,52 @@ Keep the new Status reader able to read both prefixes while migrating. Do not pe
 - [X] T040 Return and render a per-Issue successful migration outcome (migrated or unchanged), alongside existing per-Issue conflicts and failures, in `apps/api/src/issues/status-label-migration-service.ts`, `packages/gitea-contracts/src/portal.ts`, `apps/web/src/lib/api.ts`, and `apps/web/src/features/settings/SettingsPage.tsx` (FR-023, partial).
 - [ ] T041 Run the complete Status-label migration through the Portal as Gitea `admin`, resolve every reported failure/conflict according to the clarified new-label-wins rule, and record a `verified: true` full-scope report in `specs/018-issues-table/quickstart.md` before completing T035 (SC-007, partial).
 - [X] T042 Align localized Issues table headings and Status terminology in `apps/web/src/i18n/resources/issues.ts` and `apps/web/src/i18n/resources/work-views.ts` with the Gitea UI terminology; validate the affected UI resources (FR-001, FR-015).
+
+## Phase 10: User Story 6 - 自訂 Issues 表格檢視 (Priority: P1)
+
+**Goal**: Configure visible fields and a single default sort from View Options; reorder table headings directly and save the desired default order from the table toolbar. Keep preferences isolated by login and retained across browser restarts.
+
+**Independent Test**: Change visibility and sort from the two-entry View Options menu; drag a table heading to reorder it and use the toolbar action to save the default order. Confirm cookie persistence, URL sort precedence, cross-workspace reuse, account isolation, keyboard reordering, and Storybook states without live API or browser-cookie access.
+
+### Implementation for User Story 6
+
+- [X] T043 [P] [US6] Define the validated versioned preference shape and one-year account-scoped cookie read/write helper with default fallback in `apps/web/src/features/issues/issue-view-preference.ts`.
+- [X] T044 [P] [US6] Drive Issue headers and row cells from one shared field order/visibility model, support direct heading-text drag plus keyboard Shift+Space/Arrow/Space/Escape transient reordering, show a toolbar action only when current order differs from the saved default and persist the order when clicked, animate header and cell movement, retain sorting semantics, and set empty-state colspan to visible field count in `apps/web/src/features/issues/IssueListPage.tsx`, `apps/web/src/features/issues/IssueRow.tsx`, and `apps/web/src/lib/use-reorder-animation.ts`.
+- [X] T045 [P] [US6] Build the accessible View Options Dialog with a first-level menu for visibility and default sort, focused setting subviews with return navigation, always-visible Key/Title controls, remaining visibility checkboxes, one default sort field/direction, focus return, and zh-TW/en/ja wording in `apps/web/src/features/issues/IssueViewOptionsDialog.tsx`, `apps/web/src/i18n/resources/issues.ts`, and `apps/web/src/index.css`.
+- [X] T046 [US6] Pass authenticated login to the Issues page, load account preferences before resolving absent URL sorting, preserve explicit URL precedence, and immediately save/apply preference changes while synchronizing the chosen default sort to the current URL in `apps/web/src/app/App.tsx` and `apps/web/src/features/issues/IssueListPage.tsx`.
+- [X] T047 [US6] Add zh-TW/en/ja locale toolbar support and deterministic default/custom/open-dialog and narrow View Options Stories using injected demo preferences without cookie or live API side effects in `apps/web/.storybook/preview.tsx` and `apps/web/src/features/issues/IssueListPage.stories.tsx`.
+- [X] T048 [US6] Document account isolation, one-year persistence, URL precedence, Gitea terminology, keyboard/drag interactions, and manual acceptance steps in `specs/018-issues-table/quickstart.md`.
+- [X] T049 [US6] Run workspace typecheck/build and build/visually inspect Stories for all three locales, visibility/order/sort changes, View Options menu and setting subviews, dialog focus return, direct heading-text drag and keyboard reorder, save-default-order toolbar state, reorder animation/reduced-motion, and narrow layout; record outcomes in `specs/018-issues-table/quickstart.md`.
+
+**Checkpoint**: View Options preferences survive browser restarts per login, apply across Issues workspaces, and never alter Issue/Gitea data; all table columns stay aligned and keyboard-operable.
+
+### Dependencies and Parallel Opportunities
+
+- T043 and T045 may proceed in parallel; T044 may proceed in parallel with T043/T045 because it uses the existing sort-field union and table files only.
+- T046 depends on T043–T045; T047 and T048 depend on T046; T049 is the final acceptance gate.
+- Existing T035/T041 remain gated by the full-scope authenticated Status-label migration and are unrelated to the View Options UI increment.
+
+### Parallel Example: User Story 6
+
+```text
+T043 preference cookie helper
+T044 dynamic/transient table column order
+T045 View Options Dialog, translations, and styling
+```
+
+**MVP**: T043–T046 deliver the functional preference flow; T047–T049 complete Storybook, acceptance documentation, and project validation.
+
+## Phase 11: Toolbar sorting and view reset refinement
+
+**Goal**: Keep View Options focused on column visibility; let users save the current table sort from the toolbar, reorder from anywhere in a header, and restore the full initial view with compact, responsive actions.
+
+This phase supersedes the initial default-sort controls in View Options and text-only drag source implemented in Phase 10.
+
+**Independent Test**: Use Storybook fixtures to inspect header-wide drag affordance, active-sort-only arrows, pending save actions individually and together, and restore-default behavior at wide and narrow viewports.
+
+- [X] T050 [US6] Make the full table header cell a drag source, remove unsorted sort glyphs, show a toolbar action when active table sort differs from saved default, and implement restore-all-defaults including cookie, current sort, column order/visibility, and URL synchronization in `apps/web/src/features/issues/IssueListPage.tsx`.
+- [X] T051 [US6] Remove default-sort controls and navigation from View Options so the dialog directly exposes only visibility controls; update the zh-TW/en/ja toolbar, restore, and drag-area copy in `apps/web/src/features/issues/IssueViewOptionsDialog.tsx` and `apps/web/src/i18n/resources/issues.ts`.
+- [X] T052 [US6] Style save-order/save-sort actions as compact accent buttons, place restore and View Options with clear hierarchy, and support simultaneous actions wrapping cleanly on narrow widths in `apps/web/src/index.css`.
+- [X] T053 [US6] Add deterministic Storybook cases for sort pending, order plus sort pending, restore-default availability, simplified visibility dialog, and narrow toolbar behavior in `apps/web/src/features/issues/IssueListPage.stories.tsx`.
+- [X] T054 [US6] Update the feature requirements and manual acceptance flow for full-header drag, active-sort-only arrows, toolbar default-sort saving, restore-all-defaults, all locales, and Storybook states in `specs/018-issues-table/spec.md`, `specs/018-issues-table/plan.md`, and `specs/018-issues-table/quickstart.md`.
+- [X] T055 [US6] Run workspace typecheck/build and build Storybook; inspect toolbar and dialog at normal/narrow widths and all three locales, then record concrete results in `specs/018-issues-table/quickstart.md`.

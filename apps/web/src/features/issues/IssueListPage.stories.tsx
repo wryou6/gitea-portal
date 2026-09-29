@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { IssueListPage } from "./IssueListPage";
 import { demoIssue } from "../../stories/fixtures";
+import { defaultIssueViewPreference, type IssueViewPreference } from "./issue-view-preference";
 
 const meta = {
   title: "Screens/Issue List",
@@ -121,5 +122,97 @@ export const ReadError: Story = { args: { demoIssues: [], demoState: "error" } }
 
 export const NarrowViewport: Story = {
   args: { demoIssues: [demoIssue] },
+  parameters: { viewport: { defaultViewport: "mobile1" } },
+};
+
+export const ViewOptionsDefault: Story = {
+  args: {
+    demoIssues: [demoIssue],
+    demoViewPreference: defaultIssueViewPreference(),
+  },
+};
+
+const compactViewPreference: IssueViewPreference = {
+  ...defaultIssueViewPreference(),
+  visibleFields: ["key", "title", "priority", "author"],
+  columnOrder: ["type", "key", "title", "author", "assignee", "status", "priority", "startDate", "dueDate", "createdAt"],
+  defaultSortField: "createdAt",
+  defaultSortDirection: "desc",
+};
+
+export const ViewOptionsCustomized: Story = {
+  args: {
+    demoIssues: [demoIssue],
+    demoSort: { sort: "createdAt", direction: "desc" },
+    demoViewPreference: compactViewPreference,
+  },
+};
+
+export const ViewOrderNeedsSave: Story = {
+  args: {
+    demoIssues: [demoIssue],
+    demoViewPreference: compactViewPreference,
+    demoColumnOrder: ["type", "key", "priority", "title", "author", "assignee", "status", "startDate", "dueDate", "createdAt"],
+  },
+};
+
+export const ViewOptionsOpen: Story = {
+  args: {
+    demoIssues: [demoIssue],
+    demoViewPreference: compactViewPreference,
+    demoOptionsOpen: true,
+  },
+};
+
+export const ViewOptionsVisibility: Story = {
+  args: {
+    demoIssues: [demoIssue],
+    demoViewPreference: compactViewPreference,
+    demoOptionsOpen: true,
+  },
+};
+
+export const SortNeedsSave: Story = {
+  args: {
+    demoIssues: [demoIssue],
+    demoViewPreference: compactViewPreference,
+    demoSort: { sort: "key", direction: "asc" },
+  },
+};
+
+export const OrderAndSortNeedSave: Story = {
+  args: {
+    demoIssues: [demoIssue],
+    demoViewPreference: compactViewPreference,
+    demoColumnOrder: ["type", "key", "priority", "title", "author", "assignee", "status", "startDate", "dueDate", "createdAt"],
+    demoSort: { sort: "key", direction: "asc" },
+  },
+};
+
+export const ViewOptionsNarrow: Story = {
+  args: {
+    demoIssues: [demoIssue],
+    demoViewPreference: compactViewPreference,
+    demoOptionsOpen: true,
+  },
+  parameters: { viewport: { defaultViewport: "mobile1" } },
+};
+
+export const ViewOptionsVisibilityNarrow: Story = {
+  args: {
+    demoIssues: [demoIssue],
+    demoViewPreference: compactViewPreference,
+    demoOptionsOpen: true,
+  },
+  parameters: { viewport: { defaultViewport: "mobile1" } },
+};
+
+export const OrderAndSortNeedSaveNarrow: Story = {
+  args: {
+    demoIssues: [demoIssue],
+    demoViewPreference: compactViewPreference,
+    demoColumnOrder: ["type", "key", "priority", "title", "author", "assignee", "status", "startDate", "dueDate", "createdAt"],
+    demoSort: { sort: "key", direction: "asc" },
+  },
   parameters: { viewport: { defaultViewport: "mobile1" } },
 };

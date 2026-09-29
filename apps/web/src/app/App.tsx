@@ -112,7 +112,7 @@ export function App({
           />
         );
       case "issues":
-        return <IssueListPage />;
+        return <IssueListPage key={login ?? "issues"} login={login} />;
       case "not-found":
         return <main><h1>404</h1></main>;
     }
