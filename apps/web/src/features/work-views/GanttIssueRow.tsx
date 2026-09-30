@@ -1,97 +1,170 @@
-import type { Issue } from "../../lib/api";
+import type { CSSProperties, ReactNode } from "react";
+import { useTranslation } from "react-i18next";
+import { routePaths } from "../../app/routes";
 import { IssueTypeBadge } from "../../components/ui/IssueTypeBadge";
 import { PriorityBadge } from "../../components/ui/PriorityBadge";
-import { ScheduleDates } from "../issues/ScheduleDates";
-import { useTranslation } from "react-i18next";
-import {
-  statusNextActionTranslationKey,
-  issueStatusTranslationKey,
-} from "../../i18n/status";
+import { formatDateTime } from "../../i18n/format";
+import { issueStatusTranslationKey } from "../../i18n/status";
+import type { Issue, IssueSortField } from "../../lib/api";
+import { scheduleAnomalyTranslationKey } from "../issues/ScheduleDates";
+import type { GanttTimelineCell } from "./gantt-timeline";
+import { GANTT_SCALE_WIDTH } from "./GanttCalendarHeader";
+import type { GanttScale } from "./gantt-timeline";
 
 export type GanttIssueRowVariant = "scheduled" | "unscheduled" | "anomaly";
+
+export type GanttColumn = {
+  field: IssueSortField | "repository";
+  label: string;
+};
 
 export function GanttIssueRow({
   issue,
   href,
   variant,
-  start,
-  end,
-  left = 0,
-  width = 0,
-  anomaly,
+  columns,
+  fieldGridTemplate,
+  returnTo,
+  cells,
+  scale,
+  today,
 }: {
   issue: Issue;
-  href: string;
+  href?: string;
+  returnTo?: string;
   variant: GanttIssueRowVariant;
-  start?: string | null;
-  end?: string | null;
-  left?: number;
-  width?: number;
-  anomaly?: string;
+  columns: GanttColumn[];
+  fieldGridTemplate?: string;
+  cells: GanttTimelineCell[];
+  scale: GanttScale;
+  today: string;
 }) {
   const { t } = useTranslation("work-views");
-  const { t: tIssues } = useTranslation("issues");
-  const heading = (
-    <div className="gantt-issue-heading">
-      <a href={href}>{issue.title}</a>
-      <IssueTypeBadge type={issue.type} labels={issue.labels} />
-      <PriorityBadge priority={issue.priority} labels={issue.labels} />
-    </div>
-  );
-  const details = (
-    <>
-      <small className="gantt-issue-meta">
-        <span>
-          {issue.owner}/{issue.name} #{issue.number}
-        </span>
-        <span
-          className={`issue-status issue-status--${issue.status}`}
-        >
-          {tIssues(issueStatusTranslationKey(issue.status))}
-        </span>
-        <span>{t("currentAssignee")}: {issue.currentOwner ?? t("noAssignee")}</span>
-      </small>
-      <small className="gantt-next-action">{t("nextAction", { action: tIssues(statusNextActionTranslationKey(issue.nextActionKey)) })}</small>
-      <ScheduleDates
-        startDate={issue.startDate}
-        dueDate={issue.dueDate}
-        scheduleAnomaly={issue.scheduleAnomaly}
-        className="schedule-dates--compact"
-      />
-      {variant === "anomaly" && (
-        <span className="schedule-anomaly" role="status">
-          {anomaly ?? t("scheduleDateInvalid")}
-        </span>
-      )}
-    </>
-  );
-
-  if (variant === "anomaly") {
-    return (
-      <article className="gantt-anomaly">
-        <div className="gantt-issue">
-          {heading}
-          {details}
-        </div>
-      </article>
-    );
-  }
+  const { t: tIssues, i18n } = useTranslation("issues");
+  const issueHref = href ?? (returnTo
+    ? routePaths.issueDetailFrom(issue.owner, issue.name, issue.number, returnTo)
+    : routePaths.issueDetail(issue.owner, issue.name, issue.number));
+  const unitWidth = GANTT_SCALE_WIDTH[scale];
+  const totalWidth = cells.length * unitWidth;
+  const weekendOverlays: Array<{ date: string; left: number; width: number }> = [];
+  cells.forEach((cell, index) => {
+    const days = Math.max(1, Math.round((Date.parse(`${cell.end}T00:00:00Z`) - Date.parse(`${cell.start}T00:00:00Z`)) / 86_400_000));
+    for (let day = 0; day < days; day += 1) {
+      const date = new Date(Date.parse(`${cell.start}T00:00:00Z`) + day * 86_400_000);
+      const weekday = date.getUTCDay();
+      if (weekday === 0 || weekday === 6) {
+        weekendOverlays.push({
+          date: date.toISOString().slice(0, 10),
+          left: (index + day / days) * unitWidth,
+          width: unitWidth / days,
+        });
+      }
+    }
+  });
+  const vars = {
+    "--gantt-unit-width": `${unitWidth}px`,
+    "--gantt-timeline-width": `${totalWidth}px`,
+    "--gantt-fields-template": fieldGridTemplate ?? columns.map(({ field }) => field === "title"
+      ? "minmax(13rem, 2fr)"
+      : field === "assignee" || field === "status" || field === "repository"
+        ? "max-content"
+        : "minmax(7rem, 0.9fr)").join(" "),
+  } as CSSProperties;
+  const scheduleStart = issue.startDate ?? issue.dueDate;
+  const scheduleEnd = issue.dueDate ?? issue.startDate;
+  const barStart = scheduleStart && variant === "scheduled"
+    ? positionForDate(scheduleStart, cells) * unitWidth
+    : undefined;
+  const barEnd = scheduleEnd && variant === "scheduled"
+    ? positionForDate(addDay(scheduleEnd), cells) * unitWidth
+    : undefined;
+  const todayPosition = positionForDate(today, cells) * unitWidth;
+  const values: Record<IssueSortField | "repository", ReactNode> = {
+    type: <IssueTypeBadge type={issue.type} labels={issue.labels} />,
+    key: (
+      <a href={issueHref} className="gantt-key">
+        {issue.owner}/{issue.name}#{issue.number}
+      </a>
+    ),
+    title: (
+      <div className="gantt-title-cell">
+        <a href={issueHref} title={issue.title}>{issue.title}</a>
+        {variant === "anomaly" && (
+          <span className="schedule-anomaly" role="status">
+            {tIssues(scheduleAnomalyTranslationKey(issue.scheduleAnomaly))}
+          </span>
+        )}
+      </div>
+    ),
+    repository: <span className="gantt-repository-value" title={`${issue.owner}/${issue.name}`}>{issue.owner}/{issue.name}</span>,
+    assignee: issue.assignee ?? t("noAssignee"),
+    status: (
+      <span className={`issue-status issue-status--${issue.status}`}>
+        {tIssues(issueStatusTranslationKey(issue.status))}
+      </span>
+    ),
+    priority: <PriorityBadge priority={issue.priority} labels={issue.labels} />,
+    createdAt: <time dateTime={issue.createdAt}>{formatDateTime(issue.createdAt, i18n.language)}</time>,
+    startDate: null,
+    dueDate: null,
+    author: issue.author || tIssues("notSet"),
+  };
 
   return (
-    <article className="gantt-row">
-      <div className="gantt-issue">
-        {heading}
-        {details}
+    <div className={`gantt-row gantt-row--${variant}`} role="row" style={vars}>
+      <div className="gantt-row-fields" role="presentation">
+        {columns.map((column) => (
+          <div
+            className={`gantt-cell gantt-cell--${column.field}`}
+            role="cell"
+            key={column.field}
+          >
+            {values[column.field]}
+          </div>
+        ))}
       </div>
-      <div className="gantt-track" aria-hidden="true">
-        {start && end && (
+      <div className="gantt-track" role="cell" aria-label={t("timeline")} style={{ width: `${totalWidth}px` }}>
+        {weekendOverlays.map((overlay) => (
+          <span
+            className="gantt-weekend"
+            key={overlay.date}
+            style={{ left: `${overlay.left}px`, width: `${overlay.width}px` }}
+            aria-hidden="true"
+          />
+        ))}
+        {today >= (cells[0]?.start ?? today) && today < (cells.at(-1)?.end ?? today) && (
+          <span
+            className="gantt-track-today"
+            style={{ left: `${todayPosition}px` }}
+            role="img"
+            aria-label={`${today} ${t("todayMarker")}`}
+          />
+        )}
+        {barStart !== undefined && barEnd !== undefined && (
           <span
             className="gantt-bar"
-            aria-hidden="true"
-            style={{ left: `${left}%`, width: `${width}%` }}
+            style={{ left: `${barStart}px`, width: `${Math.max(barEnd - barStart, 4)}px` }}
+            role="img"
+            aria-label={`${scheduleStart} – ${scheduleEnd}`}
           />
         )}
       </div>
-    </article>
+    </div>
   );
+}
+
+function positionForDate(value: string, cells: GanttTimelineCell[]): number {
+  const target = Date.parse(`${value}T00:00:00Z`);
+  const index = cells.findIndex((cell) => Date.parse(`${cell.start}T00:00:00Z`) <= target && target < Date.parse(`${cell.end}T00:00:00Z`));
+  if (index < 0) return value < (cells[0]?.start ?? value) ? 0 : cells.length;
+  const cell = cells[index]!;
+  const start = Date.parse(`${cell.start}T00:00:00Z`);
+  const end = Date.parse(`${cell.end}T00:00:00Z`);
+  return index + (target - start) / (end - start);
+}
+
+function addDay(value: string): string {
+  const date = new Date(`${value}T00:00:00Z`);
+  date.setUTCDate(date.getUTCDate() + 1);
+  return date.toISOString().slice(0, 10);
 }

@@ -142,6 +142,13 @@ textarea:focus-visible,
 .app-shell {
   min-height: 100vh;
 }
+.app-shell:has(.workspace-view--gantt) {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  height: 100dvh;
+  min-height: 0;
+  overflow: hidden;
+}
 .auth-page {
   display: grid;
   min-height: 100vh;
@@ -631,6 +638,41 @@ textarea:focus-visible,
   width: min(1440px, calc(100% - 2rem));
   margin: 0 auto;
   padding: 2rem 0 4rem;
+}
+.app-layout:has(.workspace-view--gantt) {
+  min-height: 0;
+  overflow: hidden;
+}
+.app-content:has(.workspace-view--gantt) {
+  display: flex;
+  min-height: 0;
+  height: 100%;
+  flex-direction: column;
+  box-sizing: border-box;
+  overflow: hidden;
+  padding-block: 1rem;
+}
+.workspace-view--gantt {
+  display: flex;
+  min-height: 0;
+  flex: 1;
+  flex-direction: column;
+}
+.workspace-view--gantt > .page-heading {
+  flex: none;
+  margin-bottom: 0.75rem;
+}
+.gantt-story-shell {
+  display: flex;
+  height: 100dvh;
+  flex-direction: column;
+  box-sizing: border-box;
+  overflow: hidden;
+  padding: 1rem;
+}
+.gantt-story-shell > .page-heading {
+  flex: none;
+  margin-bottom: 0.75rem;
 }
 .page-heading {
   display: flex;
@@ -1454,21 +1496,25 @@ button.danger {
   color: var(--destructive);
 }
 .gantt-view {
-  display: grid;
-  gap: 1.25rem;
+  display: flex;
+  min-height: 0;
+  flex: 1;
+  flex-direction: column;
+  gap: 0.75rem;
 }
 .gantt-filters {
   display: flex;
   align-items: end;
   flex-wrap: wrap;
-  gap: 1rem;
+  gap: 0.75rem 1rem;
   border: 1px solid var(--border);
   border-radius: var(--radius);
   background: var(--card);
-  padding: 0.9rem;
+  padding: 0.65rem 0.8rem;
 }
 .gantt-filters .field {
   min-width: min(100%, 16rem);
+  margin-bottom: 0;
 }
 .gantt-filters fieldset {
   display: flex;
@@ -1486,126 +1532,460 @@ button.danger {
 .gantt-filters input[type="checkbox"] {
   width: auto;
 }
-.gantt-scheduled,
-.gantt-issue-section {
+.gantt-toolbar {
+  display: flex;
+  align-items: end;
+  flex: 1 1 38rem;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+.gantt-toolbar > button {
+  min-height: 2.5rem;
+}
+.gantt-start-date,
+.gantt-scale {
   display: grid;
-  gap: 0.55rem;
-}
-.gantt-issue-section h2 {
-  margin: 0 0 0.2rem;
-  font-size: 1rem;
-}
-.gantt-issue-section h2 span {
+  gap: 0.2rem;
   color: var(--muted-foreground);
-  font-size: 0.85rem;
+  font-size: 0.76rem;
 }
-.gantt-axis,
-.gantt-row {
-  display: grid;
-  grid-template-columns: minmax(13rem, 0.8fr) minmax(20rem, 1.2fr);
-  gap: 1rem;
+.gantt-start-date input,
+.gantt-scale select {
+  min-height: 2.5rem;
+  color: var(--foreground);
 }
-.gantt-axis {
-  color: var(--muted-foreground);
-  font-size: 0.78rem;
+.gantt-start-date input {
+  min-width: 9.5rem;
 }
-.gantt-axis span:last-child {
-  text-align: right;
+.gantt-scale select {
+  min-width: 8.5rem;
 }
-.gantt-row {
-  align-items: center;
-  min-height: 4.7rem;
+.gantt-chart-scroll {
+  position: relative;
+  min-height: 0;
+  flex: 1 1 auto;
+  max-width: 100%;
+  overflow: auto;
+  overscroll-behavior: contain;
   border: 1px solid var(--border);
   border-radius: var(--radius);
   background: var(--card);
-  padding: 0.7rem 0.8rem;
-  transition:
-    border-color 140ms ease,
-    background 140ms ease;
+  scrollbar-gutter: stable;
+  scrollbar-color: var(--border) var(--muted);
+  scrollbar-width: thin;
 }
-.gantt-row:hover,
-.gantt-row:focus-within {
-  border-color: color-mix(in oklch, var(--primary) 45%, var(--border));
-  background: color-mix(in oklch, var(--primary) 3%, var(--card));
+.gantt-chart-scroll::-webkit-scrollbar {
+  width: 12px;
+  height: 12px;
 }
-@media (prefers-reduced-motion: reduce) {
-  .issue-row,
-  .kanban-card,
-  .gantt-row {
-    transition: none;
-  }
-  .kanban-card:hover,
-  .kanban-card:focus-within {
-    transform: none;
-  }
+.gantt-chart-scroll::-webkit-scrollbar-track {
+  background: var(--muted);
 }
-.gantt-issue {
-  display: grid;
-  gap: 0.15rem;
-  min-width: 0;
+.gantt-chart-scroll::-webkit-scrollbar-thumb {
+  border: 3px solid var(--muted);
+  border-radius: 999px;
+  background: var(--border);
 }
-.gantt-issue-meta {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 0.35rem 0.65rem;
+.gantt-horizontal-scrollbar {
+  display: block;
+  width: 100%;
+  height: 1.75rem;
+  flex: none;
+  margin: 0;
+  padding: 0;
+  appearance: none;
+  border: 0;
+  background: transparent;
+  cursor: ew-resize;
 }
-.gantt-next-action {
-  color: var(--foreground) !important;
-  font-weight: 600;
+.gantt-horizontal-scrollbar:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 1px;
 }
-.gantt-issue-heading {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 0.35rem 0.55rem;
-  min-width: 0;
+.gantt-horizontal-scrollbar::-webkit-slider-runnable-track {
+  height: 0.45rem;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--muted);
 }
-.gantt-issue-heading > a {
-  min-width: 0;
-  overflow-wrap: anywhere;
-}
-.gantt-issue > a,
-.gantt-anomaly > a {
-  overflow-wrap: anywhere;
-  font-weight: 700;
-}
-.gantt-issue small {
-  color: var(--muted-foreground);
-  overflow-wrap: anywhere;
-}
-.gantt-track {
-  position: relative;
-  min-height: 1.5rem;
-  border-bottom: 1px solid var(--border);
-  background: repeating-linear-gradient(
-    90deg,
-    transparent 0,
-    transparent calc(10% - 1px),
-    var(--border) 10%
-  );
-}
-.gantt-bar {
-  position: absolute;
-  top: 0.25rem;
-  height: 1rem;
-  min-width: 0.25rem;
+.gantt-horizontal-scrollbar::-webkit-slider-thumb {
+  width: 3rem;
+  height: 1.4rem;
+  margin-top: -0.55rem;
+  appearance: none;
+  border: 1px solid color-mix(in oklch, var(--primary) 50%, var(--border));
   border-radius: 999px;
   background: var(--primary);
 }
-.gantt-anomaly {
+.gantt-horizontal-scrollbar::-moz-range-track {
+  height: 0.45rem;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--muted);
+}
+.gantt-horizontal-scrollbar::-moz-range-thumb {
+  width: 3rem;
+  height: 1.4rem;
+  border: 1px solid color-mix(in oklch, var(--primary) 50%, var(--border));
+  border-radius: 999px;
+  background: var(--primary);
+}
+.gantt-chart-header,
+.gantt-row {
+  display: grid;
+  grid-template-columns: var(--gantt-fields-template) var(--gantt-timeline-width);
+  width: max-content;
+  min-width: 100%;
+  align-items: stretch;
+}
+.gantt-chart-header {
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  min-height: 4rem;
+  border-bottom: 1px solid var(--border);
+  background: var(--card);
+}
+.gantt-header-fields,
+.gantt-row-fields {
+  grid-column: 1 / -2;
+  position: sticky;
+  left: 0;
+  z-index: 3;
+  display: grid;
+  grid-template-columns: var(--gantt-fields-template);
+  width: 100%;
+  min-width: 0;
+  background: var(--card);
+  box-shadow: 1px 0 var(--border);
+}
+.gantt-header-fields {
+  z-index: 7;
+  border-bottom: 1px solid var(--border);
+}
+.gantt-row-fields {
+  width: var(--gantt-fields-width);
+  max-width: var(--gantt-fields-width);
+}
+.gantt-column-heading,
+.gantt-cell {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  padding: 0.3rem 0.55rem;
+  border-right: 1px solid var(--border);
+}
+.gantt-column-heading {
+  color: var(--muted-foreground);
+  font-size: 0.76rem;
+  font-weight: 650;
+}
+.gantt-column-heading button {
+  overflow: hidden;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  cursor: grab;
+}
+.gantt-column-heading button:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+}
+.gantt-cell {
+  min-height: 2.25rem;
+  overflow-wrap: anywhere;
+  border-bottom: 1px solid var(--border);
+  font-size: 0.8rem;
+}
+.gantt-cell--title {
+  min-width: 0;
+  overflow: hidden;
+  font-weight: 600;
+}
+.gantt-cell--status,
+.gantt-cell--type,
+.gantt-cell--priority {
+  justify-content: flex-start;
+}
+.gantt-title-cell {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-  border: 1px solid color-mix(in oklch, var(--warning) 55%, var(--border));
-  border-radius: var(--radius);
-  background: color-mix(in oklch, var(--warning) 8%, var(--card));
-  padding: 0.8rem;
-}
-.gantt-anomaly .gantt-issue {
+  gap: 0.35rem;
   width: 100%;
+  min-width: 0;
+}
+.gantt-title-cell > a {
+  display: block;
+  flex: 1;
+  width: 100%;
+  min-width: 0;
+  overflow: hidden;
+  color: var(--foreground);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.gantt-key {
+  display: block;
+  width: 100%;
+  min-width: 0;
+  overflow: hidden;
+  color: var(--muted-foreground);
+  font-variant-numeric: tabular-nums;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.gantt-repository-value {
+  display: block;
+  min-width: 0;
+  overflow: hidden;
+  color: var(--muted-foreground);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.gantt-calendar-cell {
+  grid-column: -2 / -1;
+  min-width: 0;
+}
+.gantt-calendar-header {
+  position: relative;
+  font-size: 0.68rem;
+  font-variant-numeric: tabular-nums;
+}
+.gantt-calendar-month-row,
+.gantt-calendar-date-row {
+  width: max-content;
+}
+.gantt-calendar-month-row {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 1.7rem;
+  overflow: visible;
+  min-height: 1.7rem;
+  border-bottom: 1px solid var(--border);
+}
+.gantt-calendar-month {
+  position: absolute;
+  inset-block: 0;
+  justify-content: flex-start;
+  padding: 0;
+}
+.gantt-calendar-month-label {
+  position: sticky;
+  left: 0;
+  z-index: 1;
+  padding-inline: 0.25rem;
+  background: var(--card);
+}
+.gantt-calendar-month-current {
+  position: sticky;
+  left: var(--gantt-fields-width, 0px);
+  z-index: 3;
+  display: inline-flex;
+  min-height: 1.7rem;
+  align-items: center;
+  padding-inline: 0.3rem;
+  background: var(--card);
+  color: var(--muted-foreground);
+  font-weight: 650;
+  white-space: nowrap;
+}
+.gantt-calendar-date-row {
+  display: grid;
+}
+.gantt-calendar-month,
+.gantt-calendar-date {
+  display: flex;
+  min-height: 1.6rem;
+  align-items: center;
+  overflow: hidden;
+  padding: 0 0.2rem;
+  border-right: 1px solid var(--border);
+  color: var(--muted-foreground);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.gantt-calendar-date-row {
+  position: relative;
+  min-height: 2.2rem;
+}
+.gantt-calendar-date {
+  position: relative;
+  z-index: 1;
+  justify-content: center;
+  font-size: 0.66rem;
+}
+.gantt-calendar-date-row--day .gantt-calendar-date {
+  padding: 0;
+}
+.gantt-calendar-weekend {
+  position: absolute;
+  inset-block: 0;
+  z-index: 0;
+  background: color-mix(in oklch, var(--muted) 42%, transparent);
+  pointer-events: none;
+}
+.gantt-calendar-today {
+  position: absolute;
+  inset-block: 0;
+  z-index: 2;
+  width: 0;
+  border-left: 2px solid var(--primary);
+  pointer-events: none;
+}
+.gantt-calendar-today span {
+  position: absolute;
+  top: 0.1rem;
+  left: 0.15rem;
+  padding: 0.05rem 0.2rem;
+  border-radius: 0.2rem;
+  background: var(--primary);
+  color: var(--primary-foreground);
+  font-size: 0.62rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+.gantt-row-group,
+.gantt-row-section {
+  display: grid;
+}
+.gantt-row-section h2 {
+  position: sticky;
+  left: 0;
+  z-index: 4;
+  grid-column: 1 / -1;
+  margin: 0;
+  padding: 0.45rem 0.65rem;
+  border-block: 1px solid var(--border);
+  background: var(--muted);
+  font-size: 0.78rem;
+}
+.gantt-row-section h2 span {
+  color: var(--muted-foreground);
+  font-size: 0.72rem;
+}
+.gantt-row {
+  min-height: 2.25rem;
+  background: var(--card);
+  transition: background 120ms ease;
+}
+.gantt-row:hover .gantt-cell,
+.gantt-row:focus-within .gantt-cell {
+  border-bottom-color: color-mix(in oklch, var(--primary) 45%, var(--border));
+  background: color-mix(in oklch, var(--primary) 3%, var(--card));
+}
+.gantt-row--anomaly .gantt-cell--title {
+  box-shadow: inset 3px 0 color-mix(in oklch, var(--warning) 68%, var(--border));
+}
+.gantt-track {
+  grid-column: -2 / -1;
+  position: relative;
+  min-height: 2.25rem;
+  overflow: hidden;
+  border-bottom: 1px solid var(--border);
+  background-image: repeating-linear-gradient(90deg, transparent 0, transparent calc(var(--gantt-unit-width) - 1px), var(--border) calc(var(--gantt-unit-width) - 1px), var(--border) var(--gantt-unit-width));
+}
+.gantt-weekend {
+  position: absolute;
+  inset-block: 0;
+  z-index: 0;
+  background: color-mix(in oklch, var(--muted) 42%, transparent);
+  pointer-events: none;
+}
+.gantt-track-today {
+  position: absolute;
+  inset-block: 0;
+  z-index: 1;
+  border-left: 2px solid var(--primary);
+  pointer-events: none;
+}
+.gantt-bar {
+  position: absolute;
+  top: 0.5rem;
+  z-index: 2;
+  height: 1.1rem;
+  min-width: 0.3rem;
+  border: 1px solid color-mix(in oklch, var(--primary) 68%, var(--foreground));
+  border-radius: 0.35rem;
+  background: color-mix(in oklch, var(--primary) 85%, var(--card));
+}
+.gantt-row-section > .gantt-row {
+  grid-column: 1 / -1;
+}
+.gantt-chart-scroll--empty {
+  padding: 0.75rem;
+}
+.gantt-chart-scroll--empty > .gantt-calendar-header {
+  margin-bottom: 0.75rem;
+}
+.gantt-chart-scroll--empty > .gantt-row {
+  display: grid;
+}
+.gantt-view-options-dialog {
+  display: grid;
+  gap: 1rem;
+  min-width: 0;
+  margin-top: 1rem;
+}
+.gantt-view-options-dialog section {
+  display: grid;
+  gap: 0.55rem;
+  min-width: 0;
+}
+.gantt-view-options-dialog h3 {
+  margin: 0;
+  font-size: 1rem;
+}
+.gantt-view-options-dialog p {
+  max-width: 100%;
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+.gantt-view-option-list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.4rem 0.75rem;
+}
+.gantt-view-option {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  min-width: 0;
+  min-height: 2.5rem;
+  padding: 0.4rem 0.55rem;
+  border: 1px solid var(--border);
+  border-radius: calc(var(--radius) - 2px);
+  background: color-mix(in oklch, var(--card) 92%, var(--muted));
+  cursor: pointer;
+}
+.gantt-view-option input[type="checkbox"] {
+  width: 1rem;
+  height: 1rem;
+  min-width: 1rem;
+  margin: 0;
+  padding: 0;
+  flex: none;
+  accent-color: var(--primary);
+}
+.gantt-view-option > span:first-of-type {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.gantt-view-option .muted {
+  margin-inline-start: auto;
+  flex: none;
+  font-size: 0.76rem;
+}
+.gantt-view-options-shell {
+  width: min(40rem, calc(100vw - 2rem));
+  min-width: 0;
+  max-height: min(84dvh, 52rem);
+  overflow-y: auto;
 }
 .schedule-anomaly {
   color: var(--destructive);
@@ -1735,7 +2115,35 @@ button.danger {
     flex-direction: row;
     align-items: center;
   }
+  .gantt-view-options-shell {
+    width: calc(100vw - 2rem);
+    max-width: calc(100vw - 2rem);
+    box-sizing: border-box;
+    max-height: calc(100dvh - 2rem);
+    padding: 0.75rem;
+  }
+  .gantt-view-options-shell > .page-heading {
+    flex-direction: row;
+    align-items: center;
+    margin-bottom: 0.5rem;
+  }
+  .gantt-view-options-dialog {
+    margin-top: 0.35rem;
+  }
+  .gantt-view-options-dialog section {
+    gap: 0.4rem;
+  }
+  .gantt-view-option-list {
+    gap: 0.3rem;
+  }
+  .gantt-view-option {
+    min-height: 2.25rem;
+    padding-block: 0.25rem;
+  }
   .issue-view-option-list {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .gantt-view-option-list {
     grid-template-columns: minmax(0, 1fr);
   }
   .schedule-date-fields {
@@ -1753,18 +2161,20 @@ button.danger {
     display: grid;
     margin-bottom: 1rem;
   }
-  .gantt-axis {
-    display: none;
-  }
-  .gantt-row {
-    grid-template-columns: minmax(0, 1fr);
-  }
-  .gantt-track {
-    display: none;
-  }
   .gantt-filters {
     align-items: stretch;
     flex-direction: column;
+  }
+  .gantt-toolbar {
+    flex: auto;
+    align-items: stretch;
+  }
+  .gantt-toolbar > button {
+    align-self: end;
+  }
+  .gantt-chart-scroll {
+    max-width: calc(100vw - 2rem);
+    -webkit-overflow-scrolling: touch;
   }
   .gantt-filters fieldset {
     flex-wrap: wrap;

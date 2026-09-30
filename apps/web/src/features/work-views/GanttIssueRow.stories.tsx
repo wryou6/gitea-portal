@@ -1,32 +1,48 @@
+import type { ComponentProps } from "react";
 import type { Meta, StoryObj } from "@storybook/react";
+import { useTranslation } from "react-i18next";
 import { GanttIssueRow } from "./GanttIssueRow";
 import { demoIssue } from "../../stories/fixtures";
+import { buildTimelineCells } from "./gantt-timeline";
+import { GANTT_FIXED_FIELDS } from "./gantt-view-preference";
+
+const cells = buildTimelineCells("2026-09-01", "2026-10-15", "day", "2026-09-15");
+const columns = [
+  { field: "repository" as const, label: "Repository" },
+  ...GANTT_FIXED_FIELDS.map((field) => ({ field, label: field })),
+];
+
+function LocalizedGanttIssueRow(props: ComponentProps<typeof GanttIssueRow>) {
+  const { t } = useTranslation("issues");
+  const localizedColumns = props.columns.map(({ field }) => ({
+    field,
+    label: field === "repository" ? t("repository") : t(field === "priority" ? "priorityLabel" : field),
+  }));
+  return <GanttIssueRow {...props} columns={localizedColumns} />;
+}
 
 const meta = {
   title: "Work views/Gantt issue row",
-  component: GanttIssueRow,
+  component: LocalizedGanttIssueRow,
   args: {
     issue: demoIssue,
     href: "/issues/demo/frontend/42",
-    start: demoIssue.startDate,
-    end: demoIssue.dueDate,
-    left: 20,
-    width: 35,
+    variant: "scheduled",
+    columns,
+    cells,
+    scale: "day",
+    today: "2026-09-29",
   },
 } satisfies Meta<typeof GanttIssueRow>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-export const Scheduled: Story = { args: { variant: "scheduled" } };
+export const Scheduled: Story = {};
 
 export const Unscheduled: Story = {
   args: {
     variant: "unscheduled",
-    start: null,
-    end: null,
-    left: 0,
-    width: 0,
     issue: {
       ...demoIssue,
       startDate: null,
@@ -39,7 +55,6 @@ export const Unscheduled: Story = {
 export const DateAnomaly: Story = {
   args: {
     variant: "anomaly",
-    anomaly: "開始日期晚於到期日期",
     issue: {
       ...demoIssue,
       startDate: "2026-09-30",
@@ -51,34 +66,20 @@ export const DateAnomaly: Story = {
 };
 
 export const StartDateOnly: Story = {
-  args: {
-    variant: "scheduled",
-    start: demoIssue.startDate,
-    end: demoIssue.startDate,
-    issue: { ...demoIssue, dueDate: null, scheduleStatus: "scheduled" },
-  },
+  args: { issue: { ...demoIssue, dueDate: null, scheduleStatus: "scheduled" } },
 };
 
 export const DueDateOnly: Story = {
-  args: {
-    variant: "scheduled",
-    start: demoIssue.dueDate,
-    end: demoIssue.dueDate,
-    issue: { ...demoIssue, startDate: null, scheduleStatus: "scheduled" },
-  },
+  args: { issue: { ...demoIssue, startDate: null, scheduleStatus: "scheduled" } },
 };
 
 export const MissingType: Story = {
-  args: {
-    variant: "scheduled",
-    issue: { ...demoIssue, type: null, labels: [] },
-  },
+  args: { issue: { ...demoIssue, type: null, labels: [] } },
 };
 
 export const ConflictingTypeInDateAnomaly: Story = {
   args: {
     variant: "anomaly",
-    anomaly: "開始日期晚於到期日期",
     issue: {
       ...demoIssue,
       type: null,
@@ -92,19 +93,11 @@ export const ConflictingTypeInDateAnomaly: Story = {
 };
 
 export const MissingPriority: Story = {
-  args: {
-    variant: "scheduled",
-    issue: {
-      ...demoIssue,
-      priority: null,
-      labels: [{ name: "type:feature" }],
-    },
-  },
+  args: { issue: { ...demoIssue, priority: null, labels: [{ name: "type:feature" }] } },
 };
 
 export const UnknownPriority: Story = {
   args: {
-    variant: "scheduled",
     issue: {
       ...demoIssue,
       priority: null,

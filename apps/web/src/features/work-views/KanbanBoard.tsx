@@ -141,7 +141,7 @@ export function KanbanBoard({
   };
 
   return (
-    <section>
+    <section className={viewMode === "gantt" ? "workspace-view workspace-view--gantt" : "workspace-view"}>
       {error && <><ErrorNotice message={error} /><button type="button" onClick={() => void load()}>{t("retry")}</button></>}
       <PageHeader
         eyebrow={t(viewMode === "gantt" ? "ganttEyebrow" : "kanbanEyebrow")}
@@ -156,6 +156,7 @@ export function KanbanBoard({
         ganttView ? (
           <GanttBoard
             issues={ganttView.issues}
+            repository={repository}
             emptyMessage={"repositories" in ganttView && ganttView.repositories.length === 0 ? t("noReadableRepositories") : undefined}
             returnTo={`${window.location.pathname}${window.location.search}`}
           />
