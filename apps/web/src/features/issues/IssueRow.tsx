@@ -2,9 +2,9 @@ import type { ReactNode } from "react";
 import type { Issue, IssueSortField } from "../../lib/api";
 import { routePaths } from "../../app/routes";
 import { IssueTypeBadge } from "../../components/ui/IssueTypeBadge";
+import { IssueStatusBadge } from "../../components/ui/IssueStatusBadge";
 import { PriorityBadge } from "../../components/ui/PriorityBadge";
 import { useTranslation } from "react-i18next";
-import { issueStatusTranslationKey } from "../../i18n/status";
 import { formatCalendarDate, formatDateTime } from "../../i18n/format";
 import { scheduleAnomalyTranslationKey } from "./ScheduleDates";
 import { isCalendarDate } from "@gitea-portal/domain";
@@ -61,11 +61,7 @@ export function IssueRow({
       </>
     ),
     assignee: issue.assignee ?? t("notAssigned"),
-    status: (
-      <span className={`issue-status issue-status--${issue.status}`}>
-        {t(issueStatusTranslationKey(issue.status))}
-      </span>
-    ),
+    status: <IssueStatusBadge status={issue.status} />,
     priority: <PriorityBadge priority={issue.priority} labels={issue.labels} />,
     createdAt: <time dateTime={issue.createdAt}>{formatDateTime(issue.createdAt, i18n.language)}</time>,
     startDate:

@@ -3,8 +3,8 @@ import { useTranslation } from "react-i18next";
 import { routePaths } from "../../app/routes";
 import { IssueTypeBadge } from "../../components/ui/IssueTypeBadge";
 import { PriorityBadge } from "../../components/ui/PriorityBadge";
+import { IssueStatusBadge } from "../../components/ui/IssueStatusBadge";
 import { formatDateTime } from "../../i18n/format";
-import { issueStatusTranslationKey } from "../../i18n/status";
 import type { Issue, IssueSortField } from "../../lib/api";
 import { scheduleAnomalyTranslationKey } from "../issues/ScheduleDates";
 import type { GanttTimelineCell } from "./gantt-timeline";
@@ -98,11 +98,7 @@ export function GanttIssueRow({
     ),
     repository: <span className="gantt-repository-value" title={`${issue.owner}/${issue.name}`}>{issue.owner}/{issue.name}</span>,
     assignee: issue.assignee ?? t("noAssignee"),
-    status: (
-      <span className={`issue-status issue-status--${issue.status}`}>
-        {tIssues(issueStatusTranslationKey(issue.status))}
-      </span>
-    ),
+    status: <IssueStatusBadge status={issue.status} />,
     priority: <PriorityBadge priority={issue.priority} labels={issue.labels} />,
     createdAt: <time dateTime={issue.createdAt}>{formatDateTime(issue.createdAt, i18n.language)}</time>,
     startDate: null,
@@ -111,7 +107,7 @@ export function GanttIssueRow({
   };
 
   return (
-    <div className={`gantt-row gantt-row--${variant}`} role="row" style={vars}>
+    <div className={`gantt-row gantt-row--${variant}`} data-status={issue.status} role="row" style={vars}>
       <div className="gantt-row-fields" role="presentation">
         {columns.map((column) => (
           <div

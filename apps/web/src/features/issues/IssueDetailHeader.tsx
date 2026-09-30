@@ -1,7 +1,7 @@
 import type { Issue } from "../../lib/api";
 import { LabelList } from "./LabelList";
-import { Badge } from "../../components/ui/Badge";
 import { IssueTypeBadge } from "../../components/ui/IssueTypeBadge";
+import { IssueStatusBadge } from "../../components/ui/IssueStatusBadge";
 import { PriorityBadge } from "../../components/ui/PriorityBadge";
 import { ScheduleDates, scheduleAnomalyTranslationKey } from "./ScheduleDates";
 import { STATUS_ACTIONS } from "@gitea-portal/domain";
@@ -10,7 +10,6 @@ import { useTranslation } from "react-i18next";
 import {
   statusNextActionTranslationKey,
   statusReasonTranslationKey,
-  issueStatusTranslationKey,
 } from "../../i18n/status";
 import { formatDateTime } from "../../i18n/format";
 export function IssueDetailHeader({ issue }: { issue: Issue }) {
@@ -29,9 +28,7 @@ export function IssueDetailHeader({ issue }: { issue: Issue }) {
         <PriorityBadge priority={issue.priority} labels={issue.labels} />
       </div>
       <div className="meta">
-        <Badge className={`issue-status--${issue.status}`}>
-          {t(issueStatusTranslationKey(issue.status))}
-        </Badge>
+        <IssueStatusBadge status={issue.status} />
         <span>{t("nextAction", { action: t(statusNextActionTranslationKey(issue.nextActionKey)) })}</span>
         {action && <span>{t("lastReason")}：{t(statusReasonTranslationKey(action.key))}</span>}
         <ScheduleDates

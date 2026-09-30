@@ -82,6 +82,7 @@ function GanttScreen({
   fillViewport = false,
   longList = false,
   includeUnscheduled = true,
+  statusColors = false,
   repositoryScoped = false,
   visibleFields = GANTT_FIXED_FIELDS,
   columnOrder = DEFAULT_GANTT_COLUMN_ORDER,
@@ -95,6 +96,7 @@ function GanttScreen({
   fillViewport?: boolean;
   longList?: boolean;
   includeUnscheduled?: boolean;
+  statusColors?: boolean;
   repositoryScoped?: boolean;
   visibleFields?: typeof GANTT_FIXED_FIELDS;
   columnOrder?: IssueSortField[];
@@ -126,6 +128,21 @@ function GanttScreen({
   const scopedIssues = repositoryScoped
     ? displayedIssues.filter((issue) => issue.owner === "frontend" && issue.name === "portal")
     : displayedIssues;
+  const statusColorIssues: Issue[] = [
+    { ...demoIssue, number: 61, title: "Todo schedule", status: "todo" },
+    { ...demoIssue, number: 62, title: "In Progress schedule", status: "in-progress" },
+    { ...demoIssue, number: 63, title: "Done schedule", status: "done", state: "closed" },
+    {
+      ...demoIssue,
+      number: 64,
+      title: "Status and schedule anomaly",
+      status: "anomaly",
+      statusAnomaly: { reason: "missing_status", labels: [] },
+      scheduleStatus: "invalid",
+      scheduleAnomaly: "invalid_due_date",
+      dueDate: null,
+    },
+  ];
 
   return (
     <section className={fillViewport ? "gantt-story-shell" : undefined}>
@@ -147,7 +164,7 @@ function GanttScreen({
         }}
         repository={repositoryScoped ? { owner: "frontend", name: "portal" } : undefined}
         issues={[
-          ...scopedIssues,
+          ...(statusColors ? statusColorIssues : scopedIssues),
           ...(includeUnscheduled ? [{
             ...demoIssue,
             ...(repositoryScoped ? { owner: "frontend", name: "portal" } : {}),
@@ -180,6 +197,15 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 export const BeforeReference: Story = { render: () => <GanttBeforeReference /> };
 export const Default: Story = {};
+export const StatusColors: Story = { args: { statusColors: true } };
+export const StatusColorsDarkTheme: Story = {
+  args: { statusColors: true },
+  globals: { theme: "dark" },
+};
+export const StatusColorsNarrow: Story = {
+  args: { statusColors: true },
+  parameters: { viewport: { defaultViewport: "mobile1" } },
+};
 export const RepositoryScoped: Story = { args: { repositoryScoped: true } };
 export const WeekScale: Story = { args: { scale: "week" } };
 export const TwoWeekScale: Story = { args: { scale: "two-weeks" } };

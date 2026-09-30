@@ -18,33 +18,21 @@
   --success: oklch(0.48 0.13 155);
   --warning: oklch(0.65 0.15 78);
   --radius: 0.5rem;
-  --issue-type-bug-foreground: #842029;
-  --issue-type-bug-background: #f8d7da;
-  --issue-type-bug-border: #f1aeb5;
-  --issue-type-feature-foreground: #084298;
-  --issue-type-feature-background: #cfe2ff;
-  --issue-type-feature-border: #9ec5fe;
-  --issue-type-task-foreground: #0f5132;
-  --issue-type-task-background: #d1e7dd;
-  --issue-type-task-border: #a3cfbb;
-  --issue-type-missing-foreground: #664d03;
-  --issue-type-missing-background: #fff3cd;
-  --issue-type-missing-border: #ffda6a;
-  --priority-critical-foreground: #842029;
-  --priority-critical-background: #f8d7da;
-  --priority-critical-border: #f1aeb5;
-  --priority-high-foreground: #7f2704;
-  --priority-high-background: #ffedd5;
-  --priority-high-border: #fdba74;
-  --priority-medium-foreground: #664d03;
-  --priority-medium-background: #fff3cd;
-  --priority-medium-border: #ffda6a;
-  --priority-low-foreground: #084298;
-  --priority-low-background: #cfe2ff;
-  --priority-low-border: #9ec5fe;
-  --priority-anomaly-foreground: #842029;
-  --priority-anomaly-background: #f8d7da;
-  --priority-anomaly-border: #f1aeb5;
+  --badge-danger-foreground: #842029;
+  --badge-danger-background: #f8d7da;
+  --badge-danger-border: #f1aeb5;
+  --badge-warning-foreground: #664d03;
+  --badge-warning-background: #fff3cd;
+  --badge-warning-border: #ffda6a;
+  --badge-caution-foreground: #7f2704;
+  --badge-caution-background: #ffedd5;
+  --badge-caution-border: #fdba74;
+  --badge-info-foreground: #084298;
+  --badge-info-background: #cfe2ff;
+  --badge-info-border: #9ec5fe;
+  --badge-success-foreground: #0f5132;
+  --badge-success-background: #d1e7dd;
+  --badge-success-border: #a3cfbb;
 }
 .dark {
   --background: oklch(0.16 0.02 255);
@@ -63,33 +51,21 @@
   --ring: oklch(0.72 0.12 230);
   --success: oklch(0.68 0.13 155);
   --warning: oklch(0.76 0.14 78);
-  --issue-type-bug-foreground: #f1aeb5;
-  --issue-type-bug-background: #58151c;
-  --issue-type-bug-border: #a52834;
-  --issue-type-feature-foreground: #9ec5fe;
-  --issue-type-feature-background: #052c65;
-  --issue-type-feature-border: #084298;
-  --issue-type-task-foreground: #a3cfbb;
-  --issue-type-task-background: #0a3622;
-  --issue-type-task-border: #146c43;
-  --issue-type-missing-foreground: #ffda6a;
-  --issue-type-missing-background: #332701;
-  --issue-type-missing-border: #997404;
-  --priority-critical-foreground: #f1aeb5;
-  --priority-critical-background: #58151c;
-  --priority-critical-border: #a52834;
-  --priority-high-foreground: #fdba74;
-  --priority-high-background: #431407;
-  --priority-high-border: #9a3412;
-  --priority-medium-foreground: #ffda6a;
-  --priority-medium-background: #332701;
-  --priority-medium-border: #997404;
-  --priority-low-foreground: #9ec5fe;
-  --priority-low-background: #052c65;
-  --priority-low-border: #084298;
-  --priority-anomaly-foreground: #f1aeb5;
-  --priority-anomaly-background: #58151c;
-  --priority-anomaly-border: #a52834;
+  --badge-danger-foreground: #f1aeb5;
+  --badge-danger-background: #58151c;
+  --badge-danger-border: #a52834;
+  --badge-warning-foreground: #ffda6a;
+  --badge-warning-background: #332701;
+  --badge-warning-border: #997404;
+  --badge-caution-foreground: #fdba74;
+  --badge-caution-background: #431407;
+  --badge-caution-border: #9a3412;
+  --badge-info-foreground: #9ec5fe;
+  --badge-info-background: #052c65;
+  --badge-info-border: #084298;
+  --badge-success-foreground: #a3cfbb;
+  --badge-success-background: #0a3622;
+  --badge-success-border: #146c43;
 }
 * {
   border-color: var(--border);
@@ -914,6 +890,12 @@ textarea:focus-visible,
 .issue-table-row:hover {
   background: color-mix(in oklch, var(--muted) 45%, var(--card));
 }
+.issues-table tbody tr.issue-table-row:nth-child(even) > td {
+  background: color-mix(in oklch, var(--muted) 42%, var(--card));
+}
+.issues-table tbody tr.issue-table-row:hover > td {
+  background: color-mix(in oklch, var(--muted) 72%, var(--card));
+}
 .issue-key {
   color: var(--muted-foreground);
   font-size: 0.78rem;
@@ -932,28 +914,6 @@ textarea:focus-visible,
 .issue-key:hover {
   color: var(--primary);
   text-decoration: underline;
-}
-.issue-status {
-  display: inline-flex;
-  border: 1px solid var(--border);
-  border-radius: 999px;
-  padding: 0.16rem 0.55rem;
-  font-size: 0.73rem;
-  font-weight: 700;
-  line-height: 1.4;
-  white-space: nowrap;
-}
-.issue-status--todo {
-  background: color-mix(in oklch, var(--primary) 9%, var(--card));
-}
-.issue-status--in-progress {
-  background: color-mix(in oklch, var(--warning) 14%, var(--card));
-}
-.issue-status--done {
-  background: color-mix(in oklch, var(--success) 12%, var(--card));
-}
-.issue-status--anomaly {
-  background: color-mix(in oklch, var(--destructive) 12%, var(--card));
 }
 .issue-table-anomaly {
   display: block;
@@ -1076,26 +1036,30 @@ textarea:focus-visible,
   overflow-wrap: anywhere;
 }
 .issue-status {
-  display: inline-flex;
-  align-items: center;
-  border: 1px solid var(--border);
-  border-radius: 999px;
-  padding: 0.15rem 0.58rem;
-  font-size: 0.75rem;
-  font-weight: 700;
-  line-height: 1.4;
+  padding: 0.15rem 0.5rem;
+  font-weight: 650;
+  line-height: 1.25;
+  white-space: nowrap;
 }
 .issue-status--todo {
-  background: color-mix(in oklch, var(--primary) 9%, var(--card));
+  color: var(--badge-info-foreground);
+  background: var(--badge-info-background);
+  border-color: var(--badge-info-border);
 }
 .issue-status--in-progress {
-  background: color-mix(in oklch, var(--warning) 14%, var(--card));
+  color: var(--badge-warning-foreground);
+  background: var(--badge-warning-background);
+  border-color: var(--badge-warning-border);
 }
 .issue-status--done {
-  background: color-mix(in oklch, var(--success) 12%, var(--card));
+  color: var(--badge-success-foreground);
+  background: var(--badge-success-background);
+  border-color: var(--badge-success-border);
 }
 .issue-status--anomaly {
-  background: color-mix(in oklch, var(--destructive) 12%, var(--card));
+  color: var(--badge-danger-foreground);
+  background: var(--badge-danger-background);
+  border-color: var(--badge-danger-border);
 }
 .issue-row .meta {
   gap: 0.4rem 0.8rem;
@@ -1221,30 +1185,30 @@ textarea:focus-visible,
   white-space: nowrap;
 }
 .issue-type-badge--bug {
-  --issue-type-foreground: var(--issue-type-bug-foreground);
-  --issue-type-background: var(--issue-type-bug-background);
-  --issue-type-border: var(--issue-type-bug-border);
+  --issue-type-foreground: var(--badge-danger-foreground);
+  --issue-type-background: var(--badge-danger-background);
+  --issue-type-border: var(--badge-danger-border);
 }
 .issue-type-badge--feature {
-  --issue-type-foreground: var(--issue-type-feature-foreground);
-  --issue-type-background: var(--issue-type-feature-background);
-  --issue-type-border: var(--issue-type-feature-border);
+  --issue-type-foreground: var(--badge-info-foreground);
+  --issue-type-background: var(--badge-info-background);
+  --issue-type-border: var(--badge-info-border);
 }
 .issue-type-badge--task {
-  --issue-type-foreground: var(--issue-type-task-foreground);
-  --issue-type-background: var(--issue-type-task-background);
-  --issue-type-border: var(--issue-type-task-border);
+  --issue-type-foreground: var(--badge-success-foreground);
+  --issue-type-background: var(--badge-success-background);
+  --issue-type-border: var(--badge-success-border);
 }
 .issue-type-badge--missing,
 .issue-type-badge--conflict-value {
-  --issue-type-foreground: var(--issue-type-missing-foreground);
-  --issue-type-background: var(--issue-type-missing-background);
-  --issue-type-border: var(--issue-type-missing-border);
+  --issue-type-foreground: var(--badge-warning-foreground);
+  --issue-type-background: var(--badge-warning-background);
+  --issue-type-border: var(--badge-warning-border);
 }
 .issue-type-badge--conflict {
-  --issue-type-foreground: var(--issue-type-bug-foreground);
-  --issue-type-background: var(--issue-type-bug-background);
-  --issue-type-border: var(--issue-type-bug-border);
+  --issue-type-foreground: var(--badge-danger-foreground);
+  --issue-type-background: var(--badge-danger-background);
+  --issue-type-border: var(--badge-danger-border);
 }
 .issue-type-conflict {
   display: inline-flex;
@@ -1265,35 +1229,35 @@ textarea:focus-visible,
   white-space: nowrap;
 }
 .priority-badge--critical {
-  color: var(--priority-critical-foreground);
-  background: var(--priority-critical-background);
-  border-color: var(--priority-critical-border);
+  color: var(--badge-danger-foreground);
+  background: var(--badge-danger-background);
+  border-color: var(--badge-danger-border);
 }
 .priority-badge--high {
-  color: var(--priority-high-foreground);
-  background: var(--priority-high-background);
-  border-color: var(--priority-high-border);
+  color: var(--badge-caution-foreground);
+  background: var(--badge-caution-background);
+  border-color: var(--badge-caution-border);
 }
 .priority-badge--medium {
-  color: var(--priority-medium-foreground);
-  background: var(--priority-medium-background);
-  border-color: var(--priority-medium-border);
+  color: var(--badge-warning-foreground);
+  background: var(--badge-warning-background);
+  border-color: var(--badge-warning-border);
 }
 .priority-badge--low {
-  color: var(--priority-low-foreground);
-  background: var(--priority-low-background);
-  border-color: var(--priority-low-border);
+  color: var(--badge-info-foreground);
+  background: var(--badge-info-background);
+  border-color: var(--badge-info-border);
 }
 .priority-badge--missing,
 .priority-badge--conflict-value {
-  color: var(--priority-medium-foreground);
-  background: var(--priority-medium-background);
-  border-color: var(--priority-medium-border);
+  color: var(--badge-warning-foreground);
+  background: var(--badge-warning-background);
+  border-color: var(--badge-warning-border);
 }
 .priority-badge--conflict {
-  color: var(--priority-anomaly-foreground);
-  background: var(--priority-anomaly-background);
-  border-color: var(--priority-anomaly-border);
+  color: var(--badge-danger-foreground);
+  background: var(--badge-danger-background);
+  border-color: var(--badge-danger-border);
 }
 .priority-conflict {
   display: inline-flex;
@@ -1311,6 +1275,29 @@ textarea:focus-visible,
   margin: 0;
   color: var(--muted-foreground);
   font-size: 0.875rem;
+}
+.issue-badge-palette {
+  display: grid;
+  gap: 1.25rem;
+  max-width: 54rem;
+}
+.issue-badge-palette section {
+  display: grid;
+  gap: 0.6rem;
+  min-width: 0;
+}
+.issue-badge-palette h2 {
+  margin: 0;
+  color: var(--muted-foreground);
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+.issue-badge-palette__items {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  min-width: 0;
 }
 .filters {
   display: grid;
@@ -1428,19 +1415,19 @@ textarea {
   font-weight: 650;
 }
 .issue-type-select--bug {
-  --issue-type-foreground: var(--issue-type-bug-foreground);
-  --issue-type-background: var(--issue-type-bug-background);
-  --issue-type-border: var(--issue-type-bug-border);
+  --issue-type-foreground: var(--badge-danger-foreground);
+  --issue-type-background: var(--badge-danger-background);
+  --issue-type-border: var(--badge-danger-border);
 }
 .issue-type-select--feature {
-  --issue-type-foreground: var(--issue-type-feature-foreground);
-  --issue-type-background: var(--issue-type-feature-background);
-  --issue-type-border: var(--issue-type-feature-border);
+  --issue-type-foreground: var(--badge-info-foreground);
+  --issue-type-background: var(--badge-info-background);
+  --issue-type-border: var(--badge-info-border);
 }
 .issue-type-select--task {
-  --issue-type-foreground: var(--issue-type-task-foreground);
-  --issue-type-background: var(--issue-type-task-background);
-  --issue-type-border: var(--issue-type-task-border);
+  --issue-type-foreground: var(--badge-success-foreground);
+  --issue-type-background: var(--badge-success-background);
+  --issue-type-border: var(--badge-success-border);
 }
 .issue-type-select--empty {
   border-color: var(--input);
@@ -2069,12 +2056,26 @@ button.danger {
 .gantt-row {
   min-height: 2.25rem;
   background: var(--card);
+  --gantt-status-color: var(--badge-info-foreground);
   transition: background 120ms ease;
+}
+.gantt-row[data-status="in-progress"] {
+  --gantt-status-color: var(--badge-warning-foreground);
+}
+.gantt-row[data-status="done"] {
+  --gantt-status-color: var(--badge-success-foreground);
+}
+.gantt-row[data-status="anomaly"] {
+  --gantt-status-color: var(--badge-danger-foreground);
+}
+.gantt-row-fields,
+.gantt-track {
+  background-color: color-mix(in oklch, var(--gantt-status-color) 8%, var(--card));
 }
 .gantt-row:hover .gantt-cell,
 .gantt-row:focus-within .gantt-cell {
   border-bottom-color: color-mix(in oklch, var(--primary) 45%, var(--border));
-  background: color-mix(in oklch, var(--primary) 3%, var(--card));
+  background: color-mix(in oklch, var(--gantt-status-color) 15%, var(--card));
 }
 .gantt-row--anomaly .gantt-cell--title {
   box-shadow: inset 3px 0 color-mix(in oklch, var(--warning) 68%, var(--border));
@@ -2107,9 +2108,9 @@ button.danger {
   z-index: 2;
   height: 1.1rem;
   min-width: 0.3rem;
-  border: 1px solid color-mix(in oklch, var(--primary) 68%, var(--foreground));
+  border: 1px solid color-mix(in oklch, var(--gantt-status-color) 72%, var(--foreground));
   border-radius: 0.35rem;
-  background: color-mix(in oklch, var(--primary) 85%, var(--card));
+  background: color-mix(in oklch, var(--gantt-status-color) 82%, var(--card));
 }
 .gantt-row-section > .gantt-row {
   grid-column: 1 / -1;

@@ -58,6 +58,30 @@ export const Default: Story = {
   },
 };
 
+export const AlternatingRows: Story = {
+  args: {
+    demoIssues: [
+      { ...demoIssue, number: 41, status: "todo" },
+      { ...demoIssue, number: 42, status: "in-progress" },
+      { ...demoIssue, number: 43, status: "done", state: "closed" },
+      {
+        ...demoIssue,
+        number: 44,
+        status: "anomaly",
+        statusAnomaly: { reason: "missing_status", labels: [] },
+      },
+    ],
+  },
+};
+export const AlternatingRowsDarkTheme: Story = {
+  ...AlternatingRows,
+  globals: { theme: "dark" },
+};
+export const AlternatingRowsNarrow: Story = {
+  ...AlternatingRows,
+  parameters: { viewport: { defaultViewport: "mobile1" } },
+};
+
 export const SortedByPriorityDescending: Story = {
   args: {
     demoSort: { sort: "priority", direction: "desc" },
