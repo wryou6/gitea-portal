@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { api, toUserFacingError, type UserFacingError } from "../../lib/api";
 import type { WorkViewCard, WorkspaceGanttView, WorkspaceKanbanView } from "./types";
 import { GanttBoard } from "./GanttBoard";
@@ -11,6 +11,8 @@ import { PageHeader } from "../../components/layout/PageHeader";
 import { StatusTransitionDialog } from "../issues/StatusTransitionDialog";
 import { useTranslation } from "react-i18next";
 import { formatNumber } from "../../i18n/format";
+import { WorkViewFilterBar } from "./WorkViewFilterBar";
+import { matchesWorkViewFilters, parseWorkViewFilters, serializeWorkViewFilters, type WorkViewFilters } from "./work-view-filters";
 
 export function KanbanBoard({
   repository,
@@ -20,6 +22,8 @@ export function KanbanBoard({
   viewMode: "kanban" | "gantt";
 }) {
   const { t, i18n } = useTranslation("work-views");
+  const { t: tCommon } = useTranslation("common");
+  const [filters, setFilters] = useState<WorkViewFilters>(() => parseWorkViewFilters(window.location.search));
   const [view, setView] = useState<WorkspaceKanbanView>();
   const [ganttView, setGanttView] = useState<WorkspaceGanttView>();
   const [dragged, setDragged] = useState<WorkViewCard>();
@@ -99,9 +103,6 @@ export function KanbanBoard({
   const hasNoReadableRepositories = Boolean(
     currentView && "repositories" in currentView && currentView.repositories.length === 0,
   );
-  if (error && !currentView) return <section><ErrorNotice message={error} /><button type="button" onClick={() => void load()}>{t("retry")}</button></section>;
-  if (!currentView) return <LoadingState />;
-
   const selectedColumnKey = view?.columns.some(
     (column) => column.stateKey === activeColumnKey,
   )
@@ -112,6 +113,22 @@ export function KanbanBoard({
         (column) => column.stateKey === selectedColumnKey,
       ) ?? [])
     : (view?.columns ?? []);
+  const repositories = currentView && "repositories" in currentView ? currentView.repositories : currentView ? [currentView.repository] : [];
+  const allCards = view?.columns.flatMap((column) => column.cards) ?? [];
+  const assignees = [...new Set(allCards.flatMap((issue) => issue.assignees))].sort((a, b) => a.localeCompare(b));
+  const filteredColumns = useMemo(() => visibleColumns.map((column) => ({
+    ...column,
+    cards: column.cards.filter((issue) => matchesWorkViewFilters(issue, filters)),
+  })), [visibleColumns, filters]);
+
+  if (error && !currentView) return <section><ErrorNotice message={error} /><button type="button" onClick={() => void load()}>{t("retry")}</button></section>;
+  if (!currentView) return <LoadingState />;
+
+  function updateFilters(next: WorkViewFilters) {
+    setFilters(next);
+    const search = serializeWorkViewFilters(next, window.location.search);
+    window.history.replaceState({}, "", `${window.location.pathname}${search ? `?${search}` : ""}`);
+  }
 
   const move = async (issue: WorkViewCard, stateKey: string) => {
     setDragged(undefined);
@@ -144,14 +161,10 @@ export function KanbanBoard({
     <section className={viewMode === "gantt" ? "workspace-view workspace-view--gantt" : "workspace-view"}>
       {error && <><ErrorNotice message={error} /><button type="button" onClick={() => void load()}>{t("retry")}</button></>}
       <PageHeader
-        eyebrow={t(viewMode === "gantt" ? "ganttEyebrow" : "kanbanEyebrow")}
-        title={repositoryView?.fullName ?? t("allRepositories")}
-        description={
-          viewMode === "gantt"
-            ? t("ganttDescription")
-            : t("kanbanDescription")
-        }
+        title={repositoryView?.fullName ?? tCommon(viewMode === "gantt" ? "gantt" : "kanban")}
+        compact
       />
+      <WorkViewFilterBar filters={filters} onChange={updateFilters} repositories={repositories} assignees={assignees} repositoryFixed={Boolean(repository)} />
       {viewMode === "gantt" ? (
         ganttView ? (
           <GanttBoard
@@ -159,6 +172,7 @@ export function KanbanBoard({
             repository={repository}
             emptyMessage={"repositories" in ganttView && ganttView.repositories.length === 0 ? t("noReadableRepositories") : undefined}
             returnTo={`${window.location.pathname}${window.location.search}`}
+            filters={filters}
           />
         ) : (
           <LoadingState />
@@ -185,7 +199,7 @@ export function KanbanBoard({
           <div
             className={`kanban-board${isMobileViewport ? " kanban-board-mobile" : ""}`}
           >
-            {!hasNoReadableRepositories && visibleColumns.map((column) => (
+            {!hasNoReadableRepositories && filteredColumns.map((column) => (
               <KanbanColumn
                 key={column.stateKey}
                 column={column}

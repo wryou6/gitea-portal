@@ -10,6 +10,8 @@ import { LoadingState } from "../../components/feedback/LoadingState";
 import { KanbanColumn } from "./KanbanColumn";
 import type { WorkViewCard } from "./types";
 import { demoIssue } from "../../stories/fixtures";
+import { WorkViewFilterBar } from "./WorkViewFilterBar";
+import { defaultWorkViewFilters, matchesWorkViewFilters, type WorkViewFilters } from "./work-view-filters";
 
 const todo: WorkViewCard = {
   ...demoIssue,
@@ -55,11 +57,13 @@ const collidingIssueNumber: WorkViewCard = {
 
 function KanbanScreen({ includeAnomaly = false }: { includeAnomaly?: boolean }) {
   const { t, i18n } = useTranslation("work-views");
+  const { t: tCommon } = useTranslation("common");
   const { t: tIssues } = useTranslation("issues");
   const [isMobileViewport, setIsMobileViewport] = useState(
     () => window.matchMedia("(max-width: 720px)").matches,
   );
   const [activeColumnKey, setActiveColumnKey] = useState("todo");
+  const [filters, setFilters] = useState<WorkViewFilters>(defaultWorkViewFilters);
   const columns = [
     { stateKey: "todo", displayName: "待辦", cards: [todo, collidingIssueNumber] },
     { stateKey: "in-progress", displayName: "處理中", cards: [inProgress] },
@@ -78,13 +82,17 @@ function KanbanScreen({ includeAnomaly = false }: { includeAnomaly?: boolean }) 
   const visibleColumns = isMobileViewport
     ? columns.filter((column) => column.stateKey === activeColumnKey)
     : columns;
+  const filteredColumns = visibleColumns.map((column) => ({
+    ...column,
+    cards: column.cards.filter((issue) => matchesWorkViewFilters(issue, filters)),
+  }));
   return (
     <section>
       <PageHeader
-        eyebrow={t("kanbanEyebrow")}
-        title={t("allRepositories")}
-        description={t("kanbanDescription")}
+        title={tCommon("kanban")}
+        compact
       />
+      <WorkViewFilterBar filters={filters} onChange={setFilters} assignees={["engineer"]} />
       {isMobileViewport && (
         <div className="field kanban-lane-picker">
           <label htmlFor="storybook-kanban-active-column">{t("statusColumn")}</label>
@@ -102,7 +110,7 @@ function KanbanScreen({ includeAnomaly = false }: { includeAnomaly?: boolean }) 
         </div>
       )}
       <div className="kanban-board">
-        {visibleColumns.map((column) => (
+        {filteredColumns.map((column) => (
           <KanbanColumn
             key={column.stateKey}
             column={column}

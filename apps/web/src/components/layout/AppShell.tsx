@@ -4,6 +4,7 @@ import { WorkspaceSelector } from "./WorkspaceSelector";
 import { useTranslation } from "react-i18next";
 import type { Repository } from "../../lib/api";
 import { api } from "../../lib/api";
+import { GlobalIssueSearch } from "./GlobalIssueSearch";
 
 const SIDEBAR_STATE_KEY = "gitea-portal:sidebar-expanded";
 
@@ -225,6 +226,22 @@ export function AppShell({
     },
   ];
 
+  const preservedViewParams = new URLSearchParams();
+  const currentParams = new URLSearchParams(search);
+  for (const key of ["priority", "issueType", "state", "assignee", "repository", "label", "milestone", "gantt_start", "gantt_scale"]) {
+    const value = currentParams.get(key);
+    if (value) preservedViewParams.set(key, value);
+  }
+  const viewNavigationItems = navigationItems.map((item) => {
+    if (!["issues", "kanban", "gantt"].includes(item.key) || !preservedViewParams.size) return item;
+    const url = new URL(item.href, window.location.origin);
+    preservedViewParams.forEach((value, key) => url.searchParams.set(key, value));
+    return { ...item, href: `${url.pathname}?${url.searchParams.toString()}` };
+  });
+  const globalSearchReturnTo = route.type === "issue-detail" || route.type === "issue-create"
+    ? safeReturnTo(new URLSearchParams(search).get("returnTo")) ?? routePaths.issues
+    : `${pathname}${search}`;
+
   return (
     <div
       className={`app-shell ${expanded ? "app-shell--expanded" : "app-shell--collapsed"}`}
@@ -248,6 +265,7 @@ export function AppShell({
           initialPathname={routePathname}
           initialSearch={search}
         />
+        {login && <GlobalIssueSearch returnTo={globalSearchReturnTo} />}
         {login && (
           <div className="account-menu" ref={accountMenuRef}>
             <button
@@ -304,7 +322,7 @@ export function AppShell({
             className="sidebar-nav"
             aria-label={t("globalNavigation")}
           >
-            {navigationItems.map((item) => (
+            {viewNavigationItems.map((item) => (
               <a
                 key={item.key}
                 className="sidebar-link"
@@ -312,6 +330,19 @@ export function AppShell({
                 aria-label={item.label}
                 aria-current={item.active ? "page" : undefined}
                 title={!expanded ? item.label : undefined}
+                onClick={(event) => {
+                  if (!["issues", "kanban", "gantt"].includes(item.key)) return;
+                  if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || event.button !== 0) return;
+                  event.preventDefault();
+                  const target = new URL(item.href, window.location.origin);
+                  const current = new URLSearchParams(window.location.search);
+                  for (const key of ["priority", "issueType", "state", "assignee", "repository", "label", "milestone", "gantt_start", "gantt_scale"]) {
+                    const value = current.get(key);
+                    if (value) target.searchParams.set(key, value);
+                    else target.searchParams.delete(key);
+                  }
+                  window.location.assign(`${target.pathname}${target.search}`);
+                }}
               >
                 <NavigationIcon name={item.icon} />
                 <span className="sidebar-label">{item.label}</span>

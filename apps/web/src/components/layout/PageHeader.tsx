@@ -4,14 +4,16 @@ export function PageHeader({
   title,
   description,
   action,
+  compact = false,
 }: {
   eyebrow?: string;
   title: string;
   description?: string;
   action?: ReactNode;
+  compact?: boolean;
 }) {
   return (
-    <div className="page-heading">
+    <div className={`page-heading${compact ? " page-heading--compact" : ""}`}>
       <div>
         {eyebrow && <p className="eyebrow">{eyebrow}</p>}
         <h1>{title}</h1>

@@ -2,15 +2,10 @@ import { useCallback, useState } from "react";
 import { queryIssues, toUserFacingError, type Issue, type IssueSortField, type SortDirection, type UserFacingError } from "../../lib/api";
 import type { IssuePage } from "../../lib/api";
 import { useTranslation } from "react-i18next";
+import type { WorkViewFilters } from "../work-views/work-view-filters";
+import { serializeWorkViewFilters } from "../work-views/work-view-filters";
 
-export type IssueFiltersValue = {
-  q: string;
-  repository: string;
-  state: string;
-  assignee: string;
-  label: string;
-  milestone: string;
-};
+export type IssueFiltersValue = WorkViewFilters;
 export type IssuePageLoader = (
   filters: Record<string, string>,
 ) => Promise<IssuePage>;
@@ -44,24 +39,22 @@ export function useIssueListState(
       setFilters(next);
       setSort(requestedSort);
       setDirection(requestedDirection);
+      const params = new URLSearchParams(serializeWorkViewFilters(next, window.location.search));
+      if (requestedPage > 1) params.set("page", String(requestedPage));
+      else params.delete("page");
+      params.set("sort", requestedSort);
+      params.set("direction", requestedDirection);
+      window.history.replaceState({}, "", `${window.location.pathname}?${params}`);
       setLoading(true);
       setError(undefined);
       try {
-        const result = await loader({ ...next, page: String(requestedPage), sort: requestedSort, direction: requestedDirection, limit: "50" });
+        const result = await loader({
+          ...Object.fromEntries(Object.entries(next).filter(([, value]) => value && value !== "all")),
+          page: String(requestedPage), sort: requestedSort, direction: requestedDirection, limit: "50",
+        });
         setIssues(result.items);
         setPage(result.page);
         setHasNext(result.hasNext);
-        const params = new URLSearchParams(
-          Object.entries(next).filter(([, value]) => value),
-        );
-        params.set("page", String(result.page));
-        params.set("sort", result.sort);
-        params.set("direction", result.direction);
-        window.history.replaceState(
-          {},
-          "",
-          `${window.location.pathname}?${params}`,
-        );
       } catch (cause) {
         setIssues([]);
         setHasNext(false);

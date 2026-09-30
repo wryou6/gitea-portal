@@ -4,7 +4,7 @@ export const issues = defineLocaleResource({
   "zh-TW": {
     repositoryWorkspaceEyebrow: "儲存庫工作區",
     allReposEyebrow: "所有儲存庫",
-    issueListTitle: "問題",
+    issueListTitle: "問題清單",
     issueTable: "Issue 表格",
     viewOptions: "檢視選項",
     visibleProperties: "顯示欄位",
@@ -202,7 +202,7 @@ export const issues = defineLocaleResource({
   en: {
     repositoryWorkspaceEyebrow: "REPOSITORY WORKSPACE",
     allReposEyebrow: "ALL REPOS",
-    issueListTitle: "Issues",
+    issueListTitle: "Issue list",
     issueTable: "Issue table",
     viewOptions: "View options",
     visibleProperties: "Visible columns",
@@ -400,7 +400,7 @@ export const issues = defineLocaleResource({
   ja: {
     repositoryWorkspaceEyebrow: "リポジトリワークスペース",
     allReposEyebrow: "すべてのリポジトリ",
-    issueListTitle: "課題",
+    issueListTitle: "課題一覧",
     issueTable: "課題テーブル",
     viewOptions: "表示オプション",
     visibleProperties: "表示する列",

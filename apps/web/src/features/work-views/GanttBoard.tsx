@@ -1,12 +1,12 @@
-import { useEffect, useMemo, useRef, useState, type CSSProperties, type KeyboardEvent } from "react";
+import { useEffect, useRef, useState, type CSSProperties, type KeyboardEvent } from "react";
 import { EmptyState } from "../../components/feedback/EmptyState";
-import { ErrorNotice } from "../../components/feedback/ErrorNotice";
-import { api, toUserFacingError, type Issue, type IssueSortField, type UserFacingError } from "../../lib/api";
+import { api, type Issue, type IssueSortField } from "../../lib/api";
 import { routePaths } from "../../app/routes";
 import { formatNumber } from "../../i18n/format";
 import { useTranslation } from "react-i18next";
 import { GanttIssueRow, type GanttColumn, type GanttIssueRowVariant } from "./GanttIssueRow";
 import { GanttCalendarHeader, GANTT_SCALE_WIDTH } from "./GanttCalendarHeader";
+import { matchesWorkViewFilters, parseWorkViewFilters, type WorkViewFilters } from "./work-view-filters";
 import { GanttViewOptionsDialog } from "./GanttViewOptionsDialog";
 import {
   DEFAULT_GANTT_COLUMN_ORDER,
@@ -95,6 +95,7 @@ export function GanttBoard({
   demoKeyboardDraggedField,
   emptyMessage,
   repository,
+  filters: providedFilters,
 }: {
   issues: Issue[];
   returnTo?: string;
@@ -107,15 +108,13 @@ export function GanttBoard({
   demoKeyboardDraggedField?: IssueSortField;
   emptyMessage?: string;
   repository?: { owner: string; name: string };
+  filters?: WorkViewFilters;
 }) {
   const { t, i18n } = useTranslation("work-views");
   const { t: tIssues } = useTranslation("issues");
   const initialQuery = new URLSearchParams(window.location.search);
   const [login, setLogin] = useState<string>();
-  const [sessionError, setSessionError] = useState<UserFacingError>();
-  const [assignee, setAssignee] = useState(initialQuery.get("gantt_assignee") ?? "self");
-  const [showOpen, setShowOpen] = useState(initialQuery.get("gantt_open") !== "false");
-  const [showClosed, setShowClosed] = useState(initialQuery.get("gantt_closed") !== "false");
+  const filters = providedFilters ?? parseWorkViewFilters(window.location.search);
   const [initialDate, setInitialDate] = useState(() => {
     if (demoInitialDate && isCalendarDate(demoInitialDate)) return demoInitialDate;
     const query = initialQuery.get("gantt_start");
@@ -143,15 +142,11 @@ export function GanttBoard({
       return;
     }
     let cancelled = false;
-    void api<{ login: string }>("/api/session")
-      .then((session) => {
-        if (!cancelled) setLogin(session.login);
-      })
-      .catch((cause) => {
-        if (!cancelled) setSessionError(toUserFacingError(cause, t("currentUserUnavailable")));
-      });
+    void api<{ login: string }>("/api/session").then((session) => {
+      if (!cancelled) setLogin(session.login);
+    }).catch(() => undefined);
     return () => { cancelled = true; };
-  }, [demo, t]);
+  }, [demo]);
 
   useEffect(() => {
     if (!login) {
@@ -163,32 +158,15 @@ export function GanttBoard({
   }, [login, demoPreference, demoPendingOrder]);
 
   useEffect(() => {
+    if (demo) return;
     const params = new URLSearchParams(window.location.search);
-    if (assignee === "self") params.delete("gantt_assignee");
-    else params.set("gantt_assignee", assignee);
-    if (showOpen) params.delete("gantt_open");
-    else params.set("gantt_open", "false");
-    if (showClosed) params.delete("gantt_closed");
-    else params.set("gantt_closed", "false");
     params.set("gantt_start", initialDate);
     params.set("gantt_scale", scale);
     const query = params.toString();
     window.history.replaceState({}, "", `${window.location.pathname}${query ? `?${query}` : ""}`);
-  }, [assignee, showOpen, showClosed, initialDate, scale]);
+  }, [demo, initialDate, scale]);
 
-  const assignees = useMemo(
-    () => [...new Set(issues.map((issue) => issue.currentOwner).filter((value): value is string => Boolean(value)))].sort((a, b) => a.localeCompare(b)),
-    [issues],
-  );
-  const visibleIssues = issues.filter((issue) => {
-    const assigneeMatches = assignee === "all" || (assignee === "self"
-      ? Boolean(login && issue.currentOwner === login)
-      : assignee === "unassigned"
-        ? issue.currentOwner === null
-        : issue.currentOwner === assignee);
-    const stateMatches = issue.state === "open" ? showOpen : showClosed;
-    return assigneeMatches && stateMatches;
-  });
+  const visibleIssues = issues.filter((issue) => matchesWorkViewFilters(issue, filters));
   const sortedIssues = [...visibleIssues].sort(compareGanttStartDate);
   const scheduledIssues = sortedIssues.filter((issue) => issue.scheduleStatus === "scheduled");
   const unscheduledIssues = sortedIssues.filter((issue) => issue.scheduleStatus === "unscheduled");
@@ -231,12 +209,6 @@ export function GanttBoard({
     !sameFields(preference.visibleFields, GANTT_FIXED_FIELDS) ||
     !sameOrder(columnOrder, DEFAULT_GANTT_COLUMN_ORDER);
   const returnParams = new URLSearchParams(window.location.search);
-  if (assignee === "self") returnParams.delete("gantt_assignee");
-  else returnParams.set("gantt_assignee", assignee);
-  if (showOpen) returnParams.delete("gantt_open");
-  else returnParams.set("gantt_open", "false");
-  if (showClosed) returnParams.delete("gantt_closed");
-  else returnParams.set("gantt_closed", "false");
   returnParams.set("gantt_start", initialDate);
   returnParams.set("gantt_scale", scale);
   const detailReturnTo = `${window.location.pathname}?${returnParams.toString()}`;
@@ -348,20 +320,6 @@ export function GanttBoard({
   return (
     <section className="gantt-view" aria-label={t("ganttLabel")}>
       <div className="gantt-filters">
-        <label className="field" htmlFor="gantt-assignee">
-          <span>{t("currentAssignee")}</span>
-          <select id="gantt-assignee" value={assignee} onChange={(event) => setAssignee(event.target.value)}>
-            <option value="self">{t("currentUserAssignee", { login: login ? `（${login}）` : "" })}</option>
-            <option value="all">{t("allAssignees")}</option>
-            <option value="unassigned">{t("unassigned")}</option>
-            {assignees.map((name) => <option key={name} value={name}>{name}</option>)}
-          </select>
-        </label>
-        <fieldset>
-          <legend>{t("issueState")}</legend>
-          <label><input type="checkbox" checked={showOpen} onChange={(event) => setShowOpen(event.target.checked)} /> {t("open")}</label>
-          <label><input type="checkbox" checked={showClosed} onChange={(event) => setShowClosed(event.target.checked)} /> {t("closed")}</label>
-        </fieldset>
         <div className="gantt-toolbar" aria-label={t("ganttLabel")}>
           <label className="gantt-start-date" htmlFor="gantt-start-date">
             <span>{t("ganttStartDate")}</span>
@@ -384,7 +342,6 @@ export function GanttBoard({
           <button className="secondary" type="button" onClick={() => setOptionsOpen(true)}>{t("ganttViewOptions")}</button>
         </div>
       </div>
-      {sessionError && <ErrorNotice message={sessionError} />}
       {scheduledIssues.length > 0 && (
         <div
           ref={chartScrollRef}
@@ -505,7 +462,7 @@ export function GanttBoard({
         />
       )}
       {visibleIssues.length === 0 && (
-        <EmptyState>{emptyMessage ?? (assignee === "self" && !login ? t("loadingCurrentUserIssues") : t("noFilteredIssues"))}</EmptyState>
+        <EmptyState>{emptyMessage ?? t("noFilteredIssues")}</EmptyState>
       )}
       <div className="sr-only" role="status" aria-live="polite">{columnAnnouncement}</div>
       <GanttViewOptionsDialog

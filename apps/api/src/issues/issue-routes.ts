@@ -41,6 +41,12 @@ export async function registerIssueRoutes(
           ? query.state
           : undefined,
         assignee: query.assignee,
+        priority: ["critical", "high", "medium", "low"].includes(query.priority ?? "")
+          ? query.priority as "critical" | "high" | "medium" | "low"
+          : undefined,
+        issueType: ["bug", "feature", "task"].includes(query.issueType ?? "")
+          ? query.issueType as "bug" | "feature" | "task"
+          : undefined,
         milestone: query.milestone,
         labels: [
           ...(query.label?.split(",").filter(Boolean) ?? []),

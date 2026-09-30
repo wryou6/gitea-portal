@@ -161,6 +161,8 @@ export type IssueQuery = {
   limit?: number;
   labels?: string[];
   assignee?: string;
+  priority?: "critical" | "high" | "medium" | "low";
+  issueType?: "bug" | "feature" | "task";
   milestone?: string;
   sort?: IssueSortField;
   direction?: SortDirection;

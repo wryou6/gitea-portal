@@ -13,6 +13,9 @@ import { PriorityBadge } from "../../components/ui/PriorityBadge";
 import { ScheduleDates, formatScheduleDate } from "../issues/ScheduleDates";
 import { issueStatusTranslationKey } from "../../i18n/status";
 import { addCalendarDays, localCalendarDate } from "./gantt-timeline";
+import { useState } from "react";
+import { WorkViewFilterBar } from "./WorkViewFilterBar";
+import { defaultWorkViewFilters, type WorkViewFilters } from "./work-view-filters";
 
 const baselineIssues: Issue[] = [
   demoIssue,
@@ -98,9 +101,7 @@ function GanttScreen({
   pendingOrder?: IssueSortField[];
   keyboardDraggedField?: IssueSortField;
 }) {
-  const { t: tViews } = useTranslation("work-views");
   const { t: tCommon } = useTranslation("common");
-  const { t: tIssues } = useTranslation("issues");
   const issues = longTitle
     ? baselineIssues.map((issue, index) => index === 0
       ? { ...issue, title: "Improve cross repository issue filtering and timeline navigation with a deliberately long title that should stay on one line and end with a clean ellipsis" }
@@ -129,11 +130,8 @@ function GanttScreen({
   return (
     <section className={fillViewport ? "gantt-story-shell" : undefined}>
       <PageHeader
-        eyebrow={repositoryScoped
-          ? `${tIssues("repository")} · ${tCommon("gantt")}`
-          : tViews("ganttEyebrow")}
-        title={repositoryScoped ? "frontend/portal" : tViews("allRepositories")}
-        description={tViews("ganttDescription")}
+        title={repositoryScoped ? "frontend/portal" : tCommon("gantt")}
+        compact
       />
       <GanttBoard
         demo
@@ -214,3 +212,15 @@ export const DarkTheme: Story = {
 export const Loading: Story = { render: () => <LoadingState /> };
 export const Empty: Story = { render: () => <GanttEmptyState /> };
 export const ErrorWithRetry: Story = { render: () => <GanttErrorState /> };
+
+export const SharedFiltersAndGantt: Story = {
+  render: () => <SharedFiltersGanttComposition />,
+};
+
+function SharedFiltersGanttComposition() {
+  const [filters, setFilters] = useState<WorkViewFilters>(defaultWorkViewFilters);
+  return <section>
+    <WorkViewFilterBar filters={filters} onChange={setFilters} assignees={["engineer"]} />
+    <GanttBoard issues={baselineIssues} filters={filters} demo demoInitialDate={localCalendarDate()} demoScale="week" />
+  </section>;
+}

@@ -309,6 +309,48 @@ textarea:focus-visible,
   gap: 1.5rem;
   flex: none;
 }
+.global-issue-search {
+  position: relative;
+  flex: 1 1 18rem;
+  min-width: 12rem;
+  max-width: 36rem;
+}
+.global-issue-search > input {
+  min-height: 2.6rem;
+  padding-inline: 0.8rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--card);
+  color: var(--foreground);
+}
+.global-issue-search-results {
+  position: absolute;
+  z-index: 30;
+  inset: calc(100% + 0.35rem) 0 auto;
+  display: grid;
+  max-height: min(24rem, 65vh);
+  overflow: auto;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--card);
+  box-shadow: 0 0.7rem 1.8rem color-mix(in oklch, var(--foreground) 16%, transparent);
+}
+.global-issue-search-results > a,
+.global-issue-search-results > p {
+  display: grid;
+  gap: 0.2rem;
+  margin: 0;
+  padding: 0.7rem 0.85rem;
+  border-bottom: 1px solid var(--border);
+}
+.global-issue-search-results > a[aria-selected="true"],
+.global-issue-search-results > a:hover {
+  background: var(--muted);
+}
+.global-issue-search-results > a span {
+  color: var(--muted-foreground);
+  font-size: 0.8rem;
+}
 .brand {
   display: inline-flex;
   align-items: center;
@@ -688,6 +730,9 @@ textarea:focus-visible,
 }
 .page-heading h1 {
   font-size: clamp(1.75rem, 3vw, 2.5rem);
+}
+.page-heading--compact h1 {
+  font-size: 1.5rem;
 }
 .page-heading h2 {
   font-size: 1.25rem;
@@ -1276,6 +1321,85 @@ textarea:focus-visible,
   border: 1px solid var(--border);
   border-radius: var(--radius);
   background: var(--card);
+}
+.work-view-filters {
+  display: grid;
+  gap: 0.55rem;
+  margin-block: 0.8rem 1rem;
+  padding: 0.65rem 0.8rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--card);
+}
+.work-view-filters-primary,
+.work-view-filters-advanced-fields {
+  display: flex;
+  align-items: end;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+}
+.work-view-filter {
+  display: grid;
+  flex: 1 1 8rem;
+  min-width: 7.5rem;
+  gap: 0.25rem;
+  color: var(--muted-foreground);
+  font-size: 0.78rem;
+  font-weight: 650;
+}
+.work-view-filter select,
+.work-view-filter input {
+  min-height: 2.25rem;
+  padding: 0.35rem 0.55rem;
+}
+.work-view-filter-clear {
+  min-height: 2.25rem;
+  padding-inline: 0.65rem;
+  border: 0;
+  background: transparent;
+  color: var(--muted-foreground);
+  white-space: nowrap;
+}
+.work-view-filters-advanced summary {
+  width: fit-content;
+  color: var(--muted-foreground);
+  cursor: pointer;
+  font-size: 0.8rem;
+}
+.work-view-filter-count {
+  display: inline-grid;
+  min-width: 1.2rem;
+  height: 1.2rem;
+  place-items: center;
+  border-radius: 999px;
+  background: var(--primary);
+  color: var(--primary-foreground);
+  font-size: 0.72rem;
+}
+.work-view-filters-advanced-fields { padding-top: 0.7rem; }
+.work-view-filter-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.work-view-filter-chips li {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.2rem 0.45rem;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  color: var(--muted-foreground);
+  font-size: 0.76rem;
+}
+.work-view-filter-chips button {
+  border: 0;
+  background: transparent;
+  color: var(--foreground);
+  cursor: pointer;
 }
 .field {
   display: grid;
@@ -2088,6 +2212,17 @@ button.danger {
   overflow-wrap: anywhere;
 }
 @media (max-width: 1100px) {
+  .topbar {
+    flex-wrap: wrap;
+    gap: 0.4rem 1rem;
+  }
+  .workspace-selector { order: 1; }
+  .account-menu { order: 2; }
+  .global-issue-search {
+    order: 3;
+    flex-basis: 100%;
+    max-width: none;
+  }
   .filters {
     grid-template-columns: repeat(3, 1fr);
   }
@@ -2134,6 +2269,10 @@ button.danger {
     flex-direction: column;
     gap: 0.4rem;
   }
+  .topbar-primary,
+  .workspace-selector,
+  .global-issue-search,
+  .account-menu { order: initial; }
   .topbar-primary {
     width: 100%;
     gap: 0.65rem;
@@ -2154,6 +2293,22 @@ button.danger {
     width: 100%;
     grid-template-columns: auto minmax(0, 1fr);
     margin-left: 0;
+  }
+  .global-issue-search {
+    width: 100%;
+    max-width: none;
+    min-width: 0;
+  }
+  .work-view-filters-primary,
+  .work-view-filters-advanced-fields {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .work-view-filter {
+    min-width: 0;
+  }
+  .work-view-filter-clear {
+    justify-self: start;
   }
   .account-menu {
     align-self: flex-end;

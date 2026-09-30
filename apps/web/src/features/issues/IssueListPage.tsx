@@ -1,7 +1,9 @@
 import { useEffect, useRef, useState, type KeyboardEvent } from "react";
 import { useTranslation } from "react-i18next";
 import { formatNumber } from "../../i18n/format";
-import { IssueFilters } from "./IssueFilters";
+import { WorkViewFilterBar } from "../work-views/WorkViewFilterBar";
+import { defaultWorkViewFilters, parseWorkViewFilters } from "../work-views/work-view-filters";
+import { matchesWorkViewFilters } from "../work-views/work-view-filters";
 import { IssueRow } from "./IssueRow";
 import { useIssueListState, type IssueFiltersValue } from "./issue-list-state";
 import { PageHeader } from "../../components/layout/PageHeader";
@@ -10,7 +12,7 @@ import { LoadingState } from "../../components/feedback/LoadingState";
 import { EmptyState } from "../../components/feedback/EmptyState";
 import { ErrorNotice } from "../../components/feedback/ErrorNotice";
 import { Table } from "../../components/ui/Table";
-import type { Issue, IssueSortField, SortDirection, UserFacingError } from "../../lib/api";
+import { api, type Issue, type IssueSortField, type SortDirection, type UserFacingError, type Repository } from "../../lib/api";
 import { IssueViewOptionsDialog } from "./IssueViewOptionsDialog";
 import {
   ISSUE_VIEW_FIELDS,
@@ -21,23 +23,8 @@ import {
 } from "./issue-view-preference";
 import { useReorderAnimation } from "../../lib/use-reorder-animation";
 
-const defaults: IssueFiltersValue = {
-  q: "",
-  repository: "",
-  state: "all",
-  assignee: "",
-  label: "",
-  milestone: "",
-};
-
 export function filtersFromUrl(): IssueFiltersValue {
-  const params = new URLSearchParams(window.location.search);
-  return Object.fromEntries(
-    Object.keys(defaults).map((key) => [
-      key,
-      params.get(key) ?? defaults[key as keyof IssueFiltersValue],
-    ]),
-  ) as IssueFiltersValue;
+  return parseWorkViewFilters(window.location.search);
 }
 
 function sortFromUrl(fallback: IssueSortField): IssueSortField {
@@ -109,7 +96,9 @@ export function IssueListPage({
   const [preference, setPreference] = useState<IssueViewPreference>(
     () => demoViewPreference ?? readIssueViewPreference(login),
   );
-  const initialFilters = filtersFromUrl();
+  const [repositories, setRepositories] = useState<Repository[]>([]);
+  const initialFilters = { ...defaultWorkViewFilters, ...filtersFromUrl() };
+  const [demoFilters, setDemoFilters] = useState(initialFilters);
   if (repository)
     initialFilters.repository = `${repository.owner}/${repository.name}`;
   const {
@@ -159,12 +148,21 @@ export function IssueListPage({
     activeDirection !== defaultPreference.defaultSortDirection;
   useReorderAnimation(tableRef, visibleOrder.join("|"));
   const issues = demoIssues
-    ? [...demoIssues].sort((a, b) => compareIssues(a, b, activeSort, activeDirection))
+    ? demoIssues.filter((issue) => matchesWorkViewFilters(issue, demoFilters)).sort((a, b) => compareIssues(a, b, activeSort, activeDirection))
     : loadedIssues;
   const loading = demoIssues ? demoState === "loading" : isLoading;
   const displayedError: UserFacingError | undefined = demoIssues && demoState === "error"
     ? t("issueListLoadError")
     : error;
+
+  useEffect(() => {
+    if (repository || demoIssues) return;
+    let cancelled = false;
+    void api<Repository[]>("/api/repositories").then((items) => {
+      if (!cancelled) setRepositories(items);
+    }).catch(() => undefined);
+    return () => { cancelled = true; };
+  }, [repository?.owner, repository?.name, demoIssues]);
 
   useEffect(() => {
     if (demoIssues) return;
@@ -273,22 +271,23 @@ export function IssueListPage({
   return (
     <section>
       <PageHeader
-        eyebrow={t(repository ? "repositoryWorkspaceEyebrow" : "allReposEyebrow")}
         title={repository ? `${repository.owner}/${repository.name}` : t("issueListTitle")}
-        description={repository ? t("repositoryIssueDescription") : t("allReposIssueDescription")}
+        compact
       />
-      {!demoIssues && (
-        <IssueFilters
-          initial={filters}
-          onSubmit={(next) => load(
-            repository
-              ? { ...next, repository: `${repository.owner}/${repository.name}` }
-              : next,
-            1,
-          )}
-          showRepository={!repository}
-        />
-      )}
+      <WorkViewFilterBar
+        filters={demoIssues ? demoFilters : filters}
+        repositoryFixed={Boolean(repository)}
+        repositories={repositories}
+        assignees={[...new Set((demoIssues ?? loadedIssues).flatMap((issue) => issue.assignees))].sort((a, b) => a.localeCompare(b))}
+        onChange={(next) => {
+          const fixed = repository ? { ...next, repository: `${repository.owner}/${repository.name}` } : next;
+          if (demoIssues) {
+            setDemoFilters(fixed);
+            return;
+          }
+          void load(fixed, 1);
+        }}
+      />
       {displayedError && <><ErrorNotice message={displayedError} />{!demoIssues && <Button variant="secondary" type="button" onClick={() => void load(filters, page)}>{t("retry")}</Button>}</>}
       {loading && <LoadingState />}
       <div className="issues-table-toolbar">

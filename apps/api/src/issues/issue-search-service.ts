@@ -93,7 +93,10 @@ export async function searchIssuesReadThrough(
   ).filter((issue) => {
     if (query.state && query.state !== "all" && issue.state !== query.state) return false;
     if (query.portalStatus && issue.status !== query.portalStatus) return false;
-    if (query.assignee && !issue.assignees.includes(query.assignee)) return false;
+    if (query.assignee === "unassigned" && issue.assignees.length > 0) return false;
+    if (query.assignee && query.assignee !== "unassigned" && !issue.assignees.includes(query.assignee)) return false;
+    if (query.priority && issue.priority !== query.priority) return false;
+    if (query.issueType && issue.type !== query.issueType) return false;
     if (query.milestone && issue.milestone !== query.milestone) return false;
     if (query.labels?.some((label) => !issue.labels.some((item) => item.name === label))) return false;
     return true;
