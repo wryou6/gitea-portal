@@ -189,7 +189,6 @@ export function KanbanBoard({
               <KanbanColumn
                 key={column.stateKey}
                 column={column}
-                destinations={view?.columns ?? []}
                 dragged={dragged}
                 onDragStart={setDragged}
                 onDropCard={move}

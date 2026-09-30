@@ -56,11 +56,13 @@ export function ScheduleDates({
   dueDate,
   scheduleAnomaly,
   className,
+  dueOnly = false,
 }: {
   startDate: string | null;
   dueDate: string | null;
   scheduleAnomaly?: IssueScheduleAnomaly;
   className?: string;
+  dueOnly?: boolean;
 }) {
   const { t, i18n } = useTranslation("issues");
   return (
@@ -68,10 +70,12 @@ export function ScheduleDates({
       className={`schedule-dates${className ? ` ${className}` : ""}`}
       aria-label={t("scheduleDates")}
     >
-      <div className="schedule-date">
-        <dt>{t("start")}</dt>
-        <dd>{displayValue(startDate, "start", t, scheduleAnomaly, i18n.language)}</dd>
-      </div>
+      {!dueOnly && (
+        <div className="schedule-date">
+          <dt>{t("start")}</dt>
+          <dd>{displayValue(startDate, "start", t, scheduleAnomaly, i18n.language)}</dd>
+        </div>
+      )}
       <div className="schedule-date">
         <dt>{t("due")}</dt>
         <dd>{displayValue(dueDate, "due", t, scheduleAnomaly, i18n.language)}</dd>

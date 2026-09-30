@@ -6,7 +6,7 @@ export const common = defineLocaleResource({
     close: "關閉",
     loading: "載入中…",
     issues: "問題",
-    kanban: "Kanban",
+    kanban: "看板",
     gantt: "甘特圖",
     userMenu: "使用者功能",
     currentUser: "目前使用者：{{login}}",

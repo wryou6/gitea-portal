@@ -5,14 +5,12 @@ import { formatNumber } from "../../i18n/format";
 import { issueStatusTranslationKey } from "../../i18n/status";
 export function KanbanColumn({
   column,
-  destinations,
   dragged,
   onDragStart,
   onDropCard,
   returnTo,
 }: {
   column: { stateKey: string; displayName: string; cards: WorkViewCard[] };
-  destinations: Array<{ stateKey: string; displayName: string }>;
   dragged?: WorkViewCard;
   onDragStart: (issue: WorkViewCard) => void;
   onDropCard: (issue: WorkViewCard, stateKey: string) => void;
@@ -31,17 +29,18 @@ export function KanbanColumn({
       }}
     >
       <h2>
-        {t(issueStatusTranslationKey(column.stateKey))}
-        <span>{formatNumber(column.cards.length, i18n.language)}</span>
+        <span className="kanban-column-title">
+          {t(issueStatusTranslationKey(column.stateKey))}
+        </span>
+        <span className="kanban-column-count">
+          {formatNumber(column.cards.length, i18n.language)}
+        </span>
       </h2>
       {column.cards.map((issue) => (
         <div key={`${issue.owner}/${issue.name}#${issue.number}`}>
           <KanbanCard
             issue={issue}
-            destinations={destinations.filter(
-              (destination) => destination.stateKey !== column.stateKey,
-            )}
-            onMove={onDropCard}
+            canDrag={canDrop}
             onDragStart={onDragStart}
             returnTo={returnTo}
           />

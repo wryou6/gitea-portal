@@ -41,15 +41,22 @@ const preview: Preview = {
     a11y: { test: "todo" },
   },
   globalTypes: {
+    locale: {
+      description: "Storybook locale",
+      defaultValue: "zh-TW",
+      toolbar: {
+        icon: "globe",
+        items: [
+          { value: "zh-TW", title: "繁體中文" },
+          { value: "en", title: "English" },
+          { value: "ja", title: "日本語" },
+        ],
+      },
+    },
     theme: {
       description: "Portal theme",
       defaultValue: "light",
       toolbar: { icon: "paintbrush", items: ["light", "dark"] },
-    },
-    locale: {
-      description: "Portal language",
-      defaultValue: "zh-TW",
-      toolbar: { icon: "globe", items: ["zh-TW", "en", "ja"] },
     },
   },
   decorators: [

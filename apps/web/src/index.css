@@ -1059,9 +1059,6 @@ textarea:focus-visible,
   color: var(--foreground) !important;
   font-weight: 650;
 }
-.kanban-card select {
-  min-height: 2.5rem;
-}
 .assignee-roster {
   display: flex;
   flex-wrap: wrap;
@@ -1401,7 +1398,7 @@ button.danger {
 .kanban-board {
   display: grid;
   grid-auto-flow: column;
-  grid-auto-columns: minmax(17rem, 21rem);
+  grid-auto-columns: minmax(0, 1fr);
   grid-template-columns: none;
   gap: 1rem;
   align-items: start;
@@ -1413,6 +1410,7 @@ button.danger {
   display: none;
 }
 .kanban-column {
+  min-width: 0;
   min-height: 20rem;
   border: 1px solid var(--border);
   border-radius: var(--radius);
@@ -1432,21 +1430,26 @@ button.danger {
 .kanban-column--anomaly {
   border-top-color: var(--destructive);
 }
-.kanban-column h2 span {
+.kanban-column-count {
+  flex: none;
   min-width: 1.6rem;
   border-radius: 999px;
   background: var(--card);
   text-align: center;
+  color: var(--muted-foreground);
+  font-size: 0.8rem;
 }
 .kanban-column h2 {
   display: flex;
+  align-items: flex-start;
   justify-content: space-between;
+  gap: 0.5rem;
   margin: 0 0 0.75rem;
   font-size: 0.95rem;
 }
-.kanban-column h2 span {
-  color: var(--muted-foreground);
-  font-size: 0.8rem;
+.kanban-column-title {
+  min-width: 0;
+  overflow-wrap: anywhere;
 }
 .anomaly-column {
   border-color: color-mix(in oklch, var(--warning) 55%, var(--border));
@@ -1471,11 +1474,81 @@ button.danger {
   border-color: color-mix(in oklch, var(--primary) 45%, var(--border));
   box-shadow: 0 7px 18px color-mix(in oklch, var(--foreground) 8%, transparent);
 }
-.kanban-card > a {
+.kanban-card-title-row {
+  display: flex;
+  min-width: 0;
+  align-items: baseline;
+  gap: 0.5rem;
+}
+.kanban-card-title {
+  display: block;
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
   font-weight: 700;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.kanban-next-action {
+  flex: 0 1 auto;
+  min-width: 0;
+  max-width: 45%;
+  overflow: hidden;
+  color: var(--foreground) !important;
+  font-size: 0.75rem;
+  font-weight: 650;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.kanban-card-key {
+  flex: 0 1 auto;
+  min-width: 0;
+  max-width: 100%;
+  margin-inline-start: auto;
+  overflow-wrap: anywhere;
+  color: var(--muted-foreground);
+  font-size: 0.7rem;
+  font-weight: 600;
+  line-height: 1.35;
+  text-align: end;
+}
+.kanban-card-meta {
+  display: flex;
+  min-width: 0;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 0.35rem 0.5rem;
+}
+.kanban-card-assignee-due {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) max-content;
+  min-width: 0;
+  align-items: center;
+  column-gap: 0.75rem;
+}
+.kanban-card-footer {
+  display: flex;
+  min-width: 0;
+  align-items: baseline;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.4rem 0.65rem;
+}
+.kanban-card-assignee {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.kanban-card-due {
+  min-width: 0;
+  border-inline-start: 1px solid var(--border);
+  padding-inline-start: 0.75rem;
+}
+.kanban-card-due .schedule-date {
+  gap: 0.4rem;
 }
 .kanban-card-type {
   display: flex;
+  flex: none;
   flex-wrap: wrap;
   align-items: center;
   gap: 0.35rem;
@@ -2020,9 +2093,6 @@ button.danger {
   }
   .filters button {
     grid-column: span 3;
-  }
-  .kanban-board {
-    grid-auto-columns: minmax(17rem, 20rem);
   }
 }
 @media (max-width: 720px) {

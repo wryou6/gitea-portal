@@ -12,9 +12,7 @@ type Story = StoryObj<typeof meta>;
 export const Default: Story = {
   args: {
     issue: card,
-    destinations: [{ stateKey: "done", displayName: "Done" }],
     onDragStart: () => undefined,
-    onMove: () => undefined,
   },
 };
 
@@ -135,6 +133,77 @@ export const ConflictingPriority: Story = {
         { name: "priority:critical" },
         { name: "priority:high" },
       ],
+    },
+  },
+};
+
+export const LongMetadata: Story = {
+  args: {
+    ...Default.args,
+    issue: {
+      ...card,
+      owner: "platform-engineering-and-developer-experience",
+      name: "a-repository-with-a-deliberately-long-name-for-wrapping",
+      title:
+        "確認跨 Repository 狀態轉換時長標題、日文負責人與下一步文字仍能完整換行顯示",
+      currentOwner: "長い担当者名を持つエンジニア",
+      nextAction: "先確認影響範圍，再更新各 Repository 的相依套件",
+    },
+  },
+};
+
+export const CompletedWithLastAssignee: Story = {
+  args: {
+    ...Default.args,
+    issue: {
+      ...card,
+      state: "closed",
+      status: "done",
+      assignee: "completed-by",
+      assignees: ["completed-by", "previous-assignee"],
+      currentOwner: null,
+      nextAction: "確認完成結果",
+      nextActionKey: "no-follow-up",
+    },
+  },
+};
+
+export const CompletedWithoutLastAssignee: Story = {
+  args: {
+    ...CompletedWithLastAssignee.args,
+    issue: {
+      ...card,
+      state: "closed",
+      status: "done",
+      assignee: null,
+      assignees: [],
+      currentOwner: null,
+      nextAction: "確認完成結果",
+      nextActionKey: "no-follow-up",
+    },
+  },
+};
+
+export const MissingOwnerAndDueDate: Story = {
+  args: {
+    ...Default.args,
+    issue: {
+      ...card,
+      currentOwner: null,
+      dueDate: null,
+      scheduleStatus: "unscheduled",
+    },
+  },
+};
+
+export const ScheduleAnomaly: Story = {
+  args: {
+    ...Default.args,
+    issue: {
+      ...card,
+      dueDate: null,
+      scheduleStatus: "invalid",
+      scheduleAnomaly: "invalid_due_date",
     },
   },
 };

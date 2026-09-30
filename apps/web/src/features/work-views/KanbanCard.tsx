@@ -1,5 +1,4 @@
 import type { WorkViewCard } from "./types";
-import { Badge } from "../../components/ui/Badge";
 import { IssueTypeBadge } from "../../components/ui/IssueTypeBadge";
 import { PriorityBadge } from "../../components/ui/PriorityBadge";
 import { routePaths } from "../../app/routes";
@@ -7,89 +6,86 @@ import {
   ScheduleDates,
   scheduleAnomalyTranslationKey,
 } from "../issues/ScheduleDates";
-import { visibleIssueLabels } from "../issues/issueLabelPresentation";
 import { useTranslation } from "react-i18next";
-import { statusNextActionTranslationKey, issueStatusTranslationKey } from "../../i18n/status";
+import { statusNextActionTranslationKey } from "../../i18n/status";
+
 export function KanbanCard({
   issue,
   onDragStart,
-  destinations,
-  onMove,
+  canDrag = true,
   returnTo,
 }: {
   issue: WorkViewCard;
   onDragStart: (issue: WorkViewCard) => void;
-  destinations: Array<{ stateKey: string; displayName: string }>;
-  onMove: (issue: WorkViewCard, stateKey: string) => void;
+  canDrag?: boolean;
   returnTo?: string;
 }) {
   const { t } = useTranslation("work-views");
   const { t: tIssues } = useTranslation("issues");
-  const visibleLabels = visibleIssueLabels(issue.visibleLabels);
+  const isDone = issue.status === "done";
+  const assigneeLabel = isDone ? t("lastAssignee") : t("currentAssignee");
+  const assignee = isDone ? issue.assignees[0] : issue.currentOwner;
   return (
     <article
       className="kanban-card"
-      draggable
-      onDragStart={() => onDragStart(issue)}
+      draggable={canDrag}
+      onDragStart={() => {
+        if (canDrag) onDragStart(issue);
+      }}
     >
-      <a
-        href={
-          returnTo
-            ? routePaths.issueDetailFrom(
-                issue.owner,
-                issue.name,
-                issue.number,
-                returnTo,
-              )
-            : routePaths.issueDetail(issue.owner, issue.name, issue.number)
-        }
-      >
-        {issue.title}
-      </a>
-      <div className="kanban-card-type">
-        <IssueTypeBadge type={issue.type} labels={issue.labels} />
-        <PriorityBadge priority={issue.priority} labels={issue.labels} />
+      <div className="kanban-card-meta">
+        <div className="kanban-card-type">
+          <PriorityBadge priority={issue.priority} labels={issue.labels} />
+          <IssueTypeBadge type={issue.type} labels={issue.labels} />
+        </div>
+        <small className="kanban-card-key">
+          {issue.owner}/{issue.name} #{issue.number}
+        </small>
       </div>
-      <small>
-        {issue.owner}/{issue.name} #{issue.number}
-      </small>
-      <small>{t("currentAssignee")}: {issue.currentOwner ?? t("noAssignee")}</small>
-      <ScheduleDates
-        startDate={issue.startDate}
-        dueDate={issue.dueDate}
-        scheduleAnomaly={issue.scheduleAnomaly}
-        className="schedule-dates--compact"
-      />
+      <div className="kanban-card-title-row">
+        <a
+          className="kanban-card-title"
+          href={
+            returnTo
+              ? routePaths.issueDetailFrom(
+                  issue.owner,
+                  issue.name,
+                  issue.number,
+                  returnTo,
+                )
+              : routePaths.issueDetail(issue.owner, issue.name, issue.number)
+          }
+          title={issue.title}
+        >
+          {issue.title}
+        </a>
+        <small className="kanban-next-action">
+          {t("nextAction", {
+            action: tIssues(statusNextActionTranslationKey(issue.nextActionKey), {
+              ns: "issues",
+            }),
+          })}
+        </small>
+      </div>
+      <div className="kanban-card-footer">
+        <div className="kanban-card-assignee-due">
+          <small className="kanban-card-assignee">
+            {assigneeLabel}: {assignee ?? (isDone ? t("noLastAssignee") : t("noAssignee"))}
+          </small>
+          <ScheduleDates
+            startDate={issue.startDate}
+            dueDate={issue.dueDate}
+            scheduleAnomaly={issue.scheduleAnomaly}
+            className="schedule-dates--compact kanban-card-due"
+            dueOnly
+          />
+        </div>
+      </div>
       {issue.scheduleStatus === "invalid" && (
         <small className="schedule-anomaly" role="status">
           {tIssues(scheduleAnomalyTranslationKey(issue.scheduleAnomaly))}
         </small>
       )}
-      {visibleLabels.length > 0 && (
-        <div className="labels" aria-label={t("labels")}>
-          {visibleLabels.map((label) => (
-            <Badge key={label.name}>{label.name}</Badge>
-          ))}
-        </div>
-      )}
-      <label className="field">
-        <span className="muted">{t("moveToStatus")}</span>
-        <select
-          aria-label={t("moveIssueToStatus", { title: issue.title })}
-          value=""
-          onChange={(event) => {
-            if (event.target.value) onMove(issue, event.target.value);
-          }}
-        >
-          <option value="">{t("selectColumn")}</option>
-          {destinations.map((destination) => (
-            <option key={destination.stateKey} value={destination.stateKey}>
-              {tIssues(issueStatusTranslationKey(destination.stateKey))}
-            </option>
-          ))}
-        </select>
-      </label>
-      <small className="kanban-next-action">{t("nextAction", { action: tIssues(statusNextActionTranslationKey(issue.nextActionKey), { ns: "issues" }) })}</small>
     </article>
   );
 }

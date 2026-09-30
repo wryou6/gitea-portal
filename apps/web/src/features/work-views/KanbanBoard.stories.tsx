@@ -1,4 +1,8 @@
 import type { Meta, StoryObj } from "@storybook/react";
+import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
+import { formatNumber } from "../../i18n/format";
+import { issueStatusTranslationKey } from "../../i18n/status";
 import { PageHeader } from "../../components/layout/PageHeader";
 import { EmptyState } from "../../components/feedback/EmptyState";
 import { ErrorNotice } from "../../components/feedback/ErrorNotice";
@@ -26,8 +30,19 @@ const done: WorkViewCard = {
   title: "完成第一輪需求驗收",
   state: "closed",
   status: "done",
+  assignee: "engineer",
+  assignees: ["engineer"],
   currentOwner: null,
   nextAction: "確認完成結果",
+  visibleLabels: demoIssue.labels,
+};
+const anomaly: WorkViewCard = {
+  ...demoIssue,
+  number: 64,
+  title: "檢查排程日期異常",
+  status: "anomaly",
+  scheduleStatus: "invalid",
+  scheduleAnomaly: "date_range_reversed",
   visibleLabels: demoIssue.labels,
 };
 const collidingIssueNumber: WorkViewCard = {
@@ -38,25 +53,59 @@ const collidingIssueNumber: WorkViewCard = {
   title: "Same issue number from a different repository",
 };
 
-function KanbanScreen() {
+function KanbanScreen({ includeAnomaly = false }: { includeAnomaly?: boolean }) {
+  const { t, i18n } = useTranslation("work-views");
+  const { t: tIssues } = useTranslation("issues");
+  const [isMobileViewport, setIsMobileViewport] = useState(
+    () => window.matchMedia("(max-width: 720px)").matches,
+  );
+  const [activeColumnKey, setActiveColumnKey] = useState("todo");
   const columns = [
     { stateKey: "todo", displayName: "待辦", cards: [todo, collidingIssueNumber] },
     { stateKey: "in-progress", displayName: "處理中", cards: [inProgress] },
     { stateKey: "done", displayName: "已完成", cards: [done] },
+    ...(includeAnomaly
+      ? [{ stateKey: "anomaly", displayName: "異常", cards: [anomaly] }]
+      : []),
   ];
+  useEffect(() => {
+    const media = window.matchMedia("(max-width: 720px)");
+    const updateViewport = () => setIsMobileViewport(media.matches);
+    media.addEventListener("change", updateViewport);
+    updateViewport();
+    return () => media.removeEventListener("change", updateViewport);
+  }, []);
+  const visibleColumns = isMobileViewport
+    ? columns.filter((column) => column.stateKey === activeColumnKey)
+    : columns;
   return (
     <section>
       <PageHeader
-        eyebrow="ALL REPOS · KANBAN"
-        title="工程工作 Kanban"
-        description="移動卡片時選擇原因，畫面會顯示該狀態的下一步動作。"
+        eyebrow={t("kanbanEyebrow")}
+        title={t("allRepositories")}
+        description={t("kanbanDescription")}
       />
+      {isMobileViewport && (
+        <div className="field kanban-lane-picker">
+          <label htmlFor="storybook-kanban-active-column">{t("statusColumn")}</label>
+          <select
+            id="storybook-kanban-active-column"
+            value={activeColumnKey}
+            onChange={(event) => setActiveColumnKey(event.target.value)}
+          >
+            {columns.map((column) => (
+              <option key={column.stateKey} value={column.stateKey}>
+                {tIssues(issueStatusTranslationKey(column.stateKey))}（{formatNumber(column.cards.length, i18n.language)}）
+              </option>
+            ))}
+          </select>
+        </div>
+      )}
       <div className="kanban-board">
-        {columns.map((column) => (
+        {visibleColumns.map((column) => (
           <KanbanColumn
             key={column.stateKey}
             column={column}
-            destinations={columns}
             dragged={undefined}
             onDragStart={() => undefined}
             onDropCard={() => undefined}
@@ -74,6 +123,7 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 export const Default: Story = {};
+export const WithAnomaly: Story = { args: { includeAnomaly: true } };
 export const Loading: Story = { render: () => <LoadingState /> };
 export const Empty: Story = { render: () => <EmptyState>No issues in readable repositories.</EmptyState> };
 export const ErrorWithRetry: Story = { render: () => <><ErrorNotice message="Repository data could not be loaded." /><button type="button">Retry</button></> };
