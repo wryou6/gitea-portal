@@ -7,7 +7,7 @@ import { useTranslation } from "react-i18next";
 function currentContext(pathname = window.location.pathname, search = window.location.search) {
   const route = resolveAppRoute(pathname, search);
   if (route.type !== "issue-detail" && route.type !== "issue-create") return route;
-  const returnTo = safeReturnTo(new URLSearchParams(window.location.search).get("returnTo"));
+  const returnTo = safeReturnTo(new URLSearchParams(search).get("returnTo"));
   if (!returnTo) return resolveAppRoute(routePaths.issues);
   const target = new URL(returnTo, window.location.origin);
   return resolveAppRoute(target.pathname, target.search);
@@ -16,14 +16,16 @@ function currentContext(pathname = window.location.pathname, search = window.loc
 export function WorkspaceSelector({
   initialRepositories,
   initialPathname,
+  initialSearch,
   onNavigate,
 }: {
   initialRepositories?: Repository[];
   initialPathname?: string;
+  initialSearch?: string;
   onNavigate?: (path: string) => void;
 } = {}) {
   const { t } = useTranslation("common");
-  const context = currentContext(initialPathname);
+  const context = currentContext(initialPathname, initialSearch);
   const isDashboard = context.type === "dashboard";
   const [repositories, setRepositories] = useState<Repository[]>([]);
   const [loading, setLoading] = useState(true);

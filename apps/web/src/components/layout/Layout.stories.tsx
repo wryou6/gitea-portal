@@ -13,6 +13,7 @@ export const PageComposition: Story = {
     <AppShell
       login="admin"
       routePathname="/issues"
+      routeSearch=""
       workspaceRepositories={[
         { owner: "engineering", name: "portal", fullName: "engineering/portal", htmlUrl: "#" },
         { owner: "platform", name: "service-api", fullName: "platform/service-api", htmlUrl: "#" },
@@ -22,7 +23,6 @@ export const PageComposition: Story = {
         eyebrow="所有儲存庫"
         title="Issues"
         description="Layout primitives 的 isolated showcase。"
-        action={<Button>建立 Issue</Button>}
       />
       <ResponsiveToolbar>
         <Field>
@@ -31,6 +31,64 @@ export const PageComposition: Story = {
         </Field>
         <Button>套用篩選</Button>
       </ResponsiveToolbar>
+    </AppShell>
+  ),
+};
+
+export const RepositoryWorkspace: Story = {
+  render: () => (
+    <AppShell
+      login="admin"
+      routePathname="/repositories/engineering/portal/kanban"
+      routeSearch=""
+      workspaceRepositories={[
+        { owner: "engineering", name: "portal", fullName: "engineering/portal", htmlUrl: "#" },
+      ]}
+    >
+      <PageHeader
+        eyebrow="engineering/portal"
+        title="Kanban"
+        description="Repository 工作區的全域建立入口沿用目前 Repository。"
+      />
+    </AppShell>
+  ),
+};
+
+export const AllReposCreateRoute: Story = {
+  render: () => (
+    <AppShell
+      login="admin"
+      routePathname="/issues/new"
+      routeSearch="?returnTo=%2Fissues"
+      workspaceRepositories={[
+        { owner: "engineering", name: "portal", fullName: "engineering/portal", htmlUrl: "#" },
+        { owner: "platform", name: "service-api", fullName: "platform/service-api", htmlUrl: "#" },
+      ]}
+    >
+      <PageHeader
+        eyebrow="所有儲存庫"
+        title="建立問題"
+        description="All repos 維持既有的 Repository 選擇流程。"
+      />
+    </AppShell>
+  ),
+};
+
+export const RepositoryCreateRoute: Story = {
+  render: () => (
+    <AppShell
+      login="admin"
+      routePathname="/issues/new"
+      routeSearch="?repository=engineering%2Fportal&returnTo=%2Frepositories%2Fengineering%2Fportal%2Fkanban"
+      workspaceRepositories={[
+        { owner: "engineering", name: "portal", fullName: "engineering/portal", htmlUrl: "#" },
+      ]}
+    >
+      <PageHeader
+        eyebrow="engineering/portal"
+        title="建立問題"
+        description="Repository 建立流程保留 Repository 與返回位置。"
+      />
     </AppShell>
   ),
 };

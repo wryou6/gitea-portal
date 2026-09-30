@@ -7,7 +7,7 @@ import { api } from "../../lib/api";
 
 const SIDEBAR_STATE_KEY = "gitea-portal:sidebar-expanded";
 
-type NavigationIconName = "issues" | "kanban" | "gantt" | "settings";
+type NavigationIconName = "create" | "issues" | "kanban" | "gantt" | "settings";
 
 function NavigationIcon({ name }: { name: NavigationIconName }) {
   return (
@@ -44,6 +44,7 @@ function NavigationIcon({ name }: { name: NavigationIconName }) {
           <path d="m19.4 15 .1.1a1.7 1.7 0 0 1-2.4 2.4l-.1-.1a1.7 1.7 0 0 0-2.9 1.2v.2a1.7 1.7 0 0 1-3.4 0v-.2a1.7 1.7 0 0 0-2.9-1.2l-.1.1a1.7 1.7 0 0 1-2.4-2.4l.1-.1a1.7 1.7 0 0 0-1.2-2.9H4a1.7 1.7 0 0 1 0-3.4h.2a1.7 1.7 0 0 0 1.2-2.9l-.1-.1a1.7 1.7 0 0 1 2.4-2.4l.1.1a1.7 1.7 0 0 0 2.9-1.2V2a1.7 1.7 0 0 1 3.4 0v.2a1.7 1.7 0 0 0 2.9 1.2l.1-.1a1.7 1.7 0 0 1 2.4 2.4l-.1.1a1.7 1.7 0 0 0 1.2 2.9h.2a1.7 1.7 0 0 1 0 3.4h-.2a1.7 1.7 0 0 0-1.2 2.9Z" />
         </>
       )}
+      {name === "create" && <path d="M12 5v14M5 12h14" />}
     </svg>
   );
 }
@@ -84,9 +85,11 @@ export function AppShell({
   const repository =
     contextRoute.type === "repository-view" ? contextRoute : undefined;
   const allReposView = contextRoute.type === "all-repositories-view" ? contextRoute.view : undefined;
+  const onCreateIssue = route.type === "issue-create";
   const onIssues =
-    contextRoute.type === "issues" ||
-    (contextRoute.type === "repository-view" && contextRoute.view === "issues");
+    !onCreateIssue &&
+    (contextRoute.type === "issues" ||
+      (contextRoute.type === "repository-view" && contextRoute.view === "issues"));
   const onDashboard = route.type === "dashboard";
   const [accountMenuOpen, setAccountMenuOpen] = useState(false);
   const [logoutPending, setLogoutPending] = useState(false);
@@ -167,6 +170,21 @@ export function AppShell({
     active: boolean;
   }> = [
     {
+      key: "createIssue",
+      label: t("createIssue"),
+      href: onCreateIssue
+        ? `${pathname}${search}`
+        : repository
+          ? routePaths.issueCreateForRepository(
+              repository.owner,
+              repository.repo,
+              `${pathname}${search}`,
+            )
+          : routePaths.issueCreate,
+      icon: "create",
+      active: onCreateIssue,
+    },
+    {
       key: "issues",
       label: t("issues"),
       href: repository
@@ -186,7 +204,9 @@ export function AppShell({
             )
           : routePaths.kanban,
       icon: "kanban",
-      active: allReposView === "kanban" || repository?.view === "kanban",
+      active:
+        !onCreateIssue &&
+        (allReposView === "kanban" || repository?.view === "kanban"),
     },
     {
       key: "gantt",
@@ -199,7 +219,9 @@ export function AppShell({
             )
           : routePaths.gantt,
       icon: "gantt",
-      active: allReposView === "gantt" || repository?.view === "gantt",
+      active:
+        !onCreateIssue &&
+        (allReposView === "gantt" || repository?.view === "gantt"),
     },
   ];
 
@@ -224,6 +246,7 @@ export function AppShell({
         <WorkspaceSelector
           initialRepositories={workspaceRepositories}
           initialPathname={routePathname}
+          initialSearch={search}
         />
         {login && (
           <div className="account-menu" ref={accountMenuRef}>

@@ -10,7 +10,6 @@ import { LoadingState } from "../../components/feedback/LoadingState";
 import { EmptyState } from "../../components/feedback/EmptyState";
 import { ErrorNotice } from "../../components/feedback/ErrorNotice";
 import { Table } from "../../components/ui/Table";
-import { routePaths } from "../../app/routes";
 import type { Issue, IssueSortField, SortDirection, UserFacingError } from "../../lib/api";
 import { IssueViewOptionsDialog } from "./IssueViewOptionsDialog";
 import {
@@ -277,16 +276,6 @@ export function IssueListPage({
         eyebrow={t(repository ? "repositoryWorkspaceEyebrow" : "allReposEyebrow")}
         title={repository ? `${repository.owner}/${repository.name}` : t("issueListTitle")}
         description={repository ? t("repositoryIssueDescription") : t("allReposIssueDescription")}
-        action={
-          <a
-            className="button"
-            href={repository
-              ? routePaths.issueCreateForRepository(repository.owner, repository.name, returnTo)
-              : routePaths.issueCreate}
-          >
-            {t("createIssue")}
-          </a>
-        }
       />
       {!demoIssues && (
         <IssueFilters
