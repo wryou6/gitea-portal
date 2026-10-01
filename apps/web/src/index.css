@@ -1691,28 +1691,29 @@ button.danger {
 }
 .gantt-toolbar {
   display: flex;
-  align-items: end;
+  align-items: center;
   flex: 0 0 auto;
   flex-wrap: wrap;
-  gap: 0.65rem;
+  gap: 0.5rem;
   border: 1px solid var(--border);
   border-radius: var(--radius);
   background: var(--card);
-  padding: 0.65rem 0.8rem;
+  padding: 0.4rem 0.6rem;
 }
 .gantt-toolbar > button {
-  min-height: 2.5rem;
+  min-height: 2.25rem;
 }
 .gantt-date-navigation {
   display: flex;
-  align-items: end;
-  gap: 0.4rem;
+  align-items: center;
+  gap: 0.35rem;
+  min-width: 0;
 }
 .gantt-period-button {
   display: grid;
-  width: 2.5rem;
-  min-width: 2.5rem;
-  min-height: 2.5rem;
+  width: 2.25rem;
+  min-width: 2.25rem;
+  min-height: 2.25rem;
   place-items: center;
   padding: 0;
   font-size: 1.25rem;
@@ -1725,26 +1726,43 @@ button.danger {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 0.5rem;
+  gap: 0.4rem;
   margin-left: auto;
 }
 .gantt-start-date,
 .gantt-scale {
-  display: grid;
-  gap: 0.2rem;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
   color: var(--muted-foreground);
-  font-size: 0.76rem;
+  font-size: 0.85rem;
+  white-space: nowrap;
 }
 .gantt-start-date input,
 .gantt-scale select {
-  min-height: 2.5rem;
+  min-height: 2.25rem;
   color: var(--foreground);
 }
 .gantt-start-date input {
   min-width: 9.5rem;
 }
 .gantt-scale select {
-  min-width: 8.5rem;
+  min-width: 6.75rem;
+}
+.gantt-view-options-button {
+  display: grid;
+  width: 2.25rem;
+  min-width: 2.25rem;
+  min-height: 2.25rem;
+  place-items: center;
+  padding: 0;
+}
+.gantt-view-options-button svg {
+  width: 1rem;
+  height: 1rem;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-width: 1.5;
 }
 .gantt-chart-scroll {
   position: relative;
@@ -2398,31 +2416,57 @@ button.danger {
     margin-bottom: 1rem;
   }
   .gantt-toolbar {
-    align-items: stretch;
-    gap: 0.5rem;
+    column-gap: 0.45rem;
+    row-gap: 0.35rem;
+    padding: 0.4rem 0.5rem;
   }
   .gantt-date-navigation {
-    flex: 1 1 100%;
+    flex: 0 1 auto;
   }
   .gantt-start-date {
-    flex: 1 1 auto;
+    flex: 0 1 auto;
     min-width: 0;
   }
   .gantt-start-date input {
-    width: 100%;
+    width: 9.5rem;
+    min-width: 0;
+  }
+  .gantt-scale {
+    gap: 0.3rem;
+  }
+  .gantt-scale select {
+    width: 6rem;
     min-width: 0;
   }
   .gantt-toolbar-spacer {
     display: none;
   }
   .gantt-toolbar-actions {
-    flex: 1 1 100%;
-    justify-content: flex-end;
+    flex: 0 0 auto;
     margin-left: 0;
+  }
+  .gantt-view-options-button,
+  .gantt-period-button {
+    min-width: 2.5rem;
+    min-height: 2.5rem;
+  }
+  .gantt-view-options-button {
+    width: 2.5rem;
   }
   .gantt-chart-scroll {
     max-width: calc(100vw - 2rem);
     -webkit-overflow-scrolling: touch;
+  }
+}
+@media (max-width: 420px) {
+  .gantt-date-navigation {
+    flex: 1 1 100%;
+  }
+  .gantt-start-date {
+    flex: 1 1 auto;
+  }
+  .gantt-start-date input {
+    width: 100%;
   }
 }
 @media (prefers-reduced-motion: reduce) {

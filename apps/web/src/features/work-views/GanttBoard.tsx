@@ -331,7 +331,7 @@ export function GanttBoard({
             <span aria-hidden="true">‹</span>
           </button>
           <label className="gantt-start-date" htmlFor="gantt-start-date">
-            <span>{t("ganttStartDate")}</span>
+            <span className="sr-only">{t("ganttStartDate")}</span>
             <input id="gantt-start-date" type="date" value={initialDate} onChange={(event) => {
               if (isCalendarDate(event.target.value)) setInitialDate(event.target.value);
             }} />
@@ -359,7 +359,19 @@ export function GanttBoard({
         <div className="gantt-toolbar-actions">
           {hasPendingOrder && <button type="button" onClick={() => updatePreference({ ...preference, columnOrder: [...columnOrder] })}>{t("ganttSaveColumnOrder")}</button>}
           {needsRestore && <button className="secondary" type="button" onClick={restoreDefaults}>{t("ganttRestoreColumnDefaults")}</button>}
-          <button className="secondary" type="button" onClick={() => setOptionsOpen(true)}>{t("ganttViewOptions")}</button>
+          <button
+            className="secondary gantt-view-options-button"
+            type="button"
+            aria-label={t("ganttViewOptions")}
+            aria-haspopup="dialog"
+            title={t("ganttViewOptions")}
+            onClick={() => setOptionsOpen(true)}
+          >
+            <svg aria-hidden="true" viewBox="0 0 16 16" fill="none">
+              <path d="M2.5 4h11M2.5 8h11M2.5 12h11" />
+              <path d="M5 2.5v3M10.5 6.5v3M7.5 10.5v3" />
+            </svg>
+          </button>
         </div>
       </div>
       {scheduledIssues.length > 0 && (

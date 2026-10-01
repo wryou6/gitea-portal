@@ -92,6 +92,7 @@
 - [x] T029 Render the unscheduled group only when unscheduled Issues exist; add and inspect a long-list `NoUnscheduledIssues` Storybook story.
 - [x] T030 Localize Gantt navigation, page headings, view options, date controls, calendar accessibility labels, and empty/error Storybook states in `zh-TW`, `en`, and `ja`; inspect the Gantt stories with each locale.
 - [x] T031 Separate timeline controls from Issue filters; add accessible previous/next controls that shift the start date by the selected scale, keep the left fields width stable, and verify toolbar wrapping in three locales and narrow/desktop Storybook viewports.
+- [x] T032 Reduce Gantt timeline-control height with a single-row desktop toolbar and a maximum two-row narrow layout; keep labels accessible, use a compact View Options control, and verify desktop/narrow Storybook layouts in all locales.
 
 ---
 
