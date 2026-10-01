@@ -2060,20 +2060,28 @@ button.danger {
   min-height: 2.25rem;
   background: var(--card);
   --gantt-status-color: var(--badge-info-foreground);
+  --gantt-status-background: var(--badge-info-background);
+  --gantt-status-border: var(--badge-info-border);
   transition: background 120ms ease;
 }
 .gantt-row[data-status="in-progress"] {
   --gantt-status-color: var(--badge-warning-foreground);
+  --gantt-status-background: var(--badge-warning-background);
+  --gantt-status-border: var(--badge-warning-border);
 }
 .gantt-row[data-status="done"] {
   --gantt-status-color: var(--badge-success-foreground);
+  --gantt-status-background: var(--badge-success-background);
+  --gantt-status-border: var(--badge-success-border);
 }
 .gantt-row[data-status="anomaly"] {
   --gantt-status-color: var(--badge-danger-foreground);
+  --gantt-status-background: var(--badge-danger-background);
+  --gantt-status-border: var(--badge-danger-border);
 }
 .gantt-row-fields,
 .gantt-track {
-  background-color: color-mix(in oklch, var(--gantt-status-color) 8%, var(--card));
+  background-color: color-mix(in srgb, var(--gantt-status-background) 40%, var(--card));
 }
 .gantt-row:hover .gantt-cell,
 .gantt-row:focus-within .gantt-cell {
@@ -2111,9 +2119,9 @@ button.danger {
   z-index: 2;
   height: 1.1rem;
   min-width: 0.3rem;
-  border: 1px solid color-mix(in oklch, var(--gantt-status-color) 72%, var(--foreground));
+  border: 1px solid var(--gantt-status-border);
   border-radius: 0.35rem;
-  background: color-mix(in oklch, var(--gantt-status-color) 82%, var(--card));
+  background: var(--gantt-status-background);
 }
 .gantt-row-section > .gantt-row {
   grid-column: 1 / -1;
