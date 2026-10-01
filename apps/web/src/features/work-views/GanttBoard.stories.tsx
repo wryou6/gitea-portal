@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { PageHeader } from "../../components/layout/PageHeader";
+import { AppShell } from "../../components/layout/AppShell";
 import { EmptyState } from "../../components/feedback/EmptyState";
 import { ErrorNotice } from "../../components/feedback/ErrorNotice";
 import { LoadingState } from "../../components/feedback/LoadingState";
@@ -197,6 +198,12 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 export const BeforeReference: Story = { render: () => <GanttBeforeReference /> };
 export const Default: Story = {};
+export const DesktopWorkspace: Story = {
+  parameters: { layout: "fullscreen" },
+  args: { longList: true, fillViewport: true },
+  decorators: [(Story) => <AppShell login="engineer" routePathname="/" routeSearch="" workspaceRepositories={[]}><Story /></AppShell>],
+};
+export const DesktopWorkspaceDark: Story = { ...DesktopWorkspace, globals: { theme: "dark" } };
 export const StatusColors: Story = { args: { statusColors: true } };
 export const StatusColorsDarkTheme: Story = {
   args: { statusColors: true },
@@ -246,7 +253,6 @@ export const SharedFiltersAndGantt: Story = {
 function SharedFiltersGanttComposition() {
   const [filters, setFilters] = useState<WorkViewFilters>(defaultWorkViewFilters);
   return <section>
-    <WorkViewFilterBar filters={filters} onChange={setFilters} assignees={["engineer"]} />
-    <GanttBoard issues={baselineIssues} filters={filters} demo demoInitialDate={localCalendarDate()} demoScale="week" />
+      <GanttBoard issues={baselineIssues} filters={filters} filterControls={<WorkViewFilterBar filters={filters} onChange={setFilters} assignees={["engineer"]} />} demo demoInitialDate={localCalendarDate()} demoScale="week" />
   </section>;
 }

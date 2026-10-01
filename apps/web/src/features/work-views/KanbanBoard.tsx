@@ -12,6 +12,7 @@ import { StatusTransitionDialog } from "../issues/StatusTransitionDialog";
 import { useTranslation } from "react-i18next";
 import { formatNumber } from "../../i18n/format";
 import { WorkViewFilterBar } from "./WorkViewFilterBar";
+import { WorkViewLayout } from "./WorkViewLayout";
 import { matchesWorkViewFilters, parseWorkViewFilters, serializeWorkViewFilters, type WorkViewFilters } from "./work-view-filters";
 
 export function KanbanBoard({
@@ -115,7 +116,7 @@ export function KanbanBoard({
     : (view?.columns ?? []);
   const repositories = currentView && "repositories" in currentView ? currentView.repositories : currentView ? [currentView.repository] : [];
   const allCards = view?.columns.flatMap((column) => column.cards) ?? [];
-  const assignees = [...new Set(allCards.flatMap((issue) => issue.assignees))].sort((a, b) => a.localeCompare(b));
+  const assignees = [...new Set((viewMode === "gantt" ? ganttView?.issues ?? [] : allCards).flatMap((issue) => issue.assignees))].sort((a, b) => a.localeCompare(b));
   const filteredColumns = useMemo(() => visibleColumns.map((column) => ({
     ...column,
     cards: column.cards.filter((issue) => matchesWorkViewFilters(issue, filters)),
@@ -134,6 +135,8 @@ export function KanbanBoard({
     setDragged(undefined);
     setPendingTransition({ issue, targetState: stateKey });
   };
+
+  const filterControls = <WorkViewFilterBar filters={filters} onChange={updateFilters} repositories={repositories} assignees={assignees} repositoryFixed={Boolean(repository)} />;
 
   const submitTransition = async (
     actionKey: string,
@@ -164,7 +167,6 @@ export function KanbanBoard({
         title={repositoryView?.fullName ?? tCommon(viewMode === "gantt" ? "gantt" : "kanban")}
         compact
       />
-      <WorkViewFilterBar filters={filters} onChange={updateFilters} repositories={repositories} assignees={assignees} repositoryFixed={Boolean(repository)} />
       {viewMode === "gantt" ? (
         ganttView ? (
           <GanttBoard
@@ -173,12 +175,13 @@ export function KanbanBoard({
             emptyMessage={"repositories" in ganttView && ganttView.repositories.length === 0 ? t("noReadableRepositories") : undefined}
             returnTo={`${window.location.pathname}${window.location.search}`}
             filters={filters}
+            filterControls={filterControls}
           />
         ) : (
           <LoadingState />
         )
       ) : (
-        <>
+        <WorkViewLayout controls={filterControls} filters={filters} repositoryFixed={Boolean(repository)} resultCount={allCards.filter((issue) => matchesWorkViewFilters(issue, filters)).length} error={Boolean(error)}>
           {hasNoReadableRepositories && <EmptyState>{t("noReadableRepositories")}</EmptyState>}
           {isMobileViewport && (view?.columns.length ?? 0) > 0 && (
             <div className="field kanban-lane-picker">
@@ -210,7 +213,7 @@ export function KanbanBoard({
               />
             ))}
           </div>
-        </>
+        </WorkViewLayout>
       )}
       {pendingTransition && (
         <StatusTransitionDialog

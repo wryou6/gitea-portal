@@ -110,6 +110,8 @@ No setup tasks.
 - [X] T017 [P] Style the shared filter bar and top-bar dropdown for 375px, tablet, and desktop without horizontal page overflow in `apps/web/src/index.css`.
 - [X] T020 Simplify the Issues List, Kanban, and Gantt page headers to one compact, localized title matching the left navigation in All repos, without eyebrow or subtitle in `apps/web/src/components/layout/PageHeader.tsx`, `apps/web/src/features/issues/IssueListPage.tsx`, `apps/web/src/features/work-views/KanbanBoard.tsx`, `apps/web/src/i18n/resources/issues.ts`, and `apps/web/src/index.css`; align the view stories.
 - [X] T021 移除 Issues List、Kanban 與 Gantt compact 頁首的可見標題及下方 margin，保留輔助工具可讀取的標題；在 1440×900 桌機 Storybook 確認三語頁首高度與下方 margin 均為 0，並完成 workspace typecheck 與 build。
+- [X] T022 在 `WorkViewLayout.tsx` 與 `work-view-filter-labels.ts` 建立共用左側控制面板及純文字結果摘要；串接 List、Kanban、Gantt，將日期、刻度與檢視操作移至面板，保留篩選網址、分頁、欄位偏好與狀態轉移行為，補齊三語文字與桌機明暗主題 stories。
+- [X] T023 確認三檢視桌機版面、收合、篩選摘要、進階條件與檢視設定，並執行 workspace typecheck、build 及 Storybook build；在 `quickstart.md` 記錄實際驗證邊界。
 - [ ] T018 Run `pnpm.cmd typecheck`, `pnpm.cmd build`, `pnpm.cmd --filter @gitea-portal/web build-storybook`, and scenarios in `specs/022-shared-work-view-filters/quickstart.md`; correct failures in their owning source files.
 
 ## Phase 8: Convergence

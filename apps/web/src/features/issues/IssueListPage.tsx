@@ -2,6 +2,7 @@ import { useEffect, useRef, useState, type KeyboardEvent } from "react";
 import { useTranslation } from "react-i18next";
 import { formatNumber } from "../../i18n/format";
 import { WorkViewFilterBar } from "../work-views/WorkViewFilterBar";
+import { WorkViewLayout } from "../work-views/WorkViewLayout";
 import { defaultWorkViewFilters, parseWorkViewFilters } from "../work-views/work-view-filters";
 import { matchesWorkViewFilters } from "../work-views/work-view-filters";
 import { IssueRow } from "./IssueRow";
@@ -98,9 +99,9 @@ export function IssueListPage({
   );
   const [repositories, setRepositories] = useState<Repository[]>([]);
   const initialFilters = { ...defaultWorkViewFilters, ...filtersFromUrl() };
-  const [demoFilters, setDemoFilters] = useState(initialFilters);
   if (repository)
     initialFilters.repository = `${repository.owner}/${repository.name}`;
+  const [demoFilters, setDemoFilters] = useState(initialFilters);
   const {
     issues: loadedIssues,
     filters,
@@ -269,11 +270,19 @@ export function IssueListPage({
   }
 
   return (
-    <section>
+    <section className="workspace-view workspace-view--issues">
       <PageHeader
         title={repository ? `${repository.owner}/${repository.name}` : t("issueListTitle")}
         compact
       />
+      <WorkViewLayout
+        filters={demoIssues ? demoFilters : filters}
+        resultCount={issues.length}
+        pageCount={!demoIssues && (hasNext || page > 1)}
+        repositoryFixed={Boolean(repository)}
+        loading={loading}
+        error={Boolean(displayedError)}
+        controls={<>
       <WorkViewFilterBar
         filters={demoIssues ? demoFilters : filters}
         repositoryFixed={Boolean(repository)}
@@ -288,9 +297,8 @@ export function IssueListPage({
           void load(fixed, 1);
         }}
       />
-      {displayedError && <><ErrorNotice message={displayedError} />{!demoIssues && <Button variant="secondary" type="button" onClick={() => void load(filters, page)}>{t("retry")}</Button>}</>}
-      {loading && <LoadingState />}
       <div className="issues-table-toolbar">
+        <h3 className="work-view-controls-section-title">{t("viewOptions")}</h3>
         <div className="issues-table-toolbar-actions">
           {!sameFieldOrder(columnOrder, preference.columnOrder) && (
             <button className="issues-table-toolbar-save" type="button" onClick={() => {
@@ -319,6 +327,10 @@ export function IssueListPage({
           {t("viewOptions")}
         </button>
       </div>
+        </>}
+      >
+      {displayedError && <><ErrorNotice message={displayedError} />{!demoIssues && <Button variant="secondary" type="button" onClick={() => void load(filters, page)}>{t("retry")}</Button>}</>}
+      {loading && <LoadingState />}
       {(issues.length > 0 || (!loading && !displayedError) || demoState === "loading" || demoState === "error") && (
         <Table
           ref={tableRef}
@@ -428,6 +440,7 @@ export function IssueListPage({
           </Button>
         </div>
       )}
+      </WorkViewLayout>
     </section>
   );
 }

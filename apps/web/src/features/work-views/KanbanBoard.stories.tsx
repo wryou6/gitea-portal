@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 import { formatNumber } from "../../i18n/format";
 import { issueStatusTranslationKey } from "../../i18n/status";
 import { PageHeader } from "../../components/layout/PageHeader";
+import { AppShell } from "../../components/layout/AppShell";
 import { EmptyState } from "../../components/feedback/EmptyState";
 import { ErrorNotice } from "../../components/feedback/ErrorNotice";
 import { LoadingState } from "../../components/feedback/LoadingState";
@@ -11,6 +12,7 @@ import { KanbanColumn } from "./KanbanColumn";
 import type { WorkViewCard } from "./types";
 import { demoIssue } from "../../stories/fixtures";
 import { WorkViewFilterBar } from "./WorkViewFilterBar";
+import { WorkViewLayout } from "./WorkViewLayout";
 import { defaultWorkViewFilters, matchesWorkViewFilters, type WorkViewFilters } from "./work-view-filters";
 
 const todo: WorkViewCard = {
@@ -87,12 +89,12 @@ function KanbanScreen({ includeAnomaly = false }: { includeAnomaly?: boolean }) 
     cards: column.cards.filter((issue) => matchesWorkViewFilters(issue, filters)),
   }));
   return (
-    <section>
+    <section className="workspace-view">
       <PageHeader
         title={tCommon("kanban")}
         compact
       />
-      <WorkViewFilterBar filters={filters} onChange={setFilters} assignees={["engineer"]} />
+      <WorkViewLayout filters={filters} resultCount={columns.flatMap((column) => column.cards).filter((issue) => matchesWorkViewFilters(issue, filters)).length} controls={<WorkViewFilterBar filters={filters} onChange={setFilters} assignees={["engineer"]} />}>
       {isMobileViewport && (
         <div className="field kanban-lane-picker">
           <label htmlFor="storybook-kanban-active-column">{t("statusColumn")}</label>
@@ -120,6 +122,7 @@ function KanbanScreen({ includeAnomaly = false }: { includeAnomaly?: boolean }) 
           />
         ))}
       </div>
+      </WorkViewLayout>
     </section>
   );
 }
@@ -131,6 +134,11 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 export const Default: Story = {};
+export const DesktopWorkspace: Story = {
+  parameters: { layout: "fullscreen" },
+  decorators: [(Story) => <AppShell login="engineer" routePathname="/kanban" routeSearch="" workspaceRepositories={[]}><Story /></AppShell>],
+};
+export const DesktopWorkspaceDark: Story = { ...DesktopWorkspace, globals: { theme: "dark" } };
 export const WithAnomaly: Story = { args: { includeAnomaly: true } };
 export const Loading: Story = { render: () => <LoadingState /> };
 export const Empty: Story = { render: () => <EmptyState>No issues in readable repositories.</EmptyState> };

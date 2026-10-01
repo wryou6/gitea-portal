@@ -98,10 +98,12 @@ export function AppShell({
   const accountMenuRef = useRef<HTMLDivElement>(null);
   const accountTriggerRef = useRef<HTMLButtonElement>(null);
   const [expanded, setExpanded] = useState(() => {
+    const defaultExpanded = !onIssues && contextRoute.type !== "all-repositories-view" && contextRoute.type !== "repository-view";
     try {
-      return window.sessionStorage.getItem(SIDEBAR_STATE_KEY) !== "collapsed";
+      const stored = window.sessionStorage.getItem(SIDEBAR_STATE_KEY);
+      return stored === null ? defaultExpanded : stored !== "collapsed";
     } catch {
-      return true;
+      return defaultExpanded;
     }
   });
 

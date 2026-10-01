@@ -1,4 +1,6 @@
-import { useEffect, useRef, useState, type CSSProperties, type KeyboardEvent } from "react";
+import { useEffect, useRef, useState, type CSSProperties, type KeyboardEvent, type ReactNode } from "react";
+import { WorkViewLayout } from "./WorkViewLayout";
+import { WorkViewFilterBar } from "./WorkViewFilterBar";
 import { EmptyState } from "../../components/feedback/EmptyState";
 import { api, type Issue, type IssueSortField } from "../../lib/api";
 import { routePaths } from "../../app/routes";
@@ -97,6 +99,7 @@ export function GanttBoard({
   emptyMessage,
   repository,
   filters: providedFilters,
+  filterControls,
 }: {
   issues: Issue[];
   returnTo?: string;
@@ -110,12 +113,14 @@ export function GanttBoard({
   emptyMessage?: string;
   repository?: { owner: string; name: string };
   filters?: WorkViewFilters;
+  filterControls?: ReactNode;
 }) {
   const { t, i18n } = useTranslation("work-views");
   const { t: tIssues } = useTranslation("issues");
   const initialQuery = new URLSearchParams(window.location.search);
   const [login, setLogin] = useState<string>();
-  const filters = providedFilters ?? parseWorkViewFilters(window.location.search);
+  const [localFilters, setLocalFilters] = useState(() => parseWorkViewFilters(window.location.search));
+  const filters = providedFilters ?? localFilters;
   const [initialDate, setInitialDate] = useState(() => {
     if (demoInitialDate && isCalendarDate(demoInitialDate)) return demoInitialDate;
     const query = initialQuery.get("gantt_start");
@@ -320,7 +325,10 @@ export function GanttBoard({
 
   return (
     <section className="gantt-view" aria-label={t("ganttLabel")}>
+      <WorkViewLayout filters={filters} resultCount={visibleIssues.length} repositoryFixed={Boolean(repository)} controls={<>
+      {filterControls ?? <WorkViewFilterBar filters={filters} onChange={setLocalFilters} repositoryFixed={Boolean(repository)} assignees={[...new Set(issues.flatMap((issue) => issue.assignees))].sort()} />}
       <div className="gantt-toolbar" role="group" aria-label={t("timelineControls")}>
+        <h3 className="work-view-controls-section-title">{t("timeline")}</h3>
         <div className="gantt-date-navigation">
           <button
             className="secondary gantt-period-button"
@@ -331,11 +339,12 @@ export function GanttBoard({
             <span aria-hidden="true">‹</span>
           </button>
           <label className="gantt-start-date" htmlFor="gantt-start-date">
-            <span className="sr-only">{t("ganttStartDate")}</span>
+            <span>{t("ganttStartDate")}</span>
             <input id="gantt-start-date" type="date" value={initialDate} onChange={(event) => {
               if (isCalendarDate(event.target.value)) setInitialDate(event.target.value);
             }} />
           </label>
+          <button className="secondary gantt-today-button" type="button" onClick={() => setInitialDate(defaultDate)}>{t("today")}</button>
           <button
             className="secondary gantt-period-button"
             type="button"
@@ -345,7 +354,6 @@ export function GanttBoard({
             <span aria-hidden="true">›</span>
           </button>
         </div>
-        <button className="secondary" type="button" onClick={() => setInitialDate(defaultDate)}>{t("today")}</button>
         <label className="gantt-scale" htmlFor="gantt-scale">
           <span>{t("scale")}</span>
           <select id="gantt-scale" value={scale} onChange={(event) => setScale(parseGanttScale(event.target.value))}>
@@ -355,7 +363,7 @@ export function GanttBoard({
             <option value="month">{t("scaleMonth")}</option>
           </select>
         </label>
-        <span className="gantt-toolbar-spacer" aria-hidden="true" />
+        <h3 className="work-view-controls-section-title">{tIssues("viewOptions")}</h3>
         <div className="gantt-toolbar-actions">
           {hasPendingOrder && <button type="button" onClick={() => updatePreference({ ...preference, columnOrder: [...columnOrder] })}>{t("ganttSaveColumnOrder")}</button>}
           {needsRestore && <button className="secondary" type="button" onClick={restoreDefaults}>{t("ganttRestoreColumnDefaults")}</button>}
@@ -371,9 +379,11 @@ export function GanttBoard({
               <path d="M2.5 4h11M2.5 8h11M2.5 12h11" />
               <path d="M5 2.5v3M10.5 6.5v3M7.5 10.5v3" />
             </svg>
+            <span>{t("ganttViewOptions")}</span>
           </button>
         </div>
       </div>
+      </>}>
       {scheduledIssues.length > 0 && (
         <div
           ref={chartScrollRef}
@@ -503,6 +513,7 @@ export function GanttBoard({
         onClose={() => setOptionsOpen(false)}
         onChange={updatePreference}
       />
+      </WorkViewLayout>
     </section>
   );
 }

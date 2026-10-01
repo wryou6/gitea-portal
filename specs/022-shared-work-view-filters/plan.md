@@ -6,7 +6,7 @@
 
 ## Summary
 
-Add a compact shared filter bar above List, Kanban, and Gantt, and promote keyword search to the authenticated app top bar. The filter bar applies priority, type, Portal Status, assignee, and collapsed advanced Repository/Label/Milestone filters immediately; its state is encoded in the URL and carried between the three views in the current workspace. The top-bar search is a separate all-readable-repositories autocomplete, independent of the selected workspace; selecting a result opens its Issue detail and preserves the originating page for return.
+將 List、Kanban、Gantt 的篩選與檢視設定集中在左側 240px 控制面板，使用共用 `WorkViewLayout` 提供收合、獨立捲動與主要內容上方的純文字摘要。清單摘要依分頁狀態明確標示當頁筆數；看板摘要計算所有符合卡片，包含異常欄且不受手機選取欄位影響；甘特摘要包含排程、未排程及日期異常項目。全域搜尋仍在頂部導覽，篩選依既有 URL 模型立即套用。
 
 Use one web filter model/parser/predicate. List continues to use its read-through query before pagination, extended for priority and Issue Type; Kanban and Gantt filter their already-loaded complete workspace data with the same predicate. Do not persist filter state or mutate Gitea data.
 
@@ -16,7 +16,7 @@ Use one web filter model/parser/predicate. List continues to use its read-throug
 
 **Primary Dependencies**: Vite 6.1, Fastify 5.2, react-i18next 17, existing Portal API and Gitea client
 
-**Storage**: Browser URL query state only; no new persistence
+**Storage**: 篩選仍使用 Browser URL query；控制面板收合偏好存於 sessionStorage，與 Issue 資料無關。
 
 **Testing**: `pnpm.cmd typecheck`, `pnpm.cmd build`, web Storybook build; manual browser checks described in `quickstart.md`
 
@@ -48,7 +48,7 @@ No constitution violations or exceptions are required.
 
 1. Keep global keyword search in `AppShell` top bar, alongside `WorkspaceSelector`. Debounce typing, show a bounded accessible result list with loading/empty/error states, and label each result with its Repository. Search across all readable repositories regardless of workspace. Selecting a result opens Issue detail with the originating URL as `returnTo`.
 2. Create shared filter URL parsing, serialization, validation, and matching under `apps/web/src/features/work-views/`. Preserve existing query names where possible (`state`, `assignee`, `repository`, `label`, `milestone`) and add `priority` and `issueType`; omit default values from URLs. Carry shared parameters through the left navigation when moving among List, Kanban, and Gantt in the same workspace.
-3. Keep the four common controls visible in one desktop row: Priority, Type, Portal Status, and Assignee. Put Repository (All repos only), Label, and Milestone inside a collapsed advanced section. Show removable chips for active conditions and a clear-all action. The global search query is not shown as a filter chip.
+3. 將 Priority、Type、Portal Status 與 Assignee 垂直排列於左側控制面板，Repository（All repos）、Label、Milestone 留在預設收合的進階區。可移除條件與清除操作留在面板，主內容上方使用不具互動樣式的純文字條件與結果筆數摘要。最左側全域導覽初次進入工作檢視預設為圖示列，保留使用者曾選擇的展開偏好。
 4. For List, extend `/api/issues` query handling so priority and Issue Type filter the complete matched set before page slicing. For Kanban/Gantt, filter the complete loaded cards/issues in the web layer using the shared matcher; preserve status columns (including anomaly handling) and Gantt schedule grouping. Use any member of the Issue's assignee list for a named Assignee match.
 5. In Gantt, remove the Open/Closed checkboxes and old `gantt_assignee` filter. Shared Portal Status and Assignee provide those filters; retain Gantt start date, scale, and view preferences. Ignore legacy `gantt_open`, `gantt_closed`, and `gantt_assignee` query keys; keep `gantt_start` and `gantt_scale`.
 6. Build the global search and shared filter UI as Storybook-ready components with deterministic fixtures; avoid live API requests and URL mutation in stories.

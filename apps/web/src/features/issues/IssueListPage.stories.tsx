@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { IssueListPage } from "./IssueListPage";
 import { demoIssue } from "../../stories/fixtures";
+import { AppShell } from "../../components/layout/AppShell";
 import { defaultIssueViewPreference, type IssueViewPreference } from "./issue-view-preference";
 
 const meta = {
@@ -57,6 +58,13 @@ export const Default: Story = {
     ],
   },
 };
+
+export const DesktopWorkspace: Story = {
+  ...Default,
+  parameters: { layout: "fullscreen" },
+  decorators: [(Story) => <AppShell login="engineer" routePathname="/issues" routeSearch="" workspaceRepositories={[]}><Story /></AppShell>],
+};
+export const DesktopWorkspaceDark: Story = { ...DesktopWorkspace, globals: { theme: "dark" } };
 
 export const AlternatingRows: Story = {
   args: {
