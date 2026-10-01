@@ -1044,22 +1044,22 @@ textarea:focus-visible,
   line-height: 1.25;
   white-space: nowrap;
 }
-.issue-status--todo {
+.label.issue-status--todo {
   color: var(--badge-info-foreground);
   background: var(--badge-info-background);
   border-color: var(--badge-info-border);
 }
-.issue-status--in-progress {
+.label.issue-status--in-progress {
   color: var(--badge-warning-foreground);
   background: var(--badge-warning-background);
   border-color: var(--badge-warning-border);
 }
-.issue-status--done {
+.label.issue-status--done {
   color: var(--badge-success-foreground);
   background: var(--badge-success-background);
   border-color: var(--badge-success-border);
 }
-.issue-status--anomaly {
+.label.issue-status--anomaly {
   color: var(--badge-danger-foreground);
   background: var(--badge-danger-background);
   border-color: var(--badge-danger-border);
