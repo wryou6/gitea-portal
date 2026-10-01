@@ -1036,6 +1036,9 @@ textarea:focus-visible,
   overflow-wrap: anywhere;
 }
 .issue-status {
+  box-sizing: border-box;
+  inline-size: 6.5rem;
+  justify-content: center;
   padding: 0.15rem 0.5rem;
   font-weight: 650;
   line-height: 1.25;
