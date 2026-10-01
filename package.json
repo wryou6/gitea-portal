@@ -5,6 +5,7 @@
   "packageManager": "pnpm@9.15.0",
   "scripts": {
     "dev": "pnpm --parallel --filter @gitea-portal/api --filter @gitea-portal/web dev",
+    "storybook": "pnpm --filter @gitea-portal/web storybook",
     "build": "pnpm -r build",
     "typecheck": "pnpm -r typecheck",
     "format:check": "prettier --check ."
