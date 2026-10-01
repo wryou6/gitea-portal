@@ -24,6 +24,7 @@ import {
   isCalendarDate,
   localCalendarDate,
   parseGanttScale,
+  shiftTimelineStartDate,
   timelinePosition,
   type GanttScale,
 } from "./gantt-timeline";
@@ -319,24 +320,43 @@ export function GanttBoard({
 
   return (
     <section className="gantt-view" aria-label={t("ganttLabel")}>
-      <div className="gantt-filters">
-        <div className="gantt-toolbar" aria-label={t("ganttLabel")}>
+      <div className="gantt-toolbar" role="group" aria-label={t("timelineControls")}>
+        <div className="gantt-date-navigation">
+          <button
+            className="secondary gantt-period-button"
+            type="button"
+            aria-label={t("previousTimelinePeriod")}
+            onClick={() => setInitialDate((date) => shiftTimelineStartDate(date, scale, -1))}
+          >
+            <span aria-hidden="true">‹</span>
+          </button>
           <label className="gantt-start-date" htmlFor="gantt-start-date">
             <span>{t("ganttStartDate")}</span>
             <input id="gantt-start-date" type="date" value={initialDate} onChange={(event) => {
               if (isCalendarDate(event.target.value)) setInitialDate(event.target.value);
             }} />
           </label>
-          <button className="secondary" type="button" onClick={() => setInitialDate(defaultDate)}>{t("today")}</button>
-          <label className="gantt-scale" htmlFor="gantt-scale">
-            <span>{t("scale")}</span>
-            <select id="gantt-scale" value={scale} onChange={(event) => setScale(parseGanttScale(event.target.value))}>
-              <option value="day">{t("scaleDay")}</option>
-              <option value="week">{t("scaleWeek")}</option>
-              <option value="two-weeks">{t("scaleTwoWeeks")}</option>
-              <option value="month">{t("scaleMonth")}</option>
-            </select>
-          </label>
+          <button
+            className="secondary gantt-period-button"
+            type="button"
+            aria-label={t("nextTimelinePeriod")}
+            onClick={() => setInitialDate((date) => shiftTimelineStartDate(date, scale, 1))}
+          >
+            <span aria-hidden="true">›</span>
+          </button>
+        </div>
+        <button className="secondary" type="button" onClick={() => setInitialDate(defaultDate)}>{t("today")}</button>
+        <label className="gantt-scale" htmlFor="gantt-scale">
+          <span>{t("scale")}</span>
+          <select id="gantt-scale" value={scale} onChange={(event) => setScale(parseGanttScale(event.target.value))}>
+            <option value="day">{t("scaleDay")}</option>
+            <option value="week">{t("scaleWeek")}</option>
+            <option value="two-weeks">{t("scaleTwoWeeks")}</option>
+            <option value="month">{t("scaleMonth")}</option>
+          </select>
+        </label>
+        <span className="gantt-toolbar-spacer" aria-hidden="true" />
+        <div className="gantt-toolbar-actions">
           {hasPendingOrder && <button type="button" onClick={() => updatePreference({ ...preference, columnOrder: [...columnOrder] })}>{t("ganttSaveColumnOrder")}</button>}
           {needsRestore && <button className="secondary" type="button" onClick={restoreDefaults}>{t("ganttRestoreColumnDefaults")}</button>}
           <button className="secondary" type="button" onClick={() => setOptionsOpen(true)}>{t("ganttViewOptions")}</button>

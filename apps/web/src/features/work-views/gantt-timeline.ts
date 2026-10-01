@@ -34,6 +34,20 @@ export function addCalendarDays(value: string, days: number): string {
   return date.toISOString().slice(0, 10);
 }
 
+function addCalendarMonths(value: string, months: number): string {
+  const [year, month, day] = value.split("-").map(Number);
+  const target = new Date(Date.UTC(year!, month! - 1 + months, 1));
+  const lastDay = new Date(Date.UTC(target.getUTCFullYear(), target.getUTCMonth() + 1, 0)).getUTCDate();
+  target.setUTCDate(Math.min(day!, lastDay));
+  return target.toISOString().slice(0, 10);
+}
+
+export function shiftTimelineStartDate(value: string, scale: GanttScale, direction: -1 | 1): string {
+  if (scale === "month") return addCalendarMonths(value, direction);
+  const days = scale === "day" ? 1 : scale === "week" ? 7 : 14;
+  return addCalendarDays(value, days * direction);
+}
+
 export function calendarDayOrdinal(value: string): number {
   const [year, month, day] = value.split("-").map(Number);
   return Math.floor(Date.UTC(year!, month! - 1, day!) / DAY_MS);

@@ -1689,45 +1689,44 @@ button.danger {
   flex-direction: column;
   gap: 0.75rem;
 }
-.gantt-filters {
+.gantt-toolbar {
   display: flex;
   align-items: end;
+  flex: 0 0 auto;
   flex-wrap: wrap;
-  gap: 0.75rem 1rem;
+  gap: 0.65rem;
   border: 1px solid var(--border);
   border-radius: var(--radius);
   background: var(--card);
   padding: 0.65rem 0.8rem;
 }
-.gantt-filters .field {
-  min-width: min(100%, 16rem);
-  margin-bottom: 0;
-}
-.gantt-filters fieldset {
-  display: flex;
-  align-items: center;
-  gap: 0.8rem;
-  margin: 0;
-  border: 0;
-  padding: 0;
-}
-.gantt-filters fieldset label {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.3rem;
-}
-.gantt-filters input[type="checkbox"] {
-  width: auto;
-}
-.gantt-toolbar {
-  display: flex;
-  align-items: end;
-  flex: 1 1 38rem;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-}
 .gantt-toolbar > button {
   min-height: 2.5rem;
+}
+.gantt-date-navigation {
+  display: flex;
+  align-items: end;
+  gap: 0.4rem;
+}
+.gantt-period-button {
+  display: grid;
+  width: 2.5rem;
+  min-width: 2.5rem;
+  min-height: 2.5rem;
+  place-items: center;
+  padding: 0;
+  font-size: 1.25rem;
+  line-height: 1;
+}
+.gantt-toolbar-spacer {
+  flex: 1 1 auto;
+}
+.gantt-toolbar-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  margin-left: auto;
 }
 .gantt-start-date,
 .gantt-scale {
@@ -2398,23 +2397,32 @@ button.danger {
     display: grid;
     margin-bottom: 1rem;
   }
-  .gantt-filters {
-    align-items: stretch;
-    flex-direction: column;
-  }
   .gantt-toolbar {
-    flex: auto;
     align-items: stretch;
+    gap: 0.5rem;
   }
-  .gantt-toolbar > button {
-    align-self: end;
+  .gantt-date-navigation {
+    flex: 1 1 100%;
+  }
+  .gantt-start-date {
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+  .gantt-start-date input {
+    width: 100%;
+    min-width: 0;
+  }
+  .gantt-toolbar-spacer {
+    display: none;
+  }
+  .gantt-toolbar-actions {
+    flex: 1 1 100%;
+    justify-content: flex-end;
+    margin-left: 0;
   }
   .gantt-chart-scroll {
     max-width: calc(100vw - 2rem);
     -webkit-overflow-scrolling: touch;
-  }
-  .gantt-filters fieldset {
-    flex-wrap: wrap;
   }
 }
 @media (prefers-reduced-motion: reduce) {
