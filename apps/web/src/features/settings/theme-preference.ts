@@ -1,13 +1,23 @@
 export type ThemeMode = "light" | "dark" | "system";
+export type ColorPalette = "cobalt" | "juniper" | "iris";
 
 const STORAGE_KEY_PREFIX = "gitea-portal:theme:";
+const PALETTE_STORAGE_KEY_PREFIX = "gitea-portal:palette:";
 
 function storageKey(login: string): string {
   return `${STORAGE_KEY_PREFIX}${encodeURIComponent(login)}`;
 }
 
+function paletteStorageKey(login: string): string {
+  return `${PALETTE_STORAGE_KEY_PREFIX}${encodeURIComponent(login)}`;
+}
+
 function isThemeMode(value: string | null): value is ThemeMode {
   return value === "light" || value === "dark" || value === "system";
+}
+
+function isColorPalette(value: string | null): value is ColorPalette {
+  return value === "cobalt" || value === "juniper" || value === "iris";
 }
 
 export function readThemePreference(login?: string): ThemeMode {
@@ -32,6 +42,34 @@ export function saveThemePreference(
   } catch {
     // The selection still applies for this visit if browser storage is unavailable.
   }
+}
+
+export function readColorPalettePreference(login?: string): ColorPalette {
+  if (!login) return "cobalt";
+
+  try {
+    const cached = window.localStorage.getItem(paletteStorageKey(login));
+    return isColorPalette(cached) ? cached : "cobalt";
+  } catch {
+    return "cobalt";
+  }
+}
+
+export function saveColorPalettePreference(
+  login: string | undefined,
+  palette: ColorPalette,
+): void {
+  if (!login) return;
+
+  try {
+    window.localStorage.setItem(paletteStorageKey(login), palette);
+  } catch {
+    // The selection still applies for this visit if browser storage is unavailable.
+  }
+}
+
+export function applyColorPalette(palette: ColorPalette): void {
+  document.documentElement.dataset.palette = palette;
 }
 
 export function applyThemePreference(mode: ThemeMode): void {

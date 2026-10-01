@@ -1,4 +1,4 @@
-# Research: Issue List 斑馬紋與 Gantt Status 色彩
+# Research: 工作檢視色彩與可切換配色
 
 ## Current UI
 
@@ -16,6 +16,7 @@
 3. Mix each Status accent with the current card surface for Gantt rows; use the same accent for schedule bars and semantic badge colors.
 4. Use the theme's muted surface mixed with the card surface for List striping, and retain the existing hover selector at a stronger intensity.
 5. Add one Storybook palette showing all badge families, plus focused List and Gantt states. No API or domain changes, localization changes, or new runtime dependency are justified.
+6. Add a separate account-scoped preference for Cobalt, Juniper and Iris; keep it independent from the existing light/dark/system preference and apply each through shared CSS semantic tokens. Localize the options and descriptions in zh-TW, en and ja.
 
 ## UI Review Guidance
 

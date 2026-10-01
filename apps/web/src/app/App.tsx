@@ -11,9 +11,12 @@ import { WorkspaceViewPage } from "../features/work-views/WorkspaceViewPage";
 import { RepositoryWorkspacePage } from "../features/repositories/RepositoryWorkspacePage";
 import { AppShell } from "../components/layout/AppShell";
 import {
+  applyColorPalette,
   applyThemePreference,
+  saveColorPalettePreference,
   saveThemePreference,
   subscribeToSystemTheme,
+  type ColorPalette,
   type ThemeMode,
 } from "../features/settings/theme-preference";
 import { saveLocalePreference } from "../features/settings/locale-preference";
@@ -30,19 +33,24 @@ export function App({
     ? { status: "authenticated", login }
     : { status: "anonymous" },
   initialTheme = "system",
+  initialPalette = "cobalt",
   initialLocale = "zh-TW",
   sessionExpiredNotice = false,
 }: {
   login?: string;
   sessionState?: SessionBootstrapState;
   initialTheme?: ThemeMode;
+  initialPalette?: ColorPalette;
   initialLocale?: Locale;
   sessionExpiredNotice?: boolean;
 } = {}) {
   const { i18n: currentI18n } = useTranslation();
   const [themeMode, setThemeMode] = useState<ThemeMode>(initialTheme);
+  const [colorPalette, setColorPalette] =
+    useState<ColorPalette>(initialPalette);
   useEffect(() => subscribeToSystemTheme(themeMode), [themeMode]);
-  const currentLocale = resolveLocale(currentI18n.resolvedLanguage) ?? initialLocale;
+  const currentLocale =
+    resolveLocale(currentI18n.resolvedLanguage) ?? initialLocale;
   useEffect(() => {
     document.documentElement.lang = currentLocale;
   }, [currentLocale]);
@@ -51,6 +59,12 @@ export function App({
     saveThemePreference(login, mode);
     applyThemePreference(mode);
     setThemeMode(mode);
+  };
+
+  const changeColorPalette = (palette: ColorPalette) => {
+    saveColorPalettePreference(login, palette);
+    applyColorPalette(palette);
+    setColorPalette(palette);
   };
 
   const changeUiLocale = async (locale: Locale) => {
@@ -87,6 +101,8 @@ export function App({
             login={login}
             mode={themeMode}
             onThemeChange={changeTheme}
+            palette={colorPalette}
+            onPaletteChange={changeColorPalette}
             locale={currentLocale}
             onLocaleChange={changeUiLocale}
           />
@@ -114,7 +130,11 @@ export function App({
       case "issues":
         return <IssueListPage key={login ?? "issues"} login={login} />;
       case "not-found":
-        return <main><h1>404</h1></main>;
+        return (
+          <main>
+            <h1>404</h1>
+          </main>
+        );
     }
   })();
   return (

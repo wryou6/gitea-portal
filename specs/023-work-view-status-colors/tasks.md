@@ -1,8 +1,8 @@
 ---
-description: "Task list for Issue List striping and Gantt Status colors"
+description: "Task list for work-view colors and selectable product palettes"
 ---
 
-# Tasks: Issue List 斑馬紋與跨類型 Badge 色彩
+# Tasks: 工作檢視色彩與可切換配色
 
 **Input**: Design documents from `specs/023-work-view-status-colors/`
 
@@ -56,6 +56,18 @@ description: "Task list for Issue List striping and Gantt Status colors"
 - [x] T008 Create `IssueStatusBadge` with the shared `Badge` primitive and use it in `apps/web/src/features/issues/IssueRow.tsx`, `apps/web/src/features/issues/IssueDetailHeader.tsx`, and `apps/web/src/features/work-views/GanttIssueRow.tsx`.
 - [x] T009 Add a Storybook palette for Status, Type, Priority, missing/conflict and neutral Label badges in `apps/web/src/components/ui/IssueBadgePalette.stories.tsx`.
 
+## Phase 6: User Story 3 - 可切換產品配色
+
+**Goal**: Make all three desktop palette proposals selectable in Settings and persist each account's choice independently of light/dark/system mode.
+
+**Independent Test**: Switch palettes from Settings, review List/Kanban/Gantt and badge colors in light/dark/system modes, reload, and verify another account retains its own preference.
+
+- [x] T010 [US3] Define Cobalt, Juniper and Iris light/dark semantic color tokens for global surfaces, primary controls and all badge roles in `apps/web/src/index.css`.
+- [x] T011 [US3] Add account-scoped palette read/save/apply functions with Cobalt fallback in `apps/web/src/features/settings/theme-preference.ts`; load during app bootstrap and apply changes immediately in `apps/web/src/app/App.tsx`.
+- [x] T012 [US3] Add accessible palette radio cards and translated labels/descriptions/swatches to Settings and a selectable Settings Storybook screen in zh-TW/en/ja.
+- [x] T013 [US3] Validate all six palette/theme combinations across Issue List, Kanban, Gantt, shared badges and Settings; confirm preference survives reload and uses the existing per-account storage pattern.
+- [x] T014 Update the feature spec, plan, research, quickstart and task checklist with selectable palettes and final verification results.
+
 ## Dependencies & Execution Order
 
 ### Phase Dependencies
@@ -75,3 +87,4 @@ description: "Task list for Issue List striping and Gantt Status colors"
 2. Deliver and review Issue List striping.
 3. Deliver and review Gantt row/bar Status colors.
 4. Complete Storybook and package validation before commit.
+5. Add Settings selection for all palettes, validate account-scoped persistence, and record results before commit.

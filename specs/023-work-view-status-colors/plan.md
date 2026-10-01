@@ -1,29 +1,29 @@
-# Implementation Plan: Issue List 斑馬紋與 Gantt Status 色彩
+# Implementation Plan: 工作檢視色彩與可切換配色
 
 **Branch**: `023-work-view-status-colors` | **Date**: 2026-10-01 | **Spec**: [spec.md](spec.md)
 
 ## Summary
 
-為 Issues List 資料列加入主題適應的交替底色；建立共用的 semantic badge palette，讓 Status、Type、Priority、異常及一般 Label 使用一致的 badge 幾何、色彩角色與明暗主題。Status badge 透過同一元件呈現在 Issue List、detail 與 Gantt；Gantt 整列背景與排程 bar 依 Status 映射。僅修改 Web 呈現與 Storybook，不新增 API、資料模型或持久化。
+為 Issues List 資料列加入主題適應的交替底色；建立霧藍、鼠尾草、鳶尾三套完整 light/dark semantic token palettes，並讓登入使用者在 Settings 中即時切換。配色涵蓋 Portal surfaces、Badge families、Issue List、Kanban 與 Gantt。沿用共用 Status badge 幾何及語意角色；Gantt 整列背景與排程 bar 依同一 Status token。只增加 per-account localStorage 外觀偏好，不新增 API、Issue 資料模型或 Gitea 持久化。
 
 ## Technical Context
 
 **Language/Version**: TypeScript 5.x, React 19, CSS
 **Primary Dependencies**: 現有 pnpm workspace、i18next、Storybook
-**Storage**: N/A
+**Storage**: Account-scoped browser localStorage for palette preference; no server or issue persistence.
 **Testing**: Storybook review; `pnpm.cmd typecheck`; `pnpm.cmd build`; `pnpm.cmd --filter @gitea-portal/web build-storybook`
 **Target Platform**: Responsive browser UI, light and dark themes, zh-TW/en/ja
 **Project Type**: Web application
 **Performance Goals**: CSS-only visual updates; no additional runtime work per row
 **Constraints**: Gitea remains sole source of truth; preserve existing Status/anomaly text and all Issue operations; status color must not be the sole signal
-**Scale/Scope**: Issues List and Gantt presentation plus Storybook coverage
+**Scale/Scope**: Shared palette tokens across app surfaces, Issues List, Kanban and Gantt; account preference in Settings; Storybook coverage
 
 ## Constitution Check
 
-- I–IV: Pass. No Issue data, API, persistence, authorization, or Gitea behavior changes.
+- I–IV: Pass. No Issue data, API, authorization, or Gitea behavior changes. The new localStorage key stores only the visual palette preference per account.
 - V: Pass. Existing fixed Status values and anomaly visibility remain unchanged.
 - VI: Pass. Repository identity and existing Issue content remain unchanged.
-- VII: Pass. No new visible text; existing Status labels continue through i18n. Storybook review covers supported locales and themes.
+- VII: Pass. New palette names/descriptions are localized in zh-TW/en/ja; Storybook review covers supported locales and themes.
 - Development process: Feature spec, plan, tasks and analysis precede implementation; UI validation includes typecheck and build.
 
 ## Project Structure
@@ -38,6 +38,12 @@ specs/023-work-view-status-colors/
 └── tasks.md
 
 apps/web/src/index.css
+apps/web/src/features/settings/theme-preference.ts
+apps/web/src/features/settings/SettingsPage.tsx
+apps/web/src/app/App.tsx
+apps/web/src/main.tsx
+apps/web/src/i18n/resources/settings.ts
+apps/web/src/features/settings/SettingsPage.stories.tsx
 apps/web/src/components/ui/IssueStatusBadge.tsx
 apps/web/src/components/ui/IssueBadgePalette.stories.tsx
 apps/web/src/features/issues/IssueListPage.stories.tsx
@@ -57,6 +63,8 @@ apps/web/src/features/work-views/GanttBoard.stories.tsx
 - Use theme surface tokens mixed at low intensity for alternating Issues List rows; preserve the existing hover highlight above both stripe tones.
 - Put the Gantt Status on each row as a data attribute. CSS uses that value for a low-intensity row tint and the matching scheduled bar color. Unscheduled and date-anomaly rows receive the same tint; anomaly annotation remains visible.
 - Keep status words visible in badges. No extra legend or translated copy is required because the existing labels remain present.
+- Expose three named palette options in Settings with compact surface/status swatches. Store palette separately per account from light/dark/system mode; apply the palette through shared CSS semantic tokens so all surfaces and Issue views update together.
+- Keep the Status role mapping stable within each palette: Todo/info, In Progress/warning, Done/success, anomaly/danger. Palette selection may shift a role's hue while its meaning remains consistent.
 
 ## Complexity Tracking
 

@@ -4,8 +4,11 @@ import { App } from "./app/App";
 import { changeLocale } from "./i18n";
 import { readLocalePreference } from "./features/settings/locale-preference";
 import {
+  applyColorPalette,
   applyThemePreference,
+  readColorPalettePreference,
   readThemePreference,
+  type ColorPalette,
   type ThemeMode,
 } from "./features/settings/theme-preference";
 import { api } from "./lib/api";
@@ -19,11 +22,13 @@ const AUTH_ERROR_QUERY = "portalAuthError";
 async function bootstrap() {
   let sessionState: SessionBootstrapState;
   let initialTheme: ThemeMode = "system";
+  let initialPalette: ColorPalette = "cobalt";
   let sessionExpiredNotice = false;
   try {
     const { login } = await api<{ login: string }>("/api/session");
     sessionState = { status: "authenticated", login };
     initialTheme = readThemePreference(login);
+    initialPalette = readColorPalettePreference(login);
     try {
       sessionExpiredNotice =
         window.sessionStorage.getItem(SESSION_EXPIRED_KEY) === "1";
@@ -59,12 +64,14 @@ async function bootstrap() {
   const initialLocale = readLocalePreference(login);
   await changeLocale(initialLocale);
   applyThemePreference(initialTheme);
+  applyColorPalette(initialPalette);
   createRoot(document.getElementById("root")!).render(
     <StrictMode>
       <App
         login={login}
         sessionState={sessionState}
         initialTheme={initialTheme}
+        initialPalette={initialPalette}
         initialLocale={initialLocale}
         sessionExpiredNotice={sessionExpiredNotice}
       />

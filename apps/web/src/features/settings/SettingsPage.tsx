@@ -1,4 +1,4 @@
-import type { ThemeMode } from "./theme-preference";
+import type { ColorPalette, ThemeMode } from "./theme-preference";
 import { useTranslation } from "react-i18next";
 import { supportedLocales, type Locale } from "../../i18n/locales";
 import { useState } from "react";
@@ -10,6 +10,7 @@ const themeLabelKeys: Record<ThemeMode, "light" | "dark" | "system"> = {
   dark: "dark",
   system: "system",
 };
+const colorPalettes = ["cobalt", "juniper", "iris"] as const;
 
 const localeNames: Record<Locale, string> = {
   "zh-TW": "繁體中文",
@@ -21,27 +22,39 @@ export function SettingsPage({
   login,
   mode,
   onThemeChange,
+  palette,
+  onPaletteChange,
   locale,
   onLocaleChange,
 }: {
   login?: string;
   mode: ThemeMode;
   onThemeChange: (mode: ThemeMode) => void;
+  palette: ColorPalette;
+  onPaletteChange: (palette: ColorPalette) => void;
   locale: Locale;
   onLocaleChange: (locale: Locale) => void;
 }) {
   const { t } = useTranslation("settings");
   const [migrationRunning, setMigrationRunning] = useState(false);
   const [migrationError, setMigrationError] = useState<string | null>(null);
-  const [migrationReport, setMigrationReport] = useState<StatusLabelMigrationReport | null>(null);
+  const [migrationReport, setMigrationReport] =
+    useState<StatusLabelMigrationReport | null>(null);
 
   async function runStatusMigration() {
     setMigrationRunning(true);
     setMigrationError(null);
     try {
-      setMigrationReport(await api<StatusLabelMigrationReport>("/api/admin/status-label-migration", { method: "POST" }));
+      setMigrationReport(
+        await api<StatusLabelMigrationReport>(
+          "/api/admin/status-label-migration",
+          { method: "POST" },
+        ),
+      );
     } catch (cause) {
-      setMigrationError(cause instanceof Error ? cause.message : t("statusMigrationFailed"));
+      setMigrationError(
+        cause instanceof Error ? cause.message : t("statusMigrationFailed"),
+      );
     } finally {
       setMigrationRunning(false);
     }
@@ -79,6 +92,34 @@ export function SettingsPage({
         <p className="settings-current-mode" aria-live="polite">
           {t("currentMode", { mode: t(themeLabelKeys[mode]) })}
         </p>
+        <fieldset className="theme-options palette-options">
+          <legend>{t("colorPalette")}</legend>
+          {colorPalettes.map((colorPalette) => (
+            <label
+              className={`theme-option palette-option palette-option--${colorPalette} ${palette === colorPalette ? "theme-option--selected" : ""}`}
+              key={colorPalette}
+            >
+              <input
+                type="radio"
+                name="color-palette"
+                value={colorPalette}
+                checked={palette === colorPalette}
+                onChange={() => onPaletteChange(colorPalette)}
+              />
+              <span>
+                <strong>{t(colorPalette)}</strong>
+                <small>{t(`${colorPalette}Description`)}</small>
+                <span className="palette-swatches" aria-hidden="true">
+                  <i className="palette-swatch-surface" />
+                  <i className="palette-swatch-primary" />
+                  <i className="palette-swatch-todo" />
+                  <i className="palette-swatch-progress" />
+                  <i className="palette-swatch-done" />
+                </span>
+              </span>
+            </label>
+          ))}
+        </fieldset>
         <fieldset className="theme-options">
           <legend>{t("language")}</legend>
           <p className="muted">{t("languageDescription")}</p>
@@ -94,63 +135,110 @@ export function SettingsPage({
                 checked={locale === supportedLocale}
                 onChange={() => onLocaleChange(supportedLocale)}
               />
-              <span><strong>{localeNames[supportedLocale]}</strong></span>
+              <span>
+                <strong>{localeNames[supportedLocale]}</strong>
+              </span>
             </label>
           ))}
         </fieldset>
       </section>
       {login === "admin" && (
-        <section className="settings-card" aria-labelledby="settings-status-migration">
+        <section
+          className="settings-card"
+          aria-labelledby="settings-status-migration"
+        >
           <h2 id="settings-status-migration">{t("statusMigrationTitle")}</h2>
           <p>{t("statusMigrationDescription")}</p>
-          <Button type="button" disabled={migrationRunning} onClick={() => void runStatusMigration()}>
-            {migrationRunning ? t("statusMigrationRunning") : t("statusMigrationStart")}
+          <Button
+            type="button"
+            disabled={migrationRunning}
+            onClick={() => void runStatusMigration()}
+          >
+            {migrationRunning
+              ? t("statusMigrationRunning")
+              : t("statusMigrationStart")}
           </Button>
-          {migrationError && <p className="error-text" role="alert">{migrationError}</p>}
+          {migrationError && (
+            <p className="error-text" role="alert">
+              {migrationError}
+            </p>
+          )}
           {migrationReport && (
             <div className="status-migration-report" aria-live="polite">
-              <p className={migrationReport.verified ? "success-text" : "error-text"}>
-                {migrationReport.verified ? t("statusMigrationVerified") : t("statusMigrationIncomplete")}
+              <p
+                className={
+                  migrationReport.verified ? "success-text" : "error-text"
+                }
+              >
+                {migrationReport.verified
+                  ? t("statusMigrationVerified")
+                  : t("statusMigrationIncomplete")}
               </p>
               <ul>
-                <li>{t("statusMigrationCounts", {
-                  repositories: migrationReport.repositories,
-                  issues: migrationReport.issuesScanned,
-                  migrated: migrationReport.migrated,
-                  unchanged: migrationReport.unchanged,
-                })}</li>
+                <li>
+                  {t("statusMigrationCounts", {
+                    repositories: migrationReport.repositories,
+                    issues: migrationReport.issuesScanned,
+                    migrated: migrationReport.migrated,
+                    unchanged: migrationReport.unchanged,
+                  })}
+                </li>
               </ul>
               {migrationReport.successfulIssues.length > 0 && (
                 <details>
-                  <summary>{t("statusMigrationSuccesses", { count: migrationReport.successfulIssues.length })}</summary>
-                  <ul>{migrationReport.successfulIssues.map((item) => (
-                    <li key={`${item.owner}/${item.repository}#${item.issueNumber}`}>
-                      {item.owner}/{item.repository}#{item.issueNumber}: {t(item.outcome === "migrated" ? "statusMigrationIssueMigrated" : "statusMigrationIssueUnchanged")}
-                    </li>
-                  ))}</ul>
+                  <summary>
+                    {t("statusMigrationSuccesses", {
+                      count: migrationReport.successfulIssues.length,
+                    })}
+                  </summary>
+                  <ul>
+                    {migrationReport.successfulIssues.map((item) => (
+                      <li
+                        key={`${item.owner}/${item.repository}#${item.issueNumber}`}
+                      >
+                        {item.owner}/{item.repository}#{item.issueNumber}:{" "}
+                        {t(
+                          item.outcome === "migrated"
+                            ? "statusMigrationIssueMigrated"
+                            : "statusMigrationIssueUnchanged",
+                        )}
+                      </li>
+                    ))}
+                  </ul>
                 </details>
               )}
               {migrationReport.resolvedConflicts.length > 0 && (
                 <section>
                   <h3>{t("statusMigrationConflicts")}</h3>
-                  <ul>{migrationReport.resolvedConflicts.map((item) => (
-                    <li key={`${item.owner}/${item.repository}#${item.issueNumber}`}>
-                      {item.owner}/{item.repository}#{item.issueNumber}: {t("statusMigrationConflictValues", {
-                        removed: item.removedLegacyLabels.join(", "),
-                        retained: item.retainedStatusLabels.join(", "),
-                      })}
-                    </li>
-                  ))}</ul>
+                  <ul>
+                    {migrationReport.resolvedConflicts.map((item) => (
+                      <li
+                        key={`${item.owner}/${item.repository}#${item.issueNumber}`}
+                      >
+                        {item.owner}/{item.repository}#{item.issueNumber}:{" "}
+                        {t("statusMigrationConflictValues", {
+                          removed: item.removedLegacyLabels.join(", "),
+                          retained: item.retainedStatusLabels.join(", "),
+                        })}
+                      </li>
+                    ))}
+                  </ul>
                 </section>
               )}
               {migrationReport.failures.length > 0 && (
                 <section>
                   <h3>{t("statusMigrationFailures")}</h3>
-                  <ul>{migrationReport.failures.map((item, index) => (
-                    <li key={`${item.owner}/${item.repository}#${item.issueNumber ?? index}`}>
-                      {item.owner && `${item.owner}/${item.repository}${item.issueNumber ? `#${item.issueNumber}` : ""}: `}{item.reason}
-                    </li>
-                  ))}</ul>
+                  <ul>
+                    {migrationReport.failures.map((item, index) => (
+                      <li
+                        key={`${item.owner}/${item.repository}#${item.issueNumber ?? index}`}
+                      >
+                        {item.owner &&
+                          `${item.owner}/${item.repository}${item.issueNumber ? `#${item.issueNumber}` : ""}: `}
+                        {item.reason}
+                      </li>
+                    ))}
+                  </ul>
                 </section>
               )}
             </div>
