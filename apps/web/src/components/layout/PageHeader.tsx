@@ -16,7 +16,7 @@ export function PageHeader({
     <div className={`page-heading${compact ? " page-heading--compact" : ""}`}>
       <div>
         {eyebrow && <p className="eyebrow">{eyebrow}</p>}
-        <h1>{title}</h1>
+        <h1 className={compact ? "sr-only" : undefined}>{title}</h1>
         {description && <p className="muted">{description}</p>}
       </div>
       {action}

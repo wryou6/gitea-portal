@@ -109,6 +109,7 @@ No setup tasks.
 - [X] T016 [P] Add and verify zh-TW, en, and ja labels, chips, search feedback, accessible names, and empty/error text in `apps/web/src/i18n/resources/common.ts`, `apps/web/src/i18n/resources/issues.ts`, and `apps/web/src/i18n/resources/work-views.ts`.
 - [X] T017 [P] Style the shared filter bar and top-bar dropdown for 375px, tablet, and desktop without horizontal page overflow in `apps/web/src/index.css`.
 - [X] T020 Simplify the Issues List, Kanban, and Gantt page headers to one compact, localized title matching the left navigation in All repos, without eyebrow or subtitle in `apps/web/src/components/layout/PageHeader.tsx`, `apps/web/src/features/issues/IssueListPage.tsx`, `apps/web/src/features/work-views/KanbanBoard.tsx`, `apps/web/src/i18n/resources/issues.ts`, and `apps/web/src/index.css`; align the view stories.
+- [X] T021 移除 Issues List、Kanban 與 Gantt compact 頁首的可見標題及下方 margin，保留輔助工具可讀取的標題；在 1440×900 桌機 Storybook 確認三語頁首高度與下方 margin 均為 0，並完成 workspace typecheck 與 build。
 - [ ] T018 Run `pnpm.cmd typecheck`, `pnpm.cmd build`, `pnpm.cmd --filter @gitea-portal/web build-storybook`, and scenarios in `specs/022-shared-work-view-filters/quickstart.md`; correct failures in their owning source files.
 
 ## Phase 8: Convergence

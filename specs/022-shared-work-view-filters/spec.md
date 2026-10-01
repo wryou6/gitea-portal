@@ -103,7 +103,7 @@
 - **FR-003**: 全域 Issue 搜尋 MUST 出現在頂部導覽列、與工作區選擇器同層，並在登入後所有頁面可用；輸入關鍵字時 MUST 顯示跨所有可讀 Repository 的搜尋結果選單，不受目前工作區選擇限制。
 - **FR-017**: 每筆全域搜尋結果 MUST 顯示足以辨認 Issue 與 Repository 的資訊；選取結果 MUST 開啟該 Issue 詳情，且詳情返回 MUST 回到發起搜尋的頁面。
 - **FR-018**: 全域搜尋 MUST 清楚區分無符合結果與讀取失敗，並提供相應狀態提示。
-- **FR-019**: Issues List、Kanban 與 Gantt 的主要內容頁首 MUST 僅顯示單一主標題；All repos 工作區的標題須與目前檢視及左側導覽名稱一致，Repository 工作區可顯示 Repository 名稱。頁首不得顯示 eyebrow 小標或描述副標，主標題字級 MUST 採精簡層級，不得占用過多首屏高度。
+- **FR-019**: Issues List、Kanban 與 Gantt MUST 優先提供桌機表格與圖表的可用高度，不顯示獨立的頁面主標題列、eyebrow 小標或描述副標；compact 頁首的下方 margin MUST 為 0。檢視與 Repository 身分由側邊導覽及工作區選擇器識別；供輔助工具讀取的頁面標題 MUST 保留，All repos 的標題與目前檢視及左側導覽名稱一致，Repository 工作區使用 Repository 名稱。
 - **FR-004**: Repository、Label 與 Milestone MUST 位於預設收合的進階篩選區；All repos 可選 Repository，單一 Repository 工作區以目前 Repository 為準。
 - **FR-005**: 使用者 MUST 能辨認及個別移除已套用的篩選條件，並能清除所有條件。
 - **FR-006**: 使用者 MUST 能辨認已收合進階篩選內仍生效的條件數量；收合或展開不得清除條件。
