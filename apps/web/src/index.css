@@ -1998,8 +1998,8 @@ textarea:focus-visible,
 }
 .work-view-assignee-shortcut {
   min-width: 0;
-  min-height: 3rem;
-  padding: 0.4rem 0.65rem;
+  min-height: 2.5rem;
+  padding: 0.3rem 0.5rem;
   border: 1px solid var(--border);
   border-radius: 0.5rem;
   background: var(--card);
