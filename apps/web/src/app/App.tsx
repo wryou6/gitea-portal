@@ -118,13 +118,14 @@ export function App({
           />
         );
       case "all-repositories-view":
-        return <WorkspaceViewPage view={route.view} />;
+        return <WorkspaceViewPage view={route.view} login={login} />;
       case "repository-view":
         return (
           <RepositoryWorkspacePage
             owner={route.owner}
             repo={route.repo}
             view={route.view}
+            login={login}
           />
         );
       case "issues":

@@ -14,6 +14,7 @@ export function useIssueListState(
   initialSort: IssueSortField = "key",
   initialDirection: SortDirection = "asc",
   loader: IssuePageLoader = queryIssues,
+  currentUserLogin?: string,
 ): {
   issues: Issue[];
   filters: IssueFiltersValue;
@@ -48,8 +49,10 @@ export function useIssueListState(
       setLoading(true);
       setError(undefined);
       try {
+        const requestFilters = Object.fromEntries(Object.entries(next).filter(([, value]) => value && value !== "all"));
+        if (next.assignee === "me" && currentUserLogin) requestFilters.assignee = currentUserLogin;
         const result = await loader({
-          ...Object.fromEntries(Object.entries(next).filter(([, value]) => value && value !== "all")),
+          ...requestFilters,
           page: String(requestedPage), sort: requestedSort, direction: requestedDirection, limit: "50",
         });
         setIssues(result.items);
@@ -63,7 +66,7 @@ export function useIssueListState(
         setLoading(false);
       }
     },
-    [direction, filters, loader, sort, t],
+    [currentUserLogin, direction, filters, loader, sort, t],
   );
   return { issues, filters, page, sort, direction, hasNext, loading, error, load };
 }

@@ -65,7 +65,7 @@ function KanbanScreen({ includeAnomaly = false }: { includeAnomaly?: boolean }) 
     () => window.matchMedia("(max-width: 720px)").matches,
   );
   const [activeColumnKey, setActiveColumnKey] = useState("todo");
-  const [filters, setFilters] = useState<WorkViewFilters>(defaultWorkViewFilters);
+  const [filters, setFilters] = useState<WorkViewFilters>(() => ({ ...defaultWorkViewFilters, assignee: "engineer" }));
   const columns = [
     { stateKey: "todo", displayName: "待辦", cards: [todo, collidingIssueNumber] },
     { stateKey: "in-progress", displayName: "處理中", cards: [inProgress] },
@@ -86,7 +86,7 @@ function KanbanScreen({ includeAnomaly = false }: { includeAnomaly?: boolean }) 
     : columns;
   const filteredColumns = visibleColumns.map((column) => ({
     ...column,
-    cards: column.cards.filter((issue) => matchesWorkViewFilters(issue, filters)),
+    cards: column.cards.filter((issue) => matchesWorkViewFilters(issue, filters, "engineer")),
   }));
   return (
     <section className="workspace-view">
@@ -94,7 +94,7 @@ function KanbanScreen({ includeAnomaly = false }: { includeAnomaly?: boolean }) 
         title={tCommon("kanban")}
         compact
       />
-      <WorkViewLayout filters={filters} resultCount={columns.flatMap((column) => column.cards).filter((issue) => matchesWorkViewFilters(issue, filters)).length} controls={<WorkViewFilterBar filters={filters} onChange={setFilters} assignees={["engineer"]} />}>
+      <WorkViewLayout filters={filters} resultCount={columns.flatMap((column) => column.cards).filter((issue) => matchesWorkViewFilters(issue, filters, "engineer")).length} controls={<WorkViewFilterBar filters={filters} onChange={setFilters} assignees={["engineer"]} currentUserLogin="engineer" />}>
       {isMobileViewport && (
         <div className="field kanban-lane-picker">
           <label htmlFor="storybook-kanban-active-column">{t("statusColumn")}</label>

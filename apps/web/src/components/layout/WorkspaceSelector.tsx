@@ -59,7 +59,30 @@ export function WorkspaceSelector({
       const [owner, repo] = value.slice("repository:".length).split("/", 2);
       if (owner && repo) path = routePaths.repositoryView(owner, repo, activeView);
     }
-    if (path) onNavigate ? onNavigate(path) : (window.location.href = path);
+    if (path) {
+      const sourceSearch = (() => {
+        const route = resolveAppRoute(window.location.pathname, window.location.search);
+        if (route.type !== "issue-detail" && route.type !== "issue-create") return window.location.search;
+        const returnTo = safeReturnTo(new URLSearchParams(window.location.search).get("returnTo"));
+        return returnTo ? new URL(returnTo, window.location.origin).search : "";
+      })();
+      const sourceRoute = currentContext(window.location.pathname, window.location.search);
+      const sourceIsWorkView = sourceRoute.type === "issues" || sourceRoute.type === "all-repositories-view" || sourceRoute.type === "repository-view";
+      const target = new URL(path, window.location.origin);
+      const params = new URLSearchParams(sourceSearch);
+      const keys = ["priority", "issueType", "state", "assignee", "repository", "label", "milestone", "gantt_start", "gantt_scale"];
+      if (sourceIsWorkView) {
+        for (const key of keys) {
+          const currentValue = params.get(key);
+          if (currentValue) target.searchParams.set(key, currentValue);
+          else target.searchParams.delete(key);
+        }
+      } else {
+        target.searchParams.set("assignee", "me");
+      }
+      const destination = `${target.pathname}${target.search}`;
+      onNavigate ? onNavigate(destination) : (window.location.href = destination);
+    }
   };
 
   return (

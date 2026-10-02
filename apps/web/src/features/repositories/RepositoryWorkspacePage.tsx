@@ -13,10 +13,12 @@ export function RepositoryWorkspacePage({
   owner,
   repo,
   view,
+  login,
 }: {
   owner: string;
   repo: string;
   view: View;
+  login?: string;
 }) {
   const { t } = useTranslation("common");
   const [repository, setRepository] = useState<Repository>();
@@ -57,10 +59,10 @@ export function RepositoryWorkspacePage({
   return (
     <section>
       {view === "issues" && (
-        <IssueListPage repository={{ owner, name: repo }} />
+        <IssueListPage repository={{ owner, name: repo }} login={login} />
       )}
       {(view === "kanban" || view === "gantt") && (
-        <KanbanBoard repository={{ owner, name: repo }} viewMode={view} />
+        <KanbanBoard repository={{ owner, name: repo }} viewMode={view} login={login} />
       )}
     </section>
   );

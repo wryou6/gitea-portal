@@ -116,6 +116,8 @@ export function IssueListPage({
     initialFilters,
     sortFromUrl(preference.defaultSortField),
     directionFromUrl(preference.defaultSortDirection),
+    undefined,
+    login,
   );
   const [demoSort, setDemoSort] = useState<{ sort: IssueSortField; direction: SortDirection }>(
     initialDemoSort ?? {
@@ -149,7 +151,7 @@ export function IssueListPage({
     activeDirection !== defaultPreference.defaultSortDirection;
   useReorderAnimation(tableRef, visibleOrder.join("|"));
   const issues = demoIssues
-    ? demoIssues.filter((issue) => matchesWorkViewFilters(issue, demoFilters)).sort((a, b) => compareIssues(a, b, activeSort, activeDirection))
+    ? demoIssues.filter((issue) => matchesWorkViewFilters(issue, demoFilters, login)).sort((a, b) => compareIssues(a, b, activeSort, activeDirection))
     : loadedIssues;
   const loading = demoIssues ? demoState === "loading" : isLoading;
   const displayedError: UserFacingError | undefined = demoIssues && demoState === "error"
@@ -288,6 +290,7 @@ export function IssueListPage({
         repositoryFixed={Boolean(repository)}
         repositories={repositories}
         assignees={[...new Set((demoIssues ?? loadedIssues).flatMap((issue) => issue.assignees))].sort((a, b) => a.localeCompare(b))}
+        currentUserLogin={login}
         onChange={(next) => {
           const fixed = repository ? { ...next, repository: `${repository.owner}/${repository.name}` } : next;
           if (demoIssues) {

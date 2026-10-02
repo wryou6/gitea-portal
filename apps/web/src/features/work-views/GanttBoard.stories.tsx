@@ -251,8 +251,8 @@ export const SharedFiltersAndGantt: Story = {
 };
 
 function SharedFiltersGanttComposition() {
-  const [filters, setFilters] = useState<WorkViewFilters>(defaultWorkViewFilters);
+  const [filters, setFilters] = useState<WorkViewFilters>(() => ({ ...defaultWorkViewFilters, assignee: "engineer" }));
   return <section>
-      <GanttBoard issues={baselineIssues} filters={filters} filterControls={<WorkViewFilterBar filters={filters} onChange={setFilters} assignees={["engineer"]} />} demo demoInitialDate={localCalendarDate()} demoScale="week" />
+      <GanttBoard issues={baselineIssues} filters={filters} filterControls={<WorkViewFilterBar filters={filters} onChange={setFilters} assignees={["engineer"]} currentUserLogin="engineer" />} demo demoInitialDate={localCalendarDate()} demoScale="week" />
   </section>;
 }

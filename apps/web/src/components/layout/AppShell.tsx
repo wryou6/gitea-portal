@@ -228,8 +228,11 @@ export function AppShell({
     },
   ];
 
+  const isWorkViewContext = contextRoute.type === "issues" || contextRoute.type === "all-repositories-view" || contextRoute.type === "repository-view";
+  const currentViewSearch = returnUrl ? returnUrl.search : search;
   const preservedViewParams = new URLSearchParams();
-  const currentParams = new URLSearchParams(search);
+  const currentParams = new URLSearchParams(currentViewSearch);
+  if (!isWorkViewContext) preservedViewParams.set("assignee", "me");
   for (const key of ["priority", "issueType", "state", "assignee", "repository", "label", "milestone", "gantt_start", "gantt_scale"]) {
     const value = currentParams.get(key);
     if (value) preservedViewParams.set(key, value);
@@ -337,11 +340,12 @@ export function AppShell({
                   if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || event.button !== 0) return;
                   event.preventDefault();
                   const target = new URL(item.href, window.location.origin);
-                  const current = new URLSearchParams(window.location.search);
+                  const currentView = returnUrl ? returnUrl.search : window.location.search;
+                  const current = new URLSearchParams(currentView);
                   for (const key of ["priority", "issueType", "state", "assignee", "repository", "label", "milestone", "gantt_start", "gantt_scale"]) {
                     const value = current.get(key);
                     if (value) target.searchParams.set(key, value);
-                    else target.searchParams.delete(key);
+                    else if (isWorkViewContext) target.searchParams.delete(key);
                   }
                   window.location.assign(`${target.pathname}${target.search}`);
                 }}

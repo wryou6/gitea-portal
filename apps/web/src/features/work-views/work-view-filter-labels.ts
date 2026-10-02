@@ -50,8 +50,9 @@ export function useWorkViewFilterLabels(
       ),
     );
   const activeFilters = Object.entries(filters).filter(
-    ([key, value]) =>
-      value !== "all" &&
+      ([key, value]) =>
+        value !== "all" &&
+      !(key === "assignee" && value === "me") &&
       value.trim() !== "" &&
       !(key === "repository" && repositoryFixed),
   );

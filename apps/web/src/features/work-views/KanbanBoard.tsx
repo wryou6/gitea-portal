@@ -18,9 +18,11 @@ import { matchesWorkViewFilters, parseWorkViewFilters, serializeWorkViewFilters,
 export function KanbanBoard({
   repository,
   viewMode,
+  login,
 }: {
   repository?: { owner: string; name: string };
   viewMode: "kanban" | "gantt";
+  login?: string;
 }) {
   const { t, i18n } = useTranslation("work-views");
   const { t: tCommon } = useTranslation("common");
@@ -119,7 +121,7 @@ export function KanbanBoard({
   const assignees = [...new Set((viewMode === "gantt" ? ganttView?.issues ?? [] : allCards).flatMap((issue) => issue.assignees))].sort((a, b) => a.localeCompare(b));
   const filteredColumns = useMemo(() => visibleColumns.map((column) => ({
     ...column,
-    cards: column.cards.filter((issue) => matchesWorkViewFilters(issue, filters)),
+    cards: column.cards.filter((issue) => matchesWorkViewFilters(issue, filters, login)),
   })), [visibleColumns, filters]);
 
   if (error && !currentView) return <section><ErrorNotice message={error} /><button type="button" onClick={() => void load()}>{t("retry")}</button></section>;
@@ -136,7 +138,7 @@ export function KanbanBoard({
     setPendingTransition({ issue, targetState: stateKey });
   };
 
-  const filterControls = <WorkViewFilterBar filters={filters} onChange={updateFilters} repositories={repositories} assignees={assignees} repositoryFixed={Boolean(repository)} />;
+  const filterControls = <WorkViewFilterBar filters={filters} onChange={updateFilters} repositories={repositories} assignees={assignees} currentUserLogin={login} repositoryFixed={Boolean(repository)} />;
 
   const submitTransition = async (
     actionKey: string,
@@ -176,12 +178,13 @@ export function KanbanBoard({
             returnTo={`${window.location.pathname}${window.location.search}`}
             filters={filters}
             filterControls={filterControls}
+            currentUserLogin={login}
           />
         ) : (
           <LoadingState />
         )
       ) : (
-        <WorkViewLayout controls={filterControls} filters={filters} repositoryFixed={Boolean(repository)} resultCount={allCards.filter((issue) => matchesWorkViewFilters(issue, filters)).length} error={Boolean(error)}>
+        <WorkViewLayout controls={filterControls} filters={filters} repositoryFixed={Boolean(repository)} resultCount={allCards.filter((issue) => matchesWorkViewFilters(issue, filters, login)).length} error={Boolean(error)}>
           {hasNoReadableRepositories && <EmptyState>{t("noReadableRepositories")}</EmptyState>}
           {isMobileViewport && (view?.columns.length ?? 0) > 0 && (
             <div className="field kanban-lane-picker">

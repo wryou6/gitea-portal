@@ -100,6 +100,7 @@ export function GanttBoard({
   repository,
   filters: providedFilters,
   filterControls,
+  currentUserLogin,
 }: {
   issues: Issue[];
   returnTo?: string;
@@ -114,6 +115,7 @@ export function GanttBoard({
   repository?: { owner: string; name: string };
   filters?: WorkViewFilters;
   filterControls?: ReactNode;
+  currentUserLogin?: string;
 }) {
   const { t, i18n } = useTranslation("work-views");
   const { t: tIssues } = useTranslation("issues");
@@ -172,7 +174,7 @@ export function GanttBoard({
     window.history.replaceState({}, "", `${window.location.pathname}${query ? `?${query}` : ""}`);
   }, [demo, initialDate, scale]);
 
-  const visibleIssues = issues.filter((issue) => matchesWorkViewFilters(issue, filters));
+  const visibleIssues = issues.filter((issue) => matchesWorkViewFilters(issue, filters, currentUserLogin ?? login));
   const sortedIssues = [...visibleIssues].sort(compareGanttStartDate);
   const scheduledIssues = sortedIssues.filter((issue) => issue.scheduleStatus === "scheduled");
   const unscheduledIssues = sortedIssues.filter((issue) => issue.scheduleStatus === "unscheduled");
@@ -326,7 +328,7 @@ export function GanttBoard({
   return (
     <section className="gantt-view" aria-label={t("ganttLabel")}>
       <WorkViewLayout filters={filters} resultCount={visibleIssues.length} repositoryFixed={Boolean(repository)} controls={<>
-      {filterControls ?? <WorkViewFilterBar filters={filters} onChange={setLocalFilters} repositoryFixed={Boolean(repository)} assignees={[...new Set(issues.flatMap((issue) => issue.assignees))].sort()} />}
+      {filterControls ?? <WorkViewFilterBar filters={filters} onChange={setLocalFilters} repositoryFixed={Boolean(repository)} assignees={[...new Set(issues.flatMap((issue) => issue.assignees))].sort()} currentUserLogin={currentUserLogin ?? login} />}
       <div className="gantt-toolbar" role="group" aria-label={t("timelineControls")}>
         <h3 className="work-view-controls-section-title">{t("timeline")}</h3>
         <div className="gantt-date-navigation">

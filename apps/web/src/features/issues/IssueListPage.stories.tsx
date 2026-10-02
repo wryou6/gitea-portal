@@ -7,6 +7,7 @@ import { defaultIssueViewPreference, type IssueViewPreference } from "./issue-vi
 const meta = {
   title: "Screens/Issue List",
   component: IssueListPage,
+  args: { login: "engineer" },
 } satisfies Meta<typeof IssueListPage>;
 
 export default meta;
