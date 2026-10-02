@@ -36,6 +36,7 @@ type GiteaApiIssue = {
   labels?: GiteaApiLabel[];
   milestone?: { id?: number; title?: string } | null;
   due_date?: string | null;
+  closed_at?: string | null;
   created_at?: string;
   updated_at?: string;
   html_url?: string;
@@ -120,6 +121,7 @@ function normalizeIssue(value: GiteaApiIssue): GiteaIssue {
       value.milestone?.title && value.milestone.id !== undefined
         ? { id: value.milestone.id, title: value.milestone.title }
         : null,
+    closedAt: value.closed_at ?? null,
     createdAt: value.created_at,
     updatedAt: value.updated_at,
     htmlUrl: value.html_url,

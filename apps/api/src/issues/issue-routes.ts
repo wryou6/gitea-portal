@@ -51,8 +51,6 @@ export async function registerIssueRoutes(
         labels: [
           ...(query.label?.split(",").filter(Boolean) ?? []),
         ],
-        page: Number(query.page ?? 1),
-        limit: Number(query.limit ?? 50),
         sort,
         direction,
       },

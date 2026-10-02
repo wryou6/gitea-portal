@@ -37,6 +37,7 @@ export type IssueSummary = IssueIdentity &
     priority: IssuePriority | null;
     labels: IssueLabel[];
     milestone: string | null;
+    closedAt: string | null;
     updatedAt: string;
     htmlUrl: string;
     status: FixedIssueStatusKey | "anomaly";

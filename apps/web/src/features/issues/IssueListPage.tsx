@@ -1,10 +1,8 @@
 import { useEffect, useRef, useState, type KeyboardEvent } from "react";
 import { useTranslation } from "react-i18next";
-import { formatNumber } from "../../i18n/format";
 import { WorkViewFilterBar } from "../work-views/WorkViewFilterBar";
 import { WorkViewLayout } from "../work-views/WorkViewLayout";
-import { defaultWorkViewFilters, parseWorkViewFilters } from "../work-views/work-view-filters";
-import { matchesWorkViewFilters } from "../work-views/work-view-filters";
+import { defaultWorkViewFilters, matchesRecentDoneVisibility, matchesWorkViewFilters, parseWorkViewFilters } from "../work-views/work-view-filters";
 import { IssueRow } from "./IssueRow";
 import { useIssueListState, type IssueFiltersValue } from "./issue-list-state";
 import { PageHeader } from "../../components/layout/PageHeader";
@@ -93,7 +91,7 @@ export function IssueListPage({
   onDemoViewPreferenceChange?: (preference: IssueViewPreference) => void;
   demoOptionsOpen?: boolean;
 } = {}) {
-  const { t, i18n } = useTranslation("issues");
+  const { t } = useTranslation("issues");
   const [preference, setPreference] = useState<IssueViewPreference>(
     () => demoViewPreference ?? readIssueViewPreference(login),
   );
@@ -105,10 +103,8 @@ export function IssueListPage({
   const {
     issues: loadedIssues,
     filters,
-    page,
     sort,
     direction,
-    hasNext,
     loading: isLoading,
     error,
     load,
@@ -125,6 +121,7 @@ export function IssueListPage({
       direction: preference.defaultSortDirection,
     },
   );
+  const [recentDoneOnly, setRecentDoneOnly] = useState(true);
   const [sessionColumnOrder, setSessionColumnOrder] = useState<IssueSortField[] | undefined>(demoColumnOrder);
   const [draggedField, setDraggedField] = useState<IssueSortField>();
   const [dragOverField, setDragOverField] = useState<IssueSortField>();
@@ -150,9 +147,11 @@ export function IssueListPage({
     activeSort !== defaultPreference.defaultSortField ||
     activeDirection !== defaultPreference.defaultSortDirection;
   useReorderAnimation(tableRef, visibleOrder.join("|"));
-  const issues = demoIssues
-    ? demoIssues.filter((issue) => matchesWorkViewFilters(issue, demoFilters, login)).sort((a, b) => compareIssues(a, b, activeSort, activeDirection))
-    : loadedIssues;
+  const issues = (demoIssues
+    ? demoIssues.filter((issue) => matchesWorkViewFilters(issue, demoFilters, login))
+    : loadedIssues
+  ).filter((issue) => matchesRecentDoneVisibility(issue, recentDoneOnly))
+    .sort((a, b) => compareIssues(a, b, activeSort, activeDirection));
   const loading = demoIssues ? demoState === "loading" : isLoading;
   const displayedError: UserFacingError | undefined = demoIssues && demoState === "error"
     ? t("issueListLoadError")
@@ -173,11 +172,14 @@ export function IssueListPage({
       repository
         ? { ...filters, repository: `${repository.owner}/${repository.name}` }
         : filters,
-      Number(new URLSearchParams(window.location.search).get("page") ?? 1),
       sortFromUrl(preference.defaultSortField),
       directionFromUrl(preference.defaultSortDirection),
     );
   }, [repository?.owner, repository?.name, demoIssues]);
+
+  useEffect(() => {
+    setRecentDoneOnly(true);
+  }, [repository?.owner, repository?.name]);
 
   useEffect(() => {
     if (wasOptionsOpen.current && !optionsOpen) optionsTriggerRef.current?.focus();
@@ -204,7 +206,7 @@ export function IssueListPage({
       ? activeDirection === "asc" ? "desc" : "asc"
       : "asc";
     if (demoIssues) setDemoSort({ sort: field, direction: nextDirection });
-    else void load(filters, 1, field, nextDirection);
+    else void load(filters, field, nextDirection);
   }
 
   function savePreference(next: IssueViewPreference) {
@@ -218,7 +220,7 @@ export function IssueListPage({
     savePreference(next);
     setSessionColumnOrder(undefined);
     if (demoIssues) setDemoSort({ sort: next.defaultSortField, direction: next.defaultSortDirection });
-    else void load(filters, 1, next.defaultSortField, next.defaultSortDirection);
+    else void load(filters, next.defaultSortField, next.defaultSortDirection);
   }
 
   function handleColumnMoveKeyDown(event: KeyboardEvent<HTMLButtonElement>, field: IssueSortField) {
@@ -280,7 +282,7 @@ export function IssueListPage({
       <WorkViewLayout
         filters={demoIssues ? demoFilters : filters}
         resultCount={issues.length}
-        pageCount={!demoIssues && (hasNext || page > 1)}
+        recentDoneOnly={recentDoneOnly}
         repositoryFixed={Boolean(repository)}
         loading={loading}
         error={Boolean(displayedError)}
@@ -291,13 +293,15 @@ export function IssueListPage({
         repositories={repositories}
         assignees={[...new Set((demoIssues ?? loadedIssues).flatMap((issue) => issue.assignees))].sort((a, b) => a.localeCompare(b))}
         currentUserLogin={login}
+        recentDoneOnly={recentDoneOnly}
+        onRecentDoneOnlyChange={setRecentDoneOnly}
         onChange={(next) => {
           const fixed = repository ? { ...next, repository: `${repository.owner}/${repository.name}` } : next;
           if (demoIssues) {
             setDemoFilters(fixed);
             return;
           }
-          void load(fixed, 1);
+          void load(fixed);
         }}
       />
       <div className="issues-table-toolbar">
@@ -332,7 +336,7 @@ export function IssueListPage({
       </div>
         </>}
       >
-      {displayedError && <><ErrorNotice message={displayedError} />{!demoIssues && <Button variant="secondary" type="button" onClick={() => void load(filters, page)}>{t("retry")}</Button>}</>}
+      {displayedError && <><ErrorNotice message={displayedError} />{!demoIssues && <Button variant="secondary" type="button" onClick={() => void load(filters)}>{t("retry")}</Button>}</>}
       {loading && <LoadingState />}
       {(issues.length > 0 || (!loading && !displayedError) || demoState === "loading" || demoState === "error") && (
         <Table
@@ -432,17 +436,6 @@ export function IssueListPage({
         onChange={savePreference}
       />
       <p className="sr-only" role="status" aria-live="polite">{columnAnnouncement}</p>
-      {!demoIssues && (
-        <div className="actions pagination">
-          <Button variant="secondary" type="button" disabled={loading || page <= 1} onClick={() => load(filters, page - 1)}>
-            {t("previousPage")}
-          </Button>
-          <span>{t("pageNumber", { page: formatNumber(page, i18n.language) })}</span>
-          <Button variant="secondary" type="button" disabled={loading || !hasNext} onClick={() => load(filters, page + 1)}>
-            {t("nextPage")}
-          </Button>
-        </div>
-      )}
       </WorkViewLayout>
     </section>
   );

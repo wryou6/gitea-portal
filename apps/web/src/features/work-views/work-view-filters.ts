@@ -20,6 +20,29 @@ export const defaultWorkViewFilters: WorkViewFilters = {
   milestone: "",
 };
 
+function localDateValue(date: Date): string {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+}
+
+export function matchesRecentDoneVisibility(
+  issue: Issue,
+  recentDoneOnly: boolean,
+  today = localDateValue(new Date()),
+): boolean {
+  if (!recentDoneOnly || issue.status !== "done") return true;
+  if (!issue.closedAt) return false;
+  const closedAt = new Date(issue.closedAt);
+  if (!Number.isFinite(closedAt.getTime())) return false;
+  const closedDate = localDateValue(closedAt);
+  const [year, month, day] = today.split("-").map(Number);
+  const startDate = new Date(year!, month! - 1, day!);
+  startDate.setDate(startDate.getDate() - 29);
+  return closedDate >= localDateValue(startDate) && closedDate <= today;
+}
+
 export function createDefaultWorkViewFilters(): WorkViewFilters {
   return {
     ...defaultWorkViewFilters,

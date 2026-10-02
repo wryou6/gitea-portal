@@ -8,11 +8,8 @@ import type {
 } from "@gitea-portal/domain";
 import type { GiteaRepository } from "./gitea.js";
 
-export type IssuePage = {
+export type IssueSearchResult = {
   items: IssueSummary[];
-  page: number;
-  limit: number;
-  hasNext: boolean;
   sort: IssueSortField;
   direction: SortDirection;
 };

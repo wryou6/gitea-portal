@@ -54,6 +54,7 @@ export function mapIssue(issue: GiteaIssue): IssueSummary {
     priority: issuePriorityFromLabels(issue.labels),
     labels: issue.labels,
     milestone: issue.milestone?.title ?? null,
+    closedAt: issue.closedAt,
     startDate: issue.startDate,
     dueDate: issue.dueDate,
     scheduleStatus: issue.scheduleStatus,

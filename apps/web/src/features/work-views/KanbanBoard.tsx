@@ -13,7 +13,7 @@ import { useTranslation } from "react-i18next";
 import { formatNumber } from "../../i18n/format";
 import { WorkViewFilterBar } from "./WorkViewFilterBar";
 import { WorkViewLayout } from "./WorkViewLayout";
-import { matchesWorkViewFilters, parseWorkViewFilters, serializeWorkViewFilters, type WorkViewFilters } from "./work-view-filters";
+import { matchesRecentDoneVisibility, matchesWorkViewFilters, parseWorkViewFilters, serializeWorkViewFilters, type WorkViewFilters } from "./work-view-filters";
 
 export function KanbanBoard({
   repository,
@@ -27,6 +27,7 @@ export function KanbanBoard({
   const { t, i18n } = useTranslation("work-views");
   const { t: tCommon } = useTranslation("common");
   const [filters, setFilters] = useState<WorkViewFilters>(() => parseWorkViewFilters(window.location.search));
+  const [recentDoneOnly, setRecentDoneOnly] = useState(true);
   const [view, setView] = useState<WorkspaceKanbanView>();
   const [ganttView, setGanttView] = useState<WorkspaceGanttView>();
   const [dragged, setDragged] = useState<WorkViewCard>();
@@ -47,6 +48,10 @@ export function KanbanBoard({
     updateViewport();
     return () => media.removeEventListener("change", updateViewport);
   }, []);
+
+  useEffect(() => {
+    setRecentDoneOnly(true);
+  }, [viewMode, repository?.owner, repository?.name]);
 
   const load = useCallback(
     async (clearError = true) => {
@@ -121,8 +126,8 @@ export function KanbanBoard({
   const assignees = [...new Set((viewMode === "gantt" ? ganttView?.issues ?? [] : allCards).flatMap((issue) => issue.assignees))].sort((a, b) => a.localeCompare(b));
   const filteredColumns = useMemo(() => visibleColumns.map((column) => ({
     ...column,
-    cards: column.cards.filter((issue) => matchesWorkViewFilters(issue, filters, login)),
-  })), [visibleColumns, filters]);
+    cards: column.cards.filter((issue) => matchesWorkViewFilters(issue, filters, login) && matchesRecentDoneVisibility(issue, recentDoneOnly)),
+  })), [visibleColumns, filters, recentDoneOnly]);
 
   if (error && !currentView) return <section><ErrorNotice message={error} /><button type="button" onClick={() => void load()}>{t("retry")}</button></section>;
   if (!currentView) return <LoadingState />;
@@ -138,7 +143,7 @@ export function KanbanBoard({
     setPendingTransition({ issue, targetState: stateKey });
   };
 
-  const filterControls = <WorkViewFilterBar filters={filters} onChange={updateFilters} repositories={repositories} assignees={assignees} currentUserLogin={login} repositoryFixed={Boolean(repository)} />;
+  const filterControls = <WorkViewFilterBar filters={filters} onChange={updateFilters} repositories={repositories} assignees={assignees} currentUserLogin={login} repositoryFixed={Boolean(repository)} recentDoneOnly={recentDoneOnly} onRecentDoneOnlyChange={setRecentDoneOnly} />;
 
   const submitTransition = async (
     actionKey: string,
@@ -179,12 +184,13 @@ export function KanbanBoard({
             filters={filters}
             filterControls={filterControls}
             currentUserLogin={login}
+            recentDoneOnly={recentDoneOnly}
           />
         ) : (
           <LoadingState />
         )
       ) : (
-        <WorkViewLayout controls={filterControls} filters={filters} repositoryFixed={Boolean(repository)} resultCount={allCards.filter((issue) => matchesWorkViewFilters(issue, filters, login)).length} error={Boolean(error)}>
+        <WorkViewLayout controls={filterControls} filters={filters} repositoryFixed={Boolean(repository)} resultCount={allCards.filter((issue) => matchesWorkViewFilters(issue, filters, login) && matchesRecentDoneVisibility(issue, recentDoneOnly)).length} recentDoneOnly={recentDoneOnly} error={Boolean(error)}>
           {hasNoReadableRepositories && <EmptyState>{t("noReadableRepositories")}</EmptyState>}
           {isMobileViewport && (view?.columns.length ?? 0) > 0 && (
             <div className="field kanban-lane-picker">

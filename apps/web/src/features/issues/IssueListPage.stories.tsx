@@ -19,6 +19,13 @@ function localDateOffset(days: number): string {
   return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
 }
 
+function localClosedAt(daysAgo: number): string {
+  const date = new Date();
+  date.setDate(date.getDate() - daysAgo);
+  date.setHours(12, 0, 0, 0);
+  return date.toISOString();
+}
+
 export const Default: Story = {
   args: {
     demoIssues: [
@@ -52,6 +59,7 @@ export const Default: Story = {
         state: "closed",
         status: "done",
         currentOwner: null,
+        closedAt: localClosedAt(0),
         assignee: "engineer",
         lastActionKey: "work-complete",
         nextAction: "確認完成結果",
@@ -72,7 +80,7 @@ export const AlternatingRows: Story = {
     demoIssues: [
       { ...demoIssue, number: 41, status: "todo" },
       { ...demoIssue, number: 42, status: "in-progress" },
-      { ...demoIssue, number: 43, status: "done", state: "closed" },
+      { ...demoIssue, number: 43, status: "done", state: "closed", closedAt: localClosedAt(0) },
       {
         ...demoIssue,
         number: 44,
@@ -138,7 +146,7 @@ export const FutureDueDate: Story = {
 };
 
 export const ClosedIssueWithPastDueDate: Story = {
-  args: { demoIssues: [{ ...demoIssue, state: "closed", status: "done", dueDate: localDateOffset(-1) }] },
+  args: { demoIssues: [{ ...demoIssue, state: "closed", status: "done", closedAt: localClosedAt(0), dueDate: localDateOffset(-1) }] },
 };
 
 export const InvalidDueDate: Story = {
@@ -156,6 +164,18 @@ export const ReadError: Story = { args: { demoIssues: [], demoState: "error" } }
 export const NarrowViewport: Story = {
   args: { demoIssues: [demoIssue] },
   parameters: { viewport: { defaultViewport: "mobile1" } },
+};
+
+export const MoreThan50IssuesWithoutPagination: Story = {
+  args: {
+    demoIssues: Array.from({ length: 60 }, (_, index) => ({
+      ...demoIssue,
+      number: index + 1,
+      title: `完整清單項目 ${String(index + 1).padStart(2, "0")}`,
+      status: "todo" as const,
+      closedAt: null,
+    })),
+  },
 };
 
 export const ViewOptionsDefault: Story = {

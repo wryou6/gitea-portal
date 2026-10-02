@@ -75,6 +75,7 @@ export type Issue = {
     | "invalid_due_date"
     | "date_range_reversed";
   milestone: string | null;
+  closedAt: string | null;
   updatedAt: string;
   htmlUrl: string;
   status: "todo" | "in-progress" | "done" | "anomaly";
@@ -112,11 +113,8 @@ export type StatusDefinition = {
     labelName: string;
   }>;
 };
-export type IssuePage = {
+export type IssueSearchResult = {
   items: Issue[];
-  page: number;
-  limit: number;
-  hasNext: boolean;
   sort: IssueSortField;
   direction: SortDirection;
 };
@@ -227,7 +225,7 @@ export async function api<T>(path: string, init?: RequestInit): Promise<T> {
 
 export function queryIssues(
   filters: Record<string, string>,
-): Promise<IssuePage> {
+): Promise<IssueSearchResult> {
   const params = new URLSearchParams(
     Object.entries(filters).filter(([, value]) => value),
   );

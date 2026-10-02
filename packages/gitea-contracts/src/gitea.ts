@@ -21,6 +21,7 @@ export type GiteaIssue = IssueSchedule & {
   assignees: GiteaUser[];
   labels: IssueLabel[];
   milestone: { id: number; title: string } | null;
+  closedAt: string | null;
   createdAt: string;
   updatedAt: string;
   htmlUrl: string;

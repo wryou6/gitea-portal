@@ -11,8 +11,8 @@ export function WorkViewLayout({
   children,
   filters,
   resultCount,
+  recentDoneOnly = true,
   repositoryFixed = false,
-  pageCount = false,
   loading = false,
   error = false,
 }: {
@@ -20,8 +20,8 @@ export function WorkViewLayout({
   children: ReactNode;
   filters: WorkViewFilters;
   resultCount: number;
+  recentDoneOnly?: boolean;
   repositoryFixed?: boolean;
-  pageCount?: boolean;
   loading?: boolean;
   error?: boolean;
 }) {
@@ -46,7 +46,7 @@ export function WorkViewLayout({
     ? t("summaryLoading")
     : error
       ? t("summaryUnavailable")
-      : t(pageCount ? "pageResultCount" : "resultCount", {
+      : t("resultCount", {
           count: resultCount,
           formattedCount: formatNumber(resultCount, i18n.language),
         });
@@ -105,7 +105,8 @@ export function WorkViewLayout({
           aria-atomic="true"
         >
           <span>{countText}</span>
-          {activeFilters.length === 0 ? (
+          {recentDoneOnly && <span><span aria-hidden="true"> · </span>{t("recentDoneSummary")}</span>}
+          {activeFilters.length === 0 && !recentDoneOnly ? (
             <>
               <span aria-hidden="true"> · </span>
               <span>{t("noActiveFilters")}</span>

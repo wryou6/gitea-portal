@@ -20,6 +20,7 @@ import { defaultWorkViewFilters, type WorkViewFilters } from "./work-view-filter
 
 const baselineIssues: Issue[] = [
   demoIssue,
+  { ...demoIssue, number: 49, title: "Recently completed planning task", state: "closed", status: "done", closedAt: new Date().toISOString() },
   { ...demoIssue, owner: "platform", name: "service-api", title: "Same issue number in another repository", startDate: "2026-07-08", dueDate: "2026-07-15" },
   { ...demoIssue, owner: "platform", name: "service-api", number: 43, title: "Improve API request validation", startDate: "2026-07-10", dueDate: "2026-07-14" },
   { ...demoIssue, owner: "frontend", name: "portal", number: 44, title: "Refine repository navigation", startDate: "2026-07-12", dueDate: "2026-07-18" },
@@ -132,7 +133,7 @@ function GanttScreen({
   const statusColorIssues: Issue[] = [
     { ...demoIssue, number: 61, title: "Todo schedule", status: "todo" },
     { ...demoIssue, number: 62, title: "In Progress schedule", status: "in-progress" },
-    { ...demoIssue, number: 63, title: "Done schedule", status: "done", state: "closed" },
+    { ...demoIssue, number: 63, title: "Done schedule", status: "done", state: "closed", closedAt: new Date().toISOString() },
     {
       ...demoIssue,
       number: 64,
@@ -252,7 +253,8 @@ export const SharedFiltersAndGantt: Story = {
 
 function SharedFiltersGanttComposition() {
   const [filters, setFilters] = useState<WorkViewFilters>(() => ({ ...defaultWorkViewFilters, assignee: "engineer" }));
+  const [recentDoneOnly, setRecentDoneOnly] = useState(true);
   return <section>
-      <GanttBoard issues={baselineIssues} filters={filters} filterControls={<WorkViewFilterBar filters={filters} onChange={setFilters} assignees={["engineer"]} currentUserLogin="engineer" />} demo demoInitialDate={localCalendarDate()} demoScale="week" />
+      <GanttBoard issues={baselineIssues} filters={filters} recentDoneOnly={recentDoneOnly} onRecentDoneOnlyChange={setRecentDoneOnly} filterControls={<WorkViewFilterBar filters={filters} onChange={setFilters} assignees={["engineer"]} currentUserLogin="engineer" recentDoneOnly={recentDoneOnly} onRecentDoneOnlyChange={setRecentDoneOnly} />} demo demoInitialDate={localCalendarDate()} demoScale="week" />
   </section>;
 }

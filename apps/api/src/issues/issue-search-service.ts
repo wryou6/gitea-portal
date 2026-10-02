@@ -7,6 +7,7 @@ import {
 } from "@gitea-portal/domain";
 import { GiteaClient, type IssueQuery } from "../gitea/client.js";
 import { mapIssue } from "./issue-service.js";
+import type { IssueSearchResult } from "@gitea-portal/gitea-contracts";
 
 const priorityOrder = ["critical", "high", "medium", "low"] as const;
 const typeOrder = ["bug", "feature", "task"] as const;
@@ -74,9 +75,7 @@ export function isIssueSortField(value: string): value is IssueSortField {
 export async function searchIssuesReadThrough(
   client: GiteaClient,
   query: IssueQuery,
-): Promise<{ items: IssueSummary[]; page: number; limit: number; hasNext: boolean; sort: IssueSortField; direction: SortDirection }> {
-  const limit = Math.min(Math.max(query.limit ?? 50, 1), 50);
-  const page = Math.max(query.page ?? 1, 1);
+): Promise<IssueSearchResult> {
   const sort = query.sort ?? "key";
   const direction = query.direction ?? "asc";
   const repositories = await client.repositories();
@@ -104,12 +103,8 @@ export async function searchIssuesReadThrough(
   matches.sort((left, right) =>
     compareIssueField(left, right, sort, direction) || compareKey(left, right),
   );
-  const offset = (page - 1) * limit;
   return {
-    items: matches.slice(offset, offset + limit),
-    page,
-    limit,
-    hasNext: matches.length > offset + limit,
+    items: matches,
     sort,
     direction,
   };

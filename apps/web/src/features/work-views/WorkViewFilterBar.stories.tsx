@@ -2,7 +2,9 @@ import type { Meta, StoryObj } from "@storybook/react";
 import { useState } from "react";
 import type { Repository } from "../../lib/api";
 import { WorkViewFilterBar } from "./WorkViewFilterBar";
-import { createDefaultWorkViewFilters, defaultWorkViewFilters, parseWorkViewFilters, type WorkViewFilters } from "./work-view-filters";
+import { createDefaultWorkViewFilters, defaultWorkViewFilters, matchesRecentDoneVisibility, parseWorkViewFilters, type WorkViewFilters } from "./work-view-filters";
+import { WorkViewLayout } from "./WorkViewLayout";
+import { demoIssue } from "../../stories/fixtures";
 
 const repositories: Repository[] = [
   { owner: "engineering", name: "portal", fullName: "engineering/portal", htmlUrl: "#" },
@@ -43,3 +45,38 @@ export const QuerylessAllAssignees: Story = {
   render: () => <WorkViewFilterBar filters={parseWorkViewFilters("")} onChange={() => undefined} repositories={repositories} assignees={["alex", "mei"]} currentUserLogin="alex" />,
 };
 export const NarrowLayout: Story = { parameters: { viewport: { defaultViewport: "mobile1" } } };
+
+function localClosedAt(daysAgo: number): string {
+  const date = new Date();
+  date.setDate(date.getDate() - daysAgo);
+  date.setHours(12, 0, 0, 0);
+  return date.toISOString();
+}
+
+const recentDoneExamples = [
+  { ...demoIssue, number: 101, title: "今天完成", status: "done" as const, state: "closed" as const, closedAt: localClosedAt(0) },
+  { ...demoIssue, number: 102, title: "起始日完成（第 30 天）", status: "done" as const, state: "closed" as const, closedAt: localClosedAt(29) },
+  { ...demoIssue, number: 103, title: "超出範圍一天", status: "done" as const, state: "closed" as const, closedAt: localClosedAt(30) },
+  { ...demoIssue, number: 104, title: "沒有完成時間", status: "done" as const, state: "closed" as const, closedAt: null },
+  { ...demoIssue, number: 105, title: "未完成項目不受日期限制", status: "todo" as const, closedAt: null },
+];
+
+function RecentDoneSummaryDemo() {
+  const [recentDoneOnly, setRecentDoneOnly] = useState(true);
+  const visible = recentDoneExamples.filter((issue) => matchesRecentDoneVisibility(issue, recentDoneOnly));
+  return (
+    <WorkViewLayout
+      controls={<WorkViewFilterBar filters={defaultWorkViewFilters} onChange={() => undefined} recentDoneOnly={recentDoneOnly} onRecentDoneOnlyChange={setRecentDoneOnly} />}
+      filters={defaultWorkViewFilters}
+      resultCount={visible.length}
+      recentDoneOnly={recentDoneOnly}
+    >
+      <ul>{visible.map((issue) => <li key={issue.number}>{issue.title}</li>)}</ul>
+    </WorkViewLayout>
+  );
+}
+
+export const RecentDoneSummary: Story = {
+  render: () => <RecentDoneSummaryDemo />,
+  parameters: { layout: "fullscreen" },
+};

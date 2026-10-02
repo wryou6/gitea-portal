@@ -1,12 +1,12 @@
 import { useEffect, useRef, useState, type KeyboardEvent } from "react";
 import { useTranslation } from "react-i18next";
 import { routePaths } from "../../app/routes";
-import { queryIssues, type Issue, type IssuePage } from "../../lib/api";
+import { queryIssues, type Issue, type IssueSearchResult } from "../../lib/api";
 
 export function GlobalIssueSearch({ returnTo, search = queryIssues, initialQuery = "" }: {
   returnTo: string;
   initialQuery?: string;
-  search?: (filters: Record<string, string>) => Promise<IssuePage>;
+  search?: (filters: Record<string, string>) => Promise<IssueSearchResult>;
 }) {
   const { t } = useTranslation("common");
   const [query, setQuery] = useState(initialQuery);
@@ -30,8 +30,8 @@ export function GlobalIssueSearch({ returnTo, search = queryIssues, initialQuery
     let cancelled = false;
     setLoading(true);
     const timer = window.setTimeout(() => {
-      void search({ q: value, page: "1", limit: "8" })
-        .then((page) => { if (!cancelled) setResults(page.items); })
+      void search({ q: value })
+        .then((result) => { if (!cancelled) setResults(result.items.slice(0, 8)); })
         .catch(() => { if (!cancelled) setError(true); })
         .finally(() => { if (!cancelled) setLoading(false); });
     }, 250);

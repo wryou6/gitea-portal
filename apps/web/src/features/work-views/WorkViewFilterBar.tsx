@@ -46,6 +46,8 @@ export function WorkViewFilterBar({
   assignees = [],
   currentUserLogin,
   repositoryFixed = false,
+  recentDoneOnly: providedRecentDoneOnly,
+  onRecentDoneOnlyChange,
 }: {
   filters: WorkViewFilters;
   onChange: (next: WorkViewFilters) => void;
@@ -53,9 +55,13 @@ export function WorkViewFilterBar({
   assignees?: string[];
   currentUserLogin?: string;
   repositoryFixed?: boolean;
+  recentDoneOnly?: boolean;
+  onRecentDoneOnlyChange?: (checked: boolean) => void;
 }) {
   const { t } = useTranslation(["work-views", "issues"]);
   const [advancedOpen, setAdvancedOpen] = useState(false);
+  const [localRecentDoneOnly, setLocalRecentDoneOnly] = useState(true);
+  const recentDoneOnly = providedRecentDoneOnly ?? localRecentDoneOnly;
   const count = countActiveWorkViewFilters(repositoryFixed ? { ...filters, repository: "all" } : filters);
   const { activeFilters: chips, labelFor, filterHeading } = useWorkViewFilterLabels(filters, repositoryFixed);
   const advancedCount = Number(!repositoryFixed && filters.repository !== "all") + Number(Boolean(filters.label.trim())) + Number(Boolean(filters.milestone.trim()));
@@ -70,6 +76,18 @@ export function WorkViewFilterBar({
   return (
     <section className="work-view-filters" aria-label={t("filterIssues")}>
       <h3 className="work-view-controls-section-title">{t("commonFilters")}</h3>
+      <label className="work-view-filter work-view-filter--checkbox">
+        <input
+          type="checkbox"
+          checked={recentDoneOnly}
+          onChange={(event) => {
+            const checked = event.currentTarget.checked;
+            if (onRecentDoneOnlyChange) onRecentDoneOnlyChange(checked);
+            else setLocalRecentDoneOnly(checked);
+          }}
+        />
+        <span>{t("recentDoneOnly")}</span>
+      </label>
       <div className="work-view-filters-primary">
         <ChoiceFilter label={String(t("priorityLabel", { ns: "issues" }))} value={filters.priority} options={priorities} allLabel={String(t("allFilterValues"))} optionLabel={(value) => labelFor("priority", value)} badgeClassName={(value) => `priority-badge priority-badge--${value}`} onChange={(value) => update("priority", value)} />
         <ChoiceFilter label={String(t("type", { ns: "issues" }))} value={filters.issueType} options={issueTypes} allLabel={String(t("allFilterValues"))} optionLabel={(value) => labelFor("issueType", value)} badgeClassName={(value) => `issue-type-badge issue-type-badge--${value}`} onChange={(value) => update("issueType", value)} />

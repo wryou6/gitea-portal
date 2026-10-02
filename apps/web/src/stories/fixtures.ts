@@ -18,6 +18,7 @@ export const demoIssue: Issue = {
     { name: "team:frontend" },
   ],
   milestone: "Sprint 12",
+  closedAt: null,
   startDate: "2026-09-24",
   dueDate: "2026-09-30",
   scheduleStatus: "scheduled",

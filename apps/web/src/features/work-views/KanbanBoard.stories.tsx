@@ -13,7 +13,7 @@ import type { WorkViewCard } from "./types";
 import { demoIssue } from "../../stories/fixtures";
 import { WorkViewFilterBar } from "./WorkViewFilterBar";
 import { WorkViewLayout } from "./WorkViewLayout";
-import { defaultWorkViewFilters, matchesWorkViewFilters, type WorkViewFilters } from "./work-view-filters";
+import { defaultWorkViewFilters, matchesRecentDoneVisibility, matchesWorkViewFilters, type WorkViewFilters } from "./work-view-filters";
 
 const todo: WorkViewCard = {
   ...demoIssue,
@@ -34,6 +34,7 @@ const done: WorkViewCard = {
   title: "完成第一輪需求驗收",
   state: "closed",
   status: "done",
+  closedAt: new Date().toISOString(),
   assignee: "engineer",
   assignees: ["engineer"],
   currentOwner: null,
@@ -66,6 +67,7 @@ function KanbanScreen({ includeAnomaly = false }: { includeAnomaly?: boolean }) 
   );
   const [activeColumnKey, setActiveColumnKey] = useState("todo");
   const [filters, setFilters] = useState<WorkViewFilters>(() => ({ ...defaultWorkViewFilters, assignee: "engineer" }));
+  const [recentDoneOnly, setRecentDoneOnly] = useState(true);
   const columns = [
     { stateKey: "todo", displayName: "待辦", cards: [todo, collidingIssueNumber] },
     { stateKey: "in-progress", displayName: "處理中", cards: [inProgress] },
@@ -86,7 +88,7 @@ function KanbanScreen({ includeAnomaly = false }: { includeAnomaly?: boolean }) 
     : columns;
   const filteredColumns = visibleColumns.map((column) => ({
     ...column,
-    cards: column.cards.filter((issue) => matchesWorkViewFilters(issue, filters, "engineer")),
+    cards: column.cards.filter((issue) => matchesWorkViewFilters(issue, filters, "engineer") && matchesRecentDoneVisibility(issue, recentDoneOnly)),
   }));
   return (
     <section className="workspace-view">
@@ -94,7 +96,7 @@ function KanbanScreen({ includeAnomaly = false }: { includeAnomaly?: boolean }) 
         title={tCommon("kanban")}
         compact
       />
-      <WorkViewLayout filters={filters} resultCount={columns.flatMap((column) => column.cards).filter((issue) => matchesWorkViewFilters(issue, filters, "engineer")).length} controls={<WorkViewFilterBar filters={filters} onChange={setFilters} assignees={["engineer"]} currentUserLogin="engineer" />}>
+      <WorkViewLayout filters={filters} resultCount={columns.flatMap((column) => column.cards).filter((issue) => matchesWorkViewFilters(issue, filters, "engineer") && matchesRecentDoneVisibility(issue, recentDoneOnly)).length} recentDoneOnly={recentDoneOnly} controls={<WorkViewFilterBar filters={filters} onChange={setFilters} assignees={["engineer"]} currentUserLogin="engineer" recentDoneOnly={recentDoneOnly} onRecentDoneOnlyChange={setRecentDoneOnly} />}>
       {isMobileViewport && (
         <div className="field kanban-lane-picker">
           <label htmlFor="storybook-kanban-active-column">{t("statusColumn")}</label>
