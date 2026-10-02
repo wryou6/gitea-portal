@@ -18,6 +18,11 @@ export function mapIssue(issue: GiteaIssue): IssueSummary {
     : undefined;
   const action = STATUS_ACTIONS.find((candidate) => candidate.key === actionKey);
   const assignees = issue.assignees.map((assignee) => assignee.login);
+  const userProfiles = Object.fromEntries(
+    [issue.author, issue.assignee, ...issue.assignees]
+      .filter((user): user is NonNullable<typeof user> => user !== null)
+      .map((user) => [user.login, user]),
+  );
   const status = resolvedStatus.kind === "status" ? resolvedStatus.key : "anomaly";
   const nextAction =
     action && resolvedStatus.kind === "status" && action.toState === resolvedStatus.key
@@ -45,6 +50,7 @@ export function mapIssue(issue: GiteaIssue): IssueSummary {
     number: issue.number,
     title: issue.title,
     author: issue.author?.login ?? "",
+    userProfiles,
     createdAt: issue.createdAt,
     state: issue.state,
     assignee: issue.assignee?.login ?? assignees[0] ?? null,

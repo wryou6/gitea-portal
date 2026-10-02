@@ -7,3 +7,4 @@ export * from "./status.js";
 export * from "./work-view.js";
 export * from "./issue-status-resolver.js";
 export * from "./api-error.js";
+export * from "./user-profile.js";

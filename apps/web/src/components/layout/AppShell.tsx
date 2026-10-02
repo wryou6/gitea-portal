@@ -5,6 +5,7 @@ import { useTranslation } from "react-i18next";
 import type { Repository } from "../../lib/api";
 import { api } from "../../lib/api";
 import { GlobalIssueSearch } from "./GlobalIssueSearch";
+import { UserIdentity } from "../ui/UserIdentity";
 
 const SIDEBAR_STATE_KEY = "gitea-portal:sidebar-expanded";
 
@@ -53,12 +54,16 @@ function NavigationIcon({ name }: { name: NavigationIconName }) {
 export function AppShell({
   children,
   login,
+  displayName,
+  avatarUrl,
   routePathname,
   routeSearch,
   workspaceRepositories,
 }: {
   children: ReactNode;
   login?: string;
+  displayName?: string;
+  avatarUrl?: string;
   routePathname?: string;
   routeSearch?: string;
   workspaceRepositories?: Repository[];
@@ -277,12 +282,12 @@ export function AppShell({
               ref={accountTriggerRef}
               className="account-menu-trigger"
               type="button"
-              aria-label={t("currentUser", { login })}
+              aria-label={t("userIdentity", { name: displayName?.trim() || login, login })}
               aria-expanded={accountMenuOpen}
               aria-controls="account-menu-panel"
               onClick={() => setAccountMenuOpen((open) => !open)}
             >
-              <span className="account-menu-login">{login}</span>
+              <UserIdentity user={{ login, fullName: displayName, avatarUrl }} size={32} focusable={false} />
               <span aria-hidden="true">▾</span>
             </button>
       <nav

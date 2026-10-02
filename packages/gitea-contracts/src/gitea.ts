@@ -3,13 +3,14 @@ import type {
   IssueSchedule,
   IssueState,
   RepositoryRef,
+  UserProfile,
 } from "@gitea-portal/domain";
 
 export type GiteaRepository = RepositoryRef & {
   fullName: string;
   htmlUrl: string;
 };
-export type GiteaUser = { login: string; fullName?: string };
+export type GiteaUser = UserProfile;
 export type GiteaIssue = IssueSchedule & {
   repository: RepositoryRef;
   number: number;

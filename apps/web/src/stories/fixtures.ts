@@ -6,6 +6,10 @@ export const demoIssue: Issue = {
   number: 42,
   title: "改善跨 Repository Issue 清單的可讀性",
   author: "reporter",
+  userProfiles: {
+    reporter: { login: "reporter", fullName: "Riley Chen" },
+    engineer: { login: "engineer", fullName: "Alex Lin" },
+  },
   createdAt: "2026-09-20T06:30:00.000Z",
   body: "這是 Storybook 的虛構資料。",
   state: "open",

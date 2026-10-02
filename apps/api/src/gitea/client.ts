@@ -7,6 +7,7 @@ import type {
 } from "@gitea-portal/gitea-contracts";
 import {
   issueScheduleFromLabels,
+  userAvatarUrl,
   isCalendarDate,
   type IssueState,
   type IssueSortField,
@@ -16,7 +17,7 @@ import {
 } from "@gitea-portal/domain";
 import { GiteaError, mapGiteaError } from "./errors.js";
 
-type GiteaApiUser = { login?: string; full_name?: string };
+type GiteaApiUser = { login?: string; full_name?: string; avatar_url?: string };
 type GiteaApiRepository = {
   owner?: GiteaApiUser | string;
   name?: string;
@@ -67,7 +68,7 @@ function repositoryRef(
 
 function user(value: GiteaApiUser | null | undefined): GiteaUser | null {
   return value?.login
-    ? { login: value.login, fullName: value.full_name }
+    ? { login: value.login, fullName: value.full_name?.trim() || undefined, avatarUrl: userAvatarUrl(value.avatar_url) }
     : null;
 }
 
@@ -137,7 +138,7 @@ function normalizeComment(value: GiteaApiComment): GiteaComment {
     throw new Error("Gitea returned an incomplete Comment");
   return {
     id: value.id,
-    user: { login: value.user.login, fullName: value.user.full_name },
+    user: user(value.user)!,
     body: value.body ?? "",
     createdAt: value.created_at,
     updatedAt: value.updated_at,

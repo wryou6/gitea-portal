@@ -56,6 +56,8 @@ All repos 只彙整目前登入者有讀取權限的 Repository；任何必要 R
 
 Kanban 的 Issue Status 使用 Gitea Status Labels 保存。狀態轉移必須透過可驗證的 atomic Label replacement；無法保證時，Portal 會在修改前拒絕操作，不使用 remove-then-add fallback。
 
+Portal 直接使用 Gitea 使用者姓名與大頭貼呈現登入帳戶及 Issue 人員。姓名優先顯示，帳號保留在提示與人員選項中；缺少姓名或頭貼時分別回退到帳號與預設人像。重新載入會更新登入者外觀，Issue 與留言資料重新取得時會更新相關人員外觀。
+
 ## 專案結構
 
 ```text

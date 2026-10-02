@@ -12,6 +12,8 @@ import {
   statusReasonTranslationKey,
 } from "../../i18n/status";
 import { formatDateTime } from "../../i18n/format";
+import { UserIdentity } from "../../components/ui/UserIdentity";
+import { profileFor } from "../../lib/user-profiles";
 export function IssueDetailHeader({ issue }: { issue: Issue }) {
   const { t } = useTranslation("issues");
   const action = STATUS_ACTIONS.find(
@@ -50,6 +52,7 @@ export function IssueDetailHeader({ issue }: { issue: Issue }) {
         </p>
       )}
       <IssueAssigneeRoster issue={issue} />
+      <p className="issue-author"><strong>{t("author")}:</strong><UserIdentity user={profileFor(issue.userProfiles, issue.author)} /></p>
       <LabelList labels={issue.labels} />
     </>
   );

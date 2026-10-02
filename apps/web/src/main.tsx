@@ -25,8 +25,8 @@ async function bootstrap() {
   let initialPalette: ColorPalette = "cobalt";
   let sessionExpiredNotice = false;
   try {
-    const { login } = await api<{ login: string }>("/api/session");
-    sessionState = { status: "authenticated", login };
+    const { login, displayName, avatarUrl } = await api<{ login: string; displayName?: string; avatarUrl?: string }>("/api/session");
+    sessionState = { status: "authenticated", login, displayName, avatarUrl };
     initialTheme = readThemePreference(login);
     initialPalette = readColorPalettePreference(login);
     try {
@@ -69,6 +69,8 @@ async function bootstrap() {
     <StrictMode>
       <App
         login={login}
+        displayName={sessionState.status === "authenticated" ? sessionState.displayName : undefined}
+        avatarUrl={sessionState.status === "authenticated" ? sessionState.avatarUrl : undefined}
         sessionState={sessionState}
         initialTheme={initialTheme}
         initialPalette={initialPalette}

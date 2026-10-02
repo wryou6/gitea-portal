@@ -5,6 +5,9 @@ import { clearSession, readSession } from '../auth/session.js';
 import { consumeOAuthTransaction, clearOAuthTransactionCookie, createOAuthTransaction } from '../auth/oauth-state.js';
 import { safePortalReturnTo, withAuthError } from '../auth/oauth-return-to.js';
 import { apiErrorResponse } from '../errors.js';
+import { GiteaClient } from '../gitea/client.js';
+import { GiteaError } from '../gitea/errors.js';
+import { setSession } from '../auth/session.js';
 
 export function registerHttpRoutes(app: FastifyInstance, config: AppConfig): void {
   app.get('/auth/login', async (request, reply) => {
@@ -55,6 +58,20 @@ export function registerHttpRoutes(app: FastifyInstance, config: AppConfig): voi
   app.get('/api/session', async (request, reply) => {
     const session = readSession(request, config);
     if (!session) return reply.code(401).send(apiErrorResponse('auth.required', 'Authentication required'));
-    return { login: session.login };
+    const client = new GiteaClient(config.giteaBaseUrl, session.accessToken, config.giteaTimeoutMs, (details, message) => request.log.info(details, message), request.id);
+    try {
+      const user = await client.currentUser();
+      if (user.login !== session.login) {
+        clearSession(reply);
+        return reply.code(401).send(apiErrorResponse('auth.required', 'Authentication required'));
+      }
+      const fullName = user.fullName?.trim() || undefined;
+      setSession(reply, { ...session, fullName, avatarUrl: user.avatarUrl }, config);
+      return { login: session.login, displayName: fullName ?? session.login, avatarUrl: user.avatarUrl };
+    } catch (error) {
+      if (error instanceof GiteaError && error.status === 401) throw error;
+      request.log.info({ statusCode: error instanceof GiteaError ? error.status : undefined }, 'Gitea profile refresh failed; using session profile');
+      return { login: session.login, displayName: session.fullName?.trim() || session.login, avatarUrl: session.avatarUrl };
+    }
   });
 }

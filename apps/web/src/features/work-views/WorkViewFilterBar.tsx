@@ -3,6 +3,8 @@ import { useTranslation } from "react-i18next";
 import { Badge } from "../../components/ui/Badge";
 import { countActiveWorkViewFilters, createClearedWorkViewFilters, type WorkViewFilters } from "./work-view-filters";
 import { useWorkViewFilterLabels } from "./work-view-filter-labels";
+import { profileFor, userOptionLabel } from "../../lib/user-profiles";
+import type { UserProfiles } from "../../lib/user-profiles";
 
 const priorities = ["critical", "high", "medium", "low"] as const;
 const issueTypes = ["bug", "feature", "task"] as const;
@@ -42,6 +44,7 @@ export function WorkViewFilterBar({
   filters,
   onChange,
   assignees = [],
+  userProfiles,
   currentUserLogin,
   repositoryFixed = false,
   recentDoneOnly: providedRecentDoneOnly,
@@ -50,6 +53,7 @@ export function WorkViewFilterBar({
   filters: WorkViewFilters;
   onChange: (next: WorkViewFilters) => void;
   assignees?: string[];
+  userProfiles?: UserProfiles;
   currentUserLogin?: string;
   repositoryFixed?: boolean;
   recentDoneOnly?: boolean;
@@ -59,7 +63,7 @@ export function WorkViewFilterBar({
   const [localRecentDoneOnly, setLocalRecentDoneOnly] = useState(true);
   const recentDoneOnly = providedRecentDoneOnly ?? localRecentDoneOnly;
   const count = countActiveWorkViewFilters(repositoryFixed ? { ...filters, repository: "all" } : filters);
-  const { activeFilters: chips, labelFor, filterHeading } = useWorkViewFilterLabels(filters, repositoryFixed);
+  const { activeFilters: chips, labelFor, filterHeading } = useWorkViewFilterLabels(filters, repositoryFixed, userProfiles);
   const update = <K extends keyof WorkViewFilters>(key: K, value: WorkViewFilters[K]) =>
     onChange({ ...filters, [key]: value });
   const clear = () => onChange({ ...createClearedWorkViewFilters(), repository: repositoryFixed ? filters.repository : "all" });
@@ -96,7 +100,7 @@ export function WorkViewFilterBar({
           <select id="work-view-assignee-input" className="work-view-assignee-select" value={selectedAssignee} onChange={(event) => update("assignee", event.target.value || "all")}>
             <option value="">{t("selectAssignee")}</option>
             <option value="unassigned">{t("unassigned", { ns: "work-views" })}</option>
-            {selectableAssignees.map((login) => <option key={login} value={login}>{login}</option>)}
+            {selectableAssignees.map((login) => <option key={login} value={login}>{userOptionLabel(profileFor(userProfiles, login))}</option>)}
           </select>
         </div>
         <button type="button" className="work-view-filter-clear" onClick={clear} disabled={!count}>{t("clearFilters")}</button>

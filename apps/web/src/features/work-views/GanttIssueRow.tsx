@@ -10,6 +10,8 @@ import { scheduleAnomalyTranslationKey } from "../issues/ScheduleDates";
 import type { GanttTimelineCell } from "./gantt-timeline";
 import { GANTT_SCALE_WIDTH } from "./GanttCalendarHeader";
 import type { GanttScale } from "./gantt-timeline";
+import { UserIdentity } from "../../components/ui/UserIdentity";
+import { profileFor } from "../../lib/user-profiles";
 
 export type GanttIssueRowVariant = "scheduled" | "unscheduled" | "anomaly";
 
@@ -97,13 +99,13 @@ export function GanttIssueRow({
       </div>
     ),
     repository: <span className="gantt-repository-value" title={`${issue.owner}/${issue.name}`}>{issue.owner}/{issue.name}</span>,
-    assignee: issue.assignee ?? t("noAssignee"),
+    assignee: issue.assignee ? <UserIdentity user={profileFor(issue.userProfiles, issue.assignee)} /> : t("noAssignee"),
     status: <IssueStatusBadge status={issue.status} />,
     priority: <PriorityBadge priority={issue.priority} labels={issue.labels} />,
     createdAt: <time dateTime={issue.createdAt}>{formatDateTime(issue.createdAt)}</time>,
     startDate: null,
     dueDate: null,
-    author: issue.author || tIssues("notSet"),
+    author: issue.author ? <UserIdentity user={profileFor(issue.userProfiles, issue.author)} /> : tIssues("notSet"),
   };
 
   return (

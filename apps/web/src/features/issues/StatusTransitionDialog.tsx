@@ -10,7 +10,7 @@ import {
   issueStatusTranslationKey,
 } from "../../i18n/status";
 
-type Assignee = { login: string; fullName?: string };
+type Assignee = { login: string; fullName?: string; avatarUrl?: string };
 
 export function StatusTransitionDialog({
   issue,
@@ -138,7 +138,7 @@ export function StatusTransitionDialog({
             </option>
             {assignees.map((assignee) => (
               <option key={assignee.login} value={assignee.login}>
-                {assignee.fullName || assignee.login}
+                {assignee.fullName?.trim() ? `${assignee.fullName.trim()} (${assignee.login})` : assignee.login}
               </option>
             ))}
           </select>

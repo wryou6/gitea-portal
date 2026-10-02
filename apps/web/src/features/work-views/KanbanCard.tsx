@@ -8,6 +8,8 @@ import {
 } from "../issues/ScheduleDates";
 import { useTranslation } from "react-i18next";
 import { statusNextActionTranslationKey } from "../../i18n/status";
+import { UserIdentity } from "../../components/ui/UserIdentity";
+import { profileFor } from "../../lib/user-profiles";
 
 export function KanbanCard({
   issue,
@@ -70,7 +72,7 @@ export function KanbanCard({
       <div className="kanban-card-footer">
         <div className="kanban-card-assignee-due">
           <small className="kanban-card-assignee">
-            {assigneeLabel}: {assignee ?? (isDone ? t("noLastAssignee") : t("noAssignee"))}
+            {assigneeLabel}: {assignee ? <UserIdentity user={profileFor(issue.userProfiles, assignee)} /> : (isDone ? t("noLastAssignee") : t("noAssignee"))}
           </small>
           <ScheduleDates
             startDate={issue.startDate}

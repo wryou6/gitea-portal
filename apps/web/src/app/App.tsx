@@ -29,8 +29,10 @@ import type { SessionBootstrapState } from "../features/auth/session-state";
 
 export function App({
   login,
+  displayName,
+  avatarUrl,
   sessionState = login
-    ? { status: "authenticated", login }
+    ? { status: "authenticated", login, displayName, avatarUrl }
     : { status: "anonymous" },
   initialTheme = "system",
   initialPalette = "cobalt",
@@ -38,6 +40,8 @@ export function App({
   sessionExpiredNotice = false,
 }: {
   login?: string;
+  displayName?: string;
+  avatarUrl?: string;
   sessionState?: SessionBootstrapState;
   initialTheme?: ThemeMode;
   initialPalette?: ColorPalette;
@@ -99,6 +103,8 @@ export function App({
         return (
           <SettingsPage
             login={login}
+            displayName={displayName}
+            avatarUrl={avatarUrl}
             mode={themeMode}
             onThemeChange={changeTheme}
             palette={colorPalette}
@@ -139,7 +145,7 @@ export function App({
     }
   })();
   return (
-    <AppShell login={login}>
+    <AppShell login={login} displayName={displayName} avatarUrl={avatarUrl}>
       {sessionExpiredNotice && <SessionExpiredNotice />}
       {content}
     </AppShell>

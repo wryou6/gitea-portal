@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next";
 import { formatNumber } from "../../i18n/format";
 import { useWorkViewFilterLabels } from "./work-view-filter-labels";
 import type { WorkViewFilters } from "./work-view-filters";
+import type { UserProfiles } from "../../lib/user-profiles";
 
 const collapsedStorageKey = "gitea-portal:work-view-controls-collapsed";
 
@@ -15,6 +16,7 @@ export function WorkViewLayout({
   repositoryFixed = false,
   loading = false,
   error = false,
+  userProfiles,
 }: {
   controls: ReactNode;
   children: ReactNode;
@@ -24,11 +26,13 @@ export function WorkViewLayout({
   repositoryFixed?: boolean;
   loading?: boolean;
   error?: boolean;
+  userProfiles?: UserProfiles;
 }) {
   const { t, i18n } = useTranslation("work-views");
   const { activeFilters, labelFor, filterHeading } = useWorkViewFilterLabels(
     filters,
     repositoryFixed,
+    userProfiles,
   );
   const controlsId = useId();
   const [collapsed, setCollapsed] = useState(() => {

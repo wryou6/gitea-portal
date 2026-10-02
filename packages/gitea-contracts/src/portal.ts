@@ -68,4 +68,4 @@ export type StatusLabelMigrationReport = {
   }>;
   verified: boolean;
 };
-export type Session = { login: string; displayName?: string };
+export type Session = { login: string; displayName?: string; avatarUrl?: string };

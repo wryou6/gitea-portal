@@ -1,5 +1,7 @@
 import type { Issue } from "../../lib/api";
 import { useTranslation } from "react-i18next";
+import { UserIdentity } from "../../components/ui/UserIdentity";
+import { profileFor } from "../../lib/user-profiles";
 
 export function IssueAssigneeRoster({ issue }: { issue: Issue }) {
   const { t } = useTranslation("issues");
@@ -11,7 +13,7 @@ export function IssueAssigneeRoster({ issue }: { issue: Issue }) {
       {issue.state === "open" && (
         <div>
           <strong>{t("currentAssignee")}</strong>
-          <span>{issue.currentOwner ?? t("notAssigned")}</span>
+          <span>{issue.currentOwner ? <UserIdentity user={profileFor(issue.userProfiles, issue.currentOwner)} /> : t("notAssigned")}</span>
         </div>
       )}
       <div>
@@ -19,7 +21,7 @@ export function IssueAssigneeRoster({ issue }: { issue: Issue }) {
         {issue.assignees.length ? (
           <ol>
             {issue.assignees.map((login) => (
-              <li key={login}>{login}</li>
+              <li key={login}><UserIdentity user={profileFor(issue.userProfiles, login)} /></li>
             ))}
           </ol>
         ) : (

@@ -55,9 +55,10 @@ export function registerRepositoryRoutes(
     const repository = { owner: params.owner, name: params.repo };
     if (!(await canAccessRepository(client, repository, "read")))
       throw new PortalError(403, "目前使用者沒有讀取此 Repository 的權限");
-    return (await client.assignees(repository)).map(({ login, fullName }) => ({
+    return (await client.assignees(repository)).map(({ login, fullName, avatarUrl }) => ({
       login,
       fullName,
+      avatarUrl,
     }));
   });
 

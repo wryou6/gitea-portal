@@ -21,6 +21,7 @@ import {
   type IssueViewPreference,
 } from "./issue-view-preference";
 import { useReorderAnimation } from "../../lib/use-reorder-animation";
+import { mergeUserProfiles } from "../../lib/user-profiles";
 
 export function filtersFromUrl(): IssueFiltersValue {
   return parseWorkViewFilters(window.location.search);
@@ -151,6 +152,7 @@ export function IssueListPage({
     : loadedIssues
   ).filter((issue) => matchesRecentDoneVisibility(issue, recentDoneOnly))
     .sort((a, b) => compareIssues(a, b, activeSort, activeDirection));
+  const userProfiles = mergeUserProfiles((demoIssues ?? loadedIssues).map((issue) => issue.userProfiles));
   const loading = demoIssues ? demoState === "loading" : isLoading;
   const displayedError: UserFacingError | undefined = demoIssues && demoState === "error"
     ? t("issueListLoadError")
@@ -276,11 +278,13 @@ export function IssueListPage({
         repositoryFixed={Boolean(repository)}
         loading={loading}
         error={Boolean(displayedError)}
+        userProfiles={userProfiles}
         controls={<>
       <WorkViewFilterBar
         filters={demoIssues ? demoFilters : filters}
         repositoryFixed={Boolean(repository)}
         assignees={[...new Set((demoIssues ?? loadedIssues).flatMap((issue) => issue.assignees))].sort((a, b) => a.localeCompare(b))}
+        userProfiles={userProfiles}
         currentUserLogin={login}
         recentDoneOnly={recentDoneOnly}
         onRecentDoneOnlyChange={setRecentDoneOnly}

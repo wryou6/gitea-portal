@@ -4,6 +4,7 @@ import { supportedLocales, type Locale } from "../../i18n/locales";
 import { useState } from "react";
 import { api, type StatusLabelMigrationReport } from "../../lib/api";
 import { Button } from "../../components/ui/Button";
+import { UserIdentity } from "../../components/ui/UserIdentity";
 
 const themeLabelKeys: Record<ThemeMode, "light" | "dark" | "system"> = {
   light: "light",
@@ -20,6 +21,8 @@ const localeNames: Record<Locale, string> = {
 
 export function SettingsPage({
   login,
+  displayName,
+  avatarUrl,
   mode,
   onThemeChange,
   palette,
@@ -28,6 +31,8 @@ export function SettingsPage({
   onLocaleChange,
 }: {
   login?: string;
+  displayName?: string;
+  avatarUrl?: string;
   mode: ThemeMode;
   onThemeChange: (mode: ThemeMode) => void;
   palette: ColorPalette;
@@ -67,7 +72,7 @@ export function SettingsPage({
       </header>
       <section className="settings-card" aria-labelledby="settings-appearance">
         <h2 id="settings-appearance">{t("appearance")}</h2>
-        {login && <p className="muted">{t("currentAccount", { login })}</p>}
+        {login && <p className="muted"><UserIdentity user={{ login, fullName: displayName, avatarUrl }} /></p>}
         <fieldset className="theme-options">
           <legend>{t("appearanceMode")}</legend>
           {(["light", "dark", "system"] as const).map((themeMode) => (

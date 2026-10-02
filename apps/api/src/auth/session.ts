@@ -2,7 +2,7 @@ import { createHmac, randomBytes, timingSafeEqual } from 'node:crypto';
 import type { FastifyReply, FastifyRequest } from 'fastify';
 import type { AppConfig } from '../config/env.js';
 
-export type PortalSession = { login: string; accessToken: string; expiresAt: number; csrfToken?: string };
+export type PortalSession = { login: string; accessToken: string; expiresAt: number; csrfToken?: string; fullName?: string; avatarUrl?: string };
 const COOKIE = 'portal_session';
 
 function sign(value: string, secret: string): string {

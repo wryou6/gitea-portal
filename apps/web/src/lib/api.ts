@@ -6,6 +6,7 @@ import {
   type PortalApiErrorParams,
 } from "@gitea-portal/domain";
 import type { IssueSortField, SortDirection } from "@gitea-portal/domain";
+import type { UserProfiles } from "@gitea-portal/domain";
 export type { IssueSortField, SortDirection } from "@gitea-portal/domain";
 
 export class PortalApiError extends Error {
@@ -57,6 +58,7 @@ export type Issue = {
   number: number;
   title: string;
   author: string;
+  userProfiles?: UserProfiles;
   createdAt: string;
   state: "open" | "closed";
   type: IssueType | null;
