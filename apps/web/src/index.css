@@ -1175,6 +1175,13 @@ textarea:focus-visible,
   font-weight: 650;
   text-decoration: none;
 }
+.issue-row-repository {
+  display: block;
+  margin-top: 0.15rem;
+  color: var(--muted-foreground);
+  font-size: 0.76rem;
+  overflow-wrap: anywhere;
+}
 .issue-title:hover,
 .issue-key:hover {
   color: var(--primary);

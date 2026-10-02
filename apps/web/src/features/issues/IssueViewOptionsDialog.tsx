@@ -32,7 +32,7 @@ export function IssueViewOptionsDialog({
           <p className="muted">{t("visiblePropertiesHelp")}</p>
           <div className="issue-view-option-list">
             {preference.columnOrder.map((field) => {
-              const fixed = field === "key" || field === "title";
+              const fixed = field === "title";
               const checked = preference.visibleFields.includes(field);
               return (
                 <label className="issue-view-option" key={field}>

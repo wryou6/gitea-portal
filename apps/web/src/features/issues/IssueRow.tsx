@@ -24,11 +24,13 @@ export function IssueRow({
   returnTo,
   columnOrder = DEFAULT_ISSUE_COLUMN_ORDER,
   visibleFields = ISSUE_VIEW_FIELDS,
+  showRepositoryIdentity = false,
 }: {
   issue: Issue;
   returnTo?: string;
   columnOrder?: IssueSortField[];
   visibleFields?: IssueSortField[];
+  showRepositoryIdentity?: boolean;
 }) {
   const { t, i18n } = useTranslation("issues");
   const issuePath = returnTo
@@ -60,6 +62,9 @@ export function IssueRow({
     title: (
       <>
         <a className="issue-title" href={issuePath}>{issue.title}</a>
+        {showRepositoryIdentity && (
+          <span className="issue-row-repository">{issue.owner}/{issue.name}</span>
+        )}
         {hasDateAnomaly && (
           <span className="issue-table-anomaly" title={t(scheduleAnomalyTranslationKey(issue.scheduleAnomaly))}>
             {t("scheduleAnomaly")}

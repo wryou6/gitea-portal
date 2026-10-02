@@ -415,6 +415,7 @@ export function IssueListPage({
                 returnTo={returnTo}
                 columnOrder={columnOrder}
                 visibleFields={visibleFields}
+                showRepositoryIdentity={!repository}
               />
             ))}
             {!issues.length && !loading && !displayedError && (

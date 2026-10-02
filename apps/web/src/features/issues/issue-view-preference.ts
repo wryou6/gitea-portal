@@ -37,9 +37,9 @@ export type IssueViewPreference = {
 export function defaultIssueViewPreference(): IssueViewPreference {
   return {
     version: 1,
-    visibleFields: [...ISSUE_VIEW_FIELDS],
+    visibleFields: ISSUE_VIEW_FIELDS.filter((field) => field !== "key"),
     columnOrder: [...DEFAULT_ISSUE_COLUMN_ORDER],
-    defaultSortField: "key",
+    defaultSortField: "dueDate",
     defaultSortDirection: "asc",
   };
 }
@@ -68,7 +68,6 @@ function isPreference(value: unknown): value is IssueViewPreference {
   const visible = preference.visibleFields;
   const order = preference.columnOrder;
   return (
-    visible.includes("key") &&
     visible.includes("title") &&
     new Set(visible).size === visible.length &&
     order.length === ISSUE_VIEW_FIELDS.length &&

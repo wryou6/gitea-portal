@@ -28,6 +28,7 @@ function localClosedAt(daysAgo: number): string {
 
 export const Default: Story = {
   args: {
+    demoViewPreference: defaultIssueViewPreference(),
     demoIssues: [
       demoIssue,
       {
@@ -106,6 +107,32 @@ export const SortedByPriorityDescending: Story = {
       { ...demoIssue, number: 7, priority: "low" },
       { ...demoIssue, number: 23, priority: "critical" },
       { ...demoIssue, number: 12, priority: "high" },
+    ],
+  },
+};
+
+export const DueDateDefaultAscending: Story = {
+  args: {
+    demoViewPreference: defaultIssueViewPreference(),
+    demoIssues: [
+      { ...demoIssue, owner: "zeta", name: "service", number: 70, dueDate: "2026-10-24" },
+      { ...demoIssue, owner: "alpha", name: "portal", number: 3, dueDate: "2026-10-18" },
+      { ...demoIssue, owner: "zeta", name: "service", number: 5, dueDate: "2026-10-18" },
+      { ...demoIssue, owner: "demo", name: "frontend", number: 9, dueDate: null },
+    ],
+  },
+};
+
+export const SavedKeyAscendingPreference: Story = {
+  args: {
+    demoViewPreference: {
+      ...defaultIssueViewPreference(),
+      defaultSortField: "key",
+      defaultSortDirection: "asc",
+    },
+    demoIssues: [
+      { ...demoIssue, owner: "zeta", name: "service", number: 70, dueDate: "2026-10-18" },
+      { ...demoIssue, owner: "alpha", name: "portal", number: 3, dueDate: "2026-10-24" },
     ],
   },
 };
@@ -220,7 +247,7 @@ export const ViewOptionsOpen: Story = {
 export const ViewOptionsVisibility: Story = {
   args: {
     demoIssues: [demoIssue],
-    demoViewPreference: compactViewPreference,
+    demoViewPreference: defaultIssueViewPreference(),
     demoOptionsOpen: true,
   },
 };
@@ -254,7 +281,7 @@ export const ViewOptionsNarrow: Story = {
 export const ViewOptionsVisibilityNarrow: Story = {
   args: {
     demoIssues: [demoIssue],
-    demoViewPreference: compactViewPreference,
+    demoViewPreference: defaultIssueViewPreference(),
     demoOptionsOpen: true,
   },
   parameters: { viewport: { defaultViewport: "mobile1" } },
