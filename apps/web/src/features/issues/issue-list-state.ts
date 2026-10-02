@@ -36,7 +36,7 @@ export function useIssueListState(
       setFilters(next);
       setSort(requestedSort);
       setDirection(requestedDirection);
-      const params = new URLSearchParams(serializeWorkViewFilters(next, window.location.search));
+      const params = new URLSearchParams(serializeWorkViewFilters(next, window.location.search, "issues"));
       params.delete("page");
       params.set("sort", requestedSort);
       params.set("direction", requestedDirection);

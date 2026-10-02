@@ -1,4 +1,5 @@
 import type { Issue } from "../../lib/api";
+import { sanitizeWorkViewSearch, type WorkViewURLView } from "./work-view-url-state";
 
 export type WorkViewFilters = {
   priority: "all" | "critical" | "high" | "medium" | "low";
@@ -76,6 +77,7 @@ export function parseWorkViewFilters(search: string): WorkViewFilters {
 export function serializeWorkViewFilters(
   filters: WorkViewFilters,
   existingSearch = "",
+  view: WorkViewURLView = "issues",
 ): string {
   const params = new URLSearchParams(existingSearch);
   for (const key of ["priority", "issueType", "state", "assignee", "repository", "label", "milestone"])
@@ -85,7 +87,7 @@ export function serializeWorkViewFilters(
   if (filters.issueType !== "all") params.set("issueType", filters.issueType);
   if (filters.state !== "all") params.set("state", filters.state);
   if (filters.assignee !== "all") params.set("assignee", filters.assignee);
-  return params.toString();
+  return sanitizeWorkViewSearch(params.toString(), view);
 }
 
 export function countActiveWorkViewFilters(filters: WorkViewFilters): number {

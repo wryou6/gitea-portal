@@ -22,6 +22,7 @@ import {
 } from "./issue-view-preference";
 import { useReorderAnimation } from "../../lib/use-reorder-animation";
 import { mergeUserProfiles } from "../../lib/user-profiles";
+import { buildWorkViewReturnTo } from "../work-views/work-view-url-state";
 
 export function filtersFromUrl(): IssueFiltersValue {
   return parseWorkViewFilters(window.location.search);
@@ -178,7 +179,7 @@ export function IssueListPage({
     wasOptionsOpen.current = optionsOpen;
   }, [optionsOpen]);
 
-  const returnTo = `${window.location.pathname}${window.location.search}`;
+  const returnTo = buildWorkViewReturnTo(window.location.pathname, window.location.search, "issues");
   const headings: Array<{ field: IssueSortField; label: string }> = [
     { field: "type", label: t("type") },
     { field: "key", label: t("key") },

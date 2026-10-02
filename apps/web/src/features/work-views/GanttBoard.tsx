@@ -31,6 +31,7 @@ import {
   type GanttScale,
 } from "./gantt-timeline";
 import { mergeUserProfiles } from "../../lib/user-profiles";
+import { buildWorkViewReturnTo, sanitizeWorkViewSearch } from "./work-view-url-state";
 
 function compareGanttStartDate(left: Issue, right: Issue): number {
   const dateOrder = (left.startDate ?? left.dueDate ?? "").localeCompare(right.startDate ?? right.dueDate ?? "");
@@ -177,7 +178,7 @@ export function GanttBoard({
 
   useEffect(() => {
     if (demo) return;
-    const params = new URLSearchParams(window.location.search);
+    const params = new URLSearchParams(sanitizeWorkViewSearch(window.location.search, "gantt"));
     params.set("gantt_start", initialDate);
     params.set("gantt_scale", scale);
     const query = params.toString();
@@ -227,10 +228,10 @@ export function GanttBoard({
   const needsRestore = !sameOrder(preference.columnOrder, DEFAULT_GANTT_COLUMN_ORDER) ||
     !sameFields(preference.visibleFields, GANTT_FIXED_FIELDS) ||
     !sameOrder(columnOrder, DEFAULT_GANTT_COLUMN_ORDER);
-  const returnParams = new URLSearchParams(window.location.search);
+  const returnParams = new URLSearchParams(sanitizeWorkViewSearch(window.location.search, "gantt"));
   returnParams.set("gantt_start", initialDate);
   returnParams.set("gantt_scale", scale);
-  const detailReturnTo = `${window.location.pathname}?${returnParams.toString()}`;
+  const detailReturnTo = buildWorkViewReturnTo(window.location.pathname, returnParams.toString(), "gantt");
   useEffect(() => {
     const chart = chartScrollRef.current;
     const fields = chart?.querySelector<HTMLElement>(".gantt-header-fields");

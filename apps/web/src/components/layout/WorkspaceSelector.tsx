@@ -1,16 +1,12 @@
 import { useEffect, useState } from "react";
-import { resolveAppRoute, routePaths, safeReturnTo } from "../../app/routes";
+import { resolveWorkViewNavigationContext, routePaths, workViewForRoute } from "../../app/routes";
 import { api, toUserFacingError, type Repository, type UserFacingError } from "../../lib/api";
 import { ErrorNotice } from "../feedback/ErrorNotice";
 import { useTranslation } from "react-i18next";
+import { buildWorkViewSearch, type WorkViewURLView } from "../../features/work-views/work-view-url-state";
 
 function currentContext(pathname = window.location.pathname, search = window.location.search) {
-  const route = resolveAppRoute(pathname, search);
-  if (route.type !== "issue-detail" && route.type !== "issue-create") return route;
-  const returnTo = safeReturnTo(new URLSearchParams(search).get("returnTo"));
-  if (!returnTo) return resolveAppRoute(routePaths.issues);
-  const target = new URL(returnTo, window.location.origin);
-  return resolveAppRoute(target.pathname, target.search);
+  return resolveWorkViewNavigationContext(pathname, search).route;
 }
 
 export function WorkspaceSelector({
@@ -60,26 +56,10 @@ export function WorkspaceSelector({
       if (owner && repo) path = routePaths.repositoryView(owner, repo, activeView);
     }
     if (path) {
-      const sourceSearch = (() => {
-        const route = resolveAppRoute(window.location.pathname, window.location.search);
-        if (route.type !== "issue-detail" && route.type !== "issue-create") return window.location.search;
-        const returnTo = safeReturnTo(new URLSearchParams(window.location.search).get("returnTo"));
-        return returnTo ? new URL(returnTo, window.location.origin).search : "";
-      })();
-      const sourceRoute = currentContext(window.location.pathname, window.location.search);
-      const sourceIsWorkView = sourceRoute.type === "issues" || sourceRoute.type === "all-repositories-view" || sourceRoute.type === "repository-view";
+      const source = resolveWorkViewNavigationContext(window.location.pathname, window.location.search);
+      const sourceView = workViewForRoute(source.route) as WorkViewURLView | undefined;
       const target = new URL(path, window.location.origin);
-      const params = new URLSearchParams(sourceSearch);
-      const keys = ["priority", "issueType", "state", "assignee", "gantt_start", "gantt_scale"];
-      if (sourceIsWorkView) {
-        for (const key of keys) {
-          const currentValue = params.get(key);
-          if (currentValue) target.searchParams.set(key, currentValue);
-          else target.searchParams.delete(key);
-        }
-      } else {
-        target.searchParams.set("assignee", "me");
-      }
+      target.search = buildWorkViewSearch(source.search, sourceView, activeView);
       const destination = `${target.pathname}${target.search}`;
       onNavigate ? onNavigate(destination) : (window.location.href = destination);
     }

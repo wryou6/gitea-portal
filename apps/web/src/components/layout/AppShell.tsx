@@ -1,11 +1,12 @@
 import { useEffect, useRef, useState, type ReactNode } from "react";
-import { resolveAppRoute, routePaths, safeReturnTo } from "../../app/routes";
+import { resolveAppRoute, resolveWorkViewNavigationContext, routePaths, safeReturnTo, workViewForRoute } from "../../app/routes";
 import { WorkspaceSelector } from "./WorkspaceSelector";
 import { useTranslation } from "react-i18next";
 import type { Repository } from "../../lib/api";
 import { api } from "../../lib/api";
 import { GlobalIssueSearch } from "./GlobalIssueSearch";
 import { UserIdentity } from "../ui/UserIdentity";
+import { buildWorkViewSearch, type WorkViewURLView } from "../../features/work-views/work-view-url-state";
 
 const SIDEBAR_STATE_KEY = "gitea-portal:sidebar-expanded";
 
@@ -76,18 +77,9 @@ export function AppShell({
     pathname,
     search,
   );
-  const returnTo =
-    route.type === "issue-detail" || route.type === "issue-create"
-      ? safeReturnTo(
-          new URLSearchParams(search).get("returnTo"),
-        )
-      : undefined;
-  const returnUrl = returnTo
-    ? new URL(returnTo, window.location.origin)
-    : undefined;
-  const contextRoute = returnUrl
-    ? resolveAppRoute(returnUrl.pathname, returnUrl.search)
-    : route;
+  const navigationContext = resolveWorkViewNavigationContext(pathname, search);
+  const contextRoute = navigationContext.route;
+  const sourceView = workViewForRoute(contextRoute) as WorkViewURLView | undefined;
   const repository =
     contextRoute.type === "repository-view" ? contextRoute : undefined;
   const allReposView = contextRoute.type === "all-repositories-view" ? contextRoute.view : undefined;
@@ -182,13 +174,15 @@ export function AppShell({
       label: t("createIssue"),
       href: onCreateIssue
         ? `${pathname}${search}`
-        : repository
-          ? routePaths.issueCreateForRepository(
-              repository.owner,
-              repository.repo,
-              `${pathname}${search}`,
-            )
-          : routePaths.issueCreate,
+          : repository
+            ? routePaths.issueCreateForRepository(
+                repository.owner,
+                repository.repo,
+                `${navigationContext.pathname}${navigationContext.search}`,
+              )
+          : sourceView
+            ? routePaths.issueCreateFrom(`${navigationContext.pathname}${navigationContext.search}`)
+            : routePaths.issueCreate,
       icon: "create",
       active: onCreateIssue,
     },
@@ -233,20 +227,13 @@ export function AppShell({
     },
   ];
 
-  const isWorkViewContext = contextRoute.type === "issues" || contextRoute.type === "all-repositories-view" || contextRoute.type === "repository-view";
-  const currentViewSearch = returnUrl ? returnUrl.search : search;
-  const preservedViewParams = new URLSearchParams();
-  const currentParams = new URLSearchParams(currentViewSearch);
-  if (!isWorkViewContext) preservedViewParams.set("assignee", "me");
-  for (const key of ["priority", "issueType", "state", "assignee", "gantt_start", "gantt_scale"]) {
-    const value = currentParams.get(key);
-    if (value) preservedViewParams.set(key, value);
-  }
+  const currentViewSearch = navigationContext.search;
   const viewNavigationItems = navigationItems.map((item) => {
-    if (!["issues", "kanban", "gantt"].includes(item.key) || !preservedViewParams.size) return item;
+    if (!["issues", "kanban", "gantt"].includes(item.key)) return item;
+    const targetView = item.key as WorkViewURLView;
     const url = new URL(item.href, window.location.origin);
-    preservedViewParams.forEach((value, key) => url.searchParams.set(key, value));
-    return { ...item, href: `${url.pathname}?${url.searchParams.toString()}` };
+    url.search = buildWorkViewSearch(currentViewSearch, sourceView, targetView);
+    return { ...item, href: `${url.pathname}${url.search}` };
   });
   const globalSearchReturnTo = route.type === "issue-detail" || route.type === "issue-create"
     ? safeReturnTo(new URLSearchParams(search).get("returnTo")) ?? routePaths.issues
@@ -345,13 +332,9 @@ export function AppShell({
                   if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || event.button !== 0) return;
                   event.preventDefault();
                   const target = new URL(item.href, window.location.origin);
-                  const currentView = returnUrl ? returnUrl.search : window.location.search;
-                  const current = new URLSearchParams(currentView);
-                  for (const key of ["priority", "issueType", "state", "assignee", "gantt_start", "gantt_scale"]) {
-                    const value = current.get(key);
-                    if (value) target.searchParams.set(key, value);
-                    else if (isWorkViewContext) target.searchParams.delete(key);
-                  }
+                  const current = resolveWorkViewNavigationContext(window.location.pathname, window.location.search);
+                  const currentView = workViewForRoute(current.route) as WorkViewURLView | undefined;
+                  target.search = buildWorkViewSearch(current.search, currentView, item.key as WorkViewURLView);
                   window.location.assign(`${target.pathname}${target.search}`);
                 }}
               >

@@ -15,6 +15,7 @@ import { WorkViewFilterBar } from "./WorkViewFilterBar";
 import { WorkViewLayout } from "./WorkViewLayout";
 import { matchesRecentDoneVisibility, matchesWorkViewFilters, parseWorkViewFilters, serializeWorkViewFilters, type WorkViewFilters } from "./work-view-filters";
 import { mergeUserProfiles } from "../../lib/user-profiles";
+import { buildWorkViewReturnTo } from "./work-view-url-state";
 
 export function KanbanBoard({
   repository,
@@ -136,7 +137,7 @@ export function KanbanBoard({
 
   function updateFilters(next: WorkViewFilters) {
     setFilters(next);
-    const search = serializeWorkViewFilters(next, window.location.search);
+    const search = serializeWorkViewFilters(next, window.location.search, viewMode);
     window.history.replaceState({}, "", `${window.location.pathname}${search ? `?${search}` : ""}`);
   }
 
@@ -182,7 +183,7 @@ export function KanbanBoard({
             issues={ganttView.issues}
             repository={repository}
             emptyMessage={"repositories" in ganttView && ganttView.repositories.length === 0 ? t("noReadableRepositories") : undefined}
-            returnTo={`${window.location.pathname}${window.location.search}`}
+            returnTo={buildWorkViewReturnTo(window.location.pathname, window.location.search, "gantt")}
             filters={filters}
             filterControls={filterControls}
             currentUserLogin={login}
@@ -221,7 +222,7 @@ export function KanbanBoard({
                 dragged={dragged}
                 onDragStart={setDragged}
                 onDropCard={move}
-                returnTo={`${window.location.pathname}${window.location.search}`}
+                returnTo={buildWorkViewReturnTo(window.location.pathname, window.location.search, "kanban")}
               />
             ))}
           </div>
