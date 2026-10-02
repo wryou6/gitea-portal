@@ -9,6 +9,8 @@ build/
 coverage/
 .vite/
 .playwright-cli/
+/output/playwright/
+/output/concept-preview/
 .turbo/
 *.tsbuildinfo
 *.log
