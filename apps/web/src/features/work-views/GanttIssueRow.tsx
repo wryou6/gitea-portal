@@ -4,7 +4,7 @@ import { routePaths } from "../../app/routes";
 import { IssueTypeBadge } from "../../components/ui/IssueTypeBadge";
 import { PriorityBadge } from "../../components/ui/PriorityBadge";
 import { IssueStatusBadge } from "../../components/ui/IssueStatusBadge";
-import { formatDateTime } from "../../i18n/format";
+import { formatCalendarDate, formatDateTime } from "../../i18n/format";
 import type { Issue, IssueSortField } from "../../lib/api";
 import { scheduleAnomalyTranslationKey } from "../issues/ScheduleDates";
 import type { GanttTimelineCell } from "./gantt-timeline";
@@ -40,7 +40,7 @@ export function GanttIssueRow({
   today: string;
 }) {
   const { t } = useTranslation("work-views");
-  const { t: tIssues, i18n } = useTranslation("issues");
+  const { t: tIssues } = useTranslation("issues");
   const issueHref = href ?? (returnTo
     ? routePaths.issueDetailFrom(issue.owner, issue.name, issue.number, returnTo)
     : routePaths.issueDetail(issue.owner, issue.name, issue.number));
@@ -100,7 +100,7 @@ export function GanttIssueRow({
     assignee: issue.assignee ?? t("noAssignee"),
     status: <IssueStatusBadge status={issue.status} />,
     priority: <PriorityBadge priority={issue.priority} labels={issue.labels} />,
-    createdAt: <time dateTime={issue.createdAt}>{formatDateTime(issue.createdAt, i18n.language)}</time>,
+    createdAt: <time dateTime={issue.createdAt}>{formatDateTime(issue.createdAt)}</time>,
     startDate: null,
     dueDate: null,
     author: issue.author || tIssues("notSet"),
@@ -133,15 +133,15 @@ export function GanttIssueRow({
             className="gantt-track-today"
             style={{ left: `${todayPosition}px` }}
             role="img"
-            aria-label={`${today} ${t("todayMarker")}`}
+            aria-label={`${formatCalendarDate(today)} ${t("todayMarker")}`}
           />
         )}
-        {barStart !== undefined && barEnd !== undefined && (
+        {scheduleStart && scheduleEnd && barStart !== undefined && barEnd !== undefined && (
           <span
             className="gantt-bar"
             style={{ left: `${barStart}px`, width: `${Math.max(barEnd - barStart, 4)}px` }}
             role="img"
-            aria-label={`${scheduleStart} – ${scheduleEnd}`}
+            aria-label={`${formatCalendarDate(scheduleStart)} – ${formatCalendarDate(scheduleEnd)}`}
           />
         )}
       </div>

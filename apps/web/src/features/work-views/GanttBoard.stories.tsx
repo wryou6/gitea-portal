@@ -45,7 +45,7 @@ function GanttBeforeReference() {
       </div>
       <section style={{ display: "grid", gap: "0.55rem" }}>
         <div style={{ display: "grid", gridTemplateColumns: "minmax(13rem, 0.8fr) minmax(20rem, 1.2fr)", gap: "1rem", color: "var(--muted-foreground)", fontSize: "0.78rem" }}>
-          <span>{formatScheduleDate("2026-07-08", i18n.language)}</span><span style={{ textAlign: "right" }}>{formatScheduleDate("2026-09-30", i18n.language)}</span>
+          <span>{formatScheduleDate("2026-07-08")}</span><span style={{ textAlign: "right" }}>{formatScheduleDate("2026-09-30")}</span>
         </div>
         {baselineIssues.map((issue) => {
           const start = Date.parse(`${issue.startDate}T00:00:00Z`);

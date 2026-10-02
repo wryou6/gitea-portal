@@ -13,7 +13,7 @@ import {
 } from "../../i18n/status";
 import { formatDateTime } from "../../i18n/format";
 export function IssueDetailHeader({ issue }: { issue: Issue }) {
-  const { t, i18n } = useTranslation("issues");
+  const { t } = useTranslation("issues");
   const action = STATUS_ACTIONS.find(
     (candidate) => candidate.key === issue.lastActionKey,
   );
@@ -40,7 +40,7 @@ export function IssueDetailHeader({ issue }: { issue: Issue }) {
         <span>{t("milestone")}：{issue.milestone ?? t("notSet")}</span>
         <time dateTime={issue.updatedAt}>
           {t("updatedAt", {
-            date: formatDateTime(issue.updatedAt, i18n.language),
+            date: formatDateTime(issue.updatedAt),
           })}
         </time>
       </div>

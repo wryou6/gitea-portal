@@ -1,5 +1,6 @@
 import { useMemo, type CSSProperties } from "react";
 import { useTranslation } from "react-i18next";
+import { formatCalendarDate } from "../../i18n/format";
 import {
   addCalendarDays,
   calendarDayOrdinal,
@@ -111,11 +112,7 @@ export function GanttCalendarHeader({
         {cells.map((cell) => {
           const weekday = new Date(`${cell.start}T00:00:00.000Z`).getUTCDay();
           const isWeekend = weekday === 0 || weekday === 6;
-          const accessibleDate = formatDate(cell.start, i18n.language, {
-            weekday: "long",
-            month: "long",
-            day: "numeric",
-          });
+          const accessibleDate = formatCalendarDate(cell.start);
           return (
             <div
               className="gantt-calendar-date"
@@ -133,8 +130,8 @@ export function GanttCalendarHeader({
             key={overlay.date}
             style={{ left: `${overlay.left}px`, width: `${overlay.width}px` }}
             role="img"
-            aria-label={`${overlay.date} ${t("weekend")}`}
-            title={`${overlay.date} ${t("weekend")}`}
+            aria-label={`${formatCalendarDate(overlay.date)} ${t("weekend")}`}
+            title={`${formatCalendarDate(overlay.date)} ${t("weekend")}`}
           />
         ))}
         {today >= (cells[0]?.start ?? today) && today < (cells.at(-1)?.end ?? today) && (

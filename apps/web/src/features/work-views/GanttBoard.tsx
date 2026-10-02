@@ -4,7 +4,7 @@ import { WorkViewFilterBar } from "./WorkViewFilterBar";
 import { EmptyState } from "../../components/feedback/EmptyState";
 import { api, type Issue, type IssueSortField } from "../../lib/api";
 import { routePaths } from "../../app/routes";
-import { formatNumber } from "../../i18n/format";
+import { formatCalendarDate, formatNumber } from "../../i18n/format";
 import { useTranslation } from "react-i18next";
 import { GanttIssueRow, type GanttColumn, type GanttIssueRowVariant } from "./GanttIssueRow";
 import { GanttCalendarHeader, GANTT_SCALE_WIDTH } from "./GanttCalendarHeader";
@@ -462,7 +462,7 @@ export function GanttBoard({
           className="gantt-horizontal-scrollbar"
           type="range"
           aria-label={t("timeline")}
-          aria-valuetext={visibleDate}
+          aria-valuetext={formatCalendarDate(visibleDate)}
           min={0}
           max={chartMaxScroll}
           step={1}
@@ -501,7 +501,7 @@ export function GanttBoard({
           className="gantt-horizontal-scrollbar"
           type="range"
           aria-label={t("timeline")}
-          aria-valuetext={visibleDate}
+          aria-valuetext={formatCalendarDate(visibleDate)}
           min={0}
           max={chartMaxScroll}
           step={1}
