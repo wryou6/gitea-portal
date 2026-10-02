@@ -341,6 +341,7 @@ export function IssueListPage({
                 return (
                   <th
                     key={field}
+                    data-column-field={field}
                     data-reorder-key={field}
                     data-column-align={field === "type" || field === "status" || field === "priority" ? "center" : undefined}
                     scope="col"

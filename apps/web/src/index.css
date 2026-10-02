@@ -1129,6 +1129,11 @@ textarea:focus-visible,
 .issues-table td[data-column-align="center"] {
   text-align: center;
 }
+.issues-table [data-column-field="createdAt"] {
+  width: 11rem;
+  min-width: 11rem;
+  white-space: nowrap;
+}
 .issues-table tbody tr:last-child td {
   border-bottom: 0;
 }

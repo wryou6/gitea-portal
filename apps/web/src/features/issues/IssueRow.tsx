@@ -86,6 +86,7 @@ export function IssueRow({
       {columnOrder.filter((field) => visibleFields.includes(field)).map((field) => (
         <td
           key={field}
+          data-column-field={field}
           data-reorder-key={`${issue.owner}/${issue.name}#${issue.number}:${field}`}
           data-column-align={field === "type" || field === "status" || field === "priority" ? "center" : undefined}
           className={field === "title" ? "issue-table-title-cell" : undefined}
