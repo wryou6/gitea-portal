@@ -70,7 +70,7 @@ No setup tasks.
 
 ---
 
-## Phase 5: User Story 2 - 展開進階篩選 (Priority: P2)
+## Phase 5: User Story 2 - 展開進階篩選 (Prior implementation; superseded by Phase 9)
 
 **Goal**: Keep Repository, Label, and Milestone filters collapsed by default while preserving and summarizing active values.
 
@@ -83,6 +83,8 @@ No setup tasks.
 - [X] T012 [US2] Add collapsed, expanded, active-count, and All repos/Repository workspace stories in `apps/web/src/features/work-views/WorkViewFilterBar.stories.tsx` (depends on T010, T011).
 
 **Checkpoint**: Advanced filters remain applied while collapsed and behave consistently in all three views.
+
+The tasks in this phase record the earlier implementation. The 2026-10-02 scope decision below removes these controls and makes the top workspace selector authoritative for Repository scope.
 
 ---
 
@@ -117,6 +119,13 @@ No setup tasks.
 ## Phase 8: Convergence
 
 - [ ] T019 Run authenticated cross-Repository search, Issue detail return, and shared-filter navigation scenarios with a valid local Gitea session per SC-006 (partial).
+
+## Phase 9: User Requested Scope Update (2026-10-02)
+
+- [X] T024 Remove the Repository, Label, and Milestone advanced controls, URL parsing, and client-side matching from the shared work-view filter bar; retain Repository only as the internal scope for single-Repository Issue List reads.
+- [X] T025 Make the top workspace selector authoritative by dropping legacy Repository, Label, and Milestone query values when switching workspaces or views; update the shared-filter story to cover ignored legacy values.
+- [X] T026 Update the current specification, data model, contract, plan, and quickstart to document the reduced filter set and workspace scope behavior.
+- [X] T027 Run the required workspace typecheck and production build, then review the final diff.
 
 ---
 

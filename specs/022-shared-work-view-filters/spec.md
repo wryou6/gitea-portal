@@ -17,6 +17,10 @@
 - Q: 頂部全域搜尋應搜尋目前工作區，還是始終搜尋所有可讀 Repository？ → A: 始終搜尋所有可讀 Repository，與目前工作區選擇無關。
 - Q: 使用者從頂部搜尋送出關鍵字後，應在哪裡查看結果？ → A: 在頂部搜尋框下方顯示搜尋結果選單；選取結果後開啟該 Issue 詳情。
 
+### Session 2026-10-02
+
+- 決策：暫時移除 Repository、Label、Milestone 三個進階篩選。Repository 範圍統一由頂部工作區選擇器決定；切換工作區時不沿用舊的 repository、label、milestone 查詢條件。舊網址中的這三個條件不再套用，更新篩選時會清除。
+
 ## User Scenarios & Testing
 
 ### User Story 1 - 在各工作檢視使用相同篩選 (Priority: P1)
@@ -36,20 +40,20 @@
 
 ---
 
-### User Story 2 - 展開進階篩選 (Priority: P2)
+### User Story 2 - 透過工作區選擇 Repository 範圍 (Priority: P2)
 
-工程師可將低頻條件收合，以保留主要內容空間；需要時展開進階篩選，設定 Repository、Label 與 Milestone。
+工程師使用頂部工作區選擇器決定目前檢視的 Repository 範圍。工作檢視暫不提供 Repository、Label、Milestone 進階篩選。
 
-**Why this priority**: 常用篩選應容易取得，同時避免低頻欄位長期占據工作檢視的首屏高度。
+**Why this priority**: All repos 與單一 Repository 的範圍都由同一個工作區控制，避免重複條件互相衝突。
 
-**Independent Test**: 檢查進階條件預設為收合；展開後設定條件、切換檢視並收合，再確認條件仍生效且可移除。
+**Independent Test**: 從 All repos 切換至 Repository 工作區及切回，確認結果範圍隨工作區變更，且舊網址條件不會限制新工作區。
 
 **Acceptance Scenarios**:
 
-1. **Given** 使用者開啟工作檢視，**When** 篩選區初次顯示，**Then** 進階條件為收合狀態，並顯示已套用的進階條件數量。
-2. **Given** 使用者位於 All repos 工作區並展開進階篩選，**When** 編輯條件，**Then** 可設定 Repository、Label 與 Milestone。
-3. **Given** 使用者位於單一 Repository 工作區並展開進階篩選，**When** 查看範圍條件，**Then** Repository 由目前工作區決定，不提供重複選擇。
-4. **Given** 使用者設定進階條件後收合篩選區，**When** 查看結果或切換檢視，**Then** 條件持續生效並能辨認目前啟用的篩選。
+1. **Given** 使用者位於 All repos 工作區，**When** 從頂部選擇一個 Repository，**Then** 進入該 Repository 的目前檢視並只載入該 Repository 的結果。
+2. **Given** 使用者切換工作區，**When** 來源網址含舊的 repository、label 或 milestone 條件，**Then** 目標工作區不受這些條件限制。
+3. **Given** 使用者位於 Repository 工作區，**When** Issue List 發出讀取請求，**Then** Repository 範圍仍由目前路由提供給 API。
+4. **Given** 使用者切換至 All repos，**When** 檢視結果，**Then** 顯示所有可讀 Repository 中符合其他共用條件的結果。
 
 ---
 
@@ -104,9 +108,9 @@
 - **FR-017**: 每筆全域搜尋結果 MUST 顯示足以辨認 Issue 與 Repository 的資訊；選取結果 MUST 開啟該 Issue 詳情，且詳情返回 MUST 回到發起搜尋的頁面。
 - **FR-018**: 全域搜尋 MUST 清楚區分無符合結果與讀取失敗，並提供相應狀態提示。
 - **FR-019**: Issues List、Kanban 與 Gantt MUST 優先提供桌機表格與圖表的可用高度，不顯示獨立的頁面主標題列、eyebrow 小標或描述副標；compact 頁首的下方 margin MUST 為 0。檢視與 Repository 身分由側邊導覽及工作區選擇器識別；供輔助工具讀取的頁面標題 MUST 保留，All repos 的標題與目前檢視及左側導覽名稱一致，Repository 工作區使用 Repository 名稱。
-- **FR-004**: Repository、Label 與 Milestone MUST 位於預設收合的進階篩選區；All repos 可選 Repository，單一 Repository 工作區以目前 Repository 為準。
+- **FR-004**: 工作檢視 MUST NOT 顯示 Repository、Label、Milestone 進階篩選；Repository 結果範圍 MUST 由頂部工作區選擇器決定。切換工作區不得沿用舊的 repository、label、milestone 查詢條件。
 - **FR-005**: 使用者 MUST 能辨認及個別移除已套用的篩選條件，並能清除所有條件。
-- **FR-006**: 使用者 MUST 能辨認已收合進階篩選內仍生效的條件數量；收合或展開不得清除條件。
+- **FR-006**: 舊網址中的 repository、label、milestone 查詢條件 MUST 不得套用至工作檢視，並 MUST 在下一次篩選或工作區導覽時清除。
 - **FR-007**: 共用條件 MUST 套用於目前工作區的 List、Kanban 與 Gantt，且切換檢視時保持一致。
 - **FR-008**: 每次篩選條件變更 MUST 立即更新可分享網址；重新載入、返回、前進及直接開啟網址 MUST 還原有效的工作區、檢視與篩選條件。
 - **FR-009**: 無效或不支援的網址篩選值 MUST 不得使工作檢視失效；Portal MUST 忽略無效值並保留其他有效條件。
@@ -121,8 +125,8 @@
 
 ### Key Entities
 
-- **共用篩選狀態**：目前工作區套用於 List、Kanban 與 Gantt 的優先級、類型、Portal Status、負責人及進階條件。
-- **進階篩選條件**：Repository、Label、Milestone；Repository 選項只適用於 All repos 工作區。
+- **共用篩選狀態**：目前工作區套用於 List、Kanban 與 Gantt 的優先級、類型、Portal Status 及負責人。
+- **工作區 Repository 範圍**：由頂部工作區選擇器和目前路由決定；不作為共用篩選條件。
 - **工作檢視網址狀態**：可還原工作區、List/Kanban/Gantt 檢視及有效篩選條件的分享狀態。
 
 ## Success Criteria

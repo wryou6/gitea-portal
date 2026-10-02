@@ -11,7 +11,7 @@ import { LoadingState } from "../../components/feedback/LoadingState";
 import { EmptyState } from "../../components/feedback/EmptyState";
 import { ErrorNotice } from "../../components/feedback/ErrorNotice";
 import { Table } from "../../components/ui/Table";
-import { api, type Issue, type IssueSortField, type SortDirection, type UserFacingError, type Repository } from "../../lib/api";
+import { api, type Issue, type IssueSortField, type SortDirection, type UserFacingError } from "../../lib/api";
 import { IssueViewOptionsDialog } from "./IssueViewOptionsDialog";
 import {
   ISSUE_VIEW_FIELDS,
@@ -95,7 +95,6 @@ export function IssueListPage({
   const [preference, setPreference] = useState<IssueViewPreference>(
     () => demoViewPreference ?? readIssueViewPreference(login),
   );
-  const [repositories, setRepositories] = useState<Repository[]>([]);
   const initialFilters = { ...defaultWorkViewFilters, ...filtersFromUrl() };
   if (repository)
     initialFilters.repository = `${repository.owner}/${repository.name}`;
@@ -156,15 +155,6 @@ export function IssueListPage({
   const displayedError: UserFacingError | undefined = demoIssues && demoState === "error"
     ? t("issueListLoadError")
     : error;
-
-  useEffect(() => {
-    if (repository || demoIssues) return;
-    let cancelled = false;
-    void api<Repository[]>("/api/repositories").then((items) => {
-      if (!cancelled) setRepositories(items);
-    }).catch(() => undefined);
-    return () => { cancelled = true; };
-  }, [repository?.owner, repository?.name, demoIssues]);
 
   useEffect(() => {
     if (demoIssues) return;
@@ -290,7 +280,6 @@ export function IssueListPage({
       <WorkViewFilterBar
         filters={demoIssues ? demoFilters : filters}
         repositoryFixed={Boolean(repository)}
-        repositories={repositories}
         assignees={[...new Set((demoIssues ?? loadedIssues).flatMap((issue) => issue.assignees))].sort((a, b) => a.localeCompare(b))}
         currentUserLogin={login}
         recentDoneOnly={recentDoneOnly}

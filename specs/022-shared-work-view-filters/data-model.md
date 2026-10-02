@@ -12,11 +12,9 @@ Represents shared filters for the current workspace's List, Kanban, and Gantt vi
 | `issueType` | `all`, `bug`, `feature`, `task` | Match the normalized Issue Type. |
 | `state` | `all`, `todo`, `in-progress`, `done` | Match Portal Status; `all` also retains anomalous Status Issues. |
 | `assignee` | `all`, `unassigned`, or a Gitea login | A named login matches any member of the Issue assignee list. |
-| `repository` | `all` or `owner/repository` | Select a repository only in All repos; single-Repository workspaces are fixed to their route. |
-| `label` | Empty or exact Label name | Match an Issue carrying that Label. |
-| `milestone` | Empty or exact Milestone title | Match an Issue assigned to that Milestone. |
+| `repository` | `all` or `owner/repository` | Internal Issue List API scope for a single-Repository route; not a selectable shared filter. |
 
-`all` and empty optional values are defaults and are omitted from the URL. Values outside the enumerated domain are ignored when restoring a URL. Filter composition is AND across populated fields. Existing Status, Type, Priority, and Label interpretation remains authoritative; this feature does not repair missing or conflicting Issue metadata.
+Repository scope is selected through the top workspace selector and route. Legacy `repository`, `label`, and `milestone` shared-view query values are ignored and cleared when filters are updated. Remaining common filter values compose with AND. Existing Status, Type, Priority, and Label interpretation remains authoritative; this feature does not repair missing or conflicting Issue metadata.
 
 ## GlobalIssueSearch
 

@@ -121,7 +121,6 @@ export function KanbanBoard({
         (column) => column.stateKey === selectedColumnKey,
       ) ?? [])
     : (view?.columns ?? []);
-  const repositories = currentView && "repositories" in currentView ? currentView.repositories : currentView ? [currentView.repository] : [];
   const allCards = view?.columns.flatMap((column) => column.cards) ?? [];
   const assignees = [...new Set((viewMode === "gantt" ? ganttView?.issues ?? [] : allCards).flatMap((issue) => issue.assignees))].sort((a, b) => a.localeCompare(b));
   const filteredColumns = useMemo(() => visibleColumns.map((column) => ({
@@ -143,7 +142,7 @@ export function KanbanBoard({
     setPendingTransition({ issue, targetState: stateKey });
   };
 
-  const filterControls = <WorkViewFilterBar filters={filters} onChange={updateFilters} repositories={repositories} assignees={assignees} currentUserLogin={login} repositoryFixed={Boolean(repository)} recentDoneOnly={recentDoneOnly} onRecentDoneOnlyChange={setRecentDoneOnly} />;
+  const filterControls = <WorkViewFilterBar filters={filters} onChange={updateFilters} assignees={assignees} currentUserLogin={login} repositoryFixed={Boolean(repository)} recentDoneOnly={recentDoneOnly} onRecentDoneOnlyChange={setRecentDoneOnly} />;
 
   const submitTransition = async (
     actionKey: string,

@@ -70,7 +70,7 @@ export function WorkspaceSelector({
       const sourceIsWorkView = sourceRoute.type === "issues" || sourceRoute.type === "all-repositories-view" || sourceRoute.type === "repository-view";
       const target = new URL(path, window.location.origin);
       const params = new URLSearchParams(sourceSearch);
-      const keys = ["priority", "issueType", "state", "assignee", "repository", "label", "milestone", "gantt_start", "gantt_scale"];
+      const keys = ["priority", "issueType", "state", "assignee", "gantt_start", "gantt_scale"];
       if (sourceIsWorkView) {
         for (const key of keys) {
           const currentValue = params.get(key);

@@ -233,7 +233,7 @@ export function AppShell({
   const preservedViewParams = new URLSearchParams();
   const currentParams = new URLSearchParams(currentViewSearch);
   if (!isWorkViewContext) preservedViewParams.set("assignee", "me");
-  for (const key of ["priority", "issueType", "state", "assignee", "repository", "label", "milestone", "gantt_start", "gantt_scale"]) {
+  for (const key of ["priority", "issueType", "state", "assignee", "gantt_start", "gantt_scale"]) {
     const value = currentParams.get(key);
     if (value) preservedViewParams.set(key, value);
   }
@@ -342,7 +342,7 @@ export function AppShell({
                   const target = new URL(item.href, window.location.origin);
                   const currentView = returnUrl ? returnUrl.search : window.location.search;
                   const current = new URLSearchParams(currentView);
-                  for (const key of ["priority", "issueType", "state", "assignee", "repository", "label", "milestone", "gantt_start", "gantt_scale"]) {
+                  for (const key of ["priority", "issueType", "state", "assignee", "gantt_start", "gantt_scale"]) {
                     const value = current.get(key);
                     if (value) target.searchParams.set(key, value);
                     else if (isWorkViewContext) target.searchParams.delete(key);
