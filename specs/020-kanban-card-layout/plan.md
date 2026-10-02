@@ -6,7 +6,7 @@
 
 ## Summary
 
-調整既有 Kanban 呈現：桌面欄位按目前可見欄數平分可用寬度；卡片以三行主要資訊顯示 key/Type/Priority、標題與小字下一步、負責人與 Due date。長標題以省略號截短。卡片不顯示狀態操作按鈕；看板拖曳保留既有狀態確認流程，鍵盤使用者可從標題連結進入 Issue detail 使用狀態動作。欄內由既有 API service 對已讀取的 Issue 排序；不改 API contract 或 Gitea 寫入流程。
+調整既有 Kanban 呈現：桌面欄位按目前可見欄數平分可用寬度；卡片以三行主要資訊顯示 key/Type/Priority、獨立標題列，以及左側負責人、右側 Due date 與小字下一步的 footer。負責人不標示目前／最後角色；長標題以省略號截短。卡片不顯示狀態操作按鈕；看板拖曳保留既有狀態確認流程，鍵盤使用者可從標題連結進入 Issue detail 使用狀態動作。欄內由既有 API service 對已讀取的 Issue 排序；不改 API contract 或 Gitea 寫入流程。
 
 ## Technical Context
 

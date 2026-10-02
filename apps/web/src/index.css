@@ -6,6 +6,12 @@
 .user-avatar img { width: 100%; height: 100%; object-fit: cover; }
 .user-avatar svg { width: 75%; height: 75%; }
 .user-identity-name { min-width: 0; overflow-wrap: anywhere; white-space: normal; }
+.assignee-identity-group { display: inline-flex; align-items: center; flex-wrap: wrap; gap: 0.25rem; min-width: 0; max-width: 100%; vertical-align: middle; border-radius: 0.25rem; }
+.assignee-identity-group:focus-visible { outline: 2px solid var(--ring); outline-offset: 2px; }
+.assignee-identity-primary { display: inline-flex; align-items: center; gap: 0.375rem; min-width: 0; max-width: 100%; }
+.assignee-identity-primary .user-identity-name { max-width: 16rem; }
+.assignee-extra-avatar { display: inline-flex; flex: 0 0 16px; width: 16px; height: 16px; }
+.assignee-overflow { display: inline-flex; align-items: center; justify-content: center; min-width: 1.25rem; height: 1rem; border: 1px solid var(--border); border-radius: 999px; background: var(--muted); color: var(--muted-foreground); padding-inline: 0.2rem; font-size: 0.65rem; font-weight: 650; line-height: 1; }
 .user-identity-tooltip { position: fixed; z-index: 1000; background: var(--card); color: var(--card-foreground); border: 1px solid var(--border); border-radius: 0.375rem; box-shadow: 0 3px 12px #0002; padding: 0.5rem; font-size: 0.8125rem; overflow-wrap: anywhere; pointer-events: none; }
 .account-menu-panel > .user-identity { margin: 0.5rem; }
 
@@ -2267,10 +2273,8 @@ button.danger {
   box-shadow: 0 7px 18px color-mix(in oklch, var(--foreground) 8%, transparent);
 }
 .kanban-card-title-row {
-  display: flex;
+  display: block;
   min-width: 0;
-  align-items: baseline;
-  gap: 0.5rem;
 }
 .kanban-card-title {
   display: block;
@@ -2284,13 +2288,12 @@ button.danger {
 .kanban-next-action {
   flex: 0 1 auto;
   min-width: 0;
-  max-width: 45%;
-  overflow: hidden;
+  max-width: 100%;
   color: var(--foreground) !important;
   font-size: 0.75rem;
   font-weight: 650;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  text-align: end;
+  overflow-wrap: anywhere;
 }
 .kanban-card-key {
   flex: 0 1 auto;
@@ -2311,13 +2314,6 @@ button.danger {
   flex-wrap: wrap;
   gap: 0.35rem 0.5rem;
 }
-.kanban-card-assignee-due {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) max-content;
-  min-width: 0;
-  align-items: center;
-  column-gap: 0.75rem;
-}
 .kanban-card-footer {
   display: flex;
   min-width: 0;
@@ -2327,8 +2323,19 @@ button.danger {
   gap: 0.4rem 0.65rem;
 }
 .kanban-card-assignee {
+  flex: 1 1 auto;
   min-width: 0;
   overflow-wrap: anywhere;
+}
+.kanban-card-footer-meta {
+  display: flex;
+  flex: 0 1 auto;
+  min-width: 0;
+  align-items: center;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 0.4rem 0.75rem;
+  margin-inline-start: auto;
 }
 .kanban-card-due {
   min-width: 0;

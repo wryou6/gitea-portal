@@ -5,7 +5,7 @@ import { EmptyState } from "../../components/feedback/EmptyState";
 import { ErrorNotice } from "../../components/feedback/ErrorNotice";
 import { LoadingState } from "../../components/feedback/LoadingState";
 import { GanttBoard } from "./GanttBoard";
-import { demoIssue } from "../../stories/fixtures";
+import { demoIssue, demoIssueWithMultipleAssignees } from "../../stories/fixtures";
 import { DEFAULT_GANTT_COLUMN_ORDER, GANTT_FIXED_FIELDS } from "./gantt-view-preference";
 import type { Issue, IssueSortField } from "../../lib/api";
 import { useTranslation } from "react-i18next";
@@ -81,6 +81,7 @@ function GanttScreen({
   startDate = addCalendarDays(localCalendarDate(), -7),
   viewOptionsOpen = false,
   longTitle = false,
+  multipleAssignees = false,
   fillViewport = false,
   longList = false,
   includeUnscheduled = true,
@@ -95,6 +96,7 @@ function GanttScreen({
   startDate?: string;
   viewOptionsOpen?: boolean;
   longTitle?: boolean;
+  multipleAssignees?: boolean;
   fillViewport?: boolean;
   longList?: boolean;
   includeUnscheduled?: boolean;
@@ -106,11 +108,14 @@ function GanttScreen({
   keyboardDraggedField?: IssueSortField;
 }) {
   const { t: tCommon } = useTranslation("common");
+  const sourceIssues = multipleAssignees
+    ? baselineIssues.map((issue, index) => index === 0 ? demoIssueWithMultipleAssignees : issue)
+    : baselineIssues;
   const issues = longTitle
-    ? baselineIssues.map((issue, index) => index === 0
+    ? sourceIssues.map((issue, index) => index === 0
       ? { ...issue, title: "Improve cross repository issue filtering and timeline navigation with a deliberately long title that should stay on one line and end with a clean ellipsis" }
       : issue)
-    : baselineIssues;
+    : sourceIssues;
   const displayedIssues = longList
     ? Array.from({ length: 24 }, (_, index) => {
       const issue = issues[index % issues.length]!;
@@ -230,6 +235,7 @@ export const SavedColumnOrder: Story = {
 export const KeyboardReordering: Story = { args: { keyboardDraggedField: "assignee" } };
 export const ViewOptionsOpen: Story = { args: { viewOptionsOpen: true } };
 export const LongTitle: Story = { args: { longTitle: true } };
+export const MultipleAssignees: Story = { args: { multipleAssignees: true } };
 export const NarrowViewOptionsOpen: Story = {
   args: { viewOptionsOpen: true },
   parameters: { viewport: { defaultViewport: "mobile1" } },

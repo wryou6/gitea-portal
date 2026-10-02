@@ -2,7 +2,12 @@ import type { ComponentProps } from "react";
 import type { Meta, StoryObj } from "@storybook/react";
 import { useTranslation } from "react-i18next";
 import { GanttIssueRow } from "./GanttIssueRow";
-import { demoIssue } from "../../stories/fixtures";
+import {
+  demoCompletedIssueWithMultipleAssignees,
+  demoIssue,
+  demoIssueWithMultipleAssignees,
+  demoIssueWithThreeAssignees,
+} from "../../stories/fixtures";
 import { buildTimelineCells } from "./gantt-timeline";
 import { GANTT_FIXED_FIELDS } from "./gantt-view-preference";
 
@@ -39,6 +44,18 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Scheduled: Story = {};
+
+export const MultipleAssignees: Story = {
+  args: { issue: demoIssueWithThreeAssignees },
+};
+
+export const AssigneeOverflow: Story = {
+  args: { issue: demoIssueWithMultipleAssignees },
+};
+
+export const CompletedWithMultipleAssignees: Story = {
+  args: { issue: demoCompletedIssueWithMultipleAssignees },
+};
 
 export const Unscheduled: Story = {
   args: {

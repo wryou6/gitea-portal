@@ -11,6 +11,8 @@ import type { GanttTimelineCell } from "./gantt-timeline";
 import { GANTT_SCALE_WIDTH } from "./GanttCalendarHeader";
 import type { GanttScale } from "./gantt-timeline";
 import { UserIdentity } from "../../components/ui/UserIdentity";
+import { AssigneeIdentityGroup } from "../../components/ui/AssigneeIdentityGroup";
+import { assigneeLoginsForDisplay } from "../../lib/assignee-display";
 import { profileFor } from "../../lib/user-profiles";
 
 export type GanttIssueRowVariant = "scheduled" | "unscheduled" | "anomaly";
@@ -43,6 +45,9 @@ export function GanttIssueRow({
 }) {
   const { t } = useTranslation("work-views");
   const { t: tIssues } = useTranslation("issues");
+  const assigneeUsers = assigneeLoginsForDisplay(issue).map((login) =>
+    profileFor(issue.userProfiles, login),
+  );
   const issueHref = href ?? (returnTo
     ? routePaths.issueDetailFrom(issue.owner, issue.name, issue.number, returnTo)
     : routePaths.issueDetail(issue.owner, issue.name, issue.number));
@@ -99,7 +104,7 @@ export function GanttIssueRow({
       </div>
     ),
     repository: <span className="gantt-repository-value" title={`${issue.owner}/${issue.name}`}>{issue.owner}/{issue.name}</span>,
-    assignee: issue.assignee ? <UserIdentity user={profileFor(issue.userProfiles, issue.assignee)} /> : t("noAssignee"),
+    assignee: <AssigneeIdentityGroup users={assigneeUsers} emptyLabel={t("noAssignee")} />,
     status: <IssueStatusBadge status={issue.status} />,
     priority: <PriorityBadge priority={issue.priority} labels={issue.labels} />,
     createdAt: <time dateTime={issue.createdAt}>{formatDateTime(issue.createdAt)}</time>,

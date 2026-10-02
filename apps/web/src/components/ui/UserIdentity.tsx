@@ -1,11 +1,8 @@
 import { useId, useState, type CSSProperties } from "react";
 import { createPortal } from "react-dom";
 import { useTranslation } from "react-i18next";
-import {
-  userAvatarUrl,
-  userDisplayName,
-  type UserProfile,
-} from "../../lib/user-profiles";
+import { userDisplayName, type UserProfile } from "../../lib/user-profiles";
+import { UserAvatar } from "./UserAvatar";
 
 export function UserIdentity({
   user,
@@ -19,8 +16,6 @@ export function UserIdentity({
   const { t } = useTranslation("common");
   const tooltipId = useId();
   const name = userDisplayName(user);
-  const avatarUrl = userAvatarUrl(user.avatarUrl);
-  const [failedUrl, setFailedUrl] = useState<string>();
   const [tooltip, setTooltip] = useState<CSSProperties>();
   const description = t("userIdentity", { name, login: user.login });
 
@@ -53,31 +48,7 @@ export function UserIdentity({
         if (event.key === "Escape") setTooltip(undefined);
       }}
     >
-      <span className="user-avatar" aria-hidden="true">
-        {avatarUrl && failedUrl !== avatarUrl ? (
-          <img
-            src={avatarUrl}
-            alt=""
-            width={size}
-            height={size}
-            loading="lazy"
-            decoding="async"
-            draggable={false}
-            referrerPolicy="no-referrer"
-            onError={() => setFailedUrl(avatarUrl)}
-          />
-        ) : (
-          <svg
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="1.7"
-          >
-            <circle cx="12" cy="8" r="3.5" />
-            <path d="M5 21v-2a7 7 0 0 1 14 0v2" />
-          </svg>
-        )}
-      </span>
+      <UserAvatar user={user} size={size} />
       <span className="user-identity-name">{name}</span>
       {tooltip &&
         createPortal(

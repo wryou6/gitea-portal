@@ -10,6 +10,8 @@ import { scheduleAnomalyTranslationKey } from "./ScheduleDates";
 import { isCalendarDate } from "@gitea-portal/domain";
 import { DEFAULT_ISSUE_COLUMN_ORDER, ISSUE_VIEW_FIELDS } from "./issue-view-preference";
 import { UserIdentity } from "../../components/ui/UserIdentity";
+import { AssigneeIdentityGroup } from "../../components/ui/AssigneeIdentityGroup";
+import { assigneeLoginsForDisplay } from "../../lib/assignee-display";
 import { profileFor } from "../../lib/user-profiles";
 
 function localToday(): string {
@@ -33,6 +35,9 @@ export function IssueRow({
     ? routePaths.issueDetailFrom(issue.owner, issue.name, issue.number, returnTo)
     : routePaths.issueDetail(issue.owner, issue.name, issue.number);
   const hasDateAnomaly = issue.scheduleStatus === "invalid";
+  const assigneeUsers = assigneeLoginsForDisplay(issue).map((login) =>
+    profileFor(issue.userProfiles, login),
+  );
   const dueDateInvalid =
     issue.scheduleAnomaly === "invalid_due_date" ||
     issue.scheduleAnomaly === "date_range_reversed";
@@ -62,7 +67,7 @@ export function IssueRow({
         )}
       </>
     ),
-    assignee: issue.assignee ? <UserIdentity user={profileFor(issue.userProfiles, issue.assignee)} /> : t("notAssigned"),
+    assignee: <AssigneeIdentityGroup users={assigneeUsers} emptyLabel={t("notAssigned")} />,
     status: <IssueStatusBadge status={issue.status} />,
     priority: <PriorityBadge priority={issue.priority} labels={issue.labels} />,
     createdAt: <time dateTime={issue.createdAt}>{formatDateTime(issue.createdAt)}</time>,

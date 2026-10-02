@@ -8,7 +8,8 @@ import {
 } from "../issues/ScheduleDates";
 import { useTranslation } from "react-i18next";
 import { statusNextActionTranslationKey } from "../../i18n/status";
-import { UserIdentity } from "../../components/ui/UserIdentity";
+import { AssigneeIdentityGroup } from "../../components/ui/AssigneeIdentityGroup";
+import { assigneeLoginsForDisplay } from "../../lib/assignee-display";
 import { profileFor } from "../../lib/user-profiles";
 
 export function KanbanCard({
@@ -25,8 +26,9 @@ export function KanbanCard({
   const { t } = useTranslation("work-views");
   const { t: tIssues } = useTranslation("issues");
   const isDone = issue.status === "done";
-  const assigneeLabel = isDone ? t("lastAssignee") : t("currentAssignee");
-  const assignee = isDone ? issue.assignees[0] : issue.currentOwner;
+  const assigneeUsers = assigneeLoginsForDisplay(issue).map((login) =>
+    profileFor(issue.userProfiles, login),
+  );
   return (
     <article
       className="kanban-card"
@@ -61,19 +63,15 @@ export function KanbanCard({
         >
           {issue.title}
         </a>
-        <small className="kanban-next-action">
-          {t("nextAction", {
-            action: tIssues(statusNextActionTranslationKey(issue.nextActionKey), {
-              ns: "issues",
-            }),
-          })}
-        </small>
       </div>
       <div className="kanban-card-footer">
-        <div className="kanban-card-assignee-due">
-          <small className="kanban-card-assignee">
-            {assigneeLabel}: {assignee ? <UserIdentity user={profileFor(issue.userProfiles, assignee)} /> : (isDone ? t("noLastAssignee") : t("noAssignee"))}
-          </small>
+        <small className="kanban-card-assignee">
+          <AssigneeIdentityGroup
+            users={assigneeUsers}
+            emptyLabel={isDone ? t("noLastAssignee") : t("noAssignee")}
+          />
+        </small>
+        <div className="kanban-card-footer-meta">
           <ScheduleDates
             startDate={issue.startDate}
             dueDate={issue.dueDate}
@@ -81,6 +79,14 @@ export function KanbanCard({
             className="schedule-dates--compact kanban-card-due"
             dueOnly
           />
+          <small className="kanban-next-action">
+            {t("nextAction", {
+              action: tIssues(
+                statusNextActionTranslationKey(issue.nextActionKey),
+                { ns: "issues" },
+              ),
+            })}
+          </small>
         </div>
       </div>
       {issue.scheduleStatus === "invalid" && (

@@ -13,7 +13,7 @@ pnpm.cmd --filter @gitea-portal/web build-storybook
 ## Storybook design review
 
 1. Start `pnpm.cmd --filter @gitea-portal/web storybook` and open the Work views/Kanban card and Work views/Kanban stories.
-2. Inspect the three main card rows in zh-TW, English, and Japanese: Priority then Type on the left and key on the right; title followed by smaller next action; assignee/Due date. Confirm Done cards show the last assignee, open cards show the current assignee, and long titles truncate without overlap.
+2. Inspect the three main card rows in zh-TW, English, and Japanese: Priority then Type on the left and key on the right; title alone on row two; assignee on the left of the footer, with Due date and smaller right-aligned next action on the right. Confirm assignees have no current/last role label, Done cards use the first retained assignee, and long titles truncate without overlap.
 3. Inspect missing Type/Priority, unassigned and unset Due date, long title/key, and repair/schedule anomaly. Confirm generic Labels not used by card fields are hidden.
 4. Confirm cards have no Status action button. Keyboard-focus the issue title and verify it links to Issue detail. Anomaly cards must not be draggable. Storybook uses fictional callbacks and must not issue live Gitea requests.
 5. Inspect three Status columns and four columns including Anomaly at desktop and tablet widths; confirm equal widths and no clipped cards. At the narrow breakpoint, confirm the existing lane picker and single-column view remain usable.
@@ -66,6 +66,13 @@ pnpm.cmd --filter @gitea-portal/web build-storybook
 - Badge-order follow-up: ordered Priority before Type to surface urgency first.
 - Final first-row review: confirmed Priority then Type at the left and the Repository/Issue key at the right in the 1440px board screenshot; at 375px the long key wraps without overlap. Screenshots: `output/playwright/kanban-priority-before-type-desktop.png` and `output/playwright/kanban-priority-before-type-mobile.png`. `pnpm.cmd typecheck`, `pnpm.cmd build`, and `pnpm.cmd --filter @gitea-portal/web build-storybook` passed; Storybook emitted its existing `eval` and large-chunk warnings.
 - Card-order follow-up: Todo/In Progress/Anomaly now sort by Priority, nearest usable Due date, then oldest `updatedAt`; Done sorts by newest `updatedAt`. Missing Priority/Due date sorts after usable values, and Repository/name/number break ties. `pnpm.cmd typecheck` and `pnpm.cmd build` passed.
+
+## Footer layout revision — 2026-10-02
+
+- Removed the current/last role label from assignee names. The second row now gives the Issue title full width; the footer places the assignee on the left and Due date followed by the right-aligned next action on the right.
+- Added `LongFooterMetadata` to review long assignee and next-action text wrapping in narrow columns. Validation results are recorded after the code checks below.
+- Storybook browser review at 375px confirmed the long assignee wraps onto its own line and the Due date/next-action group stays right-aligned without overlap in zh-TW, English, and Japanese. At 1440px, the assignee remains left while Due date and next action align at the right. Browser console had no errors or warnings (React DevTools info only).
+- `pnpm.cmd typecheck`, `pnpm.cmd build`, and `pnpm.cmd --filter @gitea-portal/web build-storybook` passed after the revision. Storybook emitted its existing `eval` and large-chunk warnings; no build errors. `git diff --check` passed.
 
 ## Signed-in local Portal scenario
 

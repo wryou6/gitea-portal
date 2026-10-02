@@ -35,3 +35,27 @@ export const demoIssue: Issue = {
   nextAction: "開始實作",
   nextActionKey: "implement",
 };
+
+export const demoIssueWithMultipleAssignees: Issue = {
+  ...demoIssue,
+  assignees: ["engineer", "reviewer", "qa", "ops", "product"],
+  userProfiles: {
+    ...demoIssue.userProfiles,
+    reviewer: { login: "reviewer", fullName: "Alex Lin" },
+    qa: { login: "qa", fullName: "Morgan Wu" },
+    ops: { login: "ops", fullName: "Taylor Chen" },
+    product: { login: "product", fullName: "Jordan Lee" },
+  },
+};
+
+export const demoIssueWithThreeAssignees: Issue = {
+  ...demoIssueWithMultipleAssignees,
+  assignees: demoIssueWithMultipleAssignees.assignees.slice(0, 3),
+};
+
+export const demoCompletedIssueWithMultipleAssignees: Issue = {
+  ...demoIssueWithMultipleAssignees,
+  state: "closed",
+  status: "done",
+  currentOwner: null,
+};

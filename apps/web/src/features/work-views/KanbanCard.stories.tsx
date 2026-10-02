@@ -1,6 +1,11 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { KanbanCard } from "./KanbanCard";
-import { demoIssue } from "../../stories/fixtures";
+import {
+  demoCompletedIssueWithMultipleAssignees,
+  demoIssue,
+  demoIssueWithMultipleAssignees,
+  demoIssueWithThreeAssignees,
+} from "../../stories/fixtures";
 
 const card = { ...demoIssue, visibleLabels: demoIssue.labels };
 const meta = {
@@ -13,6 +18,27 @@ export const Default: Story = {
   args: {
     issue: card,
     onDragStart: () => undefined,
+  },
+};
+
+export const MultipleAssignees: Story = {
+  args: {
+    ...Default.args,
+    issue: { ...demoIssueWithThreeAssignees, visibleLabels: demoIssueWithThreeAssignees.labels },
+  },
+};
+
+export const AssigneeOverflow: Story = {
+  args: {
+    ...Default.args,
+    issue: { ...demoIssueWithMultipleAssignees, visibleLabels: demoIssueWithMultipleAssignees.labels },
+  },
+};
+
+export const CompletedWithMultipleAssignees: Story = {
+  args: {
+    ...Default.args,
+    issue: { ...demoCompletedIssueWithMultipleAssignees, visibleLabels: demoCompletedIssueWithMultipleAssignees.labels },
   },
 };
 
@@ -148,6 +174,18 @@ export const LongMetadata: Story = {
         "確認跨 Repository 狀態轉換時長標題、日文負責人與下一步文字仍能完整換行顯示",
       currentOwner: "長い担当者名を持つエンジニア",
       nextAction: "先確認影響範圍，再更新各 Repository 的相依套件",
+    },
+  },
+};
+
+export const LongFooterMetadata: Story = {
+  args: {
+    ...Default.args,
+    issue: {
+      ...card,
+      currentOwner: "long-assignee-name-for-a-narrow-kanban-column",
+      dueDate: "2026-10-14",
+      nextActionKey: "internal-follow-up",
     },
   },
 };

@@ -1,6 +1,11 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { IssueRow } from "./IssueRow";
-import { demoIssue } from "../../stories/fixtures";
+import {
+  demoCompletedIssueWithMultipleAssignees,
+  demoIssue,
+  demoIssueWithMultipleAssignees,
+  demoIssueWithThreeAssignees,
+} from "../../stories/fixtures";
 import { Table } from "../../components/ui/Table";
 
 const meta = {
@@ -11,6 +16,15 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 export const Default: Story = { args: { issue: demoIssue } };
+export const MultipleAssignees: Story = {
+  args: { issue: demoIssueWithThreeAssignees },
+};
+export const AssigneeOverflow: Story = {
+  args: { issue: demoIssueWithMultipleAssignees },
+};
+export const CompletedWithMultipleAssignees: Story = {
+  args: { issue: demoCompletedIssueWithMultipleAssignees },
+};
 export const NoOptionalMetadata: Story = {
   args: {
     issue: {

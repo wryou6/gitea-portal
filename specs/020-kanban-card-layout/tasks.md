@@ -26,7 +26,7 @@ No tasks.
 
 ## Phase 3: User Story 1 - 快速掃描 Issue 卡片 (Priority: P1) 🎯 MVP
 
-**Goal**: Arrange the card into three stable information rows: key/Type/Priority; title with a smaller inline next action; assignee/Due date. Preserve missing-value and anomaly presentation.
+**Goal**: Arrange the card into three stable information rows: key/Type/Priority; title alone; assignee on the left with Due date and smaller right-aligned next action on the right. Preserve missing-value and anomaly presentation.
 
 **Independent Test**: Inspect complete and incomplete card fixtures in Storybook and verify the prescribed order, localized missing values, hidden generic Labels, and schedule annotations.
 
@@ -81,6 +81,10 @@ No tasks.
 - [ ] T012 Validate the Issue detail keyboard action and Kanban drag transition separately with disposable local Issues; confirm both open the existing Status transition dialog and defer Gitea writes until confirmation using `specs/020-kanban-card-layout/quickstart.md`.
 
 ---
+
+## Card footer revision
+
+- [X] T022 [US1] Remove current/last assignee labels, give the title its own row, move the next action to the right side of the footer after Due date, add long-footer Storybook coverage, and update the card contract in `apps/web/src/features/work-views/KanbanCard.tsx`, `apps/web/src/features/work-views/KanbanCard.stories.tsx`, `apps/web/src/index.css`, and `specs/020-kanban-card-layout/`.
 
 ## Dependencies & Execution Order
 
