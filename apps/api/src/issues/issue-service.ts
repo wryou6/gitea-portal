@@ -11,10 +11,8 @@ import { GiteaClient } from "../gitea/client.js";
 export function mapIssue(issue: GiteaIssue): IssueSummary {
   const resolvedStatus = resolveIssueStatus(issue.state, issue.labels);
   const currentActionLabels = issue.labels.filter((label) => label.name.startsWith("status-action:"));
-  const legacyActionLabels = issue.labels.filter((label) => label.name.startsWith("workflow-action:"));
-  const actionLabels = currentActionLabels.length > 0 ? currentActionLabels : legacyActionLabels;
-  const actionKey = actionLabels.length === 1
-    ? actionLabels[0]?.name.slice(currentActionLabels.length > 0 ? "status-action:".length : "workflow-action:".length)
+  const actionKey = currentActionLabels.length === 1
+    ? currentActionLabels[0]?.name.slice("status-action:".length)
     : undefined;
   const action = STATUS_ACTIONS.find((candidate) => candidate.key === actionKey);
   const assignees = issue.assignees.map((assignee) => assignee.login);

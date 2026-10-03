@@ -72,9 +72,7 @@ function statusViewCard(card: StatusViewCard): StatusViewCard {
     visibleLabels: card.labels.filter(
       (label) =>
         !label.name.startsWith("status:") &&
-        !label.name.startsWith("status-action:") &&
-        !label.name.startsWith("workflow:") &&
-        !label.name.startsWith("workflow-action:"),
+        !label.name.startsWith("status-action:"),
     ),
   };
 }

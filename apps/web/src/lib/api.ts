@@ -120,32 +120,6 @@ export type IssueSearchResult = {
   sort: IssueSortField;
   direction: SortDirection;
 };
-export type StatusLabelMigrationReport = {
-  repositories: number;
-  issuesScanned: number;
-  migrated: number;
-  unchanged: number;
-  successfulIssues: Array<{
-    owner: string;
-    repository: string;
-    issueNumber: number;
-    outcome: "migrated" | "unchanged";
-  }>;
-  resolvedConflicts: Array<{
-    owner: string;
-    repository: string;
-    issueNumber: number;
-    removedLegacyLabels: string[];
-    retainedStatusLabels: string[];
-  }>;
-  failures: Array<{
-    owner: string;
-    repository: string;
-    issueNumber?: number;
-    reason: string;
-  }>;
-  verified: boolean;
-};
 export type RepositoryKanbanView = {
   repository: Repository;
   columns: Array<{

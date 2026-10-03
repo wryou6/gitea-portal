@@ -4,7 +4,9 @@ export const settings: Record<
   Locale,
   {
     title: string;
+    pageDescription: string;
     appearance: string;
+    appearanceDescription: string;
     currentAccount: string;
     appearanceMode: string;
     light: string;
@@ -15,33 +17,29 @@ export const settings: Record<
     systemDescription: string;
     currentMode: string;
     colorPalette: string;
+    colorPaletteDescription: string;
+    palettePreviewTitle: string;
     cobalt: string;
     cobaltDescription: string;
     juniper: string;
     juniperDescription: string;
     iris: string;
     irisDescription: string;
+    carbon: string;
+    carbonDescription: string;
+    ember: string;
+    emberDescription: string;
+    glacier: string;
+    glacierDescription: string;
     language: string;
     languageDescription: string;
-    statusMigrationTitle: string;
-    statusMigrationDescription: string;
-    statusMigrationStart: string;
-    statusMigrationRunning: string;
-    statusMigrationFailed: string;
-    statusMigrationVerified: string;
-    statusMigrationIncomplete: string;
-    statusMigrationCounts: string;
-    statusMigrationSuccesses: string;
-    statusMigrationIssueMigrated: string;
-    statusMigrationIssueUnchanged: string;
-    statusMigrationConflicts: string;
-    statusMigrationConflictValues: string;
-    statusMigrationFailures: string;
   }
 > = {
   "zh-TW": {
     title: "設定",
+    pageDescription: "個人化 Portal 的外觀與介面語言，變更會立即套用。",
     appearance: "外觀",
+    appearanceDescription: "選擇符合閱讀環境的顯示模式。",
     currentAccount: "目前帳號：{{login}}",
     appearanceMode: "外觀模式",
     light: "淺色",
@@ -52,35 +50,30 @@ export const settings: Record<
     systemDescription: "依作業系統設定",
     currentMode: "目前模式：{{mode}}",
     colorPalette: "配色",
+    colorPaletteDescription: "預覽並選擇 Portal 的強調色與狀態色。",
+    palettePreviewTitle: "範例 Issue",
     cobalt: "霧藍・Cobalt",
     cobaltDescription: "藍灰底色，清晰俐落",
     juniper: "鼠尾草・Juniper",
     juniperDescription: "暖白與礦物綠，柔和沉穩",
     iris: "鳶尾・Iris",
     irisDescription: "薰衣草灰與靛藍，鮮明聚焦",
+    carbon: "炭墨・Carbon",
+    carbonDescription: "石墨深色表面與明亮黃綠",
+    ember: "餘燼・Ember",
+    emberDescription: "墨梅底色與溫暖銅橘",
+    glacier: "冰川・Glacier",
+    glacierDescription: "藍黑層次與清透冰青",
     language: "介面語言",
     languageDescription: "選擇 Portal 的顯示語言",
-    statusMigrationTitle: "Issue Status 標籤遷移",
-    statusMigrationDescription:
-      "掃描目前 admin 可存取的所有 Repository，將舊 Status 標籤遷移為新的 Status 標籤並驗證完整範圍。發生中斷時可重新執行。",
-    statusMigrationStart: "開始或重試遷移",
-    statusMigrationRunning: "正在掃描與遷移…",
-    statusMigrationFailed: "Issue Status 標籤遷移失敗",
-    statusMigrationVerified: "完整範圍驗證成功，可移除舊標籤相容程式。",
-    statusMigrationIncomplete:
-      "尚未完成完整範圍驗證；請先處理下列項目，再重新執行。",
-    statusMigrationCounts:
-      "Repository：{{repositories}}；Issue：{{issues}}；已遷移：{{migrated}}；未變更：{{unchanged}}",
-    statusMigrationSuccesses: "成功 Issue（{{count}}）",
-    statusMigrationIssueMigrated: "已遷移",
-    statusMigrationIssueUnchanged: "已符合新格式，未變更",
-    statusMigrationConflicts: "依新標籤優先規則處理的衝突",
-    statusMigrationConflictValues: "移除 {{removed}}；保留 {{retained}}",
-    statusMigrationFailures: "失敗項目",
   },
   en: {
     title: "Settings",
+    pageDescription:
+      "Personalize the Portal's appearance and language. Changes apply immediately.",
     appearance: "Appearance",
+    appearanceDescription:
+      "Choose the display mode that suits your environment.",
     currentAccount: "Signed in as {{login}}",
     appearanceMode: "Appearance mode",
     light: "Light",
@@ -91,37 +84,30 @@ export const settings: Record<
     systemDescription: "Follow your operating system",
     currentMode: "Current mode: {{mode}}",
     colorPalette: "Color palette",
+    colorPaletteDescription:
+      "Preview and choose the Portal's accent and status colors.",
+    palettePreviewTitle: "Sample issue",
     cobalt: "Cobalt",
     cobaltDescription: "Blue gray surfaces, crisp contrast",
     juniper: "Juniper",
     juniperDescription: "Warm neutrals with mineral greens",
     iris: "Iris",
     irisDescription: "Lavender gray with focused indigo",
+    carbon: "Carbon",
+    carbonDescription: "Graphite surfaces with vivid citron accents",
+    ember: "Ember",
+    emberDescription: "Ink plum with warm copper accents",
+    glacier: "Glacier",
+    glacierDescription: "Blue-black layers with glacial cyan",
     language: "Interface language",
     languageDescription: "Choose the display language for Portal",
-    statusMigrationTitle: "Issue Status label migration",
-    statusMigrationDescription:
-      "Scan all repositories accessible to admin, migrate legacy Status labels to the current Status labels, and verify the full scope. Rerun after an interruption to resume.",
-    statusMigrationStart: "Start or retry migration",
-    statusMigrationRunning: "Scanning and migrating…",
-    statusMigrationFailed: "Issue Status label migration failed",
-    statusMigrationVerified:
-      "Full-scope verification succeeded. Legacy label compatibility can be removed.",
-    statusMigrationIncomplete:
-      "Full-scope verification is incomplete. Resolve the items below and rerun.",
-    statusMigrationCounts:
-      "Repositories: {{repositories}}; Issues: {{issues}}; migrated: {{migrated}}; unchanged: {{unchanged}}",
-    statusMigrationSuccesses: "Successful Issues ({{count}})",
-    statusMigrationIssueMigrated: "Migrated",
-    statusMigrationIssueUnchanged: "Already current; unchanged",
-    statusMigrationConflicts:
-      "Conflicts resolved using the new-label precedence rule",
-    statusMigrationConflictValues: "removed {{removed}}; retained {{retained}}",
-    statusMigrationFailures: "Failures",
   },
   ja: {
     title: "設定",
+    pageDescription:
+      "Portal の外観と言語をカスタマイズします。変更はすぐに反映されます。",
     appearance: "外観",
+    appearanceDescription: "利用環境に合わせて表示モードを選択します。",
     currentAccount: "現在のアカウント：{{login}}",
     appearanceMode: "外観モード",
     light: "ライト",
@@ -132,31 +118,22 @@ export const settings: Record<
     systemDescription: "OS の設定に従う",
     currentMode: "現在のモード：{{mode}}",
     colorPalette: "カラーパレット",
+    colorPaletteDescription:
+      "Portal のアクセントカラーとステータスカラーをプレビューして選択します。",
+    palettePreviewTitle: "Issue の例",
     cobalt: "コバルト",
     cobaltDescription: "青みのグレーで明快な配色",
     juniper: "ジュニパー",
     juniperDescription: "温かいニュートラルと鉱物系グリーン",
     iris: "アイリス",
     irisDescription: "ラベンダーグレーと印象的なインディゴ",
+    carbon: "カーボン",
+    carbonDescription: "グラファイトの深い面と鮮やかなシトロン",
+    ember: "エンバー",
+    emberDescription: "インクプラムに温かなカッパー",
+    glacier: "グレイシャー",
+    glacierDescription: "ブルーブラックと澄んだ氷河色のシアン",
     language: "表示言語",
     languageDescription: "Portal の表示言語を選択",
-    statusMigrationTitle: "Issue Status ラベルの移行",
-    statusMigrationDescription:
-      "admin がアクセスできるすべての Repository を走査し、旧 Status ラベルを新しい Status ラベルへ移行して全範囲を検証します。中断した場合は再実行できます。",
-    statusMigrationStart: "移行を開始または再試行",
-    statusMigrationRunning: "走査と移行中…",
-    statusMigrationFailed: "Issue Status ラベルの移行に失敗しました",
-    statusMigrationVerified:
-      "全範囲の検証に成功しました。旧ラベル互換コードを削除できます。",
-    statusMigrationIncomplete:
-      "全範囲の検証が未完了です。以下を解決して再実行してください。",
-    statusMigrationCounts:
-      "Repository：{{repositories}}；Issue：{{issues}}；移行済み：{{migrated}}；変更なし：{{unchanged}}",
-    statusMigrationSuccesses: "成功した Issue（{{count}}）",
-    statusMigrationIssueMigrated: "移行済み",
-    statusMigrationIssueUnchanged: "新形式のため変更なし",
-    statusMigrationConflicts: "新しいラベルを優先して解決した競合",
-    statusMigrationConflictValues: "削除：{{removed}}；保持：{{retained}}",
-    statusMigrationFailures: "失敗項目",
   },
 };

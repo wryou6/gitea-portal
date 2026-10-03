@@ -1,5 +1,20 @@
 export type ThemeMode = "light" | "dark" | "system";
-export type ColorPalette = "cobalt" | "juniper" | "iris";
+export type ColorPalette =
+  | "cobalt"
+  | "juniper"
+  | "iris"
+  | "carbon"
+  | "ember"
+  | "glacier";
+
+const colorPalettes: readonly ColorPalette[] = [
+  "cobalt",
+  "juniper",
+  "iris",
+  "carbon",
+  "ember",
+  "glacier",
+];
 
 const STORAGE_KEY_PREFIX = "gitea-portal:theme:";
 const PALETTE_STORAGE_KEY_PREFIX = "gitea-portal:palette:";
@@ -17,7 +32,7 @@ function isThemeMode(value: string | null): value is ThemeMode {
 }
 
 function isColorPalette(value: string | null): value is ColorPalette {
-  return value === "cobalt" || value === "juniper" || value === "iris";
+  return colorPalettes.some((palette) => palette === value);
 }
 
 export function readThemePreference(login?: string): ThemeMode {

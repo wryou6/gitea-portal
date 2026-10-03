@@ -42,30 +42,4 @@ export type StatusTransitionInput = {
   selectedAssignee?: string;
   expectedUpdatedAt: string;
 };
-export type StatusLabelMigrationReport = {
-  repositories: number;
-  issuesScanned: number;
-  migrated: number;
-  unchanged: number;
-  successfulIssues: Array<{
-    owner: string;
-    repository: string;
-    issueNumber: number;
-    outcome: "migrated" | "unchanged";
-  }>;
-  resolvedConflicts: Array<{
-    owner: string;
-    repository: string;
-    issueNumber: number;
-    removedLegacyLabels: string[];
-    retainedStatusLabels: string[];
-  }>;
-  failures: Array<{
-    owner: string;
-    repository: string;
-    issueNumber?: number;
-    reason: string;
-  }>;
-  verified: boolean;
-};
 export type Session = { login: string; displayName?: string; avatarUrl?: string };

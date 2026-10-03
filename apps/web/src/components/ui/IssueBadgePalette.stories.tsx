@@ -4,6 +4,7 @@ import { Badge } from "./Badge";
 import { IssueStatusBadge } from "./IssueStatusBadge";
 import { IssueTypeBadge } from "./IssueTypeBadge";
 import { PriorityBadge } from "./PriorityBadge";
+import { LabelList } from "../../features/issues/LabelList";
 
 function IssueBadgePalette() {
   const { t } = useTranslation("issues");
@@ -57,6 +58,13 @@ function IssueBadgePalette() {
         <div className="issue-badge-palette__items">
           <Badge>{t("labels")}</Badge>
           <Badge>{t("notSet")}</Badge>
+          <LabelList
+            labels={[
+              { name: "Blue", color: "2563eb" },
+              { name: "Sunlight", color: "fde68a" },
+              { name: "Snow", color: "f8fafc" },
+            ]}
+          />
         </div>
       </section>
     </div>

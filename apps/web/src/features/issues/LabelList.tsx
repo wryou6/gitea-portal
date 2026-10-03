@@ -1,3 +1,4 @@
+import type { CSSProperties } from "react";
 import { Badge } from "../../components/ui/Badge";
 import { useTranslation } from "react-i18next";
 export function LabelList({
@@ -11,7 +12,16 @@ export function LabelList({
       {labels.map((label) => (
         <Badge
           key={label.name}
-          style={label.color ? { borderColor: `#${label.color}` } : undefined}
+          data-label-color={label.color ? "true" : undefined}
+          style={
+            label.color
+              ? ({
+                  "--gitea-label-color": label.color.startsWith("#")
+                    ? label.color
+                    : `#${label.color}`,
+                } as CSSProperties)
+              : undefined
+          }
         >
           {label.name}
         </Badge>

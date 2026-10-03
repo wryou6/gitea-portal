@@ -36,9 +36,7 @@ export function IssueEditForm({
           !label.name.startsWith("type:") &&
           !label.name.startsWith("priority:") &&
           !label.name.startsWith("status:") &&
-          !label.name.startsWith("status-action:") &&
-          !label.name.startsWith("workflow:") &&
-          !label.name.startsWith("workflow-action:"),
+          !label.name.startsWith("status-action:"),
       )
       .map((label) => label.name)
       .join(", "),

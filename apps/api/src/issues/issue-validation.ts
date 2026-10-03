@@ -67,8 +67,7 @@ function validateIssueInput(
     value.labels !== undefined &&
     (value.labels as string[]).some(
       (label) =>
-        label.startsWith("status:") || label.startsWith("status-action:") ||
-        label.startsWith("workflow:") || label.startsWith("workflow-action:"),
+        label.startsWith("status:") || label.startsWith("status-action:"),
     )
   )
     throw new PortalError(422, "Status Labels 由 Portal Status 操作管理");

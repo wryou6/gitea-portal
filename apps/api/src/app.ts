@@ -7,7 +7,6 @@ import { registerAuthMiddleware } from "./http/auth-middleware.js";
 import { registerRequestMetrics } from "./telemetry/request-metrics.js";
 import { registerRepositoryRoutes } from "./repositories/repository-routes.js";
 import { registerStatusDefinitionRoutes } from "./http/status-definition-routes.js";
-import { registerStatusLabelMigrationRoutes } from "./http/status-label-migration-routes.js";
 
 export async function buildApp(config: AppConfig) {
   const app = Fastify({ logger: true });
@@ -20,6 +19,5 @@ export async function buildApp(config: AppConfig) {
   await registerIssueRoutes(app, config);
   registerRepositoryRoutes(app, config);
   registerStatusDefinitionRoutes(app);
-  registerStatusLabelMigrationRoutes(app, config);
   return app;
 }

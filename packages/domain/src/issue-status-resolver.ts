@@ -24,15 +24,13 @@ export function resolveIssueStatus(
   labels: IssueLabel[],
 ): ResolvedIssueStatus {
   const currentLabels = labels.filter((label) => label.name.startsWith("status:"));
-  const legacyLabels = labels.filter((label) => label.name.startsWith("workflow:"));
-  const statusLabels = currentLabels.length > 0 ? currentLabels : legacyLabels;
+  const statusLabels = currentLabels;
   const knownLabels = FIXED_ISSUE_STATUSES.filter(
     (candidate) => candidate.labelName !== null,
   );
   const selected = statusLabels.filter((label) =>
     knownLabels.some((candidate) =>
-      candidate.labelName === label.name ||
-      (currentLabels.length === 0 && candidate.labelName?.replace("status:", "workflow:") === label.name),
+      candidate.labelName === label.name,
     ),
   );
 
@@ -65,9 +63,7 @@ export function resolveIssueStatus(
   if (statusLabels.length === 0) {
     return { kind: "anomaly", anomaly: "missing-status-label", labels: [] };
   }
-  const labelName = currentLabels.length === 0
-    ? statusLabels[0]?.name.replace("workflow:", "status:")
-    : statusLabels[0]?.name;
+  const labelName = statusLabels[0]?.name;
   const resolvedStatus = knownLabels.find((candidate) => candidate.labelName === labelName);
   if (!resolvedStatus || resolvedStatus.giteaState !== state) {
     return {
