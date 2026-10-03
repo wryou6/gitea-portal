@@ -55,6 +55,12 @@ export function KanbanBoard({
     setRecentDoneOnly(true);
   }, [viewMode, repository?.owner, repository?.name]);
 
+  useEffect(() => {
+    const restoreFilters = () => setFilters(parseWorkViewFilters(window.location.search));
+    window.addEventListener("popstate", restoreFilters);
+    return () => window.removeEventListener("popstate", restoreFilters);
+  }, []);
+
   const load = useCallback(
     async (clearError = true) => {
       setView(undefined);
@@ -138,7 +144,7 @@ export function KanbanBoard({
   function updateFilters(next: WorkViewFilters) {
     setFilters(next);
     const search = serializeWorkViewFilters(next, window.location.search, viewMode);
-    window.history.replaceState({}, "", `${window.location.pathname}${search ? `?${search}` : ""}`);
+    window.history.pushState(window.history.state, "", `${window.location.pathname}${search ? `?${search}` : ""}`);
   }
 
   const move = async (issue: WorkViewCard, stateKey: string) => {

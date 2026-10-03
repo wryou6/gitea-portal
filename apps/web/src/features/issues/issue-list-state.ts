@@ -6,7 +6,7 @@ import { serializeWorkViewFilters } from "../work-views/work-view-filters";
 
 export type IssueFiltersValue = WorkViewFilters;
 export type IssueListLoader = (
-  filters: Record<string, string>,
+  filters: Record<string, string | string[]>,
 ) => Promise<IssueSearchResult>;
 
 export function useIssueListState(
@@ -22,7 +22,7 @@ export function useIssueListState(
   direction: SortDirection;
   loading: boolean;
   error?: UserFacingError;
-  load: (next?: IssueFiltersValue, sort?: IssueSortField, direction?: SortDirection) => Promise<void>;
+  load: (next?: IssueFiltersValue, sort?: IssueSortField, direction?: SortDirection, addHistoryEntry?: boolean) => Promise<void>;
 } {
   const { t } = useTranslation("issues");
   const [issues, setIssues] = useState<Issue[]>([]);
@@ -32,7 +32,7 @@ export function useIssueListState(
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<UserFacingError>();
   const load = useCallback(
-    async (next = filters, requestedSort = sort, requestedDirection = direction) => {
+    async (next = filters, requestedSort = sort, requestedDirection = direction, addHistoryEntry = false) => {
       setFilters(next);
       setSort(requestedSort);
       setDirection(requestedDirection);
@@ -40,11 +40,20 @@ export function useIssueListState(
       params.delete("page");
       params.set("sort", requestedSort);
       params.set("direction", requestedDirection);
-      window.history.replaceState({}, "", `${window.location.pathname}?${params}`);
+      const url = `${window.location.pathname}?${params}`;
+      if (addHistoryEntry) window.history.pushState(window.history.state, "", url);
+      else window.history.replaceState(window.history.state, "", url);
       setLoading(true);
       setError(undefined);
       try {
-        const requestFilters = Object.fromEntries(Object.entries(next).filter(([, value]) => value && value !== "all"));
+        const requestFilters: Record<string, string | string[]> = {};
+        for (const [key, value] of Object.entries(next)) {
+          if (Array.isArray(value)) {
+            if (value.length > 0) requestFilters[key] = value;
+          } else if (value && value !== "all") {
+            requestFilters[key] = value;
+          }
+        }
         if (next.assignee === "me" && currentUserLogin) requestFilters.assignee = currentUserLogin;
         const result = await loader({
           ...requestFilters,

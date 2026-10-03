@@ -17,15 +17,20 @@ function isCalendarDate(value: string): boolean {
   return Number.isFinite(date.getTime()) && date.toISOString().slice(0, 10) === value;
 }
 
+function copySharedFilterValues(
+  source: URLSearchParams,
+  target: URLSearchParams,
+  key: string,
+  allowed: Set<string>,
+): void {
+  for (const value of [...new Set(source.getAll(key))])
+    if (allowed.has(value)) target.append(key, value);
+}
+
 function copySharedFilters(source: URLSearchParams, target: URLSearchParams): void {
-  const priority = source.get("priority");
-  if (priority && priorities.has(priority)) target.set("priority", priority);
-
-  const issueType = source.get("issueType");
-  if (issueType && issueTypes.has(issueType)) target.set("issueType", issueType);
-
-  const state = source.get("state");
-  if (state && statuses.has(state)) target.set("state", state);
+  copySharedFilterValues(source, target, "priority", priorities);
+  copySharedFilterValues(source, target, "issueType", issueTypes);
+  copySharedFilterValues(source, target, "state", statuses);
 
   const assignee = source.get("assignee")?.trim();
   if (assignee && assignee !== "all") target.set("assignee", assignee);
@@ -79,12 +84,15 @@ export function sanitizeWorkViewSearch(
   if (view !== "gantt") for (const key of ganttKeys) params.delete(key);
   if (view !== "issues") for (const key of listKeys) params.delete(key);
 
-  const priority = params.get("priority");
-  if (priority && !priorities.has(priority)) params.delete("priority");
-  const issueType = params.get("issueType");
-  if (issueType && !issueTypes.has(issueType)) params.delete("issueType");
-  const state = params.get("state");
-  if (state && !statuses.has(state)) params.delete("state");
+  for (const [key, allowed] of [
+    ["priority", priorities],
+    ["issueType", issueTypes],
+    ["state", statuses],
+  ] as const) {
+    const validValues = [...new Set(params.getAll(key))].filter((value) => allowed.has(value));
+    params.delete(key);
+    for (const value of validValues) params.append(key, value);
+  }
   const assignee = params.get("assignee")?.trim();
   if (!assignee || assignee === "all") params.delete("assignee");
   else params.set("assignee", assignee);

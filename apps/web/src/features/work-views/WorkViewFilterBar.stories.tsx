@@ -22,14 +22,26 @@ export const AllRepositories: Story = {};
 export const RepositoryWorkspace: Story = { args: { repositoryFixed: true } };
 export const SharedFiltersActive: Story = {
   render: () => <WorkViewFilterBar
-    filters={{ ...createDefaultWorkViewFilters(), assignee: "me", priority: "high", issueType: "bug", state: "in-progress" }}
+    filters={{ ...createDefaultWorkViewFilters(), assignee: "me", priority: ["high"], issueType: ["bug"], state: ["in-progress"] }}
     onChange={() => undefined}
     assignees={["alex", "mei"]}
     currentUserLogin="alex"
   />,
 };
 export const RestoredSharedUrl: Story = {
-  render: () => <WorkViewFilterBar filters={parseWorkViewFilters("?priority=invalid&issueType=bug&state=done&assignee=mei&repository=old%2Frepo&label=legacy&milestone=legacy")} onChange={() => undefined} assignees={["alex", "mei"]} currentUserLogin="alex" />,
+  render: () => <WorkViewFilterBar filters={parseWorkViewFilters("?priority=invalid&priority=high&issueType=bug&issueType=task&state=todo&state=in-progress&assignee=mei&repository=old%2Frepo&label=legacy&milestone=legacy")} onChange={() => undefined} assignees={["alex", "mei"]} currentUserLogin="alex" />,
+};
+export const UnfinishedShortcut: Story = {
+  render: () => {
+    const [filters, setFilters] = useState(() => parseWorkViewFilters("?state=done"));
+    return <WorkViewFilterBar filters={filters} onChange={setFilters} assignees={["alex", "mei"]} currentUserLogin="alex" />;
+  },
+};
+export const UnfinishedWithOneStatusRemoved: Story = {
+  render: () => {
+    const [filters, setFilters] = useState(() => parseWorkViewFilters("?state=todo&state=in-progress"));
+    return <WorkViewFilterBar filters={filters} onChange={setFilters} assignees={["alex", "mei"]} currentUserLogin="alex" />;
+  },
 };
 export const ExplicitAllAssignees: Story = {
   render: () => <WorkViewFilterBar filters={{ ...defaultWorkViewFilters, assignee: "all" }} onChange={() => undefined} assignees={["alex", "mei"]} currentUserLogin="alex" />,

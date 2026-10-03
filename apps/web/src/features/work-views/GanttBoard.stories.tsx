@@ -256,11 +256,25 @@ export const ErrorWithRetry: Story = { render: () => <GanttErrorState /> };
 export const SharedFiltersAndGantt: Story = {
   render: () => <SharedFiltersGanttComposition />,
 };
+export const MultiSelectFilters: Story = {
+  render: () => <SharedFiltersGanttComposition multiSelect />,
+};
 
-function SharedFiltersGanttComposition() {
-  const [filters, setFilters] = useState<WorkViewFilters>(() => ({ ...defaultWorkViewFilters, assignee: "engineer" }));
+function SharedFiltersGanttComposition({ multiSelect = false }: { multiSelect?: boolean }) {
+  const [filters, setFilters] = useState<WorkViewFilters>(() => ({
+    ...defaultWorkViewFilters,
+    assignee: "engineer",
+    ...(multiSelect ? { priority: ["high", "low"], issueType: ["feature", "task"], state: ["todo", "in-progress"] } : {}),
+  }));
   const [recentDoneOnly, setRecentDoneOnly] = useState(true);
+  const issues = multiSelect
+    ? [
+      { ...demoIssue, number: 81, status: "todo" as const, priority: "high" as const, type: "feature" as const },
+      { ...demoIssue, number: 82, status: "in-progress" as const, priority: "low" as const, type: "task" as const },
+      { ...demoIssue, number: 83, state: "closed" as const, status: "done" as const, priority: "medium" as const, type: "bug" as const },
+    ]
+    : baselineIssues;
   return <section>
-      <GanttBoard issues={baselineIssues} filters={filters} recentDoneOnly={recentDoneOnly} onRecentDoneOnlyChange={setRecentDoneOnly} filterControls={<WorkViewFilterBar filters={filters} onChange={setFilters} assignees={["engineer"]} currentUserLogin="engineer" recentDoneOnly={recentDoneOnly} onRecentDoneOnlyChange={setRecentDoneOnly} />} demo demoInitialDate={localCalendarDate()} demoScale="week" />
+      <GanttBoard issues={issues} filters={filters} recentDoneOnly={recentDoneOnly} onRecentDoneOnlyChange={setRecentDoneOnly} filterControls={<WorkViewFilterBar filters={filters} onChange={setFilters} assignees={["engineer"]} currentUserLogin="engineer" recentDoneOnly={recentDoneOnly} onRecentDoneOnlyChange={setRecentDoneOnly} />} demo demoInitialDate={localCalendarDate()} demoScale="week" />
   </section>;
 }

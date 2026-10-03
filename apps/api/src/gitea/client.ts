@@ -7,6 +7,8 @@ import type {
 } from "@gitea-portal/gitea-contracts";
 import {
   issueScheduleFromLabels,
+  type IssuePriority,
+  type IssueType,
   userAvatarUrl,
   isCalendarDate,
   type IssueState,
@@ -158,14 +160,14 @@ export type IssueQuery = {
   q?: string;
   repository?: string;
   state?: IssueState | "all";
-  portalStatus?: FixedIssueStatusKey;
+  portalStatuses?: FixedIssueStatusKey[];
   type?: "issues" | "pulls";
   page?: number;
   limit?: number;
   labels?: string[];
   assignee?: string;
-  priority?: "critical" | "high" | "medium" | "low";
-  issueType?: "bug" | "feature" | "task";
+  priority?: IssuePriority[];
+  issueType?: IssueType[];
   milestone?: string;
   sort?: IssueSortField;
   direction?: SortDirection;

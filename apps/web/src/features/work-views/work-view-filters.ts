@@ -2,17 +2,17 @@ import type { Issue } from "../../lib/api";
 import { sanitizeWorkViewSearch, type WorkViewURLView } from "./work-view-url-state";
 
 export type WorkViewFilters = {
-  priority: "all" | "critical" | "high" | "medium" | "low";
-  issueType: "all" | "bug" | "feature" | "task";
-  state: "all" | "todo" | "in-progress" | "done";
+  priority: ("critical" | "high" | "medium" | "low")[];
+  issueType: ("bug" | "feature" | "task")[];
+  state: ("todo" | "in-progress" | "done")[];
   assignee: "all" | "unassigned" | string;
   repository: "all" | string;
 };
 
 export const defaultWorkViewFilters: WorkViewFilters = {
-  priority: "all",
-  issueType: "all",
-  state: "all",
+  priority: [],
+  issueType: [],
+  state: [],
   assignee: "all",
   repository: "all",
 };
@@ -54,21 +54,27 @@ export function createClearedWorkViewFilters(): WorkViewFilters {
   };
 }
 
-const priorities = new Set(["critical", "high", "medium", "low"]);
-const issueTypes = new Set(["bug", "feature", "task"]);
-const statuses = new Set(["todo", "in-progress", "done"]);
+const priorityOptions = ["critical", "high", "medium", "low"] as const;
+const issueTypeOptions = ["bug", "feature", "task"] as const;
+const statusOptions = ["todo", "in-progress", "done"] as const;
+
+function selectedValues<T extends string>(
+  params: URLSearchParams,
+  key: string,
+  options: readonly T[],
+): T[] {
+  const supplied = new Set(params.getAll(key));
+  return options.filter((option) => supplied.has(option));
+}
 
 export function parseWorkViewFilters(search: string): WorkViewFilters {
   const params = new URLSearchParams(search);
-  const priority = params.get("priority") ?? "all";
-  const issueType = params.get("issueType") ?? "all";
-  const state = params.get("state") ?? "all";
   const assigneeValue = params.get("assignee")?.trim() ?? "";
   const assignee = assigneeValue === "" || assigneeValue === "all" ? "all" : assigneeValue;
   return {
-    priority: priorities.has(priority) ? priority as WorkViewFilters["priority"] : "all",
-    issueType: issueTypes.has(issueType) ? issueType as WorkViewFilters["issueType"] : "all",
-    state: statuses.has(state) ? state as WorkViewFilters["state"] : "all",
+    priority: selectedValues(params, "priority", priorityOptions),
+    issueType: selectedValues(params, "issueType", issueTypeOptions),
+    state: selectedValues(params, "state", statusOptions),
     assignee: assignee === "unassigned" || assignee === "me" || (assignee !== "all" && assignee.trim()) ? assignee : "all",
     repository: "all",
   };
@@ -83,24 +89,27 @@ export function serializeWorkViewFilters(
   for (const key of ["priority", "issueType", "state", "assignee", "repository", "label", "milestone"])
     params.delete(key);
   for (const key of ["gantt_open", "gantt_closed", "gantt_assignee"]) params.delete(key);
-  if (filters.priority !== "all") params.set("priority", filters.priority);
-  if (filters.issueType !== "all") params.set("issueType", filters.issueType);
-  if (filters.state !== "all") params.set("state", filters.state);
+  for (const priority of priorityOptions)
+    if (filters.priority.includes(priority)) params.append("priority", priority);
+  for (const issueType of issueTypeOptions)
+    if (filters.issueType.includes(issueType)) params.append("issueType", issueType);
+  for (const state of statusOptions)
+    if (filters.state.includes(state)) params.append("state", state);
   if (filters.assignee !== "all") params.set("assignee", filters.assignee);
   return sanitizeWorkViewSearch(params.toString(), view);
 }
 
 export function countActiveWorkViewFilters(filters: WorkViewFilters): number {
-  return Number(filters.priority !== "all") +
-    Number(filters.issueType !== "all") +
-    Number(filters.state !== "all") +
+  return filters.priority.length +
+    filters.issueType.length +
+    filters.state.length +
     Number(filters.assignee !== "all" && filters.assignee !== "me");
 }
 
 export function matchesWorkViewFilters(issue: Issue, filters: WorkViewFilters, currentUserLogin?: string): boolean {
-  if (filters.priority !== "all" && issue.priority !== filters.priority) return false;
-  if (filters.issueType !== "all" && issue.type !== filters.issueType) return false;
-  if (filters.state !== "all" && issue.status !== filters.state) return false;
+  if (filters.priority.length > 0 && (!issue.priority || !filters.priority.includes(issue.priority))) return false;
+  if (filters.issueType.length > 0 && (!issue.type || !filters.issueType.includes(issue.type))) return false;
+  if (filters.state.length > 0 && !filters.state.includes(issue.status as (typeof filters.state)[number])) return false;
   if (filters.assignee === "me") {
     if (!currentUserLogin || !issue.assignees.includes(currentUserLogin)) return false;
   } else {

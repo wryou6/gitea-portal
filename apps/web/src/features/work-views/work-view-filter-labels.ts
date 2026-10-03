@@ -52,12 +52,16 @@ export function useWorkViewFilterLabels(
         { ns: "issues", defaultValue: key },
       ),
     );
-  const activeFilters = Object.entries(filters).filter(
-      ([key, value]) =>
-        value !== "all" &&
-      !(key === "assignee" && value === "me") &&
-      value.trim() !== "" &&
-      !(key === "repository" && repositoryFixed),
-  );
+  const activeFilters: [string, string][] = [];
+  for (const [key, value] of Object.entries(filters)) {
+    if (key === "repository" && repositoryFixed) continue;
+    if (key === "assignee" && value === "me") continue;
+    if (Array.isArray(value)) {
+      for (const selected of value) activeFilters.push([key, selected]);
+      continue;
+    }
+    if (typeof value === "string" && value !== "all" && value.trim() !== "")
+      activeFilters.push([key, value]);
+  }
   return { activeFilters, labelFor, filterHeading };
 }

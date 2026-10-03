@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next";
 import { WorkViewFilterBar } from "../work-views/WorkViewFilterBar";
 import { WorkViewLayout } from "../work-views/WorkViewLayout";
 import { defaultWorkViewFilters, matchesRecentDoneVisibility, matchesWorkViewFilters, parseWorkViewFilters } from "../work-views/work-view-filters";
+import type { WorkViewFilters } from "../work-views/work-view-filters";
 import { IssueRow } from "./IssueRow";
 import { useIssueListState, type IssueFiltersValue } from "./issue-list-state";
 import { PageHeader } from "../../components/layout/PageHeader";
@@ -82,6 +83,7 @@ export function IssueListPage({
   demoColumnOrder,
   onDemoViewPreferenceChange,
   demoOptionsOpen,
+  demoFilterValues,
 }: {
   repository?: { owner: string; name: string };
   login?: string;
@@ -92,12 +94,13 @@ export function IssueListPage({
   demoColumnOrder?: IssueSortField[];
   onDemoViewPreferenceChange?: (preference: IssueViewPreference) => void;
   demoOptionsOpen?: boolean;
+  demoFilterValues?: WorkViewFilters;
 } = {}) {
   const { t } = useTranslation("issues");
   const [preference, setPreference] = useState<IssueViewPreference>(
     () => demoViewPreference ?? readIssueViewPreference(login),
   );
-  const initialFilters = { ...defaultWorkViewFilters, ...filtersFromUrl() };
+  const initialFilters = { ...defaultWorkViewFilters, ...(demoFilterValues ?? filtersFromUrl()) };
   if (repository)
     initialFilters.repository = `${repository.owner}/${repository.name}`;
   const [demoFilters, setDemoFilters] = useState(initialFilters);
@@ -169,6 +172,23 @@ export function IssueListPage({
       directionFromUrl(preference.defaultSortDirection),
     );
   }, [repository?.owner, repository?.name, demoIssues]);
+
+  useEffect(() => {
+    if (demoIssues) return;
+    const restoreFilters = () => {
+      const restored = {
+        ...parseWorkViewFilters(window.location.search),
+        ...(repository ? { repository: `${repository.owner}/${repository.name}` } : {}),
+      };
+      void load(
+        restored,
+        sortFromUrl(preference.defaultSortField),
+        directionFromUrl(preference.defaultSortDirection),
+      );
+    };
+    window.addEventListener("popstate", restoreFilters);
+    return () => window.removeEventListener("popstate", restoreFilters);
+  }, [demoIssues, load, preference.defaultSortDirection, preference.defaultSortField, repository?.name, repository?.owner]);
 
   useEffect(() => {
     setRecentDoneOnly(true);
@@ -295,7 +315,7 @@ export function IssueListPage({
             setDemoFilters(fixed);
             return;
           }
-          void load(fixed);
+          void load(fixed, sort, direction, true);
         }}
       />
       <div className="issues-table-toolbar">

@@ -117,7 +117,7 @@ export function WorkViewLayout({
             </>
           ) : (
             activeFilters.map(([key, value]) => (
-              <span key={key}>
+              <span key={`${key}:${value}`}>
                 <span aria-hidden="true"> · </span>
                 {filterHeading(key)}
                 {i18n.resolvedLanguage === "en" ? ": " : "："}

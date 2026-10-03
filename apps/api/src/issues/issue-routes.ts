@@ -13,6 +13,19 @@ import { transitionIssue } from "./status-transition-service.js";
 import { apiErrorResponse } from "../errors.js";
 import { PortalError } from "../errors.js";
 
+function queryValues(value: unknown): string[] {
+  if (typeof value === "string") return [value];
+  return Array.isArray(value) ? value.filter((item): item is string => typeof item === "string") : [];
+}
+
+function queryString(value: unknown): string | undefined {
+  return queryValues(value)[0];
+}
+
+const portalStatuses = new Set(["todo", "in-progress", "done"]);
+const priorities = new Set(["critical", "high", "medium", "low"]);
+const issueTypes = new Set(["bug", "feature", "task"]);
+
 export async function registerIssueRoutes(
   app: FastifyInstance,
   config: AppConfig,
@@ -21,35 +34,27 @@ export async function registerIssueRoutes(
     listRepositories(giteaFor(request, config.giteaBaseUrl, config)),
   );
   app.get("/api/issues", async (request) => {
-    const query = request.query as Record<string, string | undefined>;
-    const sort = query.sort ?? "key";
-    const direction = query.direction ?? "asc";
+    const query = request.query as Record<string, unknown>;
+    const sort = queryString(query.sort) ?? "key";
+    const direction = queryString(query.direction) ?? "asc";
     if (!isIssueSortField(sort)) throw new PortalError(422, "Invalid issue sort field");
     if (direction !== "asc" && direction !== "desc") throw new PortalError(422, "Invalid sort direction");
+    const stateValues = queryValues(query.state);
+    const selectedStatuses = [...new Set(stateValues.filter((value) => portalStatuses.has(value)))];
+    const legacyState = stateValues.find((value) => value === "open" || value === "closed" || value === "all");
     return searchIssuesReadThrough(
       giteaFor(request, config.giteaBaseUrl, config),
       {
-        q: query.q,
-        repository: query.repository,
-        state:
-          query.state === "todo" || query.state === "in-progress"
-            ? "open"
-            : query.state === "done"
-              ? "closed"
-              : (query.state as "open" | "closed" | "all" | undefined),
-        portalStatus: query.state === "todo" || query.state === "in-progress" || query.state === "done"
-          ? query.state
-          : undefined,
-        assignee: query.assignee,
-        priority: ["critical", "high", "medium", "low"].includes(query.priority ?? "")
-          ? query.priority as "critical" | "high" | "medium" | "low"
-          : undefined,
-        issueType: ["bug", "feature", "task"].includes(query.issueType ?? "")
-          ? query.issueType as "bug" | "feature" | "task"
-          : undefined,
-        milestone: query.milestone,
+        q: queryString(query.q),
+        repository: queryString(query.repository),
+        state: selectedStatuses.length > 0 ? "all" : legacyState as "open" | "closed" | "all" | undefined,
+        portalStatuses: selectedStatuses as ("todo" | "in-progress" | "done")[],
+        assignee: queryString(query.assignee),
+        priority: [...new Set(queryValues(query.priority).filter((value) => priorities.has(value)))] as ("critical" | "high" | "medium" | "low")[],
+        issueType: [...new Set(queryValues(query.issueType).filter((value) => issueTypes.has(value)))] as ("bug" | "feature" | "task")[],
+        milestone: queryString(query.milestone),
         labels: [
-          ...(query.label?.split(",").filter(Boolean) ?? []),
+          ...(queryString(query.label)?.split(",").filter(Boolean) ?? []),
         ],
         sort,
         direction,

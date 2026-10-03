@@ -3,6 +3,7 @@ import { IssueListPage } from "./IssueListPage";
 import { demoIssue } from "../../stories/fixtures";
 import { AppShell } from "../../components/layout/AppShell";
 import { defaultIssueViewPreference, type IssueViewPreference } from "./issue-view-preference";
+import type { WorkViewFilters } from "../work-views/work-view-filters";
 
 const meta = {
   title: "Screens/Issue List",
@@ -139,6 +140,23 @@ export const SavedKeyAscendingPreference: Story = {
 
 export const SingleRepository: Story = {
   args: { repository: { owner: "demo", name: "frontend" }, demoIssues: [demoIssue] },
+};
+
+export const MultiSelectFilters: Story = {
+  args: {
+    demoIssues: [
+      { ...demoIssue, number: 81, status: "todo", priority: "high", type: "bug" },
+      { ...demoIssue, number: 82, status: "in-progress", priority: "low", type: "task" },
+      { ...demoIssue, number: 83, status: "done", state: "closed", priority: "medium", type: "feature" },
+    ],
+    demoFilterValues: {
+      priority: ["high", "low"],
+      issueType: ["bug", "task"],
+      state: ["todo", "in-progress"],
+      assignee: "all",
+      repository: "all",
+    } satisfies WorkViewFilters,
+  },
 };
 
 export const LongTitleAndMissingMetadata: Story = {

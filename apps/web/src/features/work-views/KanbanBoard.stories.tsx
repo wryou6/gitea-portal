@@ -58,7 +58,7 @@ const collidingIssueNumber: WorkViewCard = {
   title: "Same issue number from a different repository",
 };
 
-function KanbanScreen({ includeAnomaly = false }: { includeAnomaly?: boolean }) {
+function KanbanScreen({ includeAnomaly = false, multiSelect = false }: { includeAnomaly?: boolean; multiSelect?: boolean }) {
   const { t, i18n } = useTranslation("work-views");
   const { t: tCommon } = useTranslation("common");
   const { t: tIssues } = useTranslation("issues");
@@ -66,12 +66,16 @@ function KanbanScreen({ includeAnomaly = false }: { includeAnomaly?: boolean }) 
     () => window.matchMedia("(max-width: 720px)").matches,
   );
   const [activeColumnKey, setActiveColumnKey] = useState("todo");
-  const [filters, setFilters] = useState<WorkViewFilters>(() => ({ ...defaultWorkViewFilters, assignee: "engineer" }));
+  const [filters, setFilters] = useState<WorkViewFilters>(() => ({
+    ...defaultWorkViewFilters,
+    assignee: "engineer",
+    ...(multiSelect ? { priority: ["high", "low"], issueType: ["bug", "task"], state: ["todo", "in-progress"] } : {}),
+  }));
   const [recentDoneOnly, setRecentDoneOnly] = useState(true);
   const columns = [
-    { stateKey: "todo", displayName: "待辦", cards: [todo, collidingIssueNumber] },
-    { stateKey: "in-progress", displayName: "處理中", cards: [inProgress] },
-    { stateKey: "done", displayName: "已完成", cards: [done] },
+    { stateKey: "todo", displayName: "待辦", cards: [todo, collidingIssueNumber].map((issue) => ({ ...issue, priority: "high" as const, type: "bug" as const })) },
+    { stateKey: "in-progress", displayName: "處理中", cards: [{ ...inProgress, priority: "low" as const, type: "task" as const }] },
+    { stateKey: "done", displayName: "已完成", cards: [{ ...done, priority: "medium" as const, type: "feature" as const }] },
     ...(includeAnomaly
       ? [{ stateKey: "anomaly", displayName: "異常", cards: [anomaly] }]
       : []),
@@ -142,6 +146,7 @@ export const DesktopWorkspace: Story = {
 };
 export const DesktopWorkspaceDark: Story = { ...DesktopWorkspace, globals: { theme: "dark" } };
 export const WithAnomaly: Story = { args: { includeAnomaly: true } };
+export const MultiSelectCombination: Story = { args: { multiSelect: true } };
 export const Loading: Story = { render: () => <LoadingState /> };
 export const Empty: Story = { render: () => <EmptyState>No issues in readable repositories.</EmptyState> };
 export const ErrorWithRetry: Story = { render: () => <><ErrorNotice message="Repository data could not be loaded." /><button type="button">Retry</button></> };

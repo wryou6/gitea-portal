@@ -226,11 +226,14 @@ export async function api<T>(path: string, init?: RequestInit): Promise<T> {
 }
 
 export function queryIssues(
-  filters: Record<string, string>,
+  filters: Record<string, string | string[]>,
 ): Promise<IssueSearchResult> {
-  const params = new URLSearchParams(
-    Object.entries(filters).filter(([, value]) => value),
-  );
+  const params = new URLSearchParams();
+  for (const [key, value] of Object.entries(filters)) {
+    if (Array.isArray(value)) {
+      for (const selected of value) if (selected) params.append(key, selected);
+    } else if (value) params.set(key, value);
+  }
   return api(`/api/issues?${params}`);
 }
 
