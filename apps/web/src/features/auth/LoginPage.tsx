@@ -1,3 +1,4 @@
+import { Link } from "react-router";
 import { useTranslation } from "react-i18next";
 import { safeReturnTo } from "../../app/routes";
 
@@ -20,10 +21,10 @@ export function LoginPage({
   return (
     <main className="auth-page">
       <section className="auth-card" aria-labelledby="auth-title">
-        <a className="auth-brand" href="/" aria-label="Gitea Portal">
+        <Link className="auth-brand" to="/" aria-label="Gitea Portal">
           <img src="/favicon.svg" alt="" />
           <span>Gitea Portal</span>
-        </a>
+        </Link>
         <div className="auth-copy">
           <p className="auth-eyebrow">{t("loginProvider")}</p>
           <h1 id="auth-title">{t("loginTitle")}</h1>

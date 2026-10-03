@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { Link } from "react-router";
 import type { Issue, IssueSortField } from "../../lib/api";
 import { routePaths } from "../../app/routes";
 import { IssueTypeBadge } from "../../components/ui/IssueTypeBadge";
@@ -51,17 +52,17 @@ export function IssueRow({
   const cells: Record<IssueSortField, ReactNode> = {
     type: <IssueTypeBadge type={issue.type} labels={issue.labels} />,
     key: (
-      <a
+      <Link
         className="issue-key"
-        href={issuePath}
+        to={issuePath}
         aria-label={t("openIssueKey", { key: `${issue.owner}/${issue.name}#${issue.number}` })}
       >
         {issue.owner}/{issue.name}#{issue.number}
-      </a>
+      </Link>
     ),
     title: (
       <>
-        <a className="issue-title" href={issuePath}>{issue.title}</a>
+        <Link className="issue-title" to={issuePath}>{issue.title}</Link>
         {showRepositoryIdentity && (
           <span className="issue-row-repository">{issue.owner}/{issue.name}</span>
         )}

@@ -6,6 +6,7 @@ import { api, type Issue, type IssueSortField } from "../../lib/api";
 import { routePaths } from "../../app/routes";
 import { formatCalendarDate, formatNumber } from "../../i18n/format";
 import { useTranslation } from "react-i18next";
+import { useLocation, useNavigate, useNavigationType } from "react-router";
 import { GanttIssueRow, type GanttColumn, type GanttIssueRowVariant } from "./GanttIssueRow";
 import { GanttCalendarHeader, GANTT_SCALE_WIDTH } from "./GanttCalendarHeader";
 import { matchesRecentDoneVisibility, matchesWorkViewFilters, parseWorkViewFilters, type WorkViewFilters } from "./work-view-filters";
@@ -125,14 +126,17 @@ export function GanttBoard({
   recentDoneOnly?: boolean;
   onRecentDoneOnlyChange?: (checked: boolean) => void;
 }) {
+  const location = useLocation();
+  const navigate = useNavigate();
+  const navigationType = useNavigationType();
   const { t, i18n } = useTranslation("work-views");
   const { t: tIssues } = useTranslation("issues");
   const [localRecentDoneOnly, setLocalRecentDoneOnly] = useState(true);
   const recentDoneOnly = providedRecentDoneOnly ?? localRecentDoneOnly;
   const updateRecentDoneOnly = onRecentDoneOnlyChange ?? setLocalRecentDoneOnly;
-  const initialQuery = new URLSearchParams(window.location.search);
+  const initialQuery = new URLSearchParams(location.search);
   const [login, setLogin] = useState<string>();
-  const [localFilters, setLocalFilters] = useState(() => parseWorkViewFilters(window.location.search));
+  const [localFilters, setLocalFilters] = useState(() => parseWorkViewFilters(location.search));
   const filters = providedFilters ?? localFilters;
   const [initialDate, setInitialDate] = useState(() => {
     if (demoInitialDate && isCalendarDate(demoInitialDate)) return demoInitialDate;
@@ -178,12 +182,25 @@ export function GanttBoard({
 
   useEffect(() => {
     if (demo) return;
-    const params = new URLSearchParams(sanitizeWorkViewSearch(window.location.search, "gantt"));
+    const params = new URLSearchParams(sanitizeWorkViewSearch(location.search, "gantt"));
     params.set("gantt_start", initialDate);
     params.set("gantt_scale", scale);
     const query = params.toString();
-    window.history.replaceState({}, "", `${window.location.pathname}${query ? `?${query}` : ""}`);
-  }, [demo, initialDate, scale]);
+    const search = query ? `?${query}` : "";
+    if (search !== location.search) navigate(`${location.pathname}${search}`, { replace: true });
+  }, [demo, initialDate, location.pathname, location.search, navigate, scale]);
+
+  const previousLocationKey = useRef(location.key);
+  useEffect(() => {
+    const isPop = navigationType === "POP" && previousLocationKey.current !== location.key;
+    previousLocationKey.current = location.key;
+    if (!isPop || demo) return;
+    const params = new URLSearchParams(location.search);
+    const date = params.get("gantt_start");
+    if (date && isCalendarDate(date)) setInitialDate(date);
+    setScale(parseGanttScale(params.get("gantt_scale")));
+    setLocalFilters(parseWorkViewFilters(location.search));
+  }, [demo, location.key, location.search, navigationType]);
 
   const visibleIssues = issues.filter((issue) => matchesWorkViewFilters(issue, filters, currentUserLogin ?? login) && matchesRecentDoneVisibility(issue, recentDoneOnly));
   const userProfiles = providedUserProfiles ?? mergeUserProfiles(issues.map((issue) => issue.userProfiles));
@@ -228,10 +245,10 @@ export function GanttBoard({
   const needsRestore = !sameOrder(preference.columnOrder, DEFAULT_GANTT_COLUMN_ORDER) ||
     !sameFields(preference.visibleFields, GANTT_FIXED_FIELDS) ||
     !sameOrder(columnOrder, DEFAULT_GANTT_COLUMN_ORDER);
-  const returnParams = new URLSearchParams(sanitizeWorkViewSearch(window.location.search, "gantt"));
+  const returnParams = new URLSearchParams(sanitizeWorkViewSearch(location.search, "gantt"));
   returnParams.set("gantt_start", initialDate);
   returnParams.set("gantt_scale", scale);
-  const detailReturnTo = buildWorkViewReturnTo(window.location.pathname, returnParams.toString(), "gantt");
+  const detailReturnTo = buildWorkViewReturnTo(location.pathname, returnParams.toString(), "gantt");
   useEffect(() => {
     const chart = chartScrollRef.current;
     const fields = chart?.querySelector<HTMLElement>(".gantt-header-fields");

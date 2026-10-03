@@ -10,6 +10,7 @@ import { LoadingState } from "../../components/feedback/LoadingState";
 import { PageHeader } from "../../components/layout/PageHeader";
 import { StatusTransitionDialog } from "../issues/StatusTransitionDialog";
 import { useTranslation } from "react-i18next";
+import { useLocation, useNavigate } from "react-router";
 import { formatNumber } from "../../i18n/format";
 import { WorkViewFilterBar } from "./WorkViewFilterBar";
 import { WorkViewLayout } from "./WorkViewLayout";
@@ -26,9 +27,11 @@ export function KanbanBoard({
   viewMode: "kanban" | "gantt";
   login?: string;
 }) {
+  const location = useLocation();
+  const navigate = useNavigate();
   const { t, i18n } = useTranslation("work-views");
   const { t: tCommon } = useTranslation("common");
-  const [filters, setFilters] = useState<WorkViewFilters>(() => parseWorkViewFilters(window.location.search));
+  const [filters, setFilters] = useState<WorkViewFilters>(() => parseWorkViewFilters(location.search));
   const [recentDoneOnly, setRecentDoneOnly] = useState(true);
   const [view, setView] = useState<WorkspaceKanbanView>();
   const [ganttView, setGanttView] = useState<WorkspaceGanttView>();
@@ -56,10 +59,8 @@ export function KanbanBoard({
   }, [viewMode, repository?.owner, repository?.name]);
 
   useEffect(() => {
-    const restoreFilters = () => setFilters(parseWorkViewFilters(window.location.search));
-    window.addEventListener("popstate", restoreFilters);
-    return () => window.removeEventListener("popstate", restoreFilters);
-  }, []);
+    setFilters(parseWorkViewFilters(location.search));
+  }, [location.key, location.search]);
 
   const load = useCallback(
     async (clearError = true) => {
@@ -143,8 +144,8 @@ export function KanbanBoard({
 
   function updateFilters(next: WorkViewFilters) {
     setFilters(next);
-    const search = serializeWorkViewFilters(next, window.location.search, viewMode);
-    window.history.pushState(window.history.state, "", `${window.location.pathname}${search ? `?${search}` : ""}`);
+    const search = serializeWorkViewFilters(next, location.search, viewMode);
+    navigate(`${location.pathname}${search ? `?${search}` : ""}`);
   }
 
   const move = async (issue: WorkViewCard, stateKey: string) => {

@@ -1,4 +1,5 @@
 import { FormEvent, useEffect, useState } from "react";
+import { Link, useLocation, useNavigate } from "react-router";
 import { api, toUserFacingError, type Issue, type Repository, type UserFacingError } from "../../lib/api";
 import { PageHeader } from "../../components/layout/PageHeader";
 import { Button } from "../../components/ui/Button";
@@ -14,7 +15,9 @@ import { useTranslation } from "react-i18next";
 
 export function IssueCreatePage({ initialRepositories, initialRepository }: { initialRepositories?: Repository[]; initialRepository?: string } = {}) {
   const { t } = useTranslation("issues");
-  const params = new URLSearchParams(window.location.search);
+  const location = useLocation();
+  const navigate = useNavigate();
+  const params = new URLSearchParams(location.search);
   const requestedRepository = params.get("repository") ?? "";
   const returnTo = safeReturnTo(params.get("returnTo")) ?? routePaths.issues;
   const [repositories, setRepositories] = useState<Repository[]>([]);
@@ -90,12 +93,12 @@ export function IssueCreatePage({ initialRepositories, initialRepository }: { in
           }),
         },
       );
-      window.location.href = routePaths.issueDetailFrom(
+      navigate(routePaths.issueDetailFrom(
         issue.owner,
         issue.name,
         issue.number,
         returnTo,
-      );
+      ));
     } catch (cause) {
       setError(toUserFacingError(cause, t("createIssueFailed")));
     }
@@ -103,7 +106,7 @@ export function IssueCreatePage({ initialRepositories, initialRepository }: { in
 
   return (
     <section>
-      <a href={returnTo}>← {t("returnToWorkspace")}</a>
+      <Link to={returnTo}>← {t("returnToWorkspace")}</Link>
       <div className="detail-card">
         <PageHeader
           eyebrow={t("createIssueEyebrow")}

@@ -3,6 +3,7 @@ import { queryIssues, toUserFacingError, type Issue, type IssueSearchResult, typ
 import { useTranslation } from "react-i18next";
 import type { WorkViewFilters } from "../work-views/work-view-filters";
 import { serializeWorkViewFilters } from "../work-views/work-view-filters";
+import { useLocation, useNavigate } from "react-router";
 
 export type IssueFiltersValue = WorkViewFilters;
 export type IssueListLoader = (
@@ -25,6 +26,8 @@ export function useIssueListState(
   load: (next?: IssueFiltersValue, sort?: IssueSortField, direction?: SortDirection, addHistoryEntry?: boolean) => Promise<void>;
 } {
   const { t } = useTranslation("issues");
+  const location = useLocation();
+  const navigate = useNavigate();
   const [issues, setIssues] = useState<Issue[]>([]);
   const [filters, setFilters] = useState(initial);
   const [sort, setSort] = useState<IssueSortField>(initialSort);
@@ -36,13 +39,12 @@ export function useIssueListState(
       setFilters(next);
       setSort(requestedSort);
       setDirection(requestedDirection);
-      const params = new URLSearchParams(serializeWorkViewFilters(next, window.location.search, "issues"));
+      const params = new URLSearchParams(serializeWorkViewFilters(next, location.search, "issues"));
       params.delete("page");
       params.set("sort", requestedSort);
       params.set("direction", requestedDirection);
-      const url = `${window.location.pathname}?${params}`;
-      if (addHistoryEntry) window.history.pushState(window.history.state, "", url);
-      else window.history.replaceState(window.history.state, "", url);
+      const url = `${location.pathname}?${params}`;
+      navigate(url, { replace: !addHistoryEntry });
       setLoading(true);
       setError(undefined);
       try {
@@ -68,7 +70,7 @@ export function useIssueListState(
         setLoading(false);
       }
     },
-    [currentUserLogin, direction, filters, loader, sort, t],
+    [currentUserLogin, direction, filters, loader, location.pathname, location.search, navigate, sort, t],
   );
   return { issues, filters, sort, direction, loading, error, load };
 }

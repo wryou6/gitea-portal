@@ -1,5 +1,6 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
+import { BrowserRouter } from "react-router";
 import { App } from "./app/App";
 import { changeLocale } from "./i18n";
 import { readLocalePreference } from "./features/settings/locale-preference";
@@ -67,16 +68,18 @@ async function bootstrap() {
   applyColorPalette(initialPalette);
   createRoot(document.getElementById("root")!).render(
     <StrictMode>
-      <App
-        login={login}
-        displayName={sessionState.status === "authenticated" ? sessionState.displayName : undefined}
-        avatarUrl={sessionState.status === "authenticated" ? sessionState.avatarUrl : undefined}
-        sessionState={sessionState}
-        initialTheme={initialTheme}
-        initialPalette={initialPalette}
-        initialLocale={initialLocale}
-        sessionExpiredNotice={sessionExpiredNotice}
-      />
+      <BrowserRouter>
+        <App
+          login={login}
+          displayName={sessionState.status === "authenticated" ? sessionState.displayName : undefined}
+          avatarUrl={sessionState.status === "authenticated" ? sessionState.avatarUrl : undefined}
+          sessionState={sessionState}
+          initialTheme={initialTheme}
+          initialPalette={initialPalette}
+          initialLocale={initialLocale}
+          sessionExpiredNotice={sessionExpiredNotice}
+        />
+      </BrowserRouter>
     </StrictMode>,
   );
 }

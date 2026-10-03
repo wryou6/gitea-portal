@@ -1,4 +1,5 @@
 import type { CSSProperties, ReactNode } from "react";
+import { Link } from "react-router";
 import { useTranslation } from "react-i18next";
 import { routePaths } from "../../app/routes";
 import { IssueTypeBadge } from "../../components/ui/IssueTypeBadge";
@@ -89,13 +90,13 @@ export function GanttIssueRow({
   const values: Record<IssueSortField | "repository", ReactNode> = {
     type: <IssueTypeBadge type={issue.type} labels={issue.labels} />,
     key: (
-      <a href={issueHref} className="gantt-key">
+      <Link to={issueHref} className="gantt-key">
         {issue.owner}/{issue.name}#{issue.number}
-      </a>
+      </Link>
     ),
     title: (
       <div className="gantt-title-cell">
-        <a href={issueHref} title={issue.title}>{issue.title}</a>
+        <Link to={issueHref} title={issue.title}>{issue.title}</Link>
         {variant === "anomaly" && (
           <span className="schedule-anomaly" role="status">
             {tIssues(scheduleAnomalyTranslationKey(issue.scheduleAnomaly))}

@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState, type KeyboardEvent } from "react";
 import { useTranslation } from "react-i18next";
 import { routePaths } from "../../app/routes";
+import { Link, useNavigate } from "react-router";
 import { queryIssues, type Issue, type IssueSearchResult } from "../../lib/api";
 
 export function GlobalIssueSearch({ returnTo, search = queryIssues, initialQuery = "" }: {
@@ -9,6 +10,7 @@ export function GlobalIssueSearch({ returnTo, search = queryIssues, initialQuery
   search?: (filters: Record<string, string>) => Promise<IssueSearchResult>;
 }) {
   const { t } = useTranslation("common");
+  const navigate = useNavigate();
   const [query, setQuery] = useState(initialQuery);
   const [results, setResults] = useState<Issue[]>([]);
   const [loading, setLoading] = useState(false);
@@ -59,7 +61,7 @@ export function GlobalIssueSearch({ returnTo, search = queryIssues, initialQuery
       event.preventDefault();
       setActive((current) => (current <= 0 ? results.length - 1 : current - 1));
     } else if (event.key === "Enter" && active >= 0 && results[active]) {
-      window.location.assign(routePaths.issueDetailFrom(results[active]!.owner, results[active]!.name, results[active]!.number, returnTo));
+      navigate(routePaths.issueDetailFrom(results[active]!.owner, results[active]!.name, results[active]!.number, returnTo));
     }
   }
 
@@ -89,17 +91,17 @@ export function GlobalIssueSearch({ returnTo, search = queryIssues, initialQuery
         {loading && <p role="status">{t("searchLoading")}</p>}
         {error && <p role="alert">{t("searchFailed")}</p>}
         {!loading && !error && results.length === 0 && <p>{t("searchNoResults")}</p>}
-        {results.map((issue, index) => <a
+        {results.map((issue, index) => <Link
           id={`${listId}-${index}`}
           key={`${issue.owner}/${issue.name}#${issue.number}`}
           role="option"
           aria-selected={index === active}
-          href={routePaths.issueDetailFrom(issue.owner, issue.name, issue.number, returnTo)}
+          to={routePaths.issueDetailFrom(issue.owner, issue.name, issue.number, returnTo)}
           onMouseEnter={() => setActive(index)}
         >
           <strong>{issue.title}</strong>
           <span>{issue.owner}/{issue.name} · #{issue.number}</span>
-        </a>)}
+        </Link>)}
       </div>}
     </div>
   );

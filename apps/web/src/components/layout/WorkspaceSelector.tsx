@@ -3,6 +3,7 @@ import { resolveWorkViewNavigationContext, routePaths, workViewForRoute } from "
 import { api, toUserFacingError, type Repository, type UserFacingError } from "../../lib/api";
 import { ErrorNotice } from "../feedback/ErrorNotice";
 import { useTranslation } from "react-i18next";
+import { useLocation, useNavigate } from "react-router";
 import { buildWorkViewSearch, type WorkViewURLView } from "../../features/work-views/work-view-url-state";
 
 function currentContext(pathname = window.location.pathname, search = window.location.search) {
@@ -21,7 +22,9 @@ export function WorkspaceSelector({
   onNavigate?: (path: string) => void;
 } = {}) {
   const { t } = useTranslation("common");
-  const context = currentContext(initialPathname, initialSearch);
+  const location = useLocation();
+  const routerNavigate = useNavigate();
+  const context = currentContext(initialPathname ?? location.pathname, initialSearch ?? location.search);
   const isDashboard = context.type === "dashboard";
   const [repositories, setRepositories] = useState<Repository[]>([]);
   const [loading, setLoading] = useState(true);
@@ -56,12 +59,12 @@ export function WorkspaceSelector({
       if (owner && repo) path = routePaths.repositoryView(owner, repo, activeView);
     }
     if (path) {
-      const source = resolveWorkViewNavigationContext(window.location.pathname, window.location.search);
+      const source = resolveWorkViewNavigationContext(location.pathname, location.search);
       const sourceView = workViewForRoute(source.route) as WorkViewURLView | undefined;
       const target = new URL(path, window.location.origin);
       target.search = buildWorkViewSearch(source.search, sourceView, activeView);
       const destination = `${target.pathname}${target.search}`;
-      onNavigate ? onNavigate(destination) : (window.location.href = destination);
+      onNavigate ? onNavigate(destination) : routerNavigate(destination);
     }
   };
 

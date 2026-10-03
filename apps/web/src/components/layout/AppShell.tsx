@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState, type ReactNode } from "react";
+import { Link, useNavigate } from "react-router";
 import { resolveAppRoute, resolveWorkViewNavigationContext, routePaths, safeReturnTo, workViewForRoute } from "../../app/routes";
 import { WorkspaceSelector } from "./WorkspaceSelector";
 import { useTranslation } from "react-i18next";
@@ -70,6 +71,7 @@ export function AppShell({
   workspaceRepositories?: Repository[];
 }) {
   const { t } = useTranslation("common");
+  const navigate = useNavigate();
   const { t: authT } = useTranslation("auth");
   const pathname = routePathname ?? window.location.pathname;
   const search = routeSearch ?? window.location.search;
@@ -249,13 +251,13 @@ export function AppShell({
             <img className="brand-mark" src="/favicon.svg" alt="" />
             <span>Gitea Portal</span>
           </div>
-          <a
+          <Link
             className="dashboard-link"
-            href={routePaths.dashboard}
+            to={routePaths.dashboard}
             aria-current={onDashboard ? "page" : undefined}
           >
             {t("dashboard")}
-          </a>
+          </Link>
         </div>
         <WorkspaceSelector
           initialRepositories={workspaceRepositories}
@@ -283,7 +285,7 @@ export function AppShell({
               aria-label={t("userMenu")}
               hidden={!accountMenuOpen}
             >
-              <a href={routePaths.settings}>{t("settings")}</a>
+              <Link to={routePaths.settings}>{t("settings")}</Link>
               <button type="button" onClick={() => void logout()} disabled={logoutPending}>
                 {t(logoutPending ? "loggingOut" : "logout")}
               </button>
@@ -320,10 +322,10 @@ export function AppShell({
             aria-label={t("globalNavigation")}
           >
             {viewNavigationItems.map((item) => (
-              <a
+              <Link
                 key={item.key}
                 className="sidebar-link"
-                href={item.href}
+                to={item.href}
                 aria-label={item.label}
                 aria-current={item.active ? "page" : undefined}
                 title={!expanded ? item.label : undefined}
@@ -335,12 +337,12 @@ export function AppShell({
                   const current = resolveWorkViewNavigationContext(window.location.pathname, window.location.search);
                   const currentView = workViewForRoute(current.route) as WorkViewURLView | undefined;
                   target.search = buildWorkViewSearch(current.search, currentView, item.key as WorkViewURLView);
-                  window.location.assign(`${target.pathname}${target.search}`);
+                  navigate(`${target.pathname}${target.search}`);
                 }}
               >
                 <NavigationIcon name={item.icon} />
                 <span className="sidebar-label">{item.label}</span>
-              </a>
+              </Link>
             ))}
           </nav>
         </aside>

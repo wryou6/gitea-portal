@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState, type KeyboardEvent } from "react";
 import { useTranslation } from "react-i18next";
+import { useLocation, useNavigationType } from "react-router";
 import { WorkViewFilterBar } from "../work-views/WorkViewFilterBar";
 import { WorkViewLayout } from "../work-views/WorkViewLayout";
 import { defaultWorkViewFilters, matchesRecentDoneVisibility, matchesWorkViewFilters, parseWorkViewFilters } from "../work-views/work-view-filters";
@@ -97,6 +98,8 @@ export function IssueListPage({
   demoFilterValues?: WorkViewFilters;
 } = {}) {
   const { t } = useTranslation("issues");
+  const location = useLocation();
+  const navigationType = useNavigationType();
   const [preference, setPreference] = useState<IssueViewPreference>(
     () => demoViewPreference ?? readIssueViewPreference(login),
   );
@@ -173,22 +176,24 @@ export function IssueListPage({
     );
   }, [repository?.owner, repository?.name, demoIssues]);
 
+  const previousLocationKey = useRef(location.key);
   useEffect(() => {
-    if (demoIssues) return;
-    const restoreFilters = () => {
-      const restored = {
-        ...parseWorkViewFilters(window.location.search),
-        ...(repository ? { repository: `${repository.owner}/${repository.name}` } : {}),
-      };
-      void load(
-        restored,
-        sortFromUrl(preference.defaultSortField),
-        directionFromUrl(preference.defaultSortDirection),
-      );
+    const isPop = navigationType === "POP" && previousLocationKey.current !== location.key;
+    previousLocationKey.current = location.key;
+    if (demoIssues || !isPop) return;
+    const params = new URLSearchParams(location.search);
+    const restored = {
+      ...parseWorkViewFilters(location.search),
+      ...(repository ? { repository: `${repository.owner}/${repository.name}` } : {}),
     };
-    window.addEventListener("popstate", restoreFilters);
-    return () => window.removeEventListener("popstate", restoreFilters);
-  }, [demoIssues, load, preference.defaultSortDirection, preference.defaultSortField, repository?.name, repository?.owner]);
+    const sortValue = params.get("sort");
+    const directionValue = params.get("direction");
+    const restoredSort = ISSUE_VIEW_FIELDS.includes(sortValue as IssueSortField)
+      ? sortValue as IssueSortField
+      : preference.defaultSortField;
+    const restoredDirection = directionValue === "desc" ? "desc" : "asc";
+    void load(restored, restoredSort, restoredDirection);
+  }, [demoIssues, load, location.key, location.search, navigationType, preference.defaultSortField, repository?.name, repository?.owner]);
 
   useEffect(() => {
     setRecentDoneOnly(true);
@@ -199,7 +204,7 @@ export function IssueListPage({
     wasOptionsOpen.current = optionsOpen;
   }, [optionsOpen]);
 
-  const returnTo = buildWorkViewReturnTo(window.location.pathname, window.location.search, "issues");
+  const returnTo = buildWorkViewReturnTo(location.pathname, location.search, "issues");
   const headings: Array<{ field: IssueSortField; label: string }> = [
     { field: "type", label: t("type") },
     { field: "key", label: t("key") },

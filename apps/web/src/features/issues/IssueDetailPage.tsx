@@ -11,6 +11,7 @@ import { Button } from "../../components/ui/Button";
 import { routePaths, safeReturnTo } from "../../app/routes";
 import { StatusTransitionDialog } from "./StatusTransitionDialog";
 import { useTranslation } from "react-i18next";
+import { Link, useLocation } from "react-router";
 
 export function IssueDetailPage({
   owner,
@@ -22,8 +23,9 @@ export function IssueDetailPage({
   number: number;
 }) {
   const { t } = useTranslation("issues");
+  const location = useLocation();
   const returnTo =
-    safeReturnTo(new URLSearchParams(window.location.search).get("returnTo")) ??
+    safeReturnTo(new URLSearchParams(location.search).get("returnTo")) ??
     routePaths.issues;
   const [issue, setIssue] = useState<Issue>();
   const [comments, setComments] = useState<Comment[]>([]);
@@ -50,14 +52,14 @@ export function IssueDetailPage({
   if (error)
     return (
       <section>
-        <a href={returnTo}>← {t("returnToWorkspace")}</a>
+        <Link to={returnTo}>← {t("returnToWorkspace")}</Link>
         <ErrorNotice message={error} />
       </section>
     );
   if (!issue) return <LoadingState />;
   return (
     <section>
-      <a href={returnTo}>← {t("returnToWorkspace")}</a>
+      <Link to={returnTo}>← {t("returnToWorkspace")}</Link>
       <div className="detail-grid">
         <div className="detail-card">
           <IssueDetailHeader issue={issue} />

@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useLocation } from "react-router";
 import { changeLocale, i18n } from "../i18n";
 import { resolveLocale, type Locale } from "../i18n/locales";
 import { useTranslation } from "react-i18next";
@@ -48,6 +49,7 @@ export function App({
   initialLocale?: Locale;
   sessionExpiredNotice?: boolean;
 } = {}) {
+  const location = useLocation();
   const { i18n: currentI18n } = useTranslation();
   const [themeMode, setThemeMode] = useState<ThemeMode>(initialTheme);
   const [colorPalette, setColorPalette] =
@@ -77,12 +79,12 @@ export function App({
   };
 
   const route = resolveAppRoute(
-    window.location.pathname,
-    window.location.search,
+    location.pathname,
+    location.search,
   );
   if (sessionState.status === "anonymous") {
     const returnTo = safeReturnTo(
-      `${window.location.pathname}${window.location.search}`,
+      `${location.pathname}${location.search}`,
     );
     return (
       <LoginPage
@@ -145,7 +147,7 @@ export function App({
     }
   })();
   return (
-    <AppShell login={login} displayName={displayName} avatarUrl={avatarUrl}>
+    <AppShell login={login} displayName={displayName} avatarUrl={avatarUrl} routePathname={location.pathname} routeSearch={location.search}>
       {sessionExpiredNotice && <SessionExpiredNotice />}
       {content}
     </AppShell>

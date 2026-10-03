@@ -1,4 +1,5 @@
 import type { WorkViewCard } from "./types";
+import { Link } from "react-router";
 import { IssueTypeBadge } from "../../components/ui/IssueTypeBadge";
 import { PriorityBadge } from "../../components/ui/PriorityBadge";
 import { routePaths } from "../../app/routes";
@@ -47,9 +48,9 @@ export function KanbanCard({
         </small>
       </div>
       <div className="kanban-card-title-row">
-        <a
+        <Link
           className="kanban-card-title"
-          href={
+          to={
             returnTo
               ? routePaths.issueDetailFrom(
                   issue.owner,
@@ -62,7 +63,7 @@ export function KanbanCard({
           title={issue.title}
         >
           {issue.title}
-        </a>
+        </Link>
       </div>
       <div className="kanban-card-footer">
         <small className="kanban-card-assignee">

@@ -6,6 +6,7 @@ import { api, toUserFacingError, type Repository, type UserFacingError } from ".
 import { IssueListPage } from "../issues/IssueListPage";
 import { KanbanBoard } from "../work-views/KanbanBoard";
 import { useTranslation } from "react-i18next";
+import { Link } from "react-router";
 
 type View = "issues" | "kanban" | "gantt";
 
@@ -50,7 +51,7 @@ export function RepositoryWorkspacePage({
     return (
       <section>
         <ErrorNotice message={error} />
-        <a href={routePaths.issues}>{t("returnToIssues")}</a>
+        <Link to={routePaths.issues}>{t("returnToIssues")}</Link>
       </section>
     );
   }

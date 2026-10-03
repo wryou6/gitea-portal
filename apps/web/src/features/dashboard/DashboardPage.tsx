@@ -5,6 +5,7 @@ import { LoadingState } from "../../components/feedback/LoadingState";
 import { PageHeader } from "../../components/layout/PageHeader";
 import { Button } from "../../components/ui/Button";
 import { useTranslation } from "react-i18next";
+import { Link } from "react-router";
 import {
   api,
   toUserFacingError,
@@ -73,14 +74,14 @@ export function DashboardPage() {
         <ul className="workspace-directory" aria-label={t("listLabel")}>
           {workspaces.map((workspace) => (
             <li key={workspace.id}>
-              <a className="workspace-card" href={workspace.href}>
+              <Link className="workspace-card" to={workspace.href}>
                 <span className="workspace-card-kind">
                   {t(workspace.kind)}
                 </span>
                 <strong>
                   {workspace.name ?? t("allRepositories")}
                 </strong>
-              </a>
+              </Link>
             </li>
           ))}
         </ul>
