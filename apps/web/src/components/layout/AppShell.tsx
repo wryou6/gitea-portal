@@ -9,8 +9,6 @@ import { GlobalIssueSearch } from "./GlobalIssueSearch";
 import { UserIdentity } from "../ui/UserIdentity";
 import { buildWorkViewSearch, type WorkViewURLView } from "../../features/work-views/work-view-url-state";
 
-const SIDEBAR_STATE_KEY = "gitea-portal:sidebar-expanded";
-
 type NavigationIconName = "create" | "issues" | "kanban" | "gantt" | "settings";
 
 function NavigationIcon({ name }: { name: NavigationIconName }) {
@@ -96,31 +94,6 @@ export function AppShell({
   const [logoutFailed, setLogoutFailed] = useState(false);
   const accountMenuRef = useRef<HTMLDivElement>(null);
   const accountTriggerRef = useRef<HTMLButtonElement>(null);
-  const [expanded, setExpanded] = useState(() => {
-    const defaultExpanded = !onIssues && contextRoute.type !== "all-repositories-view" && contextRoute.type !== "repository-view";
-    try {
-      const stored = window.sessionStorage.getItem(SIDEBAR_STATE_KEY);
-      return stored === null ? defaultExpanded : stored !== "collapsed";
-    } catch {
-      return defaultExpanded;
-    }
-  });
-
-  const toggleSidebar = () => {
-    setExpanded((current) => {
-      const next = !current;
-      try {
-        window.sessionStorage.setItem(
-          SIDEBAR_STATE_KEY,
-          next ? "expanded" : "collapsed",
-        );
-      } catch {
-        // Keep the in-memory control usable if browser storage is unavailable.
-      }
-      return next;
-    });
-  };
-
   const logout = async () => {
     if (logoutPending) return;
     setLogoutPending(true);
@@ -189,15 +162,6 @@ export function AppShell({
       active: onCreateIssue,
     },
     {
-      key: "issues",
-      label: t("issues"),
-      href: repository
-        ? routePaths.repositoryView(repository.owner, repository.repo, "issues")
-        : routePaths.issues,
-      icon: "issues",
-      active: onIssues,
-    },
-    {
       key: "kanban",
       label: t("kanban"),
       href: repository
@@ -227,6 +191,15 @@ export function AppShell({
         !onCreateIssue &&
         (allReposView === "gantt" || repository?.view === "gantt"),
     },
+    {
+      key: "issues",
+      label: t("issues"),
+      href: repository
+        ? routePaths.repositoryView(repository.owner, repository.repo, "issues")
+        : routePaths.issues,
+      icon: "issues",
+      active: onIssues,
+    },
   ];
 
   const currentViewSearch = navigationContext.search;
@@ -243,7 +216,7 @@ export function AppShell({
 
   return (
     <div
-      className={`app-shell ${expanded ? "app-shell--expanded" : "app-shell--collapsed"}`}
+      className="app-shell app-shell--collapsed"
     >
       <header className="topbar">
         <div className="topbar-primary">
@@ -296,26 +269,6 @@ export function AppShell({
       </header>
       <div className="app-layout">
         <aside className="sidebar" aria-label={t("globalNavigation")}>
-          <button
-            className="sidebar-toggle"
-            type="button"
-            aria-label={t(expanded ? "collapseSidebar" : "expandSidebar")}
-            aria-expanded={expanded}
-            aria-controls="primary-navigation"
-            onClick={toggleSidebar}
-          >
-            <svg
-              aria-hidden="true"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <path d={expanded ? "m15 6-6 6 6 6" : "m9 6 6 6-6 6"} />
-            </svg>
-          </button>
           <nav
             id="primary-navigation"
             className="sidebar-nav"
@@ -328,7 +281,7 @@ export function AppShell({
                 to={item.href}
                 aria-label={item.label}
                 aria-current={item.active ? "page" : undefined}
-                title={!expanded ? item.label : undefined}
+                title={item.label}
                 onClick={(event) => {
                   if (!["issues", "kanban", "gantt"].includes(item.key)) return;
                   if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || event.button !== 0) return;

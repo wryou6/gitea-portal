@@ -54,6 +54,37 @@ export const RepositoryWorkspace: Story = {
   ),
 };
 
+export const SidebarOverlayInteraction: Story = {
+  render: () => (
+    <AppShell
+      login="admin"
+      routePathname="/repositories/engineering/portal/gantt"
+      routeSearch="?gantt_scale=week"
+      workspaceRepositories={[
+        { owner: "engineering", name: "portal", fullName: "engineering/portal", htmlUrl: "#" },
+      ]}
+    >
+      <div className="work-view-layout">
+        <PageHeader
+          eyebrow="engineering/portal"
+          title="Gantt Chart"
+          description="移入左側圖示列或以 Tab 將焦點移入，確認標籤覆蓋此內容且不推動控制面板。"
+        />
+        <ResponsiveToolbar>
+          <Button>工作檢視控制</Button>
+        </ResponsiveToolbar>
+      </div>
+    </AppShell>
+  ),
+  parameters: {
+    docs: {
+      description: {
+        story: "可將 viewport 調窄，再以滑鼠 hover 或鍵盤 focus 檢視 sidebar overlay。",
+      },
+    },
+  },
+};
+
 export const AllReposCreateRoute: Story = {
   render: () => (
     <AppShell

@@ -1115,42 +1115,49 @@ textarea:focus-visible,
 }
 .app-layout {
   display: grid;
-  grid-template-columns: 15rem minmax(0, 1fr);
-  min-height: calc(100vh - 3.5rem);
-}
-.app-shell--collapsed .app-layout {
   grid-template-columns: 4.25rem minmax(0, 1fr);
+  min-height: calc(100vh - 3.5rem);
 }
 .sidebar {
   position: sticky;
   top: 4rem;
   align-self: start;
+  z-index: 10;
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
+  width: 4.25rem;
+  box-sizing: border-box;
   height: calc(100vh - 4rem);
   overflow-y: auto;
   border-right: 1px solid var(--border);
   background: var(--background);
-  padding: 1rem 0.75rem;
+  padding: 1rem 0.55rem;
+  transition: width 140ms ease;
 }
 .sidebar-nav {
   display: grid;
   gap: 0.35rem;
 }
-.sidebar-link,
-.sidebar-toggle {
+.sidebar-link {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
+  justify-content: center;
+  gap: 0;
   min-width: 0;
   min-height: 2.75rem;
   border: 1px solid transparent;
   border-radius: var(--radius);
-  padding: 0.55rem 0.7rem;
+  padding: 0.55rem 0.4rem;
   color: var(--muted-foreground);
   font-size: 0.9rem;
   font-weight: 650;
+}
+.sidebar-link:focus-visible {
+  position: relative;
+  z-index: 1;
+  outline: 3px solid color-mix(in oklch, var(--primary) 55%, transparent);
+  outline-offset: 2px;
 }
 .sidebar-link:hover {
   background: var(--muted);
@@ -1162,35 +1169,39 @@ textarea:focus-visible,
   background: color-mix(in oklch, var(--primary) 9%, var(--card));
   color: var(--primary);
 }
-.sidebar-link svg,
-.sidebar-toggle svg {
+.sidebar-link svg {
   width: 1.25rem;
   height: 1.25rem;
   flex: none;
 }
 .sidebar-label {
+  display: none;
   min-width: 0;
   overflow-wrap: anywhere;
 }
-.sidebar-toggle {
-  width: 100%;
+@media (hover: hover) {
+  .sidebar:hover {
+    width: 15rem;
+  }
+  .sidebar:hover .sidebar-link {
+    justify-content: flex-start;
+    gap: 0.75rem;
+    padding-inline: 0.7rem;
+  }
+  .sidebar:hover .sidebar-label {
+    display: inline;
+  }
+}
+.sidebar:focus-within {
+  width: 15rem;
+}
+.sidebar:focus-within .sidebar-link {
   justify-content: flex-start;
-  border-color: var(--border);
-  background: var(--secondary);
-  color: var(--secondary-foreground);
-  cursor: pointer;
+  gap: 0.75rem;
+  padding-inline: 0.7rem;
 }
-.app-shell--collapsed .sidebar {
-  padding-inline: 0.55rem;
-}
-.app-shell--collapsed .sidebar-link,
-.app-shell--collapsed .sidebar-toggle {
-  justify-content: center;
-  gap: 0;
-  padding-inline: 0.4rem;
-}
-.app-shell--collapsed .sidebar-label {
-  display: none;
+.sidebar:focus-within .sidebar-label {
+  display: inline;
 }
 .app-content {
   min-width: 0;
@@ -3270,21 +3281,26 @@ button.danger {
   .auth-expired-notice {
     padding: 0.75rem;
   }
-  .app-shell--expanded .app-layout {
-    grid-template-columns: minmax(8.5rem, min(40vw, 13rem)) minmax(0, 1fr);
-  }
   .app-shell--collapsed .app-layout {
     grid-template-columns: 3.75rem minmax(0, 1fr);
   }
   .sidebar {
-    top: 5.25rem;
-    height: calc(100vh - 5.25rem);
+    top: 15.25rem;
+    width: 3.75rem;
+    height: calc(100vh - 15.25rem);
     padding: 0.75rem 0.5rem;
   }
-  .sidebar-link,
-  .sidebar-toggle {
+  .sidebar-link {
     gap: 0.5rem;
     padding-inline: 0.5rem;
+  }
+  @media (hover: hover) {
+    .sidebar:hover {
+      width: min(15rem, calc(100vw - 3.75rem));
+    }
+  }
+  .sidebar:focus-within {
+    width: min(15rem, calc(100vw - 3.75rem));
   }
   .sidebar-label {
     font-size: 0.82rem;
