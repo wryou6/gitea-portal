@@ -9,6 +9,7 @@ const collapsedStorageKey = "gitea-portal:work-view-controls-collapsed";
 
 export function WorkViewLayout({
   controls,
+  commonFilters,
   children,
   filters,
   resultCount,
@@ -19,6 +20,7 @@ export function WorkViewLayout({
   userProfiles,
 }: {
   controls: ReactNode;
+  commonFilters?: ReactNode;
   children: ReactNode;
   filters: WorkViewFilters;
   resultCount: number;
@@ -102,6 +104,7 @@ export function WorkViewLayout({
         </div>
       </aside>
       <div className="work-view-main">
+        {commonFilters}
         <p
           className="work-view-summary"
           role="status"

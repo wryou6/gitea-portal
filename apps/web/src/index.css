@@ -2010,65 +2010,6 @@ textarea:focus-visible,
   font-size: 0.78rem;
   font-weight: 650;
 }
-.work-view-controls .work-view-filters {
-  margin: 0;
-  padding: 0;
-  border: 0;
-  border-radius: 0;
-  background: transparent;
-  gap: 0.75rem;
-}
-.work-view-controls .work-view-filters-primary {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr);
-  gap: 0.5rem;
-}
-.work-view-controls .work-view-filter {
-  display: grid;
-  grid-template-columns: 4.5rem minmax(0, 1fr);
-  min-width: 0;
-  align-items: center;
-  gap: 0.5rem;
-}
-.work-view-controls .work-view-filter--assignee {
-  grid-column: 1 / -1;
-  grid-template-columns: minmax(0, 1fr);
-  gap: 0.35rem;
-}
-.work-view-controls .work-view-filter--choice {
-  grid-column: 1 / -1;
-  grid-template-columns: minmax(0, 1fr);
-  gap: 0.35rem;
-}
-.work-view-controls .work-view-filter input,
-.work-view-controls .work-view-filter select {
-  min-width: 0;
-}
-.work-view-controls .work-view-filter-clear {
-  justify-self: start;
-  padding-inline: 0;
-  font-size: 0.78rem;
-  cursor: pointer;
-}
-.work-view-controls .work-view-filter-clear:disabled {
-  opacity: 0.5;
-  cursor: default;
-}
-.work-view-controls .work-view-filter-chips {
-  display: grid;
-  gap: 0.3rem;
-}
-.work-view-controls .work-view-filter-chips li {
-  justify-content: space-between;
-  min-width: 0;
-  border-radius: 0.3rem;
-  overflow-wrap: anywhere;
-}
-.work-view-controls .work-view-filter-chips button {
-  min-width: 1.5rem;
-  min-height: 1.5rem;
-  flex: none;
-}
 .work-view-main {
   display: flex;
   min-width: 0;
@@ -2076,6 +2017,93 @@ textarea:focus-visible,
   flex-direction: column;
   padding: 0 0.75rem 0.5rem;
   overflow: hidden;
+}
+.work-view-main > .work-view-filters {
+  flex: none;
+  min-width: 0;
+  gap: 0.3rem;
+  margin: 0;
+  padding: 0 0 0.45rem;
+  border: 0;
+  border-bottom: 1px solid var(--border);
+  border-radius: 0;
+  background: transparent;
+}
+.work-view-main .work-view-filters-primary {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.5rem 2.0rem;
+}
+.work-view-main .work-view-filter--choice {
+  display: flex;
+  position: relative;
+  flex: 0 0 auto;
+  min-width: 0;
+  align-items: center;
+  gap: 1.0rem;
+}
+.work-view-main .work-view-filter--choice::before {
+  position: absolute;
+  top: 0.4rem;
+  bottom: 0.4rem;
+  left: -1.0rem;
+  width: 1px;
+  background: var(--border);
+  content: "";
+}
+.work-view-main .work-view-filter-label {
+  flex: none;
+  white-space: nowrap;
+}
+.work-view-main .work-view-choice-buttons {
+  flex-wrap: nowrap;
+  min-width: 0;
+  gap: 0.5rem;
+}
+.work-view-main .work-view-filter-badge-button {
+  min-height: 2.5rem;
+  padding-inline: 0.05rem;
+}
+.work-view-main .work-view-filter--assignee {
+  display: flex;
+  min-width: 0;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: 0.3rem;
+}
+.work-view-main .work-view-filter--assignee > label {
+  flex: none;
+}
+.work-view-main .work-view-assignee-shortcuts {
+  display: flex;
+  flex: none;
+  gap: 0.25rem;
+}
+.work-view-main .work-view-assignee-shortcut {
+  min-height: 2.25rem;
+  padding-inline: 0.2rem;
+}
+.work-view-main .work-view-assignee-select {
+  width: min(10rem, 100%);
+  flex: 0 1 10rem;
+  min-height: 2.25rem;
+}
+.work-view-main .work-view-filter-clear {
+  min-height: 2.25rem;
+  padding-inline: 0.45rem;
+  font-size: 0.76rem;
+}
+.work-view-main .work-view-filter-chips {
+  margin: 0;
+}
+.work-view-filter-meta {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-top: 0.3rem;
 }
 .work-view-summary {
   flex: none;
@@ -2086,6 +2114,22 @@ textarea:focus-visible,
   line-height: 1.5;
   overflow-wrap: anywhere;
   cursor: default;
+}
+@media (max-width: 1080px) {
+  .work-view-main .work-view-filters-primary {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.4rem 0.75rem;
+  }
+  .work-view-main .work-view-choice-buttons {
+    flex-wrap: wrap;
+  }
+  .work-view-main .work-view-filter--assignee {
+    flex-wrap: wrap;
+  }
+  .work-view-main .work-view-assignee-select {
+    flex-basis: 100%;
+  }
 }
 .work-view-content {
   display: flex;
@@ -2224,6 +2268,20 @@ textarea:focus-visible,
   }
   .work-view-main {
     padding-inline: 0.5rem;
+  }
+  .work-view-main .work-view-filters-primary {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0.4rem;
+  }
+  .work-view-main .work-view-filter--choice {
+    min-width: 0;
+  }
+  .work-view-main .work-view-filter--assignee {
+    flex-wrap: wrap;
+    flex-basis: auto;
+  }
+  .work-view-main .work-view-assignee-select {
+    flex-basis: 100%;
   }
   .work-view-content > .kanban-board {
     grid-template-columns: minmax(0, 1fr);

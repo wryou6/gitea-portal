@@ -11,7 +11,7 @@ import { LoadingState } from "../../components/feedback/LoadingState";
 import { KanbanColumn } from "./KanbanColumn";
 import type { WorkViewCard } from "./types";
 import { demoIssue } from "../../stories/fixtures";
-import { WorkViewFilterBar } from "./WorkViewFilterBar";
+import { WorkViewFilterBar, WorkViewRecentDoneFilter } from "./WorkViewFilterBar";
 import { WorkViewLayout } from "./WorkViewLayout";
 import { defaultWorkViewFilters, matchesRecentDoneVisibility, matchesWorkViewFilters, type WorkViewFilters } from "./work-view-filters";
 
@@ -100,7 +100,7 @@ function KanbanScreen({ includeAnomaly = false, multiSelect = false }: { include
         title={tCommon("kanban")}
         compact
       />
-      <WorkViewLayout filters={filters} resultCount={columns.flatMap((column) => column.cards).filter((issue) => matchesWorkViewFilters(issue, filters, "engineer") && matchesRecentDoneVisibility(issue, recentDoneOnly)).length} recentDoneOnly={recentDoneOnly} controls={<WorkViewFilterBar filters={filters} onChange={setFilters} assignees={["engineer"]} currentUserLogin="engineer" recentDoneOnly={recentDoneOnly} onRecentDoneOnlyChange={setRecentDoneOnly} />}>
+      <WorkViewLayout filters={filters} commonFilters={<WorkViewFilterBar filters={filters} onChange={setFilters} assignees={["engineer"]} currentUserLogin="engineer" />} resultCount={columns.flatMap((column) => column.cards).filter((issue) => matchesWorkViewFilters(issue, filters, "engineer") && matchesRecentDoneVisibility(issue, recentDoneOnly)).length} recentDoneOnly={recentDoneOnly} controls={<WorkViewRecentDoneFilter checked={recentDoneOnly} onChange={setRecentDoneOnly} />}>
       {isMobileViewport && (
         <div className="field kanban-lane-picker">
           <label htmlFor="storybook-kanban-active-column">{t("statusColumn")}</label>

@@ -12,7 +12,7 @@ import { StatusTransitionDialog } from "../issues/StatusTransitionDialog";
 import { useTranslation } from "react-i18next";
 import { useLocation, useNavigate } from "react-router";
 import { formatNumber } from "../../i18n/format";
-import { WorkViewFilterBar } from "./WorkViewFilterBar";
+import { WorkViewFilterBar, WorkViewRecentDoneFilter } from "./WorkViewFilterBar";
 import { WorkViewLayout } from "./WorkViewLayout";
 import { matchesRecentDoneVisibility, matchesWorkViewFilters, parseWorkViewFilters, serializeWorkViewFilters, type WorkViewFilters } from "./work-view-filters";
 import { mergeUserProfiles } from "../../lib/user-profiles";
@@ -153,7 +153,8 @@ export function KanbanBoard({
     setPendingTransition({ issue, targetState: stateKey });
   };
 
-  const filterControls = <WorkViewFilterBar filters={filters} onChange={updateFilters} assignees={assignees} userProfiles={userProfiles} currentUserLogin={login} repositoryFixed={Boolean(repository)} recentDoneOnly={recentDoneOnly} onRecentDoneOnlyChange={setRecentDoneOnly} />;
+  const commonFilters = <WorkViewFilterBar filters={filters} onChange={updateFilters} assignees={assignees} userProfiles={userProfiles} currentUserLogin={login} repositoryFixed={Boolean(repository)} />;
+  const controls = <WorkViewRecentDoneFilter checked={recentDoneOnly} onChange={setRecentDoneOnly} />;
 
   const submitTransition = async (
     actionKey: string,
@@ -192,7 +193,7 @@ export function KanbanBoard({
             emptyMessage={"repositories" in ganttView && ganttView.repositories.length === 0 ? t("noReadableRepositories") : undefined}
             returnTo={buildWorkViewReturnTo(window.location.pathname, window.location.search, "gantt")}
             filters={filters}
-            filterControls={filterControls}
+            commonFilters={commonFilters}
             currentUserLogin={login}
             recentDoneOnly={recentDoneOnly}
             userProfiles={userProfiles}
@@ -201,7 +202,7 @@ export function KanbanBoard({
           <LoadingState />
         )
       ) : (
-        <WorkViewLayout controls={filterControls} filters={filters} repositoryFixed={Boolean(repository)} resultCount={allCards.filter((issue) => matchesWorkViewFilters(issue, filters, login) && matchesRecentDoneVisibility(issue, recentDoneOnly)).length} recentDoneOnly={recentDoneOnly} error={Boolean(error)} userProfiles={userProfiles}>
+        <WorkViewLayout controls={controls} commonFilters={commonFilters} filters={filters} repositoryFixed={Boolean(repository)} resultCount={allCards.filter((issue) => matchesWorkViewFilters(issue, filters, login) && matchesRecentDoneVisibility(issue, recentDoneOnly)).length} recentDoneOnly={recentDoneOnly} error={Boolean(error)} userProfiles={userProfiles}>
           {hasNoReadableRepositories && <EmptyState>{t("noReadableRepositories")}</EmptyState>}
           {isMobileViewport && (view?.columns.length ?? 0) > 0 && (
             <div className="field kanban-lane-picker">

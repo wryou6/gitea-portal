@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Badge } from "../../components/ui/Badge";
 import { countActiveWorkViewFilters, createClearedWorkViewFilters, type WorkViewFilters } from "./work-view-filters";
@@ -9,6 +8,26 @@ import type { UserProfiles } from "../../lib/user-profiles";
 const priorities = ["critical", "high", "medium", "low"] as const;
 const issueTypes = ["bug", "feature", "task"] as const;
 const statuses = ["todo", "in-progress", "done"] as const;
+
+export function WorkViewRecentDoneFilter({
+  checked,
+  onChange,
+}: {
+  checked: boolean;
+  onChange: (checked: boolean) => void;
+}) {
+  const { t } = useTranslation("work-views");
+  return (
+    <label className="work-view-filter work-view-filter--checkbox">
+      <input
+        type="checkbox"
+        checked={checked}
+        onChange={(event) => onChange(event.currentTarget.checked)}
+      />
+      <span>{t("recentDoneOnly")}</span>
+    </label>
+  );
+}
 
 function ChoiceFilter<T extends string>({
   label,
@@ -32,16 +51,16 @@ function ChoiceFilter<T extends string>({
   shortcut?: { label: string; accessibleName: string; pressed: boolean; onSelect: () => void };
 }) {
   return (
-    <fieldset className="work-view-filter work-view-filter--choice">
-      <legend>{label}</legend>
-      <div className="work-view-choice-buttons" role="group" aria-label={label}>
+    <div className="work-view-filter work-view-filter--choice" role="group" aria-label={label}>
+      <span className="work-view-filter-label">{label}</span>
+      <div className="work-view-choice-buttons">
         <button type="button" className="work-view-filter-badge-button" aria-pressed={values.length === 0} onClick={onClear}><Badge className="work-view-filter-option-badge">{allLabel}</Badge></button>
         {shortcut && <button type="button" className="work-view-filter-badge-button" aria-label={shortcut.accessibleName} aria-pressed={shortcut.pressed} onClick={shortcut.onSelect}><Badge className="work-view-filter-option-badge">{shortcut.label}</Badge></button>}
         {options.map((option) => (
           <button key={option} type="button" className="work-view-filter-badge-button" aria-pressed={values.includes(option)} onClick={() => onToggle(option)}><Badge className={`work-view-filter-option-badge ${badgeClassName(option)}`}>{optionLabel(option)}</Badge></button>
         ))}
       </div>
-    </fieldset>
+    </div>
   );
 }
 
@@ -52,8 +71,6 @@ export function WorkViewFilterBar({
   userProfiles,
   currentUserLogin,
   repositoryFixed = false,
-  recentDoneOnly: providedRecentDoneOnly,
-  onRecentDoneOnlyChange,
 }: {
   filters: WorkViewFilters;
   onChange: (next: WorkViewFilters) => void;
@@ -61,12 +78,8 @@ export function WorkViewFilterBar({
   userProfiles?: UserProfiles;
   currentUserLogin?: string;
   repositoryFixed?: boolean;
-  recentDoneOnly?: boolean;
-  onRecentDoneOnlyChange?: (checked: boolean) => void;
 }) {
   const { t } = useTranslation(["work-views", "issues"]);
-  const [localRecentDoneOnly, setLocalRecentDoneOnly] = useState(true);
-  const recentDoneOnly = providedRecentDoneOnly ?? localRecentDoneOnly;
   const count = countActiveWorkViewFilters(repositoryFixed ? { ...filters, repository: "all" } : filters);
   const { activeFilters: chips, labelFor, filterHeading } = useWorkViewFilterLabels(filters, repositoryFixed, userProfiles);
   const update = <K extends keyof WorkViewFilters>(key: K, value: WorkViewFilters[K]) =>
@@ -97,23 +110,7 @@ export function WorkViewFilterBar({
   ])].sort((left, right) => left.localeCompare(right));
   return (
     <section className="work-view-filters" aria-label={t("filterIssues")}>
-      <h3 className="work-view-controls-section-title">{t("commonFilters")}</h3>
-      <label className="work-view-filter work-view-filter--checkbox">
-        <input
-          type="checkbox"
-          checked={recentDoneOnly}
-          onChange={(event) => {
-            const checked = event.currentTarget.checked;
-            if (onRecentDoneOnlyChange) onRecentDoneOnlyChange(checked);
-            else setLocalRecentDoneOnly(checked);
-          }}
-        />
-        <span>{t("recentDoneOnly")}</span>
-      </label>
       <div className="work-view-filters-primary">
-        <ChoiceFilter label={String(t("priorityLabel", { ns: "issues" }))} values={filters.priority} options={priorities} allLabel={String(t("allFilterValues"))} optionLabel={(value) => labelFor("priority", value)} badgeClassName={(value) => `priority-badge priority-badge--${value}`} onToggle={(value) => toggleValue("priority", value)} onClear={() => update("priority", [])} />
-        <ChoiceFilter label={String(t("type", { ns: "issues" }))} values={filters.issueType} options={issueTypes} allLabel={String(t("allFilterValues"))} optionLabel={(value) => labelFor("issueType", value)} badgeClassName={(value) => `issue-type-badge issue-type-badge--${value}`} onToggle={(value) => toggleValue("issueType", value)} onClear={() => update("issueType", [])} />
-        <ChoiceFilter label={String(t("status", { ns: "issues" }))} values={filters.state} options={statuses} allLabel={String(t("allFilterValues"))} optionLabel={(value) => labelFor("state", value)} badgeClassName={(value) => `issue-status issue-status--${value}`} onToggle={(value) => toggleValue("state", value)} onClear={() => update("state", [])} shortcut={{ label: String(t("unfinishedFilter")), accessibleName: String(t("unfinishedFilterAccessibleName")), pressed: filters.state.includes("todo") && filters.state.includes("in-progress"), onSelect: () => update("state", ["todo", "in-progress"]) }} />
         <div className="work-view-filter work-view-filter--assignee">
           <label htmlFor="work-view-assignee-input">{t("assignee", { ns: "issues" })}</label>
           <div className="work-view-assignee-shortcuts" role="group" aria-label={t("assigneeShortcuts")}>
@@ -126,11 +123,16 @@ export function WorkViewFilterBar({
             {selectableAssignees.map((login) => <option key={login} value={login}>{userOptionLabel(profileFor(userProfiles, login))}</option>)}
           </select>
         </div>
-        <button type="button" className="work-view-filter-clear" onClick={clear} disabled={!count}>{t("clearFilters")}</button>
+        <ChoiceFilter label={String(t("status", { ns: "issues" }))} values={filters.state} options={statuses} allLabel={String(t("allFilterValues"))} optionLabel={(value) => labelFor("state", value)} badgeClassName={(value) => `issue-status issue-status--${value}`} onToggle={(value) => toggleValue("state", value)} onClear={() => update("state", [])} shortcut={{ label: String(t("unfinishedFilter")), accessibleName: String(t("unfinishedFilterAccessibleName")), pressed: filters.state.includes("todo") && filters.state.includes("in-progress"), onSelect: () => update("state", ["todo", "in-progress"]) }} />
+        <ChoiceFilter label={String(t("priorityLabel", { ns: "issues" }))} values={filters.priority} options={priorities} allLabel={String(t("allFilterValues"))} optionLabel={(value) => labelFor("priority", value)} badgeClassName={(value) => `priority-badge priority-badge--${value}`} onToggle={(value) => toggleValue("priority", value)} onClear={() => update("priority", [])} />
+        <ChoiceFilter label={String(t("type", { ns: "issues" }))} values={filters.issueType} options={issueTypes} allLabel={String(t("allFilterValues"))} optionLabel={(value) => labelFor("issueType", value)} badgeClassName={(value) => `issue-type-badge issue-type-badge--${value}`} onToggle={(value) => toggleValue("issueType", value)} onClear={() => update("issueType", [])} />
       </div>
-      {chips.length > 0 && <ul className="work-view-filter-chips" aria-label={t("activeFilters")}>
-        {chips.map(([key, value]) => <li key={`${key}:${value}`}><span>{filterHeading(key)}: {labelFor(key, String(value))}</span><button type="button" aria-label={t("removeFilter", { filter: labelFor(key, String(value)) })} onClick={() => removeChip(key, String(value))}>×</button></li>)}
-      </ul>}
+      {(chips.length > 0 || count > 0) && <div className="work-view-filter-meta">
+        {chips.length > 0 && <ul className="work-view-filter-chips" aria-label={t("activeFilters")}>
+          {chips.map(([key, value]) => <li key={`${key}:${value}`}><span>{filterHeading(key)}: {labelFor(key, String(value))}</span><button type="button" aria-label={t("removeFilter", { filter: labelFor(key, String(value)) })} onClick={() => removeChip(key, String(value))}>×</button></li>)}
+        </ul>}
+        {count > 0 && <button type="button" className="work-view-filter-clear" onClick={clear}>{t("clearFilters")}</button>}
+      </div>}
     </section>
   );
 }

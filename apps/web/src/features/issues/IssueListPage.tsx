@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState, type KeyboardEvent } from "react";
 import { useTranslation } from "react-i18next";
 import { useLocation, useNavigationType } from "react-router";
-import { WorkViewFilterBar } from "../work-views/WorkViewFilterBar";
+import { WorkViewFilterBar, WorkViewRecentDoneFilter } from "../work-views/WorkViewFilterBar";
 import { WorkViewLayout } from "../work-views/WorkViewLayout";
 import { defaultWorkViewFilters, matchesRecentDoneVisibility, matchesWorkViewFilters, parseWorkViewFilters } from "../work-views/work-view-filters";
 import type { WorkViewFilters } from "../work-views/work-view-filters";
@@ -305,24 +305,23 @@ export function IssueListPage({
         loading={loading}
         error={Boolean(displayedError)}
         userProfiles={userProfiles}
+        commonFilters={<WorkViewFilterBar
+          filters={demoIssues ? demoFilters : filters}
+          repositoryFixed={Boolean(repository)}
+          assignees={[...new Set((demoIssues ?? loadedIssues).flatMap((issue) => issue.assignees))].sort((a, b) => a.localeCompare(b))}
+          userProfiles={userProfiles}
+          currentUserLogin={login}
+          onChange={(next) => {
+            const fixed = repository ? { ...next, repository: `${repository.owner}/${repository.name}` } : next;
+            if (demoIssues) {
+              setDemoFilters(fixed);
+              return;
+            }
+            void load(fixed, sort, direction, true);
+          }}
+        />}
         controls={<>
-      <WorkViewFilterBar
-        filters={demoIssues ? demoFilters : filters}
-        repositoryFixed={Boolean(repository)}
-        assignees={[...new Set((demoIssues ?? loadedIssues).flatMap((issue) => issue.assignees))].sort((a, b) => a.localeCompare(b))}
-        userProfiles={userProfiles}
-        currentUserLogin={login}
-        recentDoneOnly={recentDoneOnly}
-        onRecentDoneOnlyChange={setRecentDoneOnly}
-        onChange={(next) => {
-          const fixed = repository ? { ...next, repository: `${repository.owner}/${repository.name}` } : next;
-          if (demoIssues) {
-            setDemoFilters(fixed);
-            return;
-          }
-          void load(fixed, sort, direction, true);
-        }}
-      />
+      <WorkViewRecentDoneFilter checked={recentDoneOnly} onChange={setRecentDoneOnly} />
       <div className="issues-table-toolbar">
         <h3 className="work-view-controls-section-title">{t("viewOptions")}</h3>
         <div className="issues-table-toolbar-actions">

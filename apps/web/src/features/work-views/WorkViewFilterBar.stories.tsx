@@ -1,13 +1,13 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { useState } from "react";
-import { WorkViewFilterBar } from "./WorkViewFilterBar";
+import { WorkViewFilterBar, WorkViewRecentDoneFilter } from "./WorkViewFilterBar";
 import { createDefaultWorkViewFilters, defaultWorkViewFilters, matchesRecentDoneVisibility, parseWorkViewFilters, type WorkViewFilters } from "./work-view-filters";
 import { WorkViewLayout } from "./WorkViewLayout";
 import { demoIssue } from "../../stories/fixtures";
 
 function FilterBarStory({ repositoryFixed = false }: { repositoryFixed?: boolean }) {
   const currentUserLogin = "alex";
-  const [filters, setFilters] = useState<WorkViewFilters>(() => parseWorkViewFilters("?assignee=me"));
+  const [filters, setFilters] = useState<WorkViewFilters>(() => parseWorkViewFilters("?priority=high&issueType=bug&state=todo&state=in-progress&assignee=me"));
   return <WorkViewFilterBar filters={filters} onChange={setFilters} assignees={["alex", "mei"]} currentUserLogin={currentUserLogin} repositoryFixed={repositoryFixed} />;
 }
 
@@ -49,7 +49,9 @@ export const ExplicitAllAssignees: Story = {
 export const QuerylessAllAssignees: Story = {
   render: () => <WorkViewFilterBar filters={parseWorkViewFilters("")} onChange={() => undefined} assignees={["alex", "mei"]} currentUserLogin="alex" />,
 };
-export const NarrowLayout: Story = { parameters: { viewport: { defaultViewport: "mobile1" } } };
+export const NarrowLayout: Story = {
+  parameters: { viewport: { defaultViewport: "mobile1" } },
+};
 
 function localClosedAt(daysAgo: number): string {
   const date = new Date();
@@ -71,7 +73,8 @@ function RecentDoneSummaryDemo() {
   const visible = recentDoneExamples.filter((issue) => matchesRecentDoneVisibility(issue, recentDoneOnly));
   return (
     <WorkViewLayout
-      controls={<WorkViewFilterBar filters={defaultWorkViewFilters} onChange={() => undefined} recentDoneOnly={recentDoneOnly} onRecentDoneOnlyChange={setRecentDoneOnly} />}
+      controls={<WorkViewRecentDoneFilter checked={recentDoneOnly} onChange={setRecentDoneOnly} />}
+      commonFilters={<WorkViewFilterBar filters={{ ...defaultWorkViewFilters, assignee: "me", priority: ["high"], issueType: ["bug"], state: ["todo", "in-progress"] }} onChange={() => undefined} assignees={["alex", "mei"]} currentUserLogin="alex" />}
       filters={defaultWorkViewFilters}
       resultCount={visible.length}
       recentDoneOnly={recentDoneOnly}

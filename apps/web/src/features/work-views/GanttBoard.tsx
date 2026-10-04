@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState, type CSSProperties, type KeyboardEvent, type ReactNode } from "react";
 import { WorkViewLayout } from "./WorkViewLayout";
-import { WorkViewFilterBar } from "./WorkViewFilterBar";
+import { WorkViewFilterBar, WorkViewRecentDoneFilter } from "./WorkViewFilterBar";
 import { EmptyState } from "../../components/feedback/EmptyState";
 import { api, type Issue, type IssueSortField } from "../../lib/api";
 import { routePaths } from "../../app/routes";
@@ -102,7 +102,7 @@ export function GanttBoard({
   emptyMessage,
   repository,
   filters: providedFilters,
-  filterControls,
+  commonFilters,
   currentUserLogin,
   userProfiles: providedUserProfiles,
   recentDoneOnly: providedRecentDoneOnly,
@@ -120,7 +120,7 @@ export function GanttBoard({
   emptyMessage?: string;
   repository?: { owner: string; name: string };
   filters?: WorkViewFilters;
-  filterControls?: ReactNode;
+  commonFilters?: ReactNode;
   currentUserLogin?: string;
   userProfiles?: import("../../lib/user-profiles").UserProfiles;
   recentDoneOnly?: boolean;
@@ -356,8 +356,8 @@ export function GanttBoard({
 
   return (
     <section className="gantt-view" aria-label={t("ganttLabel")}>
-      <WorkViewLayout filters={filters} resultCount={visibleIssues.length} recentDoneOnly={recentDoneOnly} repositoryFixed={Boolean(repository)} userProfiles={userProfiles} controls={<>
-      {filterControls ?? <WorkViewFilterBar filters={filters} onChange={setLocalFilters} repositoryFixed={Boolean(repository)} assignees={[...new Set(issues.flatMap((issue) => issue.assignees))].sort()} userProfiles={userProfiles} currentUserLogin={currentUserLogin ?? login} recentDoneOnly={recentDoneOnly} onRecentDoneOnlyChange={updateRecentDoneOnly} />}
+      <WorkViewLayout filters={filters} commonFilters={commonFilters ?? <WorkViewFilterBar filters={filters} onChange={setLocalFilters} repositoryFixed={Boolean(repository)} assignees={[...new Set(issues.flatMap((issue) => issue.assignees))].sort()} userProfiles={userProfiles} currentUserLogin={currentUserLogin ?? login} />} resultCount={visibleIssues.length} recentDoneOnly={recentDoneOnly} repositoryFixed={Boolean(repository)} userProfiles={userProfiles} controls={<>
+      <WorkViewRecentDoneFilter checked={recentDoneOnly} onChange={updateRecentDoneOnly} />
       <div className="gantt-toolbar" role="group" aria-label={t("timelineControls")}>
         <h3 className="work-view-controls-section-title">{t("timeline")}</h3>
         <div className="gantt-date-navigation">

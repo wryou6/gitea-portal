@@ -275,6 +275,6 @@ function SharedFiltersGanttComposition({ multiSelect = false }: { multiSelect?: 
     ]
     : baselineIssues;
   return <section>
-      <GanttBoard issues={issues} filters={filters} recentDoneOnly={recentDoneOnly} onRecentDoneOnlyChange={setRecentDoneOnly} filterControls={<WorkViewFilterBar filters={filters} onChange={setFilters} assignees={["engineer"]} currentUserLogin="engineer" recentDoneOnly={recentDoneOnly} onRecentDoneOnlyChange={setRecentDoneOnly} />} demo demoInitialDate={localCalendarDate()} demoScale="week" />
+      <GanttBoard issues={issues} filters={filters} recentDoneOnly={recentDoneOnly} onRecentDoneOnlyChange={setRecentDoneOnly} commonFilters={<WorkViewFilterBar filters={filters} onChange={setFilters} assignees={["engineer"]} currentUserLogin="engineer" />} demo demoInitialDate={localCalendarDate()} demoScale="week" />
   </section>;
 }
