@@ -285,6 +285,7 @@ export function AppShell({
                 onClick={(event) => {
                   if (!["issues", "kanban", "gantt"].includes(item.key)) return;
                   if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || event.button !== 0) return;
+                  if (event.detail > 0) event.currentTarget.blur();
                   event.preventDefault();
                   const target = new URL(item.href, window.location.origin);
                   const current = resolveWorkViewNavigationContext(window.location.pathname, window.location.search);
