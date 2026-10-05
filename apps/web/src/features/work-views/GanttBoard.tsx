@@ -467,13 +467,21 @@ export function GanttBoard({
           </div>
           {unscheduledIssues.length > 0 && (
             <div className="gantt-row-section" role="rowgroup" aria-label={`${t("unscheduled")} (${formatNumber(unscheduledIssues.length, i18n.language)})`}>
-              <h2>{t("unscheduled")} <span>（{formatNumber(unscheduledIssues.length, i18n.language)}）</span></h2>
+              <h2>
+                <span className="gantt-row-section-title">
+                  {t("unscheduled")} <span>（{formatNumber(unscheduledIssues.length, i18n.language)}）</span>
+                </span>
+              </h2>
               {unscheduledIssues.map((issue) => renderIssueRow(issue, "unscheduled"))}
             </div>
           )}
           {anomalousIssues.length > 0 && (
             <div className="gantt-row-section" role="rowgroup" aria-label={`${t("dateAnomalies")} (${formatNumber(anomalousIssues.length, i18n.language)})`}>
-              <h2>{t("dateAnomalies")} <span>（{formatNumber(anomalousIssues.length, i18n.language)}）</span></h2>
+              <h2>
+                <span className="gantt-row-section-title">
+                  {t("dateAnomalies")} <span>（{formatNumber(anomalousIssues.length, i18n.language)}）</span>
+                </span>
+              </h2>
               {anomalousIssues.map((issue) => renderIssueRow(issue, "anomaly"))}
             </div>
           )}
@@ -506,13 +514,21 @@ export function GanttBoard({
           <p className="gantt-no-timeline-dates">{t("noTimelineDates")}</p>
           {unscheduledIssues.length > 0 && (
             <div className="gantt-row-section" role="rowgroup" aria-label={`${t("unscheduled")} (${formatNumber(unscheduledIssues.length, i18n.language)})`}>
-              <h2>{t("unscheduled")} <span>（{formatNumber(unscheduledIssues.length, i18n.language)}）</span></h2>
+              <h2>
+                <span className="gantt-row-section-title">
+                  {t("unscheduled")} <span>（{formatNumber(unscheduledIssues.length, i18n.language)}）</span>
+                </span>
+              </h2>
               {unscheduledIssues.map((issue) => renderIssueRow(issue, "unscheduled"))}
             </div>
           )}
           {anomalousIssues.length > 0 && (
             <div className="gantt-row-section" role="rowgroup" aria-label={`${t("dateAnomalies")} (${formatNumber(anomalousIssues.length, i18n.language)})`}>
-              <h2>{t("dateAnomalies")} <span>（{formatNumber(anomalousIssues.length, i18n.language)}）</span></h2>
+              <h2>
+                <span className="gantt-row-section-title">
+                  {t("dateAnomalies")} <span>（{formatNumber(anomalousIssues.length, i18n.language)}）</span>
+                </span>
+              </h2>
               {anomalousIssues.map((issue) => renderIssueRow(issue, "anomaly"))}
             </div>
           )}

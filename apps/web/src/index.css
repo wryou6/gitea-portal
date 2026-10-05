@@ -3115,9 +3115,6 @@ button.danger {
   display: grid;
 }
 .gantt-row-section h2 {
-  position: sticky;
-  left: 0;
-  z-index: 4;
   grid-column: 1 / -1;
   margin: 0;
   padding: 0.45rem 0.65rem;
@@ -3125,7 +3122,18 @@ button.danger {
   background: var(--muted);
   font-size: 0.78rem;
 }
-.gantt-row-section h2 span {
+.gantt-row-section-title {
+  position: sticky;
+  left: 0.65rem;
+  z-index: 4;
+  display: inline-flex;
+  width: max-content;
+  max-width: 100%;
+  align-items: center;
+  gap: 0.25rem;
+  background: var(--muted);
+}
+.gantt-row-section-title > span {
   color: var(--muted-foreground);
   font-size: 0.72rem;
 }
