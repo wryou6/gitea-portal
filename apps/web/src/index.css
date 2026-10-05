@@ -1638,10 +1638,6 @@ textarea:focus-visible,
 .issue-row .meta {
   gap: 0.4rem 0.8rem;
 }
-.kanban-next-action {
-  color: var(--foreground) !important;
-  font-weight: 650;
-}
 .assignee-roster {
   display: flex;
   flex-wrap: wrap;
@@ -2685,11 +2681,6 @@ button.danger {
   flex: 0 1 auto;
   min-width: 0;
   max-width: 100%;
-  color: var(--foreground) !important;
-  font-size: 0.75rem;
-  font-weight: 650;
-  text-align: end;
-  overflow-wrap: anywhere;
 }
 .kanban-card-key {
   flex: 0 1 auto;
@@ -2733,12 +2724,14 @@ button.danger {
   gap: 0.4rem 0.75rem;
   margin-inline-start: auto;
 }
-.kanban-card-due {
+.kanban-card-due,
+.kanban-next-action {
   min-width: 0;
   border-inline-start: 1px solid var(--border);
   padding-inline-start: 0.75rem;
 }
-.kanban-card-due .schedule-date {
+.kanban-card-due .schedule-date,
+.kanban-next-action .schedule-date {
   gap: 0.4rem;
 }
 .kanban-card-type {

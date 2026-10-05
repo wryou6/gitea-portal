@@ -80,14 +80,16 @@ export function KanbanCard({
             className="schedule-dates--compact kanban-card-due"
             dueOnly
           />
-          <small className="kanban-next-action">
-            {t("nextAction", {
-              action: tIssues(
-                statusNextActionTranslationKey(issue.nextActionKey),
-                { ns: "issues" },
-              ),
-            })}
-          </small>
+          <dl className="schedule-dates schedule-dates--compact kanban-next-action">
+            <div className="schedule-date">
+              <dt>{t("nextActionLabel")}</dt>
+              <dd>
+                {tIssues(statusNextActionTranslationKey(issue.nextActionKey), {
+                  ns: "issues",
+                })}
+              </dd>
+            </div>
+          </dl>
         </div>
       </div>
       {issue.scheduleStatus === "invalid" && (

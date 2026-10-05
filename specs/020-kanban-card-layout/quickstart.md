@@ -13,7 +13,7 @@ pnpm.cmd --filter @gitea-portal/web build-storybook
 ## Storybook design review
 
 1. Start `pnpm.cmd --filter @gitea-portal/web storybook` and open the Work views/Kanban card and Work views/Kanban stories.
-2. Inspect the three main card rows in zh-TW, English, and Japanese: Priority then Type on the left and key on the right; title alone on row two; assignee on the left of the footer, with Due date and smaller right-aligned next action on the right. Confirm assignees have no current/last role label, Done cards use the first retained assignee, and long titles truncate without overlap.
+2. Inspect the three main card rows in zh-TW, English, and Japanese: Priority then Type on the left and key on the right; title alone on row two; assignee on the left of the footer, with Due and Next as matching label/value groups on the right. Confirm Next has no colon, assignees have no current/last role label, Done cards use the first retained assignee, and long titles truncate without overlap.
 3. Inspect missing Type/Priority, unassigned and unset Due date, long title/key, and repair/schedule anomaly. Confirm generic Labels not used by card fields are hidden.
 4. Confirm cards have no Status action button. Keyboard-focus the issue title and verify it links to Issue detail. Anomaly cards must not be draggable. Storybook uses fictional callbacks and must not issue live Gitea requests.
 5. Inspect three Status columns and four columns including Anomaly at desktop and tablet widths; confirm equal widths and no clipped cards. At the narrow breakpoint, confirm the existing lane picker and single-column view remain usable.

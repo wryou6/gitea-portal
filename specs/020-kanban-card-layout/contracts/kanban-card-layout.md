@@ -4,7 +4,7 @@
 
 1. First row: Priority then Type badges on the left; Repository/Issue key (`owner/name #number`) aligned to the right.
 2. Second row: Issue title only. Truncate a long title with an ellipsis while retaining its full text for assistive technology and its detail link.
-3. Third row: Assignee on the left; Due date followed by the smaller, right-aligned next action on the right. Do not label the assignee as current or last. Done issues show the first retained Gitea assignee; show "Not recorded" when the roster is empty. Allow the footer to wrap in narrow columns without overlap.
+3. Third row: Assignee on the left; Due date followed by the right-aligned Next action on the right. Render Due and Next as separate label/value groups with matching typography, spacing, and dividers; the Next label has no trailing colon. Do not label the assignee as current or last. Done issues show the first retained Gitea assignee; show "Not recorded" when the roster is empty. Allow the footer to wrap in narrow columns without overlap.
 4. Do not render general Gitea Label chips that are not used by a card field. Keep complete Labels available in Issue list/detail; keep repair annotation and schedule anomaly details on the card.
 5. Allow metadata to wrap in narrow columns without overlap.
 
