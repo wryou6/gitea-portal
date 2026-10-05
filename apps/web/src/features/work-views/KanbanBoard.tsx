@@ -202,7 +202,7 @@ export function KanbanBoard({
           <LoadingState />
         )
       ) : (
-        <WorkViewLayout controls={controls} commonFilters={commonFilters} filters={filters} repositoryFixed={Boolean(repository)} resultCount={allCards.filter((issue) => matchesWorkViewFilters(issue, filters, login) && matchesRecentDoneVisibility(issue, recentDoneOnly)).length} recentDoneOnly={recentDoneOnly} error={Boolean(error)} userProfiles={userProfiles}>
+        <WorkViewLayout controls={controls} commonFilters={commonFilters} collapseCommonFiltersOnMobile filters={filters} repositoryFixed={Boolean(repository)} resultCount={allCards.filter((issue) => matchesWorkViewFilters(issue, filters, login) && matchesRecentDoneVisibility(issue, recentDoneOnly)).length} recentDoneOnly={recentDoneOnly} error={Boolean(error)} userProfiles={userProfiles}>
           {hasNoReadableRepositories && <EmptyState>{t("noReadableRepositories")}</EmptyState>}
           {isMobileViewport && (view?.columns.length ?? 0) > 0 && (
             <div className="field kanban-lane-picker">

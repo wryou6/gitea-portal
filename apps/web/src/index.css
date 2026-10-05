@@ -2018,7 +2018,7 @@ textarea:focus-visible,
   padding: 0 0.75rem 0.5rem;
   overflow: hidden;
 }
-.work-view-main > .work-view-filters {
+.work-view-main .work-view-filters {
   flex: none;
   min-width: 0;
   gap: 0.3rem;
@@ -2034,6 +2034,9 @@ textarea:focus-visible,
   align-items: center;
   flex-wrap: wrap;
   gap: 0.5rem 2.0rem;
+}
+.work-view-mobile-filter-toggle {
+  display: none;
 }
 .work-view-main .work-view-filter--choice {
   display: flex;
@@ -2140,6 +2143,9 @@ textarea:focus-visible,
   gap: 0.5rem;
   overflow: auto;
   overscroll-behavior: contain;
+}
+.work-view-content:has(> .kanban-board) {
+  overflow: hidden;
 }
 .work-view-content > .table-scroll-region {
   min-height: 0;
@@ -2253,6 +2259,8 @@ textarea:focus-visible,
   overflow: hidden;
 }
 .work-view-content > .kanban-board {
+  min-height: 0;
+  flex: 1;
   margin: 0;
 }
 @media (max-width: 720px) {
@@ -2565,20 +2573,26 @@ button.danger {
 .kanban-board {
   display: grid;
   grid-auto-flow: column;
-  grid-auto-columns: minmax(0, 1fr);
+  grid-auto-columns: minmax(17rem, 1fr);
   grid-template-columns: none;
   gap: 1rem;
-  align-items: start;
+  min-width: 0;
+  min-height: 0;
+  align-items: stretch;
   overflow-x: auto;
+  overflow-y: hidden;
   overscroll-behavior-x: contain;
-  padding-bottom: 1rem;
+  padding-bottom: 0;
 }
 .kanban-lane-picker {
   display: none;
 }
 .kanban-column {
+  display: flex;
   min-width: 0;
-  min-height: 20rem;
+  min-height: 0;
+  flex-direction: column;
+  overflow: hidden;
   border: 1px solid var(--border);
   border-radius: var(--radius);
   background: var(--muted);
@@ -2612,7 +2626,20 @@ button.danger {
   justify-content: space-between;
   gap: 0.5rem;
   margin: 0 0 0.75rem;
+  flex: none;
   font-size: 0.95rem;
+}
+.kanban-column-cards {
+  min-height: 0;
+  flex: 1;
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior-y: contain;
+  scrollbar-width: thin;
+}
+.kanban-column-cards:focus-visible {
+  outline: 3px solid color-mix(in oklch, var(--ring) 70%, transparent);
+  outline-offset: -3px;
 }
 .kanban-column-title {
   min-width: 0;
@@ -3417,6 +3444,19 @@ button.danger {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
+  .work-view-mobile-filter-toggle {
+    display: inline-flex;
+    min-height: 2.25rem;
+    flex: none;
+    align-self: flex-start;
+    margin-bottom: 0.35rem;
+    padding: 0.3rem 0.65rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--card);
+    color: var(--foreground);
+    cursor: pointer;
+  }
   .work-view-filter {
     min-width: 0;
   }
@@ -3498,8 +3538,9 @@ button.danger {
   .kanban-board {
     grid-auto-flow: row;
     grid-auto-columns: auto;
+    grid-auto-rows: minmax(0, 1fr);
     grid-template-columns: minmax(0, 1fr);
-    overflow: visible;
+    overflow: hidden;
     padding-bottom: 0;
   }
   .kanban-lane-picker {

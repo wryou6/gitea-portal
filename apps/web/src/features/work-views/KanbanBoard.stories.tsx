@@ -58,7 +58,7 @@ const collidingIssueNumber: WorkViewCard = {
   title: "Same issue number from a different repository",
 };
 
-function KanbanScreen({ includeAnomaly = false, multiSelect = false }: { includeAnomaly?: boolean; multiSelect?: boolean }) {
+function KanbanScreen({ includeAnomaly = false, multiSelect = false, longLists = false }: { includeAnomaly?: boolean; multiSelect?: boolean; longLists?: boolean }) {
   const { t, i18n } = useTranslation("work-views");
   const { t: tCommon } = useTranslation("common");
   const { t: tIssues } = useTranslation("issues");
@@ -72,12 +72,17 @@ function KanbanScreen({ includeAnomaly = false, multiSelect = false }: { include
     ...(multiSelect ? { priority: ["high", "low"], issueType: ["bug", "task"], state: ["todo", "in-progress"] } : {}),
   }));
   const [recentDoneOnly, setRecentDoneOnly] = useState(true);
+  const longList = (issue: WorkViewCard) => Array.from({ length: 18 }, (_, index) => ({
+    ...issue,
+    number: issue.number + index + 1,
+    title: `${issue.title} ${index + 1}`,
+  }));
   const columns = [
-    { stateKey: "todo", displayName: "待辦", cards: [todo, collidingIssueNumber].map((issue) => ({ ...issue, priority: "high" as const, type: "bug" as const })) },
-    { stateKey: "in-progress", displayName: "處理中", cards: [{ ...inProgress, priority: "low" as const, type: "task" as const }] },
-    { stateKey: "done", displayName: "已完成", cards: [{ ...done, priority: "medium" as const, type: "feature" as const }] },
+    { stateKey: "todo", displayName: "待辦", cards: [...[todo, collidingIssueNumber].map((issue) => ({ ...issue, priority: "high" as const, type: "bug" as const })), ...(longLists ? longList(todo) : [])] },
+    { stateKey: "in-progress", displayName: "處理中", cards: [{ ...inProgress, priority: "low" as const, type: "task" as const }, ...(longLists ? longList(inProgress) : [])] },
+    { stateKey: "done", displayName: "已完成", cards: [{ ...done, priority: "medium" as const, type: "feature" as const }, ...(longLists ? longList(done) : [])] },
     ...(includeAnomaly
-      ? [{ stateKey: "anomaly", displayName: "異常", cards: [anomaly] }]
+      ? [{ stateKey: "anomaly", displayName: "異常", cards: [anomaly, ...(longLists ? longList(anomaly) : [])] }]
       : []),
   ];
   useEffect(() => {
@@ -100,7 +105,7 @@ function KanbanScreen({ includeAnomaly = false, multiSelect = false }: { include
         title={tCommon("kanban")}
         compact
       />
-      <WorkViewLayout filters={filters} commonFilters={<WorkViewFilterBar filters={filters} onChange={setFilters} assignees={["engineer"]} currentUserLogin="engineer" />} resultCount={columns.flatMap((column) => column.cards).filter((issue) => matchesWorkViewFilters(issue, filters, "engineer") && matchesRecentDoneVisibility(issue, recentDoneOnly)).length} recentDoneOnly={recentDoneOnly} controls={<WorkViewRecentDoneFilter checked={recentDoneOnly} onChange={setRecentDoneOnly} />}>
+      <WorkViewLayout filters={filters} commonFilters={<WorkViewFilterBar filters={filters} onChange={setFilters} assignees={["engineer"]} currentUserLogin="engineer" />} collapseCommonFiltersOnMobile resultCount={columns.flatMap((column) => column.cards).filter((issue) => matchesWorkViewFilters(issue, filters, "engineer") && matchesRecentDoneVisibility(issue, recentDoneOnly)).length} recentDoneOnly={recentDoneOnly} controls={<WorkViewRecentDoneFilter checked={recentDoneOnly} onChange={setRecentDoneOnly} />}>
       {isMobileViewport && (
         <div className="field kanban-lane-picker">
           <label htmlFor="storybook-kanban-active-column">{t("statusColumn")}</label>
@@ -146,6 +151,15 @@ export const DesktopWorkspace: Story = {
 };
 export const DesktopWorkspaceDark: Story = { ...DesktopWorkspace, globals: { theme: "dark" } };
 export const WithAnomaly: Story = { args: { includeAnomaly: true } };
+export const IndependentScrolling: Story = {
+  ...DesktopWorkspace,
+  args: { includeAnomaly: true, longLists: true },
+};
+export const NarrowIndependentScrolling: Story = {
+  ...DesktopWorkspace,
+  args: { includeAnomaly: true, longLists: true },
+  parameters: { viewport: { defaultViewport: "mobile1" } },
+};
 export const MultiSelectCombination: Story = { args: { multiSelect: true } };
 export const Loading: Story = { render: () => <LoadingState /> };
 export const Empty: Story = { render: () => <EmptyState>No issues in readable repositories.</EmptyState> };

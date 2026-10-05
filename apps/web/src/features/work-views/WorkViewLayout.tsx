@@ -1,4 +1,4 @@
-import { useId, useState, type ReactNode } from "react";
+import { useEffect, useId, useState, type ReactNode } from "react";
 import { useTranslation } from "react-i18next";
 import { formatNumber } from "../../i18n/format";
 import { useWorkViewFilterLabels } from "./work-view-filter-labels";
@@ -10,6 +10,7 @@ const collapsedStorageKey = "gitea-portal:work-view-controls-collapsed";
 export function WorkViewLayout({
   controls,
   commonFilters,
+  collapseCommonFiltersOnMobile = false,
   children,
   filters,
   resultCount,
@@ -21,6 +22,7 @@ export function WorkViewLayout({
 }: {
   controls: ReactNode;
   commonFilters?: ReactNode;
+  collapseCommonFiltersOnMobile?: boolean;
   children: ReactNode;
   filters: WorkViewFilters;
   resultCount: number;
@@ -37,6 +39,13 @@ export function WorkViewLayout({
     userProfiles,
   );
   const controlsId = useId();
+  const commonFiltersId = useId();
+  const [isMobileViewport, setIsMobileViewport] = useState(
+    () => window.matchMedia("(max-width: 720px)").matches,
+  );
+  const [mobileFiltersCollapsed, setMobileFiltersCollapsed] = useState(
+    () => window.matchMedia("(max-width: 720px)").matches,
+  );
   const [collapsed, setCollapsed] = useState(() => {
     try {
       const stored = window.sessionStorage.getItem(collapsedStorageKey);
@@ -47,6 +56,17 @@ export function WorkViewLayout({
       return window.matchMedia("(max-width: 720px)").matches;
     }
   });
+  useEffect(() => {
+    if (!collapseCommonFiltersOnMobile) return;
+    const media = window.matchMedia("(max-width: 720px)");
+    const updateViewport = () => {
+      setIsMobileViewport(media.matches);
+      setMobileFiltersCollapsed(media.matches);
+    };
+    media.addEventListener("change", updateViewport);
+    updateViewport();
+    return () => media.removeEventListener("change", updateViewport);
+  }, [collapseCommonFiltersOnMobile]);
   const toggleLabel = t(collapsed ? "expandControls" : "collapseControls");
   const countText = loading
     ? t("summaryLoading")
@@ -104,7 +124,36 @@ export function WorkViewLayout({
         </div>
       </aside>
       <div className="work-view-main">
-        {commonFilters}
+        {commonFilters && (
+          <>
+            {collapseCommonFiltersOnMobile && (
+              <button
+                className="work-view-mobile-filter-toggle"
+                type="button"
+                aria-expanded={!isMobileViewport || !mobileFiltersCollapsed}
+                aria-controls={commonFiltersId}
+                onClick={() => setMobileFiltersCollapsed((value) => !value)}
+              >
+                {t(
+                  mobileFiltersCollapsed
+                    ? "expandMobileFilters"
+                    : "collapseMobileFilters",
+                )}
+              </button>
+            )}
+            <div
+              id={commonFiltersId}
+              className="work-view-common-filters"
+              hidden={
+                collapseCommonFiltersOnMobile &&
+                isMobileViewport &&
+                mobileFiltersCollapsed
+              }
+            >
+              {commonFilters}
+            </div>
+          </>
+        )}
         <p
           className="work-view-summary"
           role="status"
