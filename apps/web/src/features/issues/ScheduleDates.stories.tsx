@@ -23,6 +23,18 @@ export const DueOnly: Story = {
   args: { startDate: null, dueDate: "2026-09-30" },
 };
 
+export const OverdueDueDate: Story = {
+  args: { startDate: "2026-09-24", dueDate: "2026-09-25", overdue: true },
+};
+
+export const DueToday: Story = {
+  args: { startDate: null, dueDate: "2026-09-29", overdue: false },
+};
+
+export const FutureDueDate: Story = {
+  args: { startDate: null, dueDate: "2026-10-02", overdue: false },
+};
+
 export const Unscheduled: Story = {
   args: { startDate: null, dueDate: null },
 };
@@ -56,5 +68,15 @@ export const ReversedDateRange: Story = {
     startDate: "2026-09-30",
     dueDate: "2026-09-24",
     scheduleAnomaly: "date_range_reversed",
+    overdue: true,
+  },
+};
+
+export const StartDateAnomalyWithOverdueDueDate: Story = {
+  args: {
+    startDate: null,
+    dueDate: "2026-09-25",
+    scheduleAnomaly: "invalid_start_date",
+    overdue: true,
   },
 };

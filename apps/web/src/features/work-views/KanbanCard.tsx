@@ -12,6 +12,7 @@ import { statusNextActionTranslationKey } from "../../i18n/status";
 import { AssigneeIdentityGroup } from "../../components/ui/AssigneeIdentityGroup";
 import { assigneeLoginsForDisplay } from "../../lib/assignee-display";
 import { profileFor } from "../../lib/user-profiles";
+import { isIssueOverdue } from "../issues/overdue-date";
 
 export function KanbanCard({
   issue,
@@ -79,6 +80,7 @@ export function KanbanCard({
             scheduleAnomaly={issue.scheduleAnomaly}
             className="schedule-dates--compact kanban-card-due"
             dueOnly
+            overdue={isIssueOverdue(issue)}
           />
           <dl className="schedule-dates schedule-dates--compact kanban-next-action">
             <div className="schedule-date">

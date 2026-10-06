@@ -8,6 +8,12 @@ import {
 } from "../../stories/fixtures";
 import { Table } from "../../components/ui/Table";
 
+function localDateOffset(days: number): string {
+  const date = new Date();
+  date.setDate(date.getDate() + days);
+  return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
+}
+
 const meta = {
   title: "Issues/IssueRow",
   component: IssueRow,
@@ -24,6 +30,55 @@ export const AssigneeOverflow: Story = {
 };
 export const CompletedWithMultipleAssignees: Story = {
   args: { issue: demoCompletedIssueWithMultipleAssignees },
+};
+export const OverdueDueDate: Story = {
+  args: { issue: { ...demoIssue, dueDate: localDateOffset(-1) } },
+};
+export const DueToday: Story = {
+  args: { issue: { ...demoIssue, dueDate: localDateOffset(0) } },
+};
+export const FutureDueDate: Story = {
+  args: { issue: { ...demoIssue, dueDate: localDateOffset(2) } },
+};
+export const ClosedIssueWithPastDueDate: Story = {
+  args: {
+    issue: {
+      ...demoCompletedIssueWithMultipleAssignees,
+      dueDate: localDateOffset(-1),
+    },
+  },
+};
+export const InvalidDueDate: Story = {
+  args: {
+    issue: {
+      ...demoIssue,
+      dueDate: null,
+      scheduleStatus: "invalid",
+      scheduleAnomaly: "invalid_due_date",
+    },
+  },
+};
+export const ReversedRange: Story = {
+  args: {
+    issue: {
+      ...demoIssue,
+      startDate: localDateOffset(2),
+      dueDate: localDateOffset(-1),
+      scheduleStatus: "invalid",
+      scheduleAnomaly: "date_range_reversed",
+    },
+  },
+};
+export const StartDateAnomalyWithOverdueDueDate: Story = {
+  args: {
+    issue: {
+      ...demoIssue,
+      startDate: null,
+      dueDate: localDateOffset(-1),
+      scheduleStatus: "invalid",
+      scheduleAnomaly: "invalid_start_date",
+    },
+  },
 };
 export const NoOptionalMetadata: Story = {
   args: {

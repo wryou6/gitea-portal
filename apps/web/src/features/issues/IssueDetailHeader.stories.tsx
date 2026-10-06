@@ -2,6 +2,12 @@ import type { Meta, StoryObj } from "@storybook/react";
 import { IssueDetailHeader } from "./IssueDetailHeader";
 import { demoIssue } from "../../stories/fixtures";
 
+function localDateOffset(days: number): string {
+  const date = new Date();
+  date.setDate(date.getDate() + days);
+  return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
+}
+
 const meta = {
   title: "Issues/IssueDetailHeader",
   component: IssueDetailHeader,
@@ -12,6 +18,34 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {};
+
+export const OverdueDueDate: Story = {
+  args: { issue: { ...demoIssue, dueDate: localDateOffset(-1) } },
+};
+
+export const DueToday: Story = {
+  args: { issue: { ...demoIssue, dueDate: localDateOffset(0) } },
+};
+
+export const FutureDueDate: Story = {
+  args: { issue: { ...demoIssue, dueDate: localDateOffset(2) } },
+};
+
+export const ClosedIssueWithPastDueDate: Story = {
+  args: { issue: { ...demoIssue, state: "closed", status: "done", dueDate: localDateOffset(-1) } },
+};
+
+export const StartDateAnomalyWithOverdueDueDate: Story = {
+  args: {
+    issue: {
+      ...demoIssue,
+      startDate: null,
+      dueDate: localDateOffset(-1),
+      scheduleStatus: "invalid",
+      scheduleAnomaly: "invalid_start_date",
+    },
+  },
+};
 
 export const StartDateOnly: Story = {
   args: {

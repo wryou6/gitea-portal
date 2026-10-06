@@ -14,6 +14,7 @@ import {
 import { formatDateTime } from "../../i18n/format";
 import { UserIdentity } from "../../components/ui/UserIdentity";
 import { profileFor } from "../../lib/user-profiles";
+import { isIssueOverdue } from "./overdue-date";
 export function IssueDetailHeader({ issue }: { issue: Issue }) {
   const { t } = useTranslation("issues");
   const action = STATUS_ACTIONS.find(
@@ -38,6 +39,7 @@ export function IssueDetailHeader({ issue }: { issue: Issue }) {
           dueDate={issue.dueDate}
           scheduleAnomaly={issue.scheduleAnomaly}
           className="schedule-dates--compact"
+          overdue={isIssueOverdue(issue)}
         />
         <span>{t("milestone")}：{issue.milestone ?? t("notSet")}</span>
         <time dateTime={issue.updatedAt}>

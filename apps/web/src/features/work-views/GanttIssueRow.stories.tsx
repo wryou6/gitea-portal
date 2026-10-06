@@ -45,6 +45,22 @@ type Story = StoryObj<typeof meta>;
 
 export const Scheduled: Story = {};
 
+export const OverdueDueDate: Story = {
+  args: { issue: { ...demoIssue, dueDate: "2026-09-24" } },
+};
+
+export const DueToday: Story = {
+  args: { issue: { ...demoIssue, dueDate: "2026-09-29" } },
+};
+
+export const FutureDueDate: Story = {
+  args: { issue: { ...demoIssue, dueDate: "2026-10-02" } },
+};
+
+export const ClosedIssueWithPastDueDate: Story = {
+  args: { issue: { ...demoCompletedIssueWithMultipleAssignees, dueDate: "2026-09-24" } },
+};
+
 export const MultipleAssignees: Story = {
   args: { issue: demoIssueWithThreeAssignees },
 };
@@ -78,6 +94,19 @@ export const DateAnomaly: Story = {
       dueDate: "2026-09-24",
       scheduleStatus: "invalid",
       scheduleAnomaly: "date_range_reversed",
+    },
+  },
+};
+
+export const StartDateAnomalyWithOverdueDueDate: Story = {
+  args: {
+    variant: "anomaly",
+    issue: {
+      ...demoIssue,
+      startDate: null,
+      dueDate: "2026-09-24",
+      scheduleStatus: "invalid",
+      scheduleAnomaly: "invalid_start_date",
     },
   },
 };

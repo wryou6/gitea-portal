@@ -15,6 +15,8 @@ import { UserIdentity } from "../../components/ui/UserIdentity";
 import { AssigneeIdentityGroup } from "../../components/ui/AssigneeIdentityGroup";
 import { assigneeLoginsForDisplay } from "../../lib/assignee-display";
 import { profileFor } from "../../lib/user-profiles";
+import { OverdueIndicator } from "../issues/OverdueIndicator";
+import { isIssueOverdue } from "../issues/overdue-date";
 
 export type GanttIssueRowVariant = "scheduled" | "unscheduled" | "anomaly";
 
@@ -87,6 +89,7 @@ export function GanttIssueRow({
     ? positionForDate(addDay(scheduleEnd), cells) * unitWidth
     : undefined;
   const todayPosition = positionForDate(today, cells) * unitWidth;
+  const overdue = isIssueOverdue(issue, today);
   const values: Record<IssueSortField | "repository", ReactNode> = {
     type: <IssueTypeBadge type={issue.type} labels={issue.labels} />,
     key: (
@@ -97,6 +100,7 @@ export function GanttIssueRow({
     title: (
       <div className="gantt-title-cell">
         <Link to={issueHref} title={issue.title}>{issue.title}</Link>
+        {overdue && <OverdueIndicator />}
         {variant === "anomaly" && (
           <span className="schedule-anomaly" role="status">
             {tIssues(scheduleAnomalyTranslationKey(issue.scheduleAnomaly))}

@@ -5,6 +5,7 @@ import {
 } from "@gitea-portal/domain";
 import { useTranslation } from "react-i18next";
 import { formatCalendarDate } from "../../i18n/format";
+import { OverdueIndicator } from "./OverdueIndicator";
 
 export function formatScheduleDate(
   value: string | null,
@@ -55,14 +56,21 @@ export function ScheduleDates({
   scheduleAnomaly,
   className,
   dueOnly = false,
+  overdue = false,
 }: {
   startDate: string | null;
   dueDate: string | null;
   scheduleAnomaly?: IssueScheduleAnomaly;
   className?: string;
   dueOnly?: boolean;
+  overdue?: boolean;
 }) {
   const { t } = useTranslation("issues");
+  const dueDateCanBeOverdue =
+    overdue &&
+    Boolean(dueDate && isCalendarDate(dueDate)) &&
+    scheduleAnomaly !== "invalid_due_date" &&
+    scheduleAnomaly !== "date_range_reversed";
   return (
     <dl
       className={`schedule-dates${className ? ` ${className}` : ""}`}
@@ -76,7 +84,16 @@ export function ScheduleDates({
       )}
       <div className="schedule-date">
         <dt>{t("due")}</dt>
-        <dd>{displayValue(dueDate, "due", t, scheduleAnomaly)}</dd>
+        <dd>
+          {dueDateCanBeOverdue ? (
+            <span className="due-date-overdue">
+              {displayValue(dueDate, "due", t, scheduleAnomaly)}
+              <OverdueIndicator />
+            </span>
+          ) : (
+            displayValue(dueDate, "due", t, scheduleAnomaly)
+          )}
+        </dd>
       </div>
     </dl>
   );
