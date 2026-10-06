@@ -2,6 +2,11 @@ import { defineLocaleResource } from "./define-locale-resource";
 
 export const workViews = defineLocaleResource({
   "zh-TW": {
+    ganttStartHandle: "調整 {{title}} 的開始日期",
+    ganttDueHandle: "調整 {{title}} 的到期日期",
+    ganttDragKeyboardHelp: "使用左右方向鍵逐日調整；按 Enter 儲存，按 Escape 取消。",
+    ganttScheduleSaved: "排程已更新",
+    ganttScheduleSaveFailed: "無法更新排程；已重新載入 Gitea 的實際日期。",
     assigneeSelf: "自己",
     assigneeShortcuts: "負責人快速篩選",
     selectAssignee: "指定負責人…",
@@ -13,6 +18,11 @@ export const workViews = defineLocaleResource({
     allRepositories: "所有儲存庫", allAssignees: "所有負責人", closed: "已關閉", currentAssignee: "目前負責人", lastAssignee: "最後負責人", noLastAssignee: "未記錄", currentUserAssignee: "目前使用者{{login}}", currentUserUnavailable: "無法取得目前使用者", dateAnomalies: "日期異常", ganttLabel: "甘特圖", issueState: "問題狀態", loadingCurrentUserIssues: "正在載入目前使用者的問題…", noFilteredIssues: "沒有符合條件的問題", noUnscheduledIssues: "沒有未排程的問題", noReadableRepositories: "目前沒有可讀取的 Repository。", noAssignee: "未指派", open: "未關閉", scheduledIssues: "已排程問題", unscheduled: "未排程", ganttDescription: "依負責人與日期檢視所有可讀 Repository 的工作。", ganttEyebrow: "所有儲存庫・甘特圖", kanbanDescription: "依 Issue Status 檢視所有可讀 Repository 的問題。", kanbanEyebrow: "所有儲存庫看板", statusColumn: "狀態欄", transitionRejected: "狀態變更未完成", viewLoadError: "工作檢視無法載入", retry: "重試", labels: "標籤", moveIssueToStatus: "將 {{title}} 移至狀態", moveToStatus: "移至狀態", selectColumn: "選擇狀態", nextAction: "下一步：{{action}}", scheduleDateInvalid: "排程日期異常", unassigned: "未指派", ganttViewOptions: "甘特圖欄位設定", ganttVisibleColumns: "顯示欄位", ganttVisibleColumnsHelp: "標題、負責人與狀態固定顯示；其他欄位可選擇顯示。", ganttFixedColumn: "固定顯示", ganttSaveColumnOrder: "儲存為預設欄序", ganttRestoreColumnDefaults: "還原預設欄位", ganttColumnMoveHelp: "按空白鍵選取欄位，再用左右方向鍵移動；再次按空白鍵確認，Escape 取消。", ganttColumnMoved: "{{column}} 已移至第 {{position}} 欄", ganttStartDate: "時間軸起始日", timelineControls: "時間軸控制項", previousTimelinePeriod: "往前一個時間區段", nextTimelinePeriod: "往後一個時間區段", today: "今天", scale: "刻度", scaleDay: "日", scaleWeek: "週", scaleTwoWeeks: "兩週", scaleMonth: "月", timeline: "時間軸", monthHeader: "月份", dateHeader: "日期", weekend: "週末", todayMarker: "今天", noTimelineDates: "目前沒有可顯示的排程日期",
   },
   en: {
+    ganttStartHandle: "Adjust start date for {{title}}",
+    ganttDueHandle: "Adjust due date for {{title}}",
+    ganttDragKeyboardHelp: "Use the arrow keys to adjust by one day. Press Enter to save or Escape to cancel.",
+    ganttScheduleSaved: "Schedule updated",
+    ganttScheduleSaveFailed: "Could not update the schedule. The actual Gitea dates were reloaded.",
     assigneeSelf: "Me",
     assigneeShortcuts: "Assignee shortcuts",
     selectAssignee: "Choose an assignee…",
@@ -24,6 +34,11 @@ export const workViews = defineLocaleResource({
     allRepositories: "All repos", allAssignees: "All assignees", closed: "Closed", currentAssignee: "Current assignee", lastAssignee: "Last assignee", noLastAssignee: "Not recorded", currentUserAssignee: "Current user{{login}}", currentUserUnavailable: "Could not load the current user", dateAnomalies: "Date anomalies", ganttLabel: "Gantt Chart", issueState: "Issue state", loadingCurrentUserIssues: "Loading the current user's issues…", noFilteredIssues: "No issues match these filters", noUnscheduledIssues: "No unscheduled issues", noReadableRepositories: "No readable repositories are available.", noAssignee: "Unassigned", open: "Open", scheduledIssues: "Scheduled issues", unscheduled: "Unscheduled", ganttDescription: "View work across every readable repository by owner and date.", ganttEyebrow: "All repos · Gantt Chart", kanbanDescription: "View issues across every readable repository by Status.", kanbanEyebrow: "ALL REPOS KANBAN", statusColumn: "Status column", transitionRejected: "The Status change was not completed", viewLoadError: "Could not load this work view", retry: "Retry", labels: "Labels", moveIssueToStatus: "Move {{title}} to Status", moveToStatus: "Move to Status", selectColumn: "Select a Status", nextAction: "Next: {{action}}", scheduleDateInvalid: "Schedule date anomaly", unassigned: "Unassigned", ganttViewOptions: "Gantt Chart columns", ganttVisibleColumns: "Visible columns", ganttVisibleColumnsHelp: "Title, Assignee, and Status are always shown. Choose which other columns to display.", ganttFixedColumn: "Always shown", ganttSaveColumnOrder: "Save as default order", ganttRestoreColumnDefaults: "Restore default columns", ganttColumnMoveHelp: "Press Space to pick up a column, use the arrow keys to move it, then press Space again. Escape cancels.", ganttColumnMoved: "{{column}} moved to column {{position}}", ganttStartDate: "Timeline start date", timelineControls: "Timeline controls", previousTimelinePeriod: "Previous timeline period", nextTimelinePeriod: "Next timeline period", today: "Today", scale: "Scale", scaleDay: "Day", scaleWeek: "Week", scaleTwoWeeks: "2 weeks", scaleMonth: "Month", timeline: "Timeline", monthHeader: "Month", dateHeader: "Date", weekend: "Weekend", todayMarker: "Today", noTimelineDates: "No scheduled dates to display",
   },
   ja: {
+    ganttStartHandle: "{{title}} の開始日を調整",
+    ganttDueHandle: "{{title}} の期限日を調整",
+    ganttDragKeyboardHelp: "左右の矢印キーで1日ずつ調整します。Enterで保存、Escapeでキャンセルします。",
+    ganttScheduleSaved: "スケジュールを更新しました",
+    ganttScheduleSaveFailed: "スケジュールを更新できませんでした。Gitea の実際の日付を再読み込みしました。",
     assigneeSelf: "自分",
     assigneeShortcuts: "担当者のクイックフィルター",
     selectAssignee: "担当者を指定…",

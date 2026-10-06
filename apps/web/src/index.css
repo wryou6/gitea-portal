@@ -3132,8 +3132,7 @@ button.danger {
   position: absolute;
   inset-block: 0;
   z-index: 2;
-  width: 0;
-  border-left: 2px solid var(--primary);
+  background: color-mix(in oklch, var(--primary) 16%, transparent);
   pointer-events: none;
 }
 .gantt-calendar-today span {
@@ -3147,6 +3146,7 @@ button.danger {
   font-size: 0.62rem;
   font-weight: 700;
   white-space: nowrap;
+  box-shadow: 0 0 0 1px color-mix(in oklch, var(--primary) 35%, var(--card));
 }
 .gantt-row-group,
 .gantt-row-section {
@@ -3239,18 +3239,72 @@ button.danger {
   position: absolute;
   inset-block: 0;
   z-index: 1;
-  border-left: 2px solid var(--primary);
+  background: color-mix(in oklch, var(--primary) 12%, transparent);
   pointer-events: none;
+}
+.gantt-track--create-range {
+  cursor: crosshair;
+  touch-action: none;
 }
 .gantt-bar {
   position: absolute;
   top: 0.5rem;
   z-index: 2;
+  display: block;
+  overflow: visible;
   height: 1.1rem;
   min-width: 0.3rem;
   border: 1px solid var(--gantt-status-border);
   border-radius: 0.35rem;
   background: var(--gantt-status-background);
+}
+.gantt-bar-move {
+  position: absolute;
+  inset: 0 0.45rem;
+  border-radius: inherit;
+  cursor: grab;
+  touch-action: none;
+}
+.gantt-bar-move:active {
+  cursor: grabbing;
+}
+.gantt-bar-handle {
+  position: absolute;
+  inset-block: -0.45rem;
+  z-index: 1;
+  width: 1.5rem;
+  border: 0;
+  border-radius: 0.3rem;
+  background: transparent;
+  cursor: col-resize;
+  touch-action: none;
+}
+.gantt-bar-handle::after {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0.4rem;
+  height: 1rem;
+  transform: translate(-50%, -50%);
+  border: 1px solid var(--gantt-status-border);
+  border-radius: 0.3rem;
+  background: var(--card);
+  content: "";
+  pointer-events: none;
+}
+.gantt-bar-handle--start {
+  left: -0.75rem;
+}
+.gantt-bar-handle--due {
+  right: -0.75rem;
+}
+.gantt-bar-handle:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+}
+.gantt-track--create-range .gantt-bar-handle,
+.gantt-track--create-range .gantt-bar-move {
+  cursor: inherit;
 }
 .gantt-row-section > .gantt-row {
   grid-column: 1 / -1;

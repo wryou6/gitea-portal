@@ -91,6 +91,8 @@ export function GanttCalendarHeader({
     });
   }, [cells, unitWidth]);
   const todayPosition = timelinePosition(today, cells) * unitWidth;
+  const todayWidth =
+    (timelinePosition(addCalendarDays(today, 1), cells) - timelinePosition(today, cells)) * unitWidth;
 
   return (
     <div
@@ -137,7 +139,7 @@ export function GanttCalendarHeader({
         {today >= (cells[0]?.start ?? today) && today < (cells.at(-1)?.end ?? today) && (
           <span
             className="gantt-calendar-today"
-            style={{ left: `${todayPosition}px` }}
+            style={{ left: `${todayPosition}px`, width: `${todayWidth}px` }}
             role="img"
             aria-label={t("todayMarker")}
           >

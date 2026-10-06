@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { api, toUserFacingError, type UserFacingError } from "../../lib/api";
+import { api, toUserFacingError, type Issue, type UserFacingError } from "../../lib/api";
 import type { WorkViewCard, WorkspaceGanttView, WorkspaceKanbanView } from "./types";
 import { GanttBoard } from "./GanttBoard";
 import { KanbanColumn } from "./KanbanColumn";
@@ -178,6 +178,26 @@ export function KanbanBoard({
     }
   };
 
+  const saveGanttSchedule = async (
+    issue: Issue,
+    schedule: { startDate?: string | null; dueDate?: string | null },
+  ) => {
+    try {
+      await api(`/api/issues/${encodeURIComponent(issue.owner)}/${encodeURIComponent(issue.name)}/${issue.number}`, {
+        method: "PATCH",
+        body: JSON.stringify({
+          expectedUpdatedAt: issue.updatedAt,
+          ...schedule,
+        }),
+      });
+      await load();
+    } catch (cause) {
+      setError(toUserFacingError(cause, t("ganttScheduleSaveFailed")));
+      await load(false);
+      throw cause;
+    }
+  };
+
   return (
     <section className={viewMode === "gantt" ? "workspace-view workspace-view--gantt" : "workspace-view"}>
       {error && <><ErrorNotice message={error} /><button type="button" onClick={() => void load()}>{t("retry")}</button></>}
@@ -197,6 +217,7 @@ export function KanbanBoard({
             currentUserLogin={login}
             recentDoneOnly={recentDoneOnly}
             userProfiles={userProfiles}
+            onScheduleSave={saveGanttSchedule}
           />
         ) : (
           <LoadingState />

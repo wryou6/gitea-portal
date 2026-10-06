@@ -122,6 +122,21 @@ export function timelinePosition(
   return index + fraction;
 }
 
+export function dateAtTimelinePosition(
+  position: number,
+  cells: GanttTimelineCell[],
+): string {
+  if (!cells.length) return localCalendarDate();
+  const bounded = Math.min(Math.max(position, 0), cells.length - Number.EPSILON);
+  const index = Math.floor(bounded);
+  const cell = cells[index]!;
+  const daySpan = countCalendarDays(cell.start, cell.end);
+  return addCalendarDays(
+    cell.start,
+    Math.min(daySpan - 1, Math.floor((bounded - index) * daySpan)),
+  );
+}
+
 export function countCalendarDays(start: string, end: string): number {
   return calendarDayOrdinal(end) - calendarDayOrdinal(start);
 }

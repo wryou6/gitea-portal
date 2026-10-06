@@ -1,3 +1,13 @@
+<!--
+Sync Impact Report
+Version change: 1.0.1 -> 2.0.0
+Modified principles: III. Gitea 寫入必須保全資料並可驗證 (added a narrow exception for
+  documented multi-endpoint Gitea mutations and explicit partial-result recovery)
+Added sections: None
+Removed sections: None
+Follow-up TODOs: None
+-->
+
 # Gitea 跨 Repository Issue Portal Constitution
 
 ## Core Principles
@@ -18,6 +28,13 @@ Portal 對 Repository、Issue 及其相關資料的讀取與寫入 MUST 受目�
 修改 Gitea 狀態或 Labels 前，Portal MUST 驗證使用者權限及資料版本。寫入 MUST 保留未
 涉及的資料，並使用可驗證的原子更新及樂觀並行控制。若無法安全完成，Portal MUST 在
 寫入前拒絕操作，不得以可能留下部分更新的方式降級處理。
+
+例外：當同一筆資料分存於不同 Gitea API 資源，且 Gitea 未提供能涵蓋這些資源的交易時，
+功能規格可明確允許依序寫入。執行前仍 MUST 驗證目前使用者權限、資料版本及各欄位內容；
+未涉及的資料 MUST 保留。任一寫入失敗後，Portal MUST 重新讀取並呈現 Gitea 實際保存的
+各欄位，同時明確回報失敗；MUST NOT 將暫存預覽呈現為已保存結果，也 MUST NOT 宣稱跨
+資源更新具原子性。此例外只適用於功能規格明確記載資料分存、部分寫入情境及恢復行為的
+操作。
 
 ### IV. 跨來源彙整不得呈現部分結果為完整資料
 
@@ -69,4 +86,4 @@ overwritten.
 規則遞增：移除或重新定義既有原則為 MAJOR；新增原則或實質擴充規範為 MINOR；不改變
 規範意義的澄清與修正文句為 PATCH。
 
-**Version**: 1.0.1 | **Ratified**: 2026-09-28 | **Last Amended**: 2026-09-28
+**Version**: 2.0.0 | **Ratified**: 2026-09-28 | **Last Amended**: 2026-10-07

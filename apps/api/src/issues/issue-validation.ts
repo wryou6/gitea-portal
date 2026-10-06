@@ -3,6 +3,8 @@ import {
   isCalendarDate,
   isIssuePriority,
   isIssueType,
+  type IssuePriority,
+  type IssueType,
 } from "@gitea-portal/domain";
 
 export type IssueMutationInput = {
@@ -11,8 +13,8 @@ export type IssueMutationInput = {
   state?: "open" | "closed";
   assignee?: string | null;
   labels?: string[];
-  type?: string;
-  priority?: string;
+  type?: IssueType;
+  priority?: IssuePriority;
   milestone?: string | null;
   startDate?: string | null;
   dueDate?: string | null;
@@ -71,9 +73,12 @@ function validateIssueInput(
     )
   )
     throw new PortalError(422, "Status Labels 由 Portal Status 操作管理");
-  if (!isIssueType(value.type))
+  if ((requireTitle || value.type !== undefined) && !isIssueType(value.type))
     throw new PortalError(422, "Issue Type 必須是 Bug、Feature 或 Task");
-  if (!isIssuePriority(value.priority))
+  if (
+    (requireTitle || value.priority !== undefined) &&
+    !isIssuePriority(value.priority)
+  )
     throw new PortalError(422, "優先級必須是緊急、高、中或低");
   if (
     value.milestone !== undefined &&
@@ -118,10 +123,7 @@ export function validateIssueCreate(
 
 export function validateIssueUpdate(
   input: unknown,
-): asserts input is IssueMutationInput & {
-  type: "bug" | "feature" | "task";
-  priority: "critical" | "high" | "medium" | "low";
-} {
+): asserts input is IssueMutationInput {
   validateIssueInput(input, false);
 }
 

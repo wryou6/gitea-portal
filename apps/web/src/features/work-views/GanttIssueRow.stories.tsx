@@ -45,6 +45,48 @@ type Story = StoryObj<typeof meta>;
 
 export const Scheduled: Story = {};
 
+export const EditableSchedule: Story = {
+  args: { onScheduleSave: async () => undefined },
+};
+
+export const ScheduleSaveFailure: Story = {
+  args: {
+    onScheduleSave: async () => {
+      throw new Error("Mock schedule write failure");
+    },
+  },
+};
+
+export const TodayOutsideTimeline: Story = {
+  args: { today: "2026-11-01" },
+};
+
+export const TodayWeekendAndBar: Story = {
+  args: {
+    today: "2026-09-06",
+    issue: {
+      ...demoIssue,
+      startDate: "2026-09-04",
+      dueDate: "2026-09-08",
+      scheduleStatus: "scheduled",
+    },
+  },
+};
+
+export const EditableStartDateOnly: Story = {
+  args: {
+    issue: { ...demoIssue, dueDate: null, scheduleStatus: "scheduled" },
+    onScheduleSave: async () => undefined,
+  },
+};
+
+export const EditableDueDateOnly: Story = {
+  args: {
+    issue: { ...demoIssue, startDate: null, scheduleStatus: "scheduled" },
+    onScheduleSave: async () => undefined,
+  },
+};
+
 export const OverdueDueDate: Story = {
   args: { issue: { ...demoIssue, dueDate: "2026-09-24" } },
 };
@@ -82,6 +124,19 @@ export const Unscheduled: Story = {
       dueDate: null,
       scheduleStatus: "unscheduled",
     },
+  },
+};
+
+export const EditableUnscheduled: Story = {
+  args: {
+    variant: "unscheduled",
+    issue: {
+      ...demoIssue,
+      startDate: null,
+      dueDate: null,
+      scheduleStatus: "unscheduled",
+    },
+    onScheduleSave: async () => undefined,
   },
 };
 

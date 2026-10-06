@@ -87,6 +87,8 @@ function GanttScreen({
   includeUnscheduled = true,
   statusColors = false,
   repositoryScoped = false,
+  scheduleSaveInteractive = false,
+  scheduleSaveFailure = false,
   visibleFields = GANTT_FIXED_FIELDS,
   columnOrder = DEFAULT_GANTT_COLUMN_ORDER,
   pendingOrder,
@@ -102,6 +104,8 @@ function GanttScreen({
   includeUnscheduled?: boolean;
   statusColors?: boolean;
   repositoryScoped?: boolean;
+  scheduleSaveInteractive?: boolean;
+  scheduleSaveFailure?: boolean;
   visibleFields?: typeof GANTT_FIXED_FIELDS;
   columnOrder?: IssueSortField[];
   pendingOrder?: IssueSortField[];
@@ -170,6 +174,9 @@ function GanttScreen({
           columnOrder: [...columnOrder],
         }}
         repository={repositoryScoped ? { owner: "frontend", name: "portal" } : undefined}
+        onScheduleSave={scheduleSaveInteractive || scheduleSaveFailure ? async () => {
+          if (scheduleSaveFailure) throw new Error("Mock schedule write failure");
+        } : undefined}
         issues={[
           ...(statusColors ? statusColorIssues : scopedIssues),
           ...(includeUnscheduled ? [{
@@ -220,6 +227,8 @@ export const StatusColorsNarrow: Story = {
   parameters: { viewport: { defaultViewport: "mobile1" } },
 };
 export const RepositoryScoped: Story = { args: { repositoryScoped: true } };
+export const EditableSchedule: Story = { args: { scheduleSaveInteractive: true } };
+export const ScheduleSaveFailure: Story = { args: { scheduleSaveFailure: true } };
 export const WeekScale: Story = { args: { scale: "week" } };
 export const TwoWeekScale: Story = { args: { scale: "two-weeks" } };
 export const MonthScale: Story = { args: { scale: "month" } };

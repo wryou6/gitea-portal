@@ -24,6 +24,7 @@ import {
   addCalendarDays,
   buildTimelineCells,
   countCalendarDays,
+  dateAtTimelinePosition,
   isCalendarDate,
   localCalendarDate,
   parseGanttScale,
@@ -80,14 +81,10 @@ function columnsForTranslation(
     }));
 }
 
-function dateAtTimelinePosition(position: number, cells: ReturnType<typeof buildTimelineCells>): string {
-  if (!cells.length) return localCalendarDate();
-  const bounded = Math.min(Math.max(position, 0), cells.length - Number.EPSILON);
-  const index = Math.floor(bounded);
-  const cell = cells[index]!;
-  const daySpan = countCalendarDays(cell.start, cell.end);
-  return addCalendarDays(cell.start, Math.min(daySpan - 1, Math.floor((bounded - index) * daySpan)));
-}
+type GanttScheduleChange = {
+  startDate?: string | null;
+  dueDate?: string | null;
+};
 
 export function GanttBoard({
   issues,
@@ -107,6 +104,7 @@ export function GanttBoard({
   userProfiles: providedUserProfiles,
   recentDoneOnly: providedRecentDoneOnly,
   onRecentDoneOnlyChange,
+  onScheduleSave,
 }: {
   issues: Issue[];
   returnTo?: string;
@@ -125,6 +123,7 @@ export function GanttBoard({
   userProfiles?: import("../../lib/user-profiles").UserProfiles;
   recentDoneOnly?: boolean;
   onRecentDoneOnlyChange?: (checked: boolean) => void;
+  onScheduleSave?: (issue: Issue, change: GanttScheduleChange) => Promise<void>;
 }) {
   const location = useLocation();
   const navigate = useNavigate();
@@ -153,6 +152,8 @@ export function GanttBoard({
   const [fieldsWidth, setFieldsWidth] = useState(0);
   const [chartMaxScroll, setChartMaxScroll] = useState(0);
   const [chartScrollLeft, setChartScrollLeft] = useState(0);
+  const [timelineExtension, setTimelineExtension] = useState({ before: 0, after: 0 });
+  const isExtendingTimeline = useRef(false);
   const [maxContentColumnWidths, setMaxContentColumnWidths] = useState<Record<string, number>>({});
   const [isNarrowViewport, setIsNarrowViewport] = useState(() => window.matchMedia("(max-width: 720px)").matches);
   const [visibleDate, setVisibleDate] = useState(initialDate);
@@ -216,9 +217,12 @@ export function GanttBoard({
   const lastScheduleDate = scheduledDates.at(-1);
   const timelineStartDates = [firstScheduleDate, initialDate, today].filter((date): date is string => Boolean(date));
   const timelineEndDates = [lastScheduleDate, initialDate, today].filter((date): date is string => Boolean(date));
-  const axisStart = timelineStartDates.sort()[0] ?? initialDate;
+  const axisStart = addCalendarDays(
+    timelineStartDates.sort()[0] ?? initialDate,
+    -timelineExtension.before,
+  );
   const latestDate = timelineEndDates.sort().at(-1) ?? initialDate;
-  const axisEnd = addCalendarDays(latestDate, 43);
+  const axisEnd = addCalendarDays(latestDate, 43 + timelineExtension.after);
   const cells = buildTimelineCells(axisStart, axisEnd, scale, initialDate);
   const columnOrder = pendingOrder ?? preference.columnOrder;
   const visibleOrder = columnOrder.filter((field) => preference.visibleFields.includes(field));
@@ -280,10 +284,27 @@ export function GanttBoard({
 
   useEffect(() => {
     if (!chartScrollRef.current) return;
+    setChartMaxScroll(Math.max(0, chartScrollRef.current.scrollWidth - chartScrollRef.current.clientWidth));
+    if (isExtendingTimeline.current) {
+      isExtendingTimeline.current = false;
+      return;
+    }
     chartScrollRef.current.scrollLeft = selectedPosition;
     setChartScrollLeft(chartScrollRef.current.scrollLeft);
     setVisibleDate(initialDate);
   }, [selectedPosition, timelineWidth, fieldGridTemplate, fieldsWidth, isNarrowViewport, initialDate]);
+
+  function extendTimeline(direction: -1 | 1): number {
+    const expandedCells = direction < 0
+      ? buildTimelineCells(addCalendarDays(axisStart, -28), axisEnd, scale, initialDate)
+      : buildTimelineCells(axisStart, addCalendarDays(axisEnd, 28), scale, initialDate);
+    const extensionWidth = Math.max(0, expandedCells.length - cells.length) * unitWidth;
+    isExtendingTimeline.current = true;
+    setTimelineExtension((current) => direction < 0
+      ? { ...current, before: current.before + 28 }
+      : { ...current, after: current.after + 28 });
+    return extensionWidth;
+  }
 
   function updatePreference(next: GanttViewPreference) {
     setPreference(next);
@@ -350,6 +371,8 @@ export function GanttBoard({
         cells={cells}
         scale={scale}
         today={today}
+        onScheduleSave={onScheduleSave}
+        onTimelineEdge={extendTimeline}
       />
     );
   }

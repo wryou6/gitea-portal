@@ -8,10 +8,8 @@ import {
   FIXED_ISSUE_STATUSES,
   isIssuePriorityLabelName,
   isIssueTypeLabelName,
-  issuePriorityFromLabels,
   issuePriorityLabelName,
   issueScheduleFromLabels,
-  issueTypeFromLabels,
   issueTypeLabelName,
   startDateLabelName,
   START_DATE_LABEL_PREFIX,
@@ -184,8 +182,8 @@ export async function updateIssueLabelsAndSchedule(
   issue: GiteaIssue,
   requestedNames: string[] | undefined,
   startDate: string | null | undefined,
-  type: IssueType,
-  priority: IssuePriority,
+  type: IssueType | undefined,
+  priority: IssuePriority | undefined,
 ): Promise<GiteaIssue> {
   if (requestedNames?.some(isStartDateLabel))
     throw new PortalError(
@@ -210,16 +208,24 @@ export async function updateIssueLabelsAndSchedule(
             (label) =>
               !isStartDateLabel(label.name) &&
               !isIssueTypeLabelName(label.name) &&
-              !isIssuePriorityLabelName(label.name),
+              !isIssuePriorityLabelName(label.name) &&
+              !label.name.startsWith("status:") &&
+              !label.name.startsWith("status-action:"),
           )
           .map((label) => label.name)
       : [...new Set(requestedNames)];
-  const selectedTypeLabel = await issueTypeLabel(client, repository, type);
-  const selectedPriorityLabel = await issuePriorityLabel(
-    client,
-    repository,
-    priority,
-  );
+  const typeNames =
+    type === undefined
+      ? issue.labels
+          .filter((label) => isIssueTypeLabelName(label.name))
+          .map((label) => label.name)
+      : [(await issueTypeLabel(client, repository, type)).name];
+  const priorityNames =
+    priority === undefined
+      ? issue.labels
+          .filter((label) => isIssuePriorityLabelName(label.name))
+          .map((label) => label.name)
+      : [(await issuePriorityLabel(client, repository, priority)).name];
   let dateNames = existingDateLabels.map((label) => label.name);
   if (startDate !== undefined) {
     dateNames =
@@ -231,15 +237,15 @@ export async function updateIssueLabelsAndSchedule(
     ...normalNames,
     ...statusLabels,
     ...dateNames,
-    selectedTypeLabel.name,
-    selectedPriorityLabel.name,
+    ...typeNames,
+    ...priorityNames,
   ];
   const currentNames = issue.labels.map((label) => label.name);
   if (
     requestedNames === undefined &&
     startDate === undefined &&
-    issueTypeFromLabels(issue.labels) === type &&
-    issuePriorityFromLabels(issue.labels) === priority
+    type === undefined &&
+    priority === undefined
   )
     return issue;
 
