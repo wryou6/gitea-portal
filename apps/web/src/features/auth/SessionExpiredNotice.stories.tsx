@@ -9,3 +9,9 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Reauthenticated: Story = {};
+
+export const NarrowViewport: Story = {
+  parameters: {
+    viewport: { defaultViewport: "mobile1" },
+  },
+};

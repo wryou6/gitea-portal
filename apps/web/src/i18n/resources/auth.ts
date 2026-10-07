@@ -14,6 +14,7 @@ export const auth = defineLocaleResource({
     sessionUnavailableDescription: "Portal 暫時無法連線。請檢查連線後重試。",
     retrySession: "重試",
     sessionRestored: "已重新登入。請確認目前頁面的資料已重新載入。",
+    dismissSessionNotice: "關閉通知",
     logoutFailed: "無法確認登出已完成。請重試。",
   },
   en: {
@@ -29,6 +30,7 @@ export const auth = defineLocaleResource({
     sessionUnavailableDescription: "The Portal cannot connect right now. Check your connection and try again.",
     retrySession: "Retry",
     sessionRestored: "You are signed in again. Confirm that this page has reloaded its data.",
+    dismissSessionNotice: "Dismiss notification",
     logoutFailed: "Sign-out could not be confirmed. Please try again.",
   },
   ja: {
@@ -44,6 +46,7 @@ export const auth = defineLocaleResource({
     sessionUnavailableDescription: "Portal に一時的に接続できません。接続を確認して再試行してください。",
     retrySession: "再試行",
     sessionRestored: "再度ログインしました。このページのデータが再読み込みされたことを確認してください。",
+    dismissSessionNotice: "通知を閉じる",
     logoutFailed: "ログアウトを確認できませんでした。もう一度お試しください。",
   },
 });
