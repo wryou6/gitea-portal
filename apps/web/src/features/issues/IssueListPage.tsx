@@ -13,7 +13,8 @@ import { LoadingState } from "../../components/feedback/LoadingState";
 import { EmptyState } from "../../components/feedback/EmptyState";
 import { ErrorNotice } from "../../components/feedback/ErrorNotice";
 import { Table } from "../../components/ui/Table";
-import { api, type Issue, type IssueSortField, type SortDirection, type UserFacingError } from "../../lib/api";
+import { api, transitionIssue, type Issue, type IssueSortField, type SortDirection, type UserFacingError } from "../../lib/api";
+import { StatusTransitionDialog } from "./StatusTransitionDialog";
 import { IssueViewOptionsDialog } from "./IssueViewOptionsDialog";
 import {
   ISSUE_VIEW_FIELDS,
@@ -134,6 +135,7 @@ export function IssueListPage({
   const [dragOverField, setDragOverField] = useState<IssueSortField>();
   const [keyboardDraggedField, setKeyboardDraggedField] = useState<IssueSortField>();
   const [columnAnnouncement, setColumnAnnouncement] = useState("");
+  const [pendingStatusIssue, setPendingStatusIssue] = useState<Issue>();
   const keyboardOrderBeforeDrag = useRef<IssueSortField[] | undefined>(undefined);
   const [optionsOpen, setOptionsOpen] = useState(demoOptionsOpen ?? false);
   const optionsTriggerRef = useRef<HTMLButtonElement>(null);
@@ -205,6 +207,29 @@ export function IssueListPage({
   }, [optionsOpen]);
 
   const returnTo = buildWorkViewReturnTo(location.pathname, location.search, "issues");
+  const saveIssueMetadata = async (issue: Issue, field: "type" | "priority", value: string) => {
+    try {
+      await api(`/api/issues/${encodeURIComponent(issue.owner)}/${encodeURIComponent(issue.name)}/${issue.number}`, {
+        method: "PATCH",
+        body: JSON.stringify({ expectedUpdatedAt: issue.updatedAt, [field]: value }),
+      });
+      await load();
+    } catch (cause) {
+      await load();
+      throw cause;
+    }
+  };
+  const submitStatusTransition = async (actionKey: string, selectedAssignee?: string) => {
+    if (!pendingStatusIssue) return;
+    try {
+      await transitionIssue(pendingStatusIssue.owner, pendingStatusIssue.name, pendingStatusIssue, actionKey, selectedAssignee);
+      setPendingStatusIssue(undefined);
+      await load();
+    } catch (cause) {
+      await load();
+      throw cause;
+    }
+  };
   const headings: Array<{ field: IssueSortField; label: string }> = [
     { field: "type", label: t("type") },
     { field: "key", label: t("key") },
@@ -441,6 +466,8 @@ export function IssueListPage({
                 columnOrder={columnOrder}
                 visibleFields={visibleFields}
                 showRepositoryIdentity={!repository}
+                onMetadataSave={demoIssues ? undefined : saveIssueMetadata}
+                onStatusClick={demoIssues ? undefined : setPendingStatusIssue}
               />
             ))}
             {!issues.length && !loading && !displayedError && (
@@ -455,6 +482,13 @@ export function IssueListPage({
         onClose={() => setOptionsOpen(false)}
         onChange={savePreference}
       />
+      {pendingStatusIssue && (
+        <StatusTransitionDialog
+          issue={pendingStatusIssue}
+          onClose={() => setPendingStatusIssue(undefined)}
+          onSubmit={submitStatusTransition}
+        />
+      )}
       <p className="sr-only" role="status" aria-live="polite">{columnAnnouncement}</p>
       </WorkViewLayout>
     </section>

@@ -48,6 +48,12 @@ export const Scheduled: Story = {};
 export const EditableSchedule: Story = {
   args: { onScheduleSave: async () => undefined },
 };
+export const EditableBadges: Story = {
+  args: {
+    onMetadataSave: async () => undefined,
+    onStatusClick: () => undefined,
+  },
+};
 
 export const ScheduleSaveFailure: Story = {
   args: {

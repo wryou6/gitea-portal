@@ -1683,6 +1683,21 @@ textarea:focus-visible,
   line-height: 1.25;
   white-space: nowrap;
 }
+.issue-status-badge-trigger {
+  display: inline-flex;
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius);
+  background: transparent;
+  cursor: pointer;
+}
+.issue-status-badge-trigger:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+}
+.issue-status-badge-trigger:disabled {
+  cursor: not-allowed;
+}
 .label.issue-status--todo {
   color: var(--badge-info-foreground);
   background: var(--badge-info-background);
@@ -1913,6 +1928,89 @@ textarea:focus-visible,
   display: inline-flex;
   flex-wrap: wrap;
   gap: 0.25rem;
+}
+.issue-metadata-editor {
+  position: relative;
+  display: inline-flex;
+  max-width: 100%;
+  vertical-align: middle;
+}
+.issue-metadata-editor-trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  max-width: 100%;
+  cursor: pointer;
+  list-style: none;
+}
+.issue-metadata-editor-trigger::-webkit-details-marker {
+  display: none;
+}
+.issue-metadata-editor-trigger:focus-visible,
+.issue-metadata-editor-option:focus-visible,
+.issue-metadata-editor-cancel:focus-visible,
+.issue-metadata-editor-retry:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+}
+.issue-metadata-editor-popover {
+  position: fixed;
+  z-index: 1000;
+  width: max-content;
+  min-width: 11rem;
+  max-width: min(18rem, calc(100vw - 2rem));
+  padding: 0.65rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--card);
+  color: var(--foreground);
+  box-shadow: 0 8px 24px rgb(0 0 0 / 18%);
+}
+.issue-metadata-editor-popover {
+  display: grid;
+  gap: 0.5rem;
+}
+.issue-metadata-editor-label {
+  color: var(--muted-foreground);
+  font-size: 0.75rem;
+}
+.issue-metadata-editor-options {
+  display: grid;
+  gap: 0.25rem;
+}
+.issue-metadata-editor-option,
+.issue-metadata-editor-cancel,
+.issue-metadata-editor-retry {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  min-height: 2rem;
+  padding: 0.25rem 0.4rem;
+  border: 0;
+  border-radius: calc(var(--radius) - 2px);
+  background: transparent;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+.issue-metadata-editor-option:hover,
+.issue-metadata-editor-option[aria-pressed="true"],
+.issue-metadata-editor-cancel:hover,
+.issue-metadata-editor-retry:hover {
+  background: var(--muted);
+}
+.issue-metadata-editor-option:disabled,
+.issue-metadata-editor-cancel:disabled {
+  cursor: wait;
+  opacity: 0.65;
+}
+.issue-metadata-editor-status {
+  color: var(--muted-foreground);
+  font-size: 0.8rem;
+}
+.issue-metadata-editor-error .error {
+  margin: 0;
+  font-size: 0.8rem;
 }
 .priority-field-help {
   margin: 0;

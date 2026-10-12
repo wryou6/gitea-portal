@@ -105,6 +105,8 @@ export function GanttBoard({
   recentDoneOnly: providedRecentDoneOnly,
   onRecentDoneOnlyChange,
   onScheduleSave,
+  onMetadataSave,
+  onStatusClick,
 }: {
   issues: Issue[];
   returnTo?: string;
@@ -124,6 +126,8 @@ export function GanttBoard({
   recentDoneOnly?: boolean;
   onRecentDoneOnlyChange?: (checked: boolean) => void;
   onScheduleSave?: (issue: Issue, change: GanttScheduleChange) => Promise<void>;
+  onMetadataSave?: (issue: Issue, field: "type" | "priority", value: string) => Promise<void>;
+  onStatusClick?: (issue: Issue) => void;
 }) {
   const location = useLocation();
   const navigate = useNavigate();
@@ -373,6 +377,8 @@ export function GanttBoard({
         scale={scale}
         today={today}
         onScheduleSave={onScheduleSave}
+        onMetadataSave={onMetadataSave}
+        onStatusClick={onStatusClick}
         onTimelineEdge={extendTimeline}
       />
     );

@@ -20,6 +20,12 @@ export const Default: Story = {
     onDragStart: () => undefined,
   },
 };
+export const EditableBadges: Story = {
+  args: {
+    ...Default.args,
+    onMetadataSave: async () => undefined,
+  },
+};
 
 export const MultipleAssignees: Story = {
   args: {

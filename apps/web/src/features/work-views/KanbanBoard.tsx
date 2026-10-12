@@ -42,8 +42,8 @@ export function KanbanBoard({
   );
   const [activeColumnKey, setActiveColumnKey] = useState<string>();
   const [pendingTransition, setPendingTransition] = useState<{
-    issue: WorkViewCard;
-    targetState: string;
+    issue: Issue;
+    targetState?: string;
   }>();
 
   useEffect(() => {
@@ -169,7 +169,7 @@ export function KanbanBoard({
         actionKey,
         selectedAssignee,
       );
-      setActiveColumnKey(pendingTransition.targetState);
+      if (pendingTransition.targetState) setActiveColumnKey(pendingTransition.targetState);
       await load();
     } catch (cause) {
       setError(toUserFacingError(cause, t("transitionRejected")));
@@ -198,6 +198,19 @@ export function KanbanBoard({
     }
   };
 
+  const saveIssueMetadata = async (issue: Issue, field: "type" | "priority", value: string) => {
+    try {
+      await api(`/api/issues/${encodeURIComponent(issue.owner)}/${encodeURIComponent(issue.name)}/${issue.number}`, {
+        method: "PATCH",
+        body: JSON.stringify({ expectedUpdatedAt: issue.updatedAt, [field]: value }),
+      });
+      await load();
+    } catch (cause) {
+      await load(false);
+      throw cause;
+    }
+  };
+
   return (
     <section className={viewMode === "gantt" ? "workspace-view workspace-view--gantt" : "workspace-view"}>
       {error && <><ErrorNotice message={error} /><button type="button" onClick={() => void load()}>{t("retry")}</button></>}
@@ -218,6 +231,8 @@ export function KanbanBoard({
             recentDoneOnly={recentDoneOnly}
             userProfiles={userProfiles}
             onScheduleSave={saveGanttSchedule}
+            onMetadataSave={saveIssueMetadata}
+            onStatusClick={(issue) => setPendingTransition({ issue })}
           />
         ) : (
           <LoadingState />
@@ -252,6 +267,7 @@ export function KanbanBoard({
                 onDragStart={setDragged}
                 onDropCard={move}
                 returnTo={buildWorkViewReturnTo(location.pathname, location.search, "kanban")}
+                onMetadataSave={saveIssueMetadata}
               />
             ))}
           </div>

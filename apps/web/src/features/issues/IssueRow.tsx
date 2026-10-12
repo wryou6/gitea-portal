@@ -16,6 +16,7 @@ import { UserIdentity } from "../../components/ui/UserIdentity";
 import { AssigneeIdentityGroup } from "../../components/ui/AssigneeIdentityGroup";
 import { assigneeLoginsForDisplay } from "../../lib/assignee-display";
 import { profileFor } from "../../lib/user-profiles";
+import { IssueMetadataBadgeEditor } from "./IssueMetadataBadgeEditor";
 
 export function IssueRow({
   issue,
@@ -23,12 +24,16 @@ export function IssueRow({
   columnOrder = DEFAULT_ISSUE_COLUMN_ORDER,
   visibleFields = ISSUE_VIEW_FIELDS,
   showRepositoryIdentity = false,
+  onMetadataSave,
+  onStatusClick,
 }: {
   issue: Issue;
   returnTo?: string;
   columnOrder?: IssueSortField[];
   visibleFields?: IssueSortField[];
   showRepositoryIdentity?: boolean;
+  onMetadataSave?: (issue: Issue, field: "type" | "priority", value: string) => Promise<void>;
+  onStatusClick?: (issue: Issue) => void;
 }) {
   const { t, i18n } = useTranslation("issues");
   const issuePath = issueDetailMask(issue.owner, issue.name, issue.number, returnTo);
@@ -45,7 +50,11 @@ export function IssueRow({
       : null;
   const overdue = isIssueOverdue(issue);
   const cells: Record<IssueSortField, ReactNode> = {
-    type: <IssueTypeBadge type={issue.type} labels={issue.labels} />,
+    type: onMetadataSave ? (
+      <IssueMetadataBadgeEditor field="type" value={issue.type} onSave={(value) => onMetadataSave(issue, "type", value)}>
+        <IssueTypeBadge type={issue.type} labels={issue.labels} />
+      </IssueMetadataBadgeEditor>
+    ) : <IssueTypeBadge type={issue.type} labels={issue.labels} />,
     key: (
       <Link
         className="issue-key"
@@ -71,8 +80,12 @@ export function IssueRow({
       </>
     ),
     assignee: <AssigneeIdentityGroup users={assigneeUsers} emptyLabel={t("notAssigned")} />,
-    status: <IssueStatusBadge status={issue.status} />,
-    priority: <PriorityBadge priority={issue.priority} labels={issue.labels} />,
+    status: <IssueStatusBadge status={issue.status} onClick={onStatusClick ? () => onStatusClick(issue) : undefined} disabled={issue.status === "anomaly"} />,
+    priority: onMetadataSave ? (
+      <IssueMetadataBadgeEditor field="priority" value={issue.priority} onSave={(value) => onMetadataSave(issue, "priority", value)}>
+        <PriorityBadge priority={issue.priority} labels={issue.labels} />
+      </IssueMetadataBadgeEditor>
+    ) : <PriorityBadge priority={issue.priority} labels={issue.labels} />,
     createdAt: <time dateTime={issue.createdAt}>{formatDateTime(issue.createdAt)}</time>,
     startDate:
       issue.scheduleAnomaly === "invalid_start_date" || issue.scheduleAnomaly === "multiple_start_dates"

@@ -22,6 +22,13 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 export const Default: Story = { args: { issue: demoIssue } };
+export const EditableBadges: Story = {
+  args: {
+    issue: demoIssue,
+    onMetadataSave: async () => undefined,
+    onStatusClick: () => undefined,
+  },
+};
 export const MultipleAssignees: Story = {
   args: { issue: demoIssueWithThreeAssignees },
 };

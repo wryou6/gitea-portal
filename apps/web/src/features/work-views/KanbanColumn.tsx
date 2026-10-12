@@ -9,12 +9,14 @@ export function KanbanColumn({
   onDragStart,
   onDropCard,
   returnTo,
+  onMetadataSave,
 }: {
   column: { stateKey: string; displayName: string; cards: WorkViewCard[] };
   dragged?: WorkViewCard;
   onDragStart: (issue: WorkViewCard) => void;
   onDropCard: (issue: WorkViewCard, stateKey: string) => void;
   returnTo?: string;
+  onMetadataSave?: (issue: WorkViewCard, field: "type" | "priority", value: string) => Promise<void>;
 }) {
   const { t, i18n } = useTranslation("issues");
   const canDrop = column.stateKey !== "anomaly";
@@ -50,6 +52,7 @@ export function KanbanColumn({
               canDrag={canDrop}
               onDragStart={onDragStart}
               returnTo={returnTo}
+              onMetadataSave={onMetadataSave}
             />
           </div>
         ))}

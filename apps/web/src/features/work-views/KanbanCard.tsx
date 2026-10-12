@@ -13,17 +13,20 @@ import { AssigneeIdentityGroup } from "../../components/ui/AssigneeIdentityGroup
 import { assigneeLoginsForDisplay } from "../../lib/assignee-display";
 import { profileFor } from "../../lib/user-profiles";
 import { isIssueOverdue } from "../issues/overdue-date";
+import { IssueMetadataBadgeEditor } from "../issues/IssueMetadataBadgeEditor";
 
 export function KanbanCard({
   issue,
   onDragStart,
   canDrag = true,
   returnTo,
+  onMetadataSave,
 }: {
   issue: WorkViewCard;
   onDragStart: (issue: WorkViewCard) => void;
   canDrag?: boolean;
   returnTo?: string;
+  onMetadataSave?: (issue: WorkViewCard, field: "type" | "priority", value: string) => Promise<void>;
 }) {
   const { t } = useTranslation("work-views");
   const { t: tIssues } = useTranslation("issues");
@@ -35,14 +38,26 @@ export function KanbanCard({
     <article
       className="kanban-card"
       draggable={canDrag}
-      onDragStart={() => {
+      onDragStart={(event) => {
+        if (event.target instanceof HTMLElement && event.target.closest(".issue-metadata-editor")) {
+          event.preventDefault();
+          return;
+        }
         if (canDrag) onDragStart(issue);
       }}
     >
       <div className="kanban-card-meta">
         <div className="kanban-card-type">
-          <PriorityBadge priority={issue.priority} labels={issue.labels} />
-          <IssueTypeBadge type={issue.type} labels={issue.labels} />
+          {onMetadataSave ? (
+            <IssueMetadataBadgeEditor field="priority" value={issue.priority} onSave={(value) => onMetadataSave(issue, "priority", value)}>
+              <PriorityBadge priority={issue.priority} labels={issue.labels} />
+            </IssueMetadataBadgeEditor>
+          ) : <PriorityBadge priority={issue.priority} labels={issue.labels} />}
+          {onMetadataSave ? (
+            <IssueMetadataBadgeEditor field="type" value={issue.type} onSave={(value) => onMetadataSave(issue, "type", value)}>
+              <IssueTypeBadge type={issue.type} labels={issue.labels} />
+            </IssueMetadataBadgeEditor>
+          ) : <IssueTypeBadge type={issue.type} labels={issue.labels} />}
         </div>
         <small className="kanban-card-key">
           {issue.owner}/{issue.name} #{issue.number}
