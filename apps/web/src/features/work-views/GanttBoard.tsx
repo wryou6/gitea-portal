@@ -1,10 +1,10 @@
-import { useEffect, useRef, useState, type CSSProperties, type KeyboardEvent, type ReactNode } from "react";
+import { useEffect, useRef, useState, type CSSProperties, type KeyboardEvent, type PointerEvent, type ReactNode } from "react";
 import { WorkViewLayout } from "./WorkViewLayout";
 import { WorkViewFilterBar, WorkViewRecentDoneFilter } from "./WorkViewFilterBar";
 import { EmptyState } from "../../components/feedback/EmptyState";
 import { api, type Issue, type IssueSortField } from "../../lib/api";
 import { routePaths } from "../../app/routes";
-import { formatCalendarDate, formatNumber } from "../../i18n/format";
+import { formatNumber } from "../../i18n/format";
 import { useTranslation } from "react-i18next";
 import { useLocation, useNavigate, useNavigationType } from "react-router";
 import { GanttIssueRow, type GanttColumn, type GanttIssueRowVariant } from "./GanttIssueRow";
@@ -67,6 +67,12 @@ function sameOrder(left: IssueSortField[], right: IssueSortField[]): boolean {
 function getIssueHref(issue: Issue, returnTo: string) {
   return routePaths.issueDetailFrom(issue.owner, issue.name, issue.number, returnTo);
 }
+
+type ActiveTimelinePan = {
+  pointerId: number;
+  startClientX: number;
+  startScrollLeft: number;
+};
 
 function columnsForTranslation(
   order: IssueSortField[],
@@ -154,14 +160,14 @@ export function GanttBoard({
   const [columnAnnouncement, setColumnAnnouncement] = useState("");
   const [optionsOpen, setOptionsOpen] = useState(demoViewOptionsOpen);
   const [fieldsWidth, setFieldsWidth] = useState(0);
-  const [chartMaxScroll, setChartMaxScroll] = useState(0);
-  const [chartScrollLeft, setChartScrollLeft] = useState(0);
   const [timelineExtension, setTimelineExtension] = useState({ before: 0, after: 0 });
   const isExtendingTimeline = useRef(false);
   const [maxContentColumnWidths, setMaxContentColumnWidths] = useState<Record<string, number>>({});
   const [isNarrowViewport, setIsNarrowViewport] = useState(() => window.matchMedia("(max-width: 720px)").matches);
   const [visibleDate, setVisibleDate] = useState(initialDate);
   const chartScrollRef = useRef<HTMLDivElement>(null);
+  const activeTimelinePan = useRef<ActiveTimelinePan | undefined>(undefined);
+  const [isTimelinePanning, setIsTimelinePanning] = useState(false);
   const defaultDate = addCalendarDays(localCalendarDate(), -7);
 
   useEffect(() => {
@@ -263,7 +269,6 @@ export function GanttBoard({
     if (!chart || !fields) return;
     const updateLayout = () => {
       setFieldsWidth(fields.getBoundingClientRect().width);
-      setChartMaxScroll(Math.max(0, chart.scrollWidth - chart.clientWidth));
       setIsNarrowViewport(window.matchMedia("(max-width: 720px)").matches);
       const nextWidths: Record<string, number> = {};
       for (const field of ["assignee", "status", ...(allRepositories ? ["repository"] : [])]) {
@@ -288,13 +293,11 @@ export function GanttBoard({
 
   useEffect(() => {
     if (!chartScrollRef.current) return;
-    setChartMaxScroll(Math.max(0, chartScrollRef.current.scrollWidth - chartScrollRef.current.clientWidth));
     if (isExtendingTimeline.current) {
       isExtendingTimeline.current = false;
       return;
     }
     chartScrollRef.current.scrollLeft = selectedPosition;
-    setChartScrollLeft(chartScrollRef.current.scrollLeft);
     setVisibleDate(initialDate);
   }, [selectedPosition, timelineWidth, fieldGridTemplate, fieldsWidth, isNarrowViewport, initialDate]);
 
@@ -384,6 +387,57 @@ export function GanttBoard({
     );
   }
 
+  function handleChartKeyDown(event: KeyboardEvent<HTMLDivElement>) {
+    if (event.target !== event.currentTarget) return;
+    const chart = event.currentTarget;
+    if (event.key === "ArrowLeft") {
+      event.preventDefault();
+      chart.scrollLeft = Math.max(0, chart.scrollLeft - 48);
+    } else if (event.key === "ArrowRight") {
+      event.preventDefault();
+      chart.scrollLeft = Math.min(chart.scrollWidth - chart.clientWidth, chart.scrollLeft + 48);
+    } else if (event.key === "Home") {
+      event.preventDefault();
+      chart.scrollLeft = 0;
+    } else if (event.key === "End") {
+      event.preventDefault();
+      chart.scrollLeft = chart.scrollWidth - chart.clientWidth;
+    }
+  }
+
+  function handleChartPointerDown(event: PointerEvent<HTMLDivElement>) {
+    if (!event.isPrimary || event.button !== 0) return;
+    const target = event.target instanceof Element ? event.target : null;
+    if (!target) return;
+    const timelineTarget = target.closest(".gantt-calendar-cell, .gantt-track");
+    const fixedFields = target.closest<HTMLElement>(".gantt-header-fields, .gantt-row-fields");
+    const fieldsCoverTimeline = fixedFields
+      && fixedFields.getBoundingClientRect().right >= event.currentTarget.getBoundingClientRect().right - 1;
+    if (!timelineTarget && !(event.pointerType === "touch" && fixedFields && fieldsCoverTimeline)) return;
+    if (target.closest(".gantt-track--create-range, .gantt-bar, [data-drag-mode], a, button, input, select, textarea, [contenteditable='true']")) return;
+
+    event.preventDefault();
+    activeTimelinePan.current = {
+      pointerId: event.pointerId,
+      startClientX: event.clientX,
+      startScrollLeft: event.currentTarget.scrollLeft,
+    };
+    setIsTimelinePanning(true);
+    event.currentTarget.setPointerCapture(event.pointerId);
+  }
+
+  function handleChartPointerMove(event: PointerEvent<HTMLDivElement>) {
+    const activePan = activeTimelinePan.current;
+    if (!activePan || activePan.pointerId !== event.pointerId) return;
+    event.currentTarget.scrollLeft = activePan.startScrollLeft - (event.clientX - activePan.startClientX);
+  }
+
+  function finishChartPointerPan(event: PointerEvent<HTMLDivElement>) {
+    if (activeTimelinePan.current?.pointerId !== event.pointerId) return;
+    activeTimelinePan.current = undefined;
+    setIsTimelinePanning(false);
+  }
+
   return (
     <section className="gantt-view" aria-label={t("ganttLabel")}>
       <WorkViewLayout filters={filters} commonFilters={commonFilters ?? <WorkViewFilterBar filters={filters} onChange={setLocalFilters} repositoryFixed={Boolean(repository)} assignees={[...new Set(issues.flatMap((issue) => issue.assignees))].sort()} userProfiles={userProfiles} currentUserLogin={currentUserLogin ?? login} />} resultCount={visibleIssues.length} recentDoneOnly={recentDoneOnly} repositoryFixed={Boolean(repository)} userProfiles={userProfiles} controls={<>
@@ -448,12 +502,18 @@ export function GanttBoard({
       {scheduledIssues.length > 0 && (
         <div
           ref={chartScrollRef}
-          className="gantt-chart-scroll"
+          className={`gantt-chart-scroll${isTimelinePanning ? " gantt-chart-scroll--panning" : ""}`}
           role="grid"
+          tabIndex={0}
           aria-label={t("ganttLabel")}
           style={{ "--gantt-fields-template": fieldGridTemplate, "--gantt-timeline-width": `${timelineWidth}px`, "--gantt-fields-width": `${fieldsWidth}px` } as CSSProperties}
+          onKeyDown={handleChartKeyDown}
+          onPointerDown={handleChartPointerDown}
+          onPointerMove={handleChartPointerMove}
+          onPointerUp={finishChartPointerPan}
+          onPointerCancel={finishChartPointerPan}
+          onLostPointerCapture={finishChartPointerPan}
           onScroll={(event) => {
-            setChartScrollLeft(event.currentTarget.scrollLeft);
             setVisibleDate(dateAtTimelinePosition(event.currentTarget.scrollLeft / unitWidth, cells));
           }}
         >
@@ -517,24 +577,8 @@ export function GanttBoard({
           )}
         </div>
       )}
-      {scheduledIssues.length > 0 && (
-        <input
-          className="gantt-horizontal-scrollbar"
-          type="range"
-          aria-label={t("timeline")}
-          aria-valuetext={formatCalendarDate(visibleDate)}
-          min={0}
-          max={chartMaxScroll}
-          step={1}
-          value={Math.min(chartScrollLeft, chartMaxScroll)}
-          disabled={chartMaxScroll === 0}
-          onChange={(event) => {
-            if (chartScrollRef.current) chartScrollRef.current.scrollLeft = Number(event.target.value);
-          }}
-        />
-      )}
       {scheduledIssues.length === 0 && visibleIssues.length > 0 && (
-        <div ref={chartScrollRef} className="gantt-chart-scroll gantt-chart-scroll--empty" role="grid" aria-label={t("ganttLabel")} style={{ "--gantt-fields-template": fieldGridTemplate, "--gantt-timeline-width": `${timelineWidth}px`, "--gantt-fields-width": `${fieldsWidth}px` } as CSSProperties} onScroll={(event) => setChartScrollLeft(event.currentTarget.scrollLeft)}>
+        <div ref={chartScrollRef} className={`gantt-chart-scroll gantt-chart-scroll--empty${isTimelinePanning ? " gantt-chart-scroll--panning" : ""}`} role="grid" tabIndex={0} aria-label={t("ganttLabel")} style={{ "--gantt-fields-template": fieldGridTemplate, "--gantt-timeline-width": `${timelineWidth}px`, "--gantt-fields-width": `${fieldsWidth}px` } as CSSProperties} onKeyDown={handleChartKeyDown} onPointerDown={handleChartPointerDown} onPointerMove={handleChartPointerMove} onPointerUp={finishChartPointerPan} onPointerCancel={finishChartPointerPan} onLostPointerCapture={finishChartPointerPan} onScroll={(event) => setVisibleDate(dateAtTimelinePosition(event.currentTarget.scrollLeft / unitWidth, cells))}>
           <div className="gantt-chart-header" role="row">
             <div className="gantt-header-fields" role="presentation">
               {columns.map(({ field, label }) => <div className="gantt-column-heading" role="columnheader" key={field}>{label}</div>)}
@@ -563,22 +607,6 @@ export function GanttBoard({
             </div>
           )}
         </div>
-      )}
-      {scheduledIssues.length === 0 && visibleIssues.length > 0 && (
-        <input
-          className="gantt-horizontal-scrollbar"
-          type="range"
-          aria-label={t("timeline")}
-          aria-valuetext={formatCalendarDate(visibleDate)}
-          min={0}
-          max={chartMaxScroll}
-          step={1}
-          value={Math.min(chartScrollLeft, chartMaxScroll)}
-          disabled={chartMaxScroll === 0}
-          onChange={(event) => {
-            if (chartScrollRef.current) chartScrollRef.current.scrollLeft = Number(event.target.value);
-          }}
-        />
       )}
       {visibleIssues.length === 0 && (
         <EmptyState>{emptyMessage ?? t("noFilteredIssues")}</EmptyState>

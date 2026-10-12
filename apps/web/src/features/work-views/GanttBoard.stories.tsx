@@ -82,6 +82,7 @@ function GanttScreen({
   viewOptionsOpen = false,
   longTitle = false,
   multipleAssignees = false,
+  noScheduleDates = false,
   fillViewport = false,
   longList = false,
   includeUnscheduled = true,
@@ -99,6 +100,7 @@ function GanttScreen({
   viewOptionsOpen?: boolean;
   longTitle?: boolean;
   multipleAssignees?: boolean;
+  noScheduleDates?: boolean;
   fillViewport?: boolean;
   longList?: boolean;
   includeUnscheduled?: boolean;
@@ -120,9 +122,12 @@ function GanttScreen({
       ? { ...issue, title: "Improve cross repository issue filtering and timeline navigation with a deliberately long title that should stay on one line and end with a clean ellipsis" }
       : issue)
     : sourceIssues;
+  const timelineIssues = noScheduleDates
+    ? issues.map((issue) => ({ ...issue, startDate: null, dueDate: null, scheduleStatus: "unscheduled" as const }))
+    : issues;
   const displayedIssues = longList
     ? Array.from({ length: 24 }, (_, index) => {
-      const issue = issues[index % issues.length]!;
+      const issue = timelineIssues[index % timelineIssues.length]!;
       const issueStart = new Date(`${startDate}T00:00:00Z`);
       issueStart.setUTCDate(issueStart.getUTCDate() + index - 7);
       const dueDate = new Date(issueStart);
@@ -135,7 +140,7 @@ function GanttScreen({
         dueDate: dueDate.toISOString().slice(0, 10),
       };
     })
-    : issues;
+    : timelineIssues;
   const scopedIssues = repositoryScoped
     ? displayedIssues.filter((issue) => issue.owner === "frontend" && issue.name === "portal")
     : displayedIssues;
@@ -228,6 +233,14 @@ export const StatusColorsNarrow: Story = {
 };
 export const RepositoryScoped: Story = { args: { repositoryScoped: true } };
 export const EditableSchedule: Story = { args: { scheduleSaveInteractive: true } };
+export const TimelinePanning: Story = { args: { fillViewport: true, longList: true, scheduleSaveInteractive: true } };
+export const UnscheduledOnlyTimeline: Story = { args: { fillViewport: true, noScheduleDates: true, scheduleSaveInteractive: true } };
+export const ScheduledMonthTimeline: Story = { args: { scale: "month", includeUnscheduled: false } };
+export const UnscheduledOnlyMonthTimeline: Story = { args: { scale: "month", noScheduleDates: true, scheduleSaveInteractive: true } };
+export const TimelinePanningNarrow: Story = {
+  args: { fillViewport: true, longList: true, scheduleSaveInteractive: true },
+  parameters: { viewport: { defaultViewport: "mobile1" } },
+};
 export const ScheduleSaveFailure: Story = { args: { scheduleSaveFailure: true } };
 export const WeekScale: Story = { args: { scale: "week" } };
 export const TwoWeekScale: Story = { args: { scale: "two-weeks" } };
