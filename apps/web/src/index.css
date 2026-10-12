@@ -3192,14 +3192,15 @@ button.danger {
   position: absolute;
   inset-block: 0;
   z-index: 0;
-  background: color-mix(in oklch, var(--muted) 42%, transparent);
+  background: color-mix(in oklch, var(--muted) 45%, var(--border));
   pointer-events: none;
 }
 .gantt-calendar-today {
   position: absolute;
   inset-block: 0;
   z-index: 2;
-  background: color-mix(in oklch, var(--primary) 16%, transparent);
+  background: color-mix(in oklch, var(--primary) 24%, transparent);
+  box-shadow: inset 2px 0 var(--primary), inset -2px 0 var(--primary);
   pointer-events: none;
 }
 .gantt-calendar-today span {
@@ -3299,14 +3300,15 @@ button.danger {
   position: absolute;
   inset-block: 0;
   z-index: 0;
-  background: color-mix(in oklch, var(--muted) 42%, transparent);
+  background: color-mix(in oklch, var(--muted) 45%, var(--border));
   pointer-events: none;
 }
 .gantt-track-today {
   position: absolute;
   inset-block: 0;
   z-index: 1;
-  background: color-mix(in oklch, var(--primary) 12%, transparent);
+  background: color-mix(in oklch, var(--primary) 20%, transparent);
+  box-shadow: inset 2px 0 var(--primary), inset -2px 0 var(--primary);
   pointer-events: none;
 }
 .gantt-track--create-range {
