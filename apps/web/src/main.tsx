@@ -1,6 +1,6 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
-import { BrowserRouter } from "react-router";
+import { createBrowserRouter, RouterProvider } from "react-router";
 import { App } from "./app/App";
 import { changeLocale } from "./i18n";
 import { readLocalePreference } from "./features/settings/locale-preference";
@@ -66,9 +66,10 @@ async function bootstrap() {
   await changeLocale(initialLocale);
   applyThemePreference(initialTheme);
   applyColorPalette(initialPalette);
-  createRoot(document.getElementById("root")!).render(
-    <StrictMode>
-      <BrowserRouter>
+  const router = createBrowserRouter([
+    {
+      path: "*",
+      element: (
         <App
           login={login}
           displayName={sessionState.status === "authenticated" ? sessionState.displayName : undefined}
@@ -79,7 +80,12 @@ async function bootstrap() {
           initialLocale={initialLocale}
           sessionExpiredNotice={sessionExpiredNotice}
         />
-      </BrowserRouter>
+      ),
+    },
+  ]);
+  createRoot(document.getElementById("root")!).render(
+    <StrictMode>
+      <RouterProvider router={router} />
     </StrictMode>,
   );
 }

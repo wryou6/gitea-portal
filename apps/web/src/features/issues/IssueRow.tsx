@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 import { Link } from "react-router";
 import type { Issue, IssueSortField } from "../../lib/api";
-import { routePaths } from "../../app/routes";
+import { issueDetailMask } from "../../app/routes";
 import { IssueTypeBadge } from "../../components/ui/IssueTypeBadge";
 import { IssueStatusBadge } from "../../components/ui/IssueStatusBadge";
 import { PriorityBadge } from "../../components/ui/PriorityBadge";
@@ -31,9 +31,7 @@ export function IssueRow({
   showRepositoryIdentity?: boolean;
 }) {
   const { t, i18n } = useTranslation("issues");
-  const issuePath = returnTo
-    ? routePaths.issueDetailFrom(issue.owner, issue.name, issue.number, returnTo)
-    : routePaths.issueDetail(issue.owner, issue.name, issue.number);
+  const issuePath = issueDetailMask(issue.owner, issue.name, issue.number, returnTo);
   const hasDateAnomaly = issue.scheduleStatus === "invalid";
   const assigneeUsers = assigneeLoginsForDisplay(issue).map((login) =>
     profileFor(issue.userProfiles, login),
@@ -51,7 +49,9 @@ export function IssueRow({
     key: (
       <Link
         className="issue-key"
-        to={issuePath}
+        to={returnTo ?? "/issues"}
+        replace={false}
+        mask={issuePath}
         aria-label={t("openIssueKey", { key: `${issue.owner}/${issue.name}#${issue.number}` })}
       >
         {issue.owner}/{issue.name}#{issue.number}
@@ -59,7 +59,7 @@ export function IssueRow({
     ),
     title: (
       <>
-        <Link className="issue-title" to={issuePath}>{issue.title}</Link>
+        <Link className="issue-title" to={returnTo ?? "/issues"} replace={false} mask={issuePath}>{issue.title}</Link>
         {showRepositoryIdentity && (
           <span className="issue-row-repository">{issue.owner}/{issue.name}</span>
         )}

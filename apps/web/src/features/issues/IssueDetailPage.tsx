@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState, type ReactNode } from "react";
 import { api, toUserFacingError, type Issue, type UserFacingError } from "../../lib/api";
 import { CommentComposer } from "./CommentComposer";
 import { IssueComments } from "./IssueComments";
@@ -12,19 +12,28 @@ import { routePaths, safeReturnTo } from "../../app/routes";
 import { StatusTransitionDialog } from "./StatusTransitionDialog";
 import { useTranslation } from "react-i18next";
 import { Link, useLocation } from "react-router";
+import { Dialog } from "../../components/ui/Dialog";
 
 export function IssueDetailPage({
   owner,
   repo,
   number,
+  presentation = "page",
+  returnToOverride,
+  onClose,
+  onExpand,
 }: {
   owner: string;
   repo: string;
   number: number;
+  presentation?: "page" | "dialog";
+  returnToOverride?: string;
+  onClose?: () => void;
+  onExpand?: () => void;
 }) {
   const { t } = useTranslation("issues");
   const location = useLocation();
-  const returnTo =
+  const returnTo = returnToOverride ??
     safeReturnTo(new URLSearchParams(location.search).get("returnTo")) ??
     routePaths.issues;
   const [issue, setIssue] = useState<Issue>();
@@ -49,17 +58,32 @@ export function IssueDetailPage({
   useEffect(() => {
     void load();
   }, [load]);
+  const render = (content: ReactNode) => presentation === "dialog" ? (
+    <Dialog
+      open
+      title={issue?.title ?? `${owner}/${repo}#${number}`}
+      onClose={onClose ?? (() => undefined)}
+      className="issue-detail-dialog"
+      headerAction={(
+        <Button variant="secondary" type="button" onClick={onExpand} aria-label={t("openIssuePage")}>
+          {t("openIssuePage")}
+        </Button>
+      )}
+    >
+      {content}
+    </Dialog>
+  ) : content;
   if (error)
-    return (
+    return render(
       <section>
-        <Link to={returnTo}>← {t("returnToWorkspace")}</Link>
+        {presentation === "page" && <Link to={returnTo}>← {t("returnToWorkspace")}</Link>}
         <ErrorNotice message={error} />
       </section>
     );
-  if (!issue) return <LoadingState />;
-  return (
+  if (!issue) return render(<LoadingState />);
+  return render(
     <section>
-      <Link to={returnTo}>← {t("returnToWorkspace")}</Link>
+      {presentation === "page" && <Link to={returnTo}>← {t("returnToWorkspace")}</Link>}
       <div className="detail-grid">
         <div className="detail-card">
           <IssueDetailHeader issue={issue} />

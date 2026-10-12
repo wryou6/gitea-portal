@@ -365,6 +365,7 @@ export function GanttBoard({
         key={`${issue.owner}/${issue.name}#${issue.number}`}
         issue={issue}
         href={getIssueHref(issue, detailReturnTo)}
+        returnTo={detailReturnTo}
         variant={variant}
         columns={columns}
         fieldGridTemplate={fieldGridTemplate}

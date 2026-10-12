@@ -26,12 +26,12 @@ import { useReorderAnimation } from "../../lib/use-reorder-animation";
 import { mergeUserProfiles } from "../../lib/user-profiles";
 import { buildWorkViewReturnTo } from "../work-views/work-view-url-state";
 
-export function filtersFromUrl(): IssueFiltersValue {
-  return parseWorkViewFilters(window.location.search);
+export function filtersFromUrl(search = window.location.search): IssueFiltersValue {
+  return parseWorkViewFilters(search);
 }
 
-function sortFromUrl(fallback: IssueSortField): IssueSortField {
-  const params = new URLSearchParams(window.location.search);
+function sortFromUrl(fallback: IssueSortField, search = window.location.search): IssueSortField {
+  const params = new URLSearchParams(search);
   const value = params.get("sort");
   return ISSUE_VIEW_FIELDS.includes(value as IssueSortField) &&
       (params.get("direction") === "asc" || params.get("direction") === "desc")
@@ -39,8 +39,8 @@ function sortFromUrl(fallback: IssueSortField): IssueSortField {
     : fallback;
 }
 
-function directionFromUrl(fallback: SortDirection): SortDirection {
-  const params = new URLSearchParams(window.location.search);
+function directionFromUrl(fallback: SortDirection, search = window.location.search): SortDirection {
+  const params = new URLSearchParams(search);
   const value = params.get("sort");
   const direction = params.get("direction");
   return ISSUE_VIEW_FIELDS.includes(value as IssueSortField) &&
@@ -103,7 +103,7 @@ export function IssueListPage({
   const [preference, setPreference] = useState<IssueViewPreference>(
     () => demoViewPreference ?? readIssueViewPreference(login),
   );
-  const initialFilters = { ...defaultWorkViewFilters, ...(demoFilterValues ?? filtersFromUrl()) };
+  const initialFilters = { ...defaultWorkViewFilters, ...(demoFilterValues ?? filtersFromUrl(location.search)) };
   if (repository)
     initialFilters.repository = `${repository.owner}/${repository.name}`;
   const [demoFilters, setDemoFilters] = useState(initialFilters);
@@ -117,8 +117,8 @@ export function IssueListPage({
     load,
   } = useIssueListState(
     initialFilters,
-    sortFromUrl(preference.defaultSortField),
-    directionFromUrl(preference.defaultSortDirection),
+    sortFromUrl(preference.defaultSortField, location.search),
+    directionFromUrl(preference.defaultSortDirection, location.search),
     undefined,
     login,
   );
@@ -171,8 +171,8 @@ export function IssueListPage({
       repository
         ? { ...filters, repository: `${repository.owner}/${repository.name}` }
         : filters,
-      sortFromUrl(preference.defaultSortField),
-      directionFromUrl(preference.defaultSortDirection),
+      sortFromUrl(preference.defaultSortField, location.search),
+      directionFromUrl(preference.defaultSortDirection, location.search),
     );
   }, [repository?.owner, repository?.name, demoIssues]);
 

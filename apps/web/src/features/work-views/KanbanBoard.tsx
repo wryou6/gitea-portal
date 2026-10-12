@@ -211,7 +211,7 @@ export function KanbanBoard({
             issues={ganttView.issues}
             repository={repository}
             emptyMessage={"repositories" in ganttView && ganttView.repositories.length === 0 ? t("noReadableRepositories") : undefined}
-            returnTo={buildWorkViewReturnTo(window.location.pathname, window.location.search, "gantt")}
+            returnTo={buildWorkViewReturnTo(location.pathname, location.search, "gantt")}
             filters={filters}
             commonFilters={commonFilters}
             currentUserLogin={login}
@@ -251,7 +251,7 @@ export function KanbanBoard({
                 dragged={dragged}
                 onDragStart={setDragged}
                 onDropCard={move}
-                returnTo={buildWorkViewReturnTo(window.location.pathname, window.location.search, "kanban")}
+                returnTo={buildWorkViewReturnTo(location.pathname, location.search, "kanban")}
               />
             ))}
           </div>

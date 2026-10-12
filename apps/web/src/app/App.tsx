@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
-import { useLocation } from "react-router";
+import { useEffect, useRef, useState } from "react";
+import { useLocation, useNavigate } from "react-router";
 import { changeLocale, i18n } from "../i18n";
 import { resolveLocale, type Locale } from "../i18n/locales";
 import { useTranslation } from "react-i18next";
@@ -21,8 +21,7 @@ import {
   type ThemeMode,
 } from "../features/settings/theme-preference";
 import { saveLocalePreference } from "../features/settings/locale-preference";
-import { resolveAppRoute } from "./routes";
-import { safeReturnTo } from "./routes";
+import { resolveAppRoute, resolveMaskedIssueLocation, safeReturnTo } from "./routes";
 import { LoginPage } from "../features/auth/LoginPage";
 import { SessionExpiredNotice } from "../features/auth/SessionExpiredNotice";
 import { SessionUnavailable } from "../features/auth/SessionUnavailable";
@@ -50,6 +49,8 @@ export function App({
   sessionExpiredNotice?: boolean;
 } = {}) {
   const location = useLocation();
+  const navigate = useNavigate();
+  const initialLocationKey = useRef(location.key);
   const { i18n: currentI18n } = useTranslation();
   const [themeMode, setThemeMode] = useState<ThemeMode>(initialTheme);
   const [colorPalette, setColorPalette] =
@@ -78,13 +79,17 @@ export function App({
     await changeLocale(locale);
   };
 
-  const route = resolveAppRoute(
-    location.pathname,
-    location.search,
-  );
+  const maskedIssue = resolveMaskedIssueLocation(location.mask);
+  const isInitialMaskedIssue = Boolean(maskedIssue && location.key === initialLocationKey.current);
+  const modalIssue = maskedIssue && !isInitialMaskedIssue ? maskedIssue : undefined;
+  const pagePathname = isInitialMaskedIssue ? maskedIssue!.pathname : location.pathname;
+  const pageSearch = isInitialMaskedIssue ? maskedIssue!.search : location.search;
+  const route = isInitialMaskedIssue
+    ? maskedIssue!.route
+    : resolveAppRoute(location.pathname, location.search);
   if (sessionState.status === "anonymous") {
     const returnTo = safeReturnTo(
-      `${location.pathname}${location.search}`,
+      `${pagePathname}${pageSearch}`,
     );
     return (
       <LoginPage
@@ -123,6 +128,7 @@ export function App({
             owner={route.owner}
             repo={route.repo}
             number={route.number}
+            returnToOverride={isInitialMaskedIssue ? maskedIssue?.returnTo : undefined}
           />
         );
       case "all-repositories-view":
@@ -147,9 +153,21 @@ export function App({
     }
   })();
   return (
-    <AppShell login={login} displayName={displayName} avatarUrl={avatarUrl} routePathname={location.pathname} routeSearch={location.search}>
+    <AppShell login={login} displayName={displayName} avatarUrl={avatarUrl} routePathname={pagePathname} routeSearch={pageSearch}>
       {sessionExpiredNotice && <SessionExpiredNotice />}
       {content}
+      {modalIssue && (
+        <IssueDetailPage
+          key={`${modalIssue.route.owner}/${modalIssue.route.repo}/${modalIssue.route.number}`}
+          owner={modalIssue.route.owner}
+          repo={modalIssue.route.repo}
+          number={modalIssue.route.number}
+          presentation="dialog"
+          returnToOverride={modalIssue.returnTo}
+          onClose={() => navigate(-1)}
+          onExpand={() => navigate(`${modalIssue.pathname}${modalIssue.search}`, { replace: true })}
+        />
+      )}
     </AppShell>
   );
 }

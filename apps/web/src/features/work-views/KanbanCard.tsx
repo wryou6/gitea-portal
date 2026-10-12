@@ -2,7 +2,7 @@ import type { WorkViewCard } from "./types";
 import { Link } from "react-router";
 import { IssueTypeBadge } from "../../components/ui/IssueTypeBadge";
 import { PriorityBadge } from "../../components/ui/PriorityBadge";
-import { routePaths } from "../../app/routes";
+import { issueDetailMask } from "../../app/routes";
 import {
   ScheduleDates,
   scheduleAnomalyTranslationKey,
@@ -51,16 +51,9 @@ export function KanbanCard({
       <div className="kanban-card-title-row">
         <Link
           className="kanban-card-title"
-          to={
-            returnTo
-              ? routePaths.issueDetailFrom(
-                  issue.owner,
-                  issue.name,
-                  issue.number,
-                  returnTo,
-                )
-              : routePaths.issueDetail(issue.owner, issue.name, issue.number)
-          }
+          to={returnTo ?? "/kanban"}
+          replace={false}
+          mask={issueDetailMask(issue.owner, issue.name, issue.number, returnTo)}
           title={issue.title}
         >
           {issue.title}

@@ -1,7 +1,7 @@
 import { useRef, useState, type CSSProperties, type KeyboardEvent, type PointerEvent, type ReactNode } from "react";
 import { Link } from "react-router";
 import { useTranslation } from "react-i18next";
-import { routePaths } from "../../app/routes";
+import { issueDetailMask } from "../../app/routes";
 import { IssueTypeBadge } from "../../components/ui/IssueTypeBadge";
 import { PriorityBadge } from "../../components/ui/PriorityBadge";
 import { IssueStatusBadge } from "../../components/ui/IssueStatusBadge";
@@ -75,9 +75,8 @@ export function GanttIssueRow({
   const assigneeUsers = assigneeLoginsForDisplay(issue).map((login) =>
     profileFor(issue.userProfiles, login),
   );
-  const issueHref = href ?? (returnTo
-    ? routePaths.issueDetailFrom(issue.owner, issue.name, issue.number, returnTo)
-    : routePaths.issueDetail(issue.owner, issue.name, issue.number));
+  const issueHref = href ?? issueDetailMask(issue.owner, issue.name, issue.number, returnTo);
+  const workViewHref = returnTo ?? "/gantt";
   const unitWidth = GANTT_SCALE_WIDTH[scale];
   const totalWidth = cells.length * unitWidth;
   const weekendOverlays: Array<{ date: string; left: number; width: number }> = [];
@@ -274,13 +273,13 @@ export function GanttIssueRow({
   const values: Record<IssueSortField | "repository", ReactNode> = {
     type: <IssueTypeBadge type={issue.type} labels={issue.labels} />,
     key: (
-      <Link to={issueHref} className="gantt-key">
+      <Link to={workViewHref} replace={false} mask={issueHref} className="gantt-key">
         {issue.owner}/{issue.name}#{issue.number}
       </Link>
     ),
     title: (
       <div className="gantt-title-cell">
-        <Link to={issueHref} title={issue.title}>{issue.title}</Link>
+        <Link to={workViewHref} replace={false} mask={issueHref} title={issue.title}>{issue.title}</Link>
         {overdue && <OverdueIndicator />}
         {variant === "anomaly" && (
           <span className="schedule-anomaly" role="status">

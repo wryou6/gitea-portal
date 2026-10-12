@@ -57,6 +57,29 @@ export function workViewForRoute(route: AppRoute): WorkspaceView | undefined {
   return undefined;
 }
 
+export type MaskedLocation = {
+  pathname: string;
+  search: string;
+};
+
+export function resolveMaskedIssueLocation(mask: MaskedLocation | undefined) {
+  if (!mask) return undefined;
+  const route = resolveAppRoute(mask.pathname, mask.search);
+  if (route.type !== "issue-detail") return undefined;
+  const returnTo = safeReturnTo(new URLSearchParams(mask.search).get("returnTo"));
+  return { route, returnTo: returnTo ?? routePaths.issues, pathname: mask.pathname, search: mask.search };
+}
+
+export function issueDetailMask(
+  owner: string,
+  repo: string,
+  number: number,
+  returnTo: string | undefined,
+): string {
+  const safeTarget = safeReturnTo(returnTo) ?? routePaths.issues;
+  return routePaths.issueDetailFrom(owner, repo, number, safeTarget);
+}
+
 export function resolveWorkViewNavigationContext(
   pathname: string,
   search: string,

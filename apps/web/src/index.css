@@ -1316,6 +1316,29 @@ textarea:focus-visible,
 .detail-card {
   padding: 1.25rem;
 }
+
+.issue-detail-dialog {
+  width: min(72rem, calc(100vw - 2rem));
+  max-width: none;
+  max-height: calc(100dvh - 2rem);
+  overflow: auto;
+}
+
+.issue-detail-dialog > .page-heading {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  margin: -1.25rem -1.25rem 1rem;
+  padding: 1.25rem;
+  background: var(--card);
+}
+
+.dialog-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-shrink: 0;
+}
 .issue-list {
   display: grid;
   gap: 0.7rem;
@@ -2305,6 +2328,20 @@ textarea:focus-visible,
   margin: 0;
 }
 @media (max-width: 720px) {
+  .issue-detail-dialog {
+    width: calc(100vw - 1rem);
+    max-height: calc(100dvh - 1rem);
+    padding: 0.75rem;
+  }
+
+  .issue-detail-dialog > .page-heading {
+    margin: -0.75rem -0.75rem 0.75rem;
+    padding: 0.75rem;
+  }
+
+  .dialog-header-actions {
+    gap: 0.35rem;
+  }
   .work-view-layout {
     grid-template-columns: 12rem minmax(0, 1fr);
   }
