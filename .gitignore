@@ -7,6 +7,7 @@ dist/
 storybook-static/
 build/
 coverage/
+apps/web/test-results/
 .vite/
 .playwright-cli/
 /output/playwright/
