@@ -78,6 +78,8 @@ pnpm.cmd format:check
 
 `typecheck` 會檢查 API、Web 與 shared packages；`build` 會編譯 API、contracts、domain 並建立 Web production bundle。
 
+Playwright E2E 指令：`pnpm.cmd --filter @gitea-portal/web test:e2e`。腳本會先建立 production bundle，測試直接載入 bundle CSS 並用 `page.setContent()` 檢查 DOM 版面，不啟動 Vite preview 或 API，也不需要 loopback 權限。使用獨立 Playwright 瀏覽器，不依賴 Codex CUA MCP 或既有瀏覽器工作階段。若新增需要驗證 HTTP/API 整合的測試，再為該測試設定 webServer 並從一開始要求本機 loopback 權限。
+
 ## 安全與權限邊界
 
 - Gitea OAuth delegated access token 只存在後端 session，不得進入 frontend bundle、JSON store 或 Git history。

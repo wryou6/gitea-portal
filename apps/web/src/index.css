@@ -2086,6 +2086,13 @@ textarea:focus-visible,
   padding: 0;
   overflow: hidden;
 }
+.app-content:has(.work-view-layout) > section:has(> .workspace-view:has(.work-view-layout)) {
+  display: flex;
+  min-width: 0;
+  min-height: 0;
+  flex: 1;
+  flex-direction: column;
+}
 .workspace-view:has(.work-view-layout) {
   display: flex;
   min-width: 0;

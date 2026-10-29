@@ -50,6 +50,7 @@ No shared infrastructure or data contract changes are required.
 
 - [X] T009 Run `pnpm.cmd typecheck` and `pnpm.cmd build` from the repository root; resolve any regressions in the changed Web files.
 - [X] T010 Review the scenarios in `specs/036-kanban-independent-scroll/quickstart.md` against the Storybook examples, including empty lanes, Anomaly behavior, focus visibility, filter disclosure, and drag/drop.
+- [X] T011 Constrain the Repository workspace wrapper to the available height when it contains a work-view layout, so Kanban card lists retain their independent vertical scrolling.
 
 ## Dependencies & Execution Order
 

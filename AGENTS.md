@@ -40,6 +40,7 @@ API 預設使用 `http://localhost:3001`，Web 預設使用 `http://localhost:51
 - 修改 Gitea Label 或 Issue Status 時，確認 atomic replacement 與 optimistic concurrency 行為未被破壞；不得改回 remove-then-add fallback。
 - 修改 Kanban/Gantt view 時，確認沒有新的 Issue persistence mutation，且 repair annotation、error、anomaly column、drag transition 仍可辨識。
 - 修改 UI 後至少執行 `pnpm.cmd typecheck` 與 `pnpm.cmd build`；若涉及 feature spec，更新對應 `specs/<feature>/` 文件與 tasks。
+- Playwright E2E 使用 `pnpm.cmd --filter @gitea-portal/web test:e2e`。此腳本先建立 production bundle，再由測試直接載入產出的 CSS，以 `page.setContent()` 驗證版面；不要為這類純前端佈局測試啟動 Vite preview 或 API，也不需要 loopback 權限。使用獨立 Playwright 瀏覽器，不使用 Codex CUA MCP 或既有瀏覽器工作階段。若測試需要驗證真實 HTTP/API 整合，才設定 webServer，並從一開始要求本機 loopback 權限。
 - 使用 `apply_patch` 編輯檔案；不要用 shell redirect 或腳本覆寫檔案。
 
 ## Git
