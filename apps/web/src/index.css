@@ -2086,7 +2086,7 @@ textarea:focus-visible,
   padding: 0;
   overflow: hidden;
 }
-.app-content:has(.work-view-layout) > section:has(> .workspace-view:has(.work-view-layout)) {
+.app-content:has(.work-view-layout) > section:has(.workspace-view) {
   display: flex;
   min-width: 0;
   min-height: 0;
@@ -2313,7 +2313,7 @@ textarea:focus-visible,
   overflow: auto;
   overscroll-behavior: contain;
 }
-.work-view-content:has(> .kanban-board) {
+.work-view-content:has(.kanban-board) {
   overflow: hidden;
 }
 .work-view-content > .table-scroll-region {
@@ -2818,7 +2818,20 @@ button.danger {
   overflow-x: hidden;
   overflow-y: auto;
   overscroll-behavior-y: contain;
+  scrollbar-gutter: stable;
+  scrollbar-color: var(--border) var(--muted);
   scrollbar-width: thin;
+}
+.kanban-column-cards::-webkit-scrollbar {
+  width: 12px;
+}
+.kanban-column-cards::-webkit-scrollbar-track {
+  background: var(--muted);
+}
+.kanban-column-cards::-webkit-scrollbar-thumb {
+  border: 3px solid var(--muted);
+  border-radius: 999px;
+  background: var(--border);
 }
 .kanban-column-cards:focus-visible {
   outline: 3px solid color-mix(in oklch, var(--ring) 70%, transparent);
