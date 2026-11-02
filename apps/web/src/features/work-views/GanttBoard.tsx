@@ -74,15 +74,18 @@ type ActiveTimelinePan = {
   startScrollLeft: number;
 };
 
-type ActiveTitleResize = {
+type ActiveColumnResize = {
   pointerId: number;
   startClientX: number;
   startWidth: number;
+  field: "title" | "repository";
 };
 
 const GANTT_TITLE_DEFAULT_WIDTH = 312;
 const GANTT_TITLE_MIN_WIDTH = 208;
 const GANTT_TITLE_MAX_WIDTH = 720;
+const GANTT_REPOSITORY_MIN_WIDTH = 120;
+const GANTT_REPOSITORY_MAX_WIDTH = 720;
 
 function columnsForTranslation(
   order: IssueSortField[],
@@ -171,6 +174,7 @@ export function GanttBoard({
   const [optionsOpen, setOptionsOpen] = useState(demoViewOptionsOpen);
   const [fieldsWidth, setFieldsWidth] = useState(0);
   const [titleWidth, setTitleWidth] = useState<number | undefined>();
+  const [repositoryWidth, setRepositoryWidth] = useState<number | undefined>();
   const [timelineExtension, setTimelineExtension] = useState({ before: 0, after: 0 });
   const isExtendingTimeline = useRef(false);
   const [maxContentColumnWidths, setMaxContentColumnWidths] = useState<Record<string, number>>({});
@@ -178,7 +182,7 @@ export function GanttBoard({
   const [visibleDate, setVisibleDate] = useState(initialDate);
   const chartScrollRef = useRef<HTMLDivElement>(null);
   const activeTimelinePan = useRef<ActiveTimelinePan | undefined>(undefined);
-  const activeTitleResize = useRef<ActiveTitleResize | undefined>(undefined);
+  const activeColumnResize = useRef<ActiveColumnResize | undefined>(undefined);
   const [isTimelinePanning, setIsTimelinePanning] = useState(false);
   const defaultDate = addCalendarDays(localCalendarDate(), -7);
 
@@ -198,11 +202,13 @@ export function GanttBoard({
     if (!login) {
       setPreference(defaultGanttViewPreference());
       setTitleWidth(undefined);
+      setRepositoryWidth(undefined);
       return;
     }
     const nextPreference = demoPreference ?? readGanttViewPreference(login);
     setPreference(nextPreference);
     setTitleWidth(nextPreference.titleWidth);
+    setRepositoryWidth(nextPreference.repositoryWidth);
     setPendingOrder(demoPendingOrder ? [...demoPendingOrder] : undefined);
   }, [login, demoPreference, demoPendingOrder]);
 
@@ -260,12 +266,16 @@ export function GanttBoard({
     ? field === "title"
       ? titleWidth ? `${titleWidth}px` : "11.25rem"
       : field === "assignee" || field === "status" || field === "repository"
-        ? `${maxContentColumnWidths[field] ?? "max-content"}${typeof maxContentColumnWidths[field] === "number" ? "px" : ""}`
+        ? field === "repository" && repositoryWidth !== undefined
+          ? `${repositoryWidth}px`
+          : `${maxContentColumnWidths[field] ?? "max-content"}${typeof maxContentColumnWidths[field] === "number" ? "px" : ""}`
         : "4.5rem"
     : field === "title"
       ? titleWidth ? `${titleWidth}px` : "minmax(19.5rem, 3fr)"
         : field === "assignee" || field === "status" || field === "repository"
-          ? `${maxContentColumnWidths[field] ?? "max-content"}${typeof maxContentColumnWidths[field] === "number" ? "px" : ""}`
+          ? field === "repository" && repositoryWidth !== undefined
+            ? `${repositoryWidth}px`
+            : `${maxContentColumnWidths[field] ?? "max-content"}${typeof maxContentColumnWidths[field] === "number" ? "px" : ""}`
             : "minmax(7rem, 0.9fr)").join(" ");
   const unitWidth = GANTT_SCALE_WIDTH[scale];
   const timelineWidth = cells.length * unitWidth;
@@ -333,49 +343,85 @@ export function GanttBoard({
     if (login) writeGanttViewPreference(login, next);
   }
 
-  function updateTitleWidth(width: number) {
-    const nextWidth = Math.min(GANTT_TITLE_MAX_WIDTH, Math.max(GANTT_TITLE_MIN_WIDTH, Math.round(width)));
-    setTitleWidth(nextWidth);
-    updatePreference({ ...preference, titleWidth: nextWidth });
+  function updateColumnWidth(field: "title" | "repository", width: number) {
+    const minWidth = field === "title" ? GANTT_TITLE_MIN_WIDTH : GANTT_REPOSITORY_MIN_WIDTH;
+    const maxWidth = field === "title" ? GANTT_TITLE_MAX_WIDTH : GANTT_REPOSITORY_MAX_WIDTH;
+    const nextWidth = Math.min(maxWidth, Math.max(minWidth, Math.round(width)));
+    if (field === "title") {
+      setTitleWidth(nextWidth);
+      updatePreference({ ...preference, titleWidth: nextWidth });
+    } else {
+      setRepositoryWidth(nextWidth);
+      updatePreference({ ...preference, repositoryWidth: nextWidth });
+    }
   }
 
-  function handleTitleResizePointerDown(event: PointerEvent<HTMLDivElement>) {
+  function handleColumnResizePointerDown(event: PointerEvent<HTMLDivElement>, field: "title" | "repository") {
     event.preventDefault();
     event.stopPropagation();
     event.currentTarget.setPointerCapture(event.pointerId);
-    activeTitleResize.current = {
+    activeColumnResize.current = {
       pointerId: event.pointerId,
       startClientX: event.clientX,
-      startWidth: titleWidth ?? event.currentTarget.parentElement?.getBoundingClientRect().width ?? (isNarrowViewport ? 180 : GANTT_TITLE_DEFAULT_WIDTH),
+      startWidth: (field === "title" ? titleWidth : repositoryWidth) ?? event.currentTarget.parentElement?.getBoundingClientRect().width ?? (field === "title" && !isNarrowViewport ? GANTT_TITLE_DEFAULT_WIDTH : 180),
+      field,
     };
   }
 
-  function handleTitleResizePointerMove(event: PointerEvent<HTMLDivElement>) {
-    const resize = activeTitleResize.current;
+  function handleColumnResizePointerMove(event: PointerEvent<HTMLDivElement>) {
+    const resize = activeColumnResize.current;
     if (!resize || resize.pointerId !== event.pointerId) return;
-    updateTitleWidth(resize.startWidth + event.clientX - resize.startClientX);
+    updateColumnWidth(resize.field, resize.startWidth + event.clientX - resize.startClientX);
   }
 
-  function handleTitleResizePointerUp(event: PointerEvent<HTMLDivElement>) {
-    if (activeTitleResize.current?.pointerId !== event.pointerId) return;
-    activeTitleResize.current = undefined;
+  function handleColumnResizePointerUp(event: PointerEvent<HTMLDivElement>) {
+    if (activeColumnResize.current?.pointerId !== event.pointerId) return;
+    activeColumnResize.current = undefined;
     if (event.currentTarget.hasPointerCapture(event.pointerId)) event.currentTarget.releasePointerCapture(event.pointerId);
   }
 
-  function handleTitleResizeKeyDown(event: KeyboardEvent<HTMLDivElement>) {
+  function handleColumnResizeKeyDown(event: KeyboardEvent<HTMLDivElement>, field: "title" | "repository") {
     if (event.key !== "ArrowLeft" && event.key !== "ArrowRight" && event.key !== "Home" && event.key !== "End") return;
     event.preventDefault();
-    const currentWidth = titleWidth ?? event.currentTarget.parentElement?.getBoundingClientRect().width ?? (isNarrowViewport ? 180 : GANTT_TITLE_DEFAULT_WIDTH);
-    const nextWidth = event.key === "Home" ? GANTT_TITLE_MIN_WIDTH
-      : event.key === "End" ? GANTT_TITLE_MAX_WIDTH
+    const currentWidth = (field === "title" ? titleWidth : repositoryWidth) ?? event.currentTarget.parentElement?.getBoundingClientRect().width ?? (field === "title" && !isNarrowViewport ? GANTT_TITLE_DEFAULT_WIDTH : 180);
+    const minWidth = field === "title" ? GANTT_TITLE_MIN_WIDTH : GANTT_REPOSITORY_MIN_WIDTH;
+    const maxWidth = field === "title" ? GANTT_TITLE_MAX_WIDTH : GANTT_REPOSITORY_MAX_WIDTH;
+    const nextWidth = event.key === "Home" ? minWidth
+      : event.key === "End" ? maxWidth
         : currentWidth + (event.key === "ArrowRight" ? 16 : -16);
-    updateTitleWidth(nextWidth);
+    updateColumnWidth(field, nextWidth);
+  }
+
+  function renderColumnResizer(field: "title" | "repository") {
+    const minWidth = field === "title" ? GANTT_TITLE_MIN_WIDTH : GANTT_REPOSITORY_MIN_WIDTH;
+    const maxWidth = field === "title" ? GANTT_TITLE_MAX_WIDTH : GANTT_REPOSITORY_MAX_WIDTH;
+    const currentWidth = field === "title"
+      ? titleWidth ?? (isNarrowViewport ? 180 : GANTT_TITLE_DEFAULT_WIDTH)
+      : repositoryWidth ?? maxContentColumnWidths.repository ?? 180;
+    return (
+      <div
+        className="gantt-column-resizer"
+        role="separator"
+        aria-orientation="vertical"
+        aria-label={t(field === "title" ? "ganttResizeTitle" : "ganttResizeRepository")}
+        aria-valuemin={minWidth}
+        aria-valuemax={maxWidth}
+        aria-valuenow={currentWidth}
+        tabIndex={0}
+        onPointerDown={(event) => handleColumnResizePointerDown(event, field)}
+        onPointerMove={handleColumnResizePointerMove}
+        onPointerUp={handleColumnResizePointerUp}
+        onPointerCancel={handleColumnResizePointerUp}
+        onKeyDown={(event) => handleColumnResizeKeyDown(event, field)}
+      />
+    );
   }
 
   function restoreDefaults() {
     const next = defaultGanttViewPreference();
     updatePreference(next);
     setTitleWidth(undefined);
+    setRepositoryWidth(undefined);
     setPendingOrder(undefined);
     setKeyboardDraggedField(undefined);
     setKeyboardOrderBeforeDrag(undefined);
@@ -469,7 +515,7 @@ export function GanttBoard({
     const fieldsCoverTimeline = fixedFields
       && fixedFields.getBoundingClientRect().right >= event.currentTarget.getBoundingClientRect().right - 1;
     if (!timelineTarget && !(event.pointerType === "touch" && fixedFields && fieldsCoverTimeline)) return;
-    if (target.closest(".gantt-title-resizer, .gantt-track--create-range, .gantt-bar, [data-drag-mode], a, button, input, select, textarea, [contenteditable='true']")) return;
+    if (target.closest(".gantt-column-resizer, .gantt-track--create-range, .gantt-bar, [data-drag-mode], a, button, input, select, textarea, [contenteditable='true']")) return;
 
     event.preventDefault();
     activeTimelinePan.current = {
@@ -575,8 +621,13 @@ export function GanttBoard({
           <div className="gantt-chart-header" role="row">
             <div className="gantt-header-fields" role="presentation">
               {columns.map(({ field, label }) => (
-                <div className={`gantt-column-heading${field === "title" ? " gantt-column-heading--resizable" : ""}`} role="columnheader" key={field}>
-                  {field === "repository" ? label : (
+                <div className={`gantt-column-heading${field === "title" || (field === "repository" && allRepositories) ? " gantt-column-heading--resizable" : ""}`} role="columnheader" key={field}>
+                  {field === "repository" ? (
+                    <>
+                      <span>{label}</span>
+                      {allRepositories && renderColumnResizer("repository")}
+                    </>
+                  ) : (
                   <>
                   <button
                     type="button"
@@ -600,23 +651,7 @@ export function GanttBoard({
                       }));
                     }}
                   >{label}</button>
-                  {field === "title" && (
-                    <div
-                      className="gantt-title-resizer"
-                      role="separator"
-                      aria-orientation="vertical"
-                      aria-label={t("ganttResizeTitle")}
-                      aria-valuemin={GANTT_TITLE_MIN_WIDTH}
-                      aria-valuemax={GANTT_TITLE_MAX_WIDTH}
-                      aria-valuenow={titleWidth ?? (isNarrowViewport ? 180 : GANTT_TITLE_DEFAULT_WIDTH)}
-                      tabIndex={0}
-                      onPointerDown={handleTitleResizePointerDown}
-                      onPointerMove={handleTitleResizePointerMove}
-                      onPointerUp={handleTitleResizePointerUp}
-                      onPointerCancel={handleTitleResizePointerUp}
-                      onKeyDown={handleTitleResizeKeyDown}
-                    />
-                  )}
+                  {field === "title" && renderColumnResizer("title")}
                   </>
                   )}
                 </div>

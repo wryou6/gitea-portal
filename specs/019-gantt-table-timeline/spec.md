@@ -119,6 +119,7 @@
 - **FR-016**: Assignee 與 Status 欄，以及 All repos 的 Repository 欄 MUST 依目前可見 Issue 值的最大內容寬度計算；表頭與所有 Issue 列 MUST 共用量測後的欄寬，且語系或資料改變後 MUST 重新量測。
 - **FR-017**: 未排程區段 MUST 僅在至少有一筆未排程 Issue 時顯示；未排程數量為零時 MUST 隱藏整個區段及其空狀態內容。
 - **FR-018**: 使用者 MUST 能以滑鼠拖曳或鍵盤調整 Gantt Title 欄寬；預設最小寬度與彈性比例 MUST 為現行值的 1.5 倍，調整後的寬度 MUST 依登入帳號保存並跨 Repository Gantt 套用。
+- **FR-019**: All repos Gantt MUST 允許使用者以滑鼠拖曳或鍵盤調整 Repository 欄寬；調整後的寬度 MUST 依登入帳號保存並跨 All repos Gantt 工作區套用，單一 Repository Gantt MUST 不顯示 Repository 欄寬控制。
 
 ### Key Entities *(include if feature involves data)*
 

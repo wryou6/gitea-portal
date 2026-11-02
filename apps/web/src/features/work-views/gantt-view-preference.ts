@@ -33,6 +33,7 @@ export type GanttViewPreference = {
   visibleFields: IssueSortField[];
   columnOrder: IssueSortField[];
   titleWidth?: number;
+  repositoryWidth?: number;
 };
 
 export function defaultGanttViewPreference(): GanttViewPreference {
@@ -60,6 +61,8 @@ function isGanttPreference(value: unknown): value is GanttViewPreference {
     !Array.isArray(preference.columnOrder) ||
     (preference.titleWidth !== undefined &&
       (typeof preference.titleWidth !== "number" || !Number.isFinite(preference.titleWidth) || preference.titleWidth < 208 || preference.titleWidth > 720)) ||
+    (preference.repositoryWidth !== undefined &&
+      (typeof preference.repositoryWidth !== "number" || !Number.isFinite(preference.repositoryWidth) || preference.repositoryWidth < 120 || preference.repositoryWidth > 720)) ||
     !preference.visibleFields.every(isGanttField) ||
     !preference.columnOrder.every(isGanttField)
   ) return false;

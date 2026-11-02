@@ -3139,6 +3139,13 @@ button.danger {
   justify-content: space-between;
   gap: 0.25rem;
 }
+.gantt-column-heading--resizable > span {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
 .gantt-column-heading button {
   flex: 1;
   min-width: 0;
@@ -3157,7 +3164,7 @@ button.danger {
   outline: 2px solid var(--ring);
   outline-offset: 2px;
 }
-.gantt-title-resizer {
+.gantt-column-resizer {
   position: relative;
   flex: 0 0 1.5rem;
   align-self: stretch;
@@ -3166,7 +3173,7 @@ button.danger {
   cursor: col-resize;
   touch-action: none;
 }
-.gantt-title-resizer::after {
+.gantt-column-resizer::after {
   position: absolute;
   inset-block: 0.65rem;
   left: 50%;
@@ -3176,11 +3183,11 @@ button.danger {
   content: "";
   transform: translateX(-50%);
 }
-.gantt-title-resizer:hover::after,
-.gantt-title-resizer:focus-visible::after {
+.gantt-column-resizer:hover::after,
+.gantt-column-resizer:focus-visible::after {
   background: var(--ring);
 }
-.gantt-title-resizer:focus-visible {
+.gantt-column-resizer:focus-visible {
   outline: 2px solid var(--ring);
   outline-offset: -2px;
 }

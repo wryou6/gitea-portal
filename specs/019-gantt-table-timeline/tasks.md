@@ -94,6 +94,7 @@
 - [x] T031 Separate timeline controls from Issue filters; add accessible previous/next controls that shift the start date by the selected scale, keep the left fields width stable, and verify toolbar wrapping in three locales and narrow/desktop Storybook viewports.
 - [x] T032 Reduce Gantt timeline-control height with a single-row desktop toolbar and a maximum two-row narrow layout; keep labels accessible, use a compact View Options control, and verify desktop/narrow Storybook layouts in all locales.
 - [x] T033 Allow pointer and keyboard resizing of the Title column, set its default minimum and flexible proportion to 1.5× the current values, and save the width with the account-scoped Gantt preference; verify with workspace typecheck and build.
+- [x] T034 Allow pointer and keyboard resizing of the Repository column in All repos Gantt, save its width with the account-scoped Gantt preference, and verify that Repository-scoped Gantt has no Repository width control by conditional rendering; workspace typecheck and build pass.
 
 ---
 
