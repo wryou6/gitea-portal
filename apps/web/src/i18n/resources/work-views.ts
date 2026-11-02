@@ -4,6 +4,7 @@ export const workViews = defineLocaleResource({
   "zh-TW": {
     ganttStartHandle: "調整 {{title}} 的開始日期",
     ganttDueHandle: "調整 {{title}} 的到期日期",
+    ganttResizeTitle: "調整標題欄寬度",
     ganttDragKeyboardHelp: "使用左右方向鍵逐日調整；按 Enter 儲存，按 Escape 取消。",
     ganttScheduleSaved: "排程已更新",
     ganttScheduleSaveFailed: "無法更新排程；已重新載入 Gitea 的實際日期。",
@@ -20,6 +21,7 @@ export const workViews = defineLocaleResource({
   en: {
     ganttStartHandle: "Adjust start date for {{title}}",
     ganttDueHandle: "Adjust due date for {{title}}",
+    ganttResizeTitle: "Resize title column",
     ganttDragKeyboardHelp: "Use the arrow keys to adjust by one day. Press Enter to save or Escape to cancel.",
     ganttScheduleSaved: "Schedule updated",
     ganttScheduleSaveFailed: "Could not update the schedule. The actual Gitea dates were reloaded.",
@@ -36,6 +38,7 @@ export const workViews = defineLocaleResource({
   ja: {
     ganttStartHandle: "{{title}} の開始日を調整",
     ganttDueHandle: "{{title}} の期限日を調整",
+    ganttResizeTitle: "タイトル列の幅を調整",
     ganttDragKeyboardHelp: "左右の矢印キーで1日ずつ調整します。Enterで保存、Escapeでキャンセルします。",
     ganttScheduleSaved: "スケジュールを更新しました",
     ganttScheduleSaveFailed: "スケジュールを更新できませんでした。Gitea の実際の日付を再読み込みしました。",

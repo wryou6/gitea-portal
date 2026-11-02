@@ -3135,7 +3135,13 @@ button.danger {
   font-size: 0.76rem;
   font-weight: 650;
 }
+.gantt-column-heading--resizable {
+  justify-content: space-between;
+  gap: 0.25rem;
+}
 .gantt-column-heading button {
+  flex: 1;
+  min-width: 0;
   overflow: hidden;
   padding: 0;
   border: 0;
@@ -3150,6 +3156,33 @@ button.danger {
 .gantt-column-heading button:focus-visible {
   outline: 2px solid var(--ring);
   outline-offset: 2px;
+}
+.gantt-title-resizer {
+  position: relative;
+  flex: 0 0 1.5rem;
+  align-self: stretch;
+  width: 1.5rem;
+  margin: -0.3rem -0.55rem -0.3rem 0;
+  cursor: col-resize;
+  touch-action: none;
+}
+.gantt-title-resizer::after {
+  position: absolute;
+  inset-block: 0.65rem;
+  left: 50%;
+  width: 2px;
+  border-radius: 2px;
+  background: var(--border);
+  content: "";
+  transform: translateX(-50%);
+}
+.gantt-title-resizer:hover::after,
+.gantt-title-resizer:focus-visible::after {
+  background: var(--ring);
+}
+.gantt-title-resizer:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: -2px;
 }
 .gantt-cell {
   min-height: 2.25rem;
