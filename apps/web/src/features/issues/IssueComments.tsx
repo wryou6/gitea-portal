@@ -2,6 +2,7 @@ import type { Comment } from "./types";
 import { useTranslation } from "react-i18next";
 import { formatDateTime } from "../../i18n/format";
 import { UserIdentity } from "../../components/ui/UserIdentity";
+import { MarkdownContent } from "./MarkdownContent";
 export function IssueComments({ comments }: { comments: Comment[] }) {
   const { t } = useTranslation("issues");
   if (!comments.length) return <div className="empty">{t("noComments")}</div>;
@@ -15,7 +16,7 @@ export function IssueComments({ comments }: { comments: Comment[] }) {
               {formatDateTime(item.createdAt)}
             </time>
           </header>
-          <p className="prose">{item.body}</p>
+          <MarkdownContent content={item.body} />
         </article>
       ))}
     </div>

@@ -13,6 +13,7 @@ import { StatusTransitionDialog } from "./StatusTransitionDialog";
 import { useTranslation } from "react-i18next";
 import { Link, useLocation } from "react-router";
 import { Dialog } from "../../components/ui/Dialog";
+import { MarkdownContent } from "./MarkdownContent";
 
 export function IssueDetailPage({
   owner,
@@ -87,8 +88,12 @@ export function IssueDetailPage({
       <div className="detail-grid">
         <div className="detail-card">
           <IssueDetailHeader issue={issue} />
-          <div className="prose" style={{ margin: "1.5rem 0" }}>
-            {issue.body || t("noDescription")}
+          <div style={{ margin: "1.5rem 0" }}>
+            {issue.body ? (
+              <MarkdownContent content={issue.body} />
+            ) : (
+              t("noDescription")
+            )}
           </div>
           <div className="actions">
             <a
