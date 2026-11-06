@@ -44,6 +44,7 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Scheduled: Story = {};
+export const WithIssueNumber: Story = { args: { showIssueNumber: true } };
 
 export const EditableSchedule: Story = {
   args: { onScheduleSave: async () => undefined },

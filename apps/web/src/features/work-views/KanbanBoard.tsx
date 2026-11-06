@@ -268,6 +268,7 @@ export function KanbanBoard({
                 onDropCard={move}
                 returnTo={buildWorkViewReturnTo(location.pathname, location.search, "kanban")}
                 onMetadataSave={saveIssueMetadata}
+                showIssueNumber
               />
             ))}
           </div>

@@ -484,6 +484,7 @@ export function GanttBoard({
         onMetadataSave={onMetadataSave}
         onStatusClick={onStatusClick}
         onTimelineEdge={extendTimeline}
+        showIssueNumber
       />
     );
   }

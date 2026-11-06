@@ -17,6 +17,7 @@ import { AssigneeIdentityGroup } from "../../components/ui/AssigneeIdentityGroup
 import { assigneeLoginsForDisplay } from "../../lib/assignee-display";
 import { profileFor } from "../../lib/user-profiles";
 import { IssueMetadataBadgeEditor } from "./IssueMetadataBadgeEditor";
+import { issueTitleForDisplay } from "./issue-title";
 
 export function IssueRow({
   issue,
@@ -24,6 +25,7 @@ export function IssueRow({
   columnOrder = DEFAULT_ISSUE_COLUMN_ORDER,
   visibleFields = ISSUE_VIEW_FIELDS,
   showRepositoryIdentity = false,
+  showIssueNumber = false,
   onMetadataSave,
   onStatusClick,
 }: {
@@ -32,6 +34,7 @@ export function IssueRow({
   columnOrder?: IssueSortField[];
   visibleFields?: IssueSortField[];
   showRepositoryIdentity?: boolean;
+  showIssueNumber?: boolean;
   onMetadataSave?: (issue: Issue, field: "type" | "priority", value: string) => Promise<void>;
   onStatusClick?: (issue: Issue) => void;
 }) {
@@ -49,6 +52,7 @@ export function IssueRow({
       ? issue.dueDate
       : null;
   const overdue = isIssueOverdue(issue);
+  const title = issueTitleForDisplay(issue.title, issue.number, showIssueNumber);
   const cells: Record<IssueSortField, ReactNode> = {
     type: onMetadataSave ? (
       <IssueMetadataBadgeEditor field="type" value={issue.type} onSave={(value) => onMetadataSave(issue, "type", value)}>
@@ -68,7 +72,7 @@ export function IssueRow({
     ),
     title: (
       <>
-        <Link className="issue-title" to={returnTo ?? "/issues"} replace={false} mask={issuePath}>{issue.title}</Link>
+        <Link className="issue-title" to={returnTo ?? "/issues"} replace={false} mask={issuePath}>{title}</Link>
         {showRepositoryIdentity && (
           <span className="issue-row-repository">{issue.owner}/{issue.name}</span>
         )}

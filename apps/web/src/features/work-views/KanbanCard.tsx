@@ -14,6 +14,7 @@ import { assigneeLoginsForDisplay } from "../../lib/assignee-display";
 import { profileFor } from "../../lib/user-profiles";
 import { isIssueOverdue } from "../issues/overdue-date";
 import { IssueMetadataBadgeEditor } from "../issues/IssueMetadataBadgeEditor";
+import { issueTitleForDisplay } from "../issues/issue-title";
 
 export function KanbanCard({
   issue,
@@ -21,16 +22,19 @@ export function KanbanCard({
   canDrag = true,
   returnTo,
   onMetadataSave,
+  showIssueNumber = false,
 }: {
   issue: WorkViewCard;
   onDragStart: (issue: WorkViewCard) => void;
   canDrag?: boolean;
   returnTo?: string;
   onMetadataSave?: (issue: WorkViewCard, field: "type" | "priority", value: string) => Promise<void>;
+  showIssueNumber?: boolean;
 }) {
   const { t } = useTranslation("work-views");
   const { t: tIssues } = useTranslation("issues");
   const isDone = issue.status === "done";
+  const title = issueTitleForDisplay(issue.title, issue.number, showIssueNumber);
   const assigneeUsers = assigneeLoginsForDisplay(issue).map((login) =>
     profileFor(issue.userProfiles, login),
   );
@@ -69,9 +73,9 @@ export function KanbanCard({
           to={returnTo ?? "/kanban"}
           replace={false}
           mask={issueDetailMask(issue.owner, issue.name, issue.number, returnTo)}
-          title={issue.title}
+          title={title}
         >
-          {issue.title}
+          {title}
         </Link>
       </div>
       <div className="kanban-card-footer">

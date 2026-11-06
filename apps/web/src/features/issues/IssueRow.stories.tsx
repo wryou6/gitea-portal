@@ -22,6 +22,7 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 export const Default: Story = { args: { issue: demoIssue } };
+export const WithIssueNumber: Story = { args: { issue: demoIssue, showIssueNumber: true } };
 export const EditableBadges: Story = {
   args: {
     issue: demoIssue,

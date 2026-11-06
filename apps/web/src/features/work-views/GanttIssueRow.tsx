@@ -18,6 +18,7 @@ import { profileFor } from "../../lib/user-profiles";
 import { OverdueIndicator } from "../issues/OverdueIndicator";
 import { isIssueOverdue } from "../issues/overdue-date";
 import { IssueMetadataBadgeEditor } from "../issues/IssueMetadataBadgeEditor";
+import { issueTitleForDisplay } from "../issues/issue-title";
 
 export type GanttIssueRowVariant = "scheduled" | "unscheduled" | "anomaly";
 
@@ -55,6 +56,7 @@ export function GanttIssueRow({
   onMetadataSave,
   onStatusClick,
   onTimelineEdge,
+  showIssueNumber = false,
 }: {
   issue: Issue;
   href?: string;
@@ -69,6 +71,7 @@ export function GanttIssueRow({
   onMetadataSave?: (issue: Issue, field: "type" | "priority", value: string) => Promise<void>;
   onStatusClick?: (issue: Issue) => void;
   onTimelineEdge?: (direction: -1 | 1) => number;
+  showIssueNumber?: boolean;
 }) {
   const { t } = useTranslation("work-views");
   const { t: tIssues } = useTranslation("issues");
@@ -81,6 +84,7 @@ export function GanttIssueRow({
     profileFor(issue.userProfiles, login),
   );
   const issueHref = href ?? issueDetailMask(issue.owner, issue.name, issue.number, returnTo);
+  const title = issueTitleForDisplay(issue.title, issue.number, showIssueNumber);
   const workViewHref = returnTo ?? "/gantt";
   const unitWidth = GANTT_SCALE_WIDTH[scale];
   const totalWidth = cells.length * unitWidth;
@@ -288,7 +292,7 @@ export function GanttIssueRow({
     ),
     title: (
       <div className="gantt-title-cell">
-        <Link to={workViewHref} replace={false} mask={issueHref} title={issue.title}>{issue.title}</Link>
+        <Link to={workViewHref} replace={false} mask={issueHref} title={title}>{title}</Link>
         {overdue && <OverdueIndicator />}
         {variant === "anomaly" && (
           <span className="schedule-anomaly" role="status">

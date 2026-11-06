@@ -466,6 +466,7 @@ export function IssueListPage({
                 columnOrder={columnOrder}
                 visibleFields={visibleFields}
                 showRepositoryIdentity={!repository}
+                showIssueNumber
                 onMetadataSave={demoIssues ? undefined : saveIssueMetadata}
                 onStatusClick={demoIssues ? undefined : setPendingStatusIssue}
               />

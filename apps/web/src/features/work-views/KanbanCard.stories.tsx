@@ -20,6 +20,9 @@ export const Default: Story = {
     onDragStart: () => undefined,
   },
 };
+export const WithIssueNumber: Story = {
+  args: { ...Default.args, showIssueNumber: true },
+};
 export const EditableBadges: Story = {
   args: {
     ...Default.args,
