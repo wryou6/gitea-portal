@@ -54,7 +54,6 @@ The decisions are recorded in [research.md](./research.md). The global UI/UX des
 - [data-model.md](./data-model.md) defines UI-only view state and design-token entities; no persisted Issue or Board model is added.
 - [contracts/ui-api-preservation.md](./contracts/ui-api-preservation.md) records the API and authorization contracts the frontend must preserve.
 - [quickstart.md](./quickstart.md) defines runnable validation scenarios for the migrated UI.
-- [../../design-system/gitea-issue-portal/MASTER.md](../../design-system/gitea-issue-portal/MASTER.md) records the visual system and component rules.
 
 ## Project Structure
 
@@ -93,10 +92,6 @@ apps/web/
 ├── .storybook/
 ├── package.json
 └── vite.config.ts
-
-design-system/
-└── gitea-issue-portal/
-    └── MASTER.md
 ```
 
 **Structure Decision**: Keep the existing `apps/web/src/features` boundaries and API client. Add shared source-owned UI primitives under `components/ui`, layout primitives under `components/layout`, feedback states under `components/feedback`, and Storybook configuration under `apps/web/.storybook`. Consolidate global presentation tokens in `src/index.css`; remove only obsolete custom presentation files after every responsibility has moved.
