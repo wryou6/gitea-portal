@@ -79,7 +79,9 @@ apps/api/                 Fastify API、Gitea adapter、OAuth、Issue 與工作�
 apps/web/                 React/Vite Web UI
 packages/domain/          Issue、Status 等共用 domain types
 packages/gitea-contracts/ API response 與 Gitea contract types
-specs/                    Spec Kit feature specification、plan、tasks 與 checklist
+specs/current/             已驗收且仍有效的權威需求契約
+specs/<feature>/           進行中的 Spec Kit feature specification、plan、tasks 與 checklist
+specs/archive/             已驗收並同步至現行契約的 feature 交付紀錄
 ```
 
 ## 驗證指令
