@@ -3,7 +3,13 @@
   "private": true,
   "version": "0.1.0",
   "type": "module",
-  "scripts": { "dev": "tsx watch src/server.ts", "build": "tsc -p tsconfig.json", "typecheck": "tsc -p tsconfig.json --noEmit", "validate:user-profiles": "tsx scripts/validate-user-profiles.ts" },
+  "scripts": {
+    "dev": "tsx watch src/server.ts",
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "tsx --test test/**/*.test.ts",
+    "validate:user-profiles": "tsx scripts/validate-user-profiles.ts"
+  },
   "dependencies": {
     "@gitea-portal/domain": "workspace:*",
     "@gitea-portal/gitea-contracts": "workspace:*",
