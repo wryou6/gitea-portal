@@ -1,16 +1,10 @@
-import { useEffect, useRef, useState } from "react";
+import { lazy, Suspense, useEffect, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router";
 import { changeLocale, i18n } from "../i18n";
 import { resolveLocale, type Locale } from "../i18n/locales";
 import { useTranslation } from "react-i18next";
-import { IssueListPage } from "../features/issues/IssueListPage";
-import { IssueDetailPage } from "../features/issues/IssueDetailPage";
-import { IssueCreatePage } from "../features/issues/IssueCreatePage";
-import { SettingsPage } from "../features/settings/SettingsPage";
-import { DashboardPage } from "../features/dashboard/DashboardPage";
-import { WorkspaceViewPage } from "../features/work-views/WorkspaceViewPage";
-import { RepositoryWorkspacePage } from "../features/repositories/RepositoryWorkspacePage";
 import { AppShell } from "../components/layout/AppShell";
+import { LoadingState } from "../components/feedback/LoadingState";
 import {
   applyColorPalette,
   applyThemePreference,
@@ -30,6 +24,42 @@ import { LoginPage } from "../features/auth/LoginPage";
 import { SessionExpiredNotice } from "../features/auth/SessionExpiredNotice";
 import { SessionUnavailable } from "../features/auth/SessionUnavailable";
 import type { SessionBootstrapState } from "../features/auth/session-state";
+
+const IssueListPage = lazy(() =>
+  import("../features/issues/IssueListPage").then((module) => ({
+    default: module.IssueListPage,
+  })),
+);
+const IssueDetailPage = lazy(() =>
+  import("../features/issues/IssueDetailPage").then((module) => ({
+    default: module.IssueDetailPage,
+  })),
+);
+const IssueCreatePage = lazy(() =>
+  import("../features/issues/IssueCreatePage").then((module) => ({
+    default: module.IssueCreatePage,
+  })),
+);
+const SettingsPage = lazy(() =>
+  import("../features/settings/SettingsPage").then((module) => ({
+    default: module.SettingsPage,
+  })),
+);
+const DashboardPage = lazy(() =>
+  import("../features/dashboard/DashboardPage").then((module) => ({
+    default: module.DashboardPage,
+  })),
+);
+const WorkspaceViewPage = lazy(() =>
+  import("../features/work-views/WorkspaceViewPage").then((module) => ({
+    default: module.WorkspaceViewPage,
+  })),
+);
+const RepositoryWorkspacePage = lazy(() =>
+  import("../features/repositories/RepositoryWorkspacePage").then(
+    (module) => ({ default: module.RepositoryWorkspacePage }),
+  ),
+);
 
 export function App({
   login,
@@ -172,23 +202,25 @@ export function App({
       routeSearch={pageSearch}
     >
       {sessionExpiredNotice && <SessionExpiredNotice />}
-      {content}
-      {modalIssue && (
-        <IssueDetailPage
-          key={`${modalIssue.route.owner}/${modalIssue.route.repo}/${modalIssue.route.number}`}
-          owner={modalIssue.route.owner}
-          repo={modalIssue.route.repo}
-          number={modalIssue.route.number}
-          presentation="dialog"
-          returnToOverride={modalIssue.returnTo}
-          onClose={() => navigate(-1)}
-          onExpand={() =>
-            navigate(`${modalIssue.pathname}${modalIssue.search}`, {
-              replace: true,
-            })
-          }
-        />
-      )}
+      <Suspense fallback={<LoadingState />}>
+        {content}
+        {modalIssue && (
+          <IssueDetailPage
+            key={`${modalIssue.route.owner}/${modalIssue.route.repo}/${modalIssue.route.number}`}
+            owner={modalIssue.route.owner}
+            repo={modalIssue.route.repo}
+            number={modalIssue.route.number}
+            presentation="dialog"
+            returnToOverride={modalIssue.returnTo}
+            onClose={() => navigate(-1)}
+            onExpand={() =>
+              navigate(`${modalIssue.pathname}${modalIssue.search}`, {
+                replace: true,
+              })
+            }
+          />
+        )}
+      </Suspense>
     </AppShell>
   );
 }
