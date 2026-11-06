@@ -546,6 +546,15 @@ export function GanttBoard({
     setIsTimelinePanning(false);
   }
 
+  function goToToday() {
+    setInitialDate(defaultDate);
+    const chart = chartScrollRef.current;
+    if (!chart) return;
+    chart.scrollLeft = timelinePosition(defaultDate, cells) * unitWidth;
+    visibleDateRef.current = defaultDate;
+    setVisibleDate(defaultDate);
+  }
+
   return (
     <section className="gantt-view" aria-label={t("ganttLabel")}>
       <WorkViewLayout filters={filters} commonFilters={commonFilters ?? <WorkViewFilterBar filters={filters} onChange={setLocalFilters} repositoryFixed={Boolean(repository)} assignees={[...new Set(issues.flatMap((issue) => issue.assignees))].sort()} userProfiles={userProfiles} currentUserLogin={currentUserLogin ?? login} />} resultCount={visibleIssues.length} recentDoneOnly={recentDoneOnly} repositoryFixed={Boolean(repository)} userProfiles={userProfiles} controls={<>
@@ -567,7 +576,7 @@ export function GanttBoard({
               if (isCalendarDate(event.target.value)) setInitialDate(event.target.value);
             }} />
           </label>
-          <button className="secondary gantt-today-button" type="button" onClick={() => setInitialDate(defaultDate)}>{t("today")}</button>
+          <button className="secondary gantt-today-button" type="button" onClick={goToToday}>{t("today")}</button>
           <button
             className="secondary gantt-period-button"
             type="button"
