@@ -1,21 +1,25 @@
-# Research: 分層自動化測試
+# Research: 分層自動化測試補強
 
-## 決策：API/domain 使用 Node.js 內建測試 runner
+## 決策：沿用現有 API test runner
 
-- **Rationale**: API 已有 tsx，Node.js 22 提供 `node:test`，避免為純 TypeScript API/domain 邏輯再引入一套 runner。Fastify 原生 `inject()` 可測 routes 而不開啟 listener。
-- **Alternatives considered**: Vitest 全 workspace；會讓 API 額外引入前端測試 runner。Jest；需要額外轉譯設定。
+- **Decision**: API route/service tests 使用已安裝的 `node:test`、tsx 與 Fastify `inject()`。
+- **Rationale**: 現有 API tests 已採用此模式，inject 可經過完整 route pipeline 而不啟動 listener。
+- **Alternatives considered**: 新增 Vitest/Jest；對 API integration 不提供必要優勢且增加依賴。
 
-## 決策：Web 純邏輯使用 Node.js 內建 runner
+## 決策：使用 Vitest 與 Testing Library 驗證 React 元件互動
 
-- **Rationale**: pnpm 目前因既有 node_modules 綁定到不同 store 而拒絕新增依賴；使用 API workspace 已安裝的 tsx 可立即建立不依賴 DOM 的前端純邏輯測試，避免改動 lockfile 或全量重裝。
-- **Alternatives considered**: Vitest + Testing Library + jsdom；需成功調整 store 並安裝額外 dependencies。UI component interaction 由現有 Playwright E2E 驗證。
+- **Decision**: WorkViewFilterBar 使用 Vitest、React Testing Library、user-event 與 jsdom；Kanban transition 留在 Playwright E2E。
+- **Rationale**: handoff 要求 component tests 可獨立執行；DOM runner 能快速驗證元件互動而不啟動 API/browser server。測試套件採 dev-only dependencies。
+- **Alternatives considered**: 全部使用 Playwright；無法提供獨立的 component test suite，且執行成本較高。
 
-## 決策：外部 Gitea 呼叫使用可控制的 HTTP mock
+## 決策：隔離 Gitea HTTP 故障測試
 
-- **Rationale**: 測試可覆蓋成功、拒絕、timeout、異常回應與並行衝突，同時不依賴正式帳號、credentials 或網路狀態。
-- **Alternatives considered**: 必須安裝本機 Gitea；環境成本高且難以測試故障回應。可選真實 Gitea smoke test 不屬於此 feature 的必要範圍。
+- **Decision**: adapter tests 使用 per-test fetch stub；需要讀取/寫入 log 時注入測試 logger 或攔截專屬 logger，不共用可變全域 fetch。
+- **Rationale**: 可以精確注入 HTTP response、timeout 和意外 request，並避免測試間污染。
+- **Alternatives considered**: 真實 Gitea instance；無法安全或穩定模擬錯誤，不符合無正式 credentials 的要求。
 
-## 決策：不設定全域 coverage gate
+## 決策：覆蓋依風險案例，不設全域 coverage gate
 
-- **Rationale**: 專案尚無測試基線，總百分比容易鼓勵低價值覆蓋。以權限委派、Status/Label 原子更新/衝突、contract 錯誤處理及主要 Web 邏輯列為明確必測項。
-- **Alternatives considered**: 立即設定總覆蓋率門檻；沒有現有測量基線，不能證明門檻能提升風險覆蓋。
+- **Decision**: 驗收以 spec 中的 route 權限、原子 label replacement、adapter failures、UI transition 結果作為明確案例。
+- **Rationale**: 延續既有 feature 決定，聚焦可證明的資料與權限邊界。
+- **Alternatives considered**: 全域 coverage percentage；目前沒有基線且不能取代高風險行為斷言。

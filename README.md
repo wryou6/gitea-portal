@@ -103,7 +103,7 @@ pnpm.cmd test:e2e
 pnpm.cmd test
 ```
 
-`test:api` 使用 Node.js test runner 測試 API、domain、Gitea HTTP adapter 與 route contract；Gitea 呼叫由測試替身攔截。`test:web` 測試 Web 純邏輯，不啟動服務或瀏覽器。`test:e2e` 執行 Playwright 瀏覽器流程；`test` 依序執行三層測試。這些測試不使用正式 Gitea credentials。
+`test:api` 使用 Node.js test runner 測試 API、domain、Gitea HTTP adapter 與 route contract；Gitea 呼叫由測試替身攔截。`test:web` 執行 Web 純邏輯與 Vitest/Testing Library 元件測試，不啟動 API 或瀏覽器；可用 `pnpm.cmd --filter @gitea-portal/web test:component` 單獨執行元件測試。`test:e2e` 執行 Playwright 瀏覽器流程；`test` 依序執行各層測試。這些測試不使用正式 Gitea credentials。
 
 ## 安全與權限邊界
 
