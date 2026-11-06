@@ -61,6 +61,9 @@
 
 - [x] T012 Review drag labels and announcements in all supported locales and light/dark Storybook globals at narrow and desktop widths in `apps/web/src/i18n/resources/work-views.ts` and `apps/web/src/features/work-views/GanttBoard.stories.tsx`.
 - [x] T013 Run `pnpm.cmd typecheck`, `pnpm.cmd build`, `pnpm.cmd --filter @gitea-portal/web build-storybook`, and the configured Gitea scenarios from `specs/038-gantt-today-drag/quickstart.md` against any fake Issue, restoring its original schedule and Labels afterward; resolve failures without changing delegated permissions or atomic Label replacement.
+- [x] T014 Keep the start and due drag hit areas separate on same-day bars in `apps/web/src/features/work-views/GanttIssueRow.tsx` and `apps/web/src/index.css`.
+- [x] T015 Use the persisted Due date as the drag origin for the Due handle so the first next-day cell extends a one-day schedule to two days in `apps/web/src/features/work-views/GanttIssueRow.tsx`.
+- [x] T016 Use the persisted Start date as the drag origin for the Start handle so the first previous-day cell extends a one-day schedule to two days in `apps/web/src/features/work-views/GanttIssueRow.tsx`.
 
 ## Dependencies & Execution Order
 

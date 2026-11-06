@@ -194,7 +194,11 @@ export function GanttIssueRow({
     activeDrag.current = {
       pointerId: event.pointerId,
       mode,
-      originDate: pointerDate(event.clientX, track),
+      originDate: mode === "resize-start"
+        ? initial.startDate ?? initial.dueDate ?? pointerDate(event.clientX, track)
+        : mode === "resize-due"
+          ? initial.dueDate ?? initial.startDate ?? pointerDate(event.clientX, track)
+          : pointerDate(event.clientX, track),
       initial,
     };
     track.setPointerCapture(event.pointerId);
@@ -356,7 +360,7 @@ export function GanttIssueRow({
         )}
         {scheduleStart && scheduleEnd && barStart !== undefined && barEnd !== undefined && (
           <div
-            className="gantt-bar"
+            className={`gantt-bar${scheduleStart === scheduleEnd ? " gantt-bar--single-day" : ""}`}
             style={{ left: `${barStart}px`, width: `${Math.max(barEnd - barStart, 4)}px` }}
             aria-label={`${formatCalendarDate(scheduleStart)} – ${formatCalendarDate(scheduleEnd)}`}
           >

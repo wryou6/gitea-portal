@@ -3532,6 +3532,21 @@ button.danger {
 .gantt-bar-handle--due {
   right: -0.75rem;
 }
+.gantt-bar--single-day .gantt-bar-handle {
+  width: 0.75rem;
+}
+.gantt-bar--single-day .gantt-bar-handle--start {
+  left: -0.75rem;
+}
+.gantt-bar--single-day .gantt-bar-handle--due {
+  right: -0.75rem;
+}
+.gantt-bar--single-day .gantt-bar-handle--start::after {
+  left: 100%;
+}
+.gantt-bar--single-day .gantt-bar-handle--due::after {
+  left: 0;
+}
 .gantt-bar-handle:focus-visible {
   outline: 2px solid var(--ring);
   outline-offset: 2px;

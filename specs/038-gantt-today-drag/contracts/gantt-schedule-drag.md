@@ -9,6 +9,7 @@
 - Scheduled range: 拖曳左端只調整 Start，右端只調整 Due；拖曳 bar 中段等距平移已存在的日期欄位。
 - Start-only row: 左端調整 Start，右端建立 Due；中段只平移 Start。
 - Due-only row: 左端建立 Start，右端調整 Due；中段只平移 Due。
+- Start 與 Due 同日的單日 bar：左右端點各有不重疊的拖曳命中區；右端只延長 Due，左端只延長 Start。兩個端點均以目前保存的日期判斷拖曳起點，跨入相鄰日期即可延長為兩天，不需再多拖一日。
 - Unscheduled row: 按住並拖出日期範圍，保存含首尾日期的 Start/Due。
 - 日期吸附到 pointer 所在的 calendar day；dragging 未離開日期格不會寫入。端點不會跨越另一端。
 - 接近 viewport 水平邊緣時自動水平捲動；接近 timeline data edge 時延展日期範圍，拖曳日期連續。
