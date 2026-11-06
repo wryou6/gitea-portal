@@ -50,18 +50,11 @@ export async function registerIssueRoutes(
     const selectedStatuses = [
       ...new Set(stateValues.filter((value) => portalStatuses.has(value))),
     ];
-    const legacyState = stateValues.find(
-      (value) => value === "open" || value === "closed" || value === "all",
-    );
     return searchIssuesReadThrough(
       giteaFor(request, config.giteaBaseUrl, config),
       {
         q: queryString(query.q),
         repository: queryString(query.repository),
-        state:
-          selectedStatuses.length > 0
-            ? "all"
-            : (legacyState as "open" | "closed" | "all" | undefined),
         portalStatuses: selectedStatuses as ("todo" | "in-progress" | "done")[],
         assignee: queryString(query.assignee),
         priority: [
