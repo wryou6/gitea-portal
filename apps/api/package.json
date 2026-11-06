@@ -16,5 +16,9 @@
     "fastify": "^5.2.1",
     "js-yaml": "^4.1.0"
   },
-  "devDependencies": { "tsx": "^4.19.3", "@types/node": "^22.13.4", "@types/js-yaml": "^4.0.9" }
+  "devDependencies": {
+    "tsx": "^4.19.3",
+    "@types/node": "^22.13.4",
+    "@types/js-yaml": "^4.0.9"
+  }
 }

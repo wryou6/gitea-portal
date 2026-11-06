@@ -11,6 +11,9 @@ describe("mapGiteaError", () => {
   });
 
   it("provides a fallback message for an empty response", () => {
-    assert.equal(mapGiteaError(504, "").message, "Gitea request failed with status 504");
+    assert.equal(
+      mapGiteaError(504, "").message,
+      "Gitea request failed with status 504",
+    );
   });
 });

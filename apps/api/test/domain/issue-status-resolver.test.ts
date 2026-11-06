@@ -25,10 +25,22 @@ describe("resolveIssueStatus", () => {
       { name: "status:in-progress" },
     ]);
     const mismatch = resolveIssueStatus("closed", [{ name: "status:todo" }]);
-    assert.equal(missing.kind === "anomaly" && missing.anomaly, "missing-status-label");
-    assert.equal(unknown.kind === "anomaly" && unknown.anomaly, "unknown-status-label");
-    assert.equal(conflicting.kind === "anomaly" && conflicting.anomaly, "conflicting-status-labels");
-    assert.equal(mismatch.kind === "anomaly" && mismatch.anomaly, "status-mismatch");
+    assert.equal(
+      missing.kind === "anomaly" && missing.anomaly,
+      "missing-status-label",
+    );
+    assert.equal(
+      unknown.kind === "anomaly" && unknown.anomaly,
+      "unknown-status-label",
+    );
+    assert.equal(
+      conflicting.kind === "anomaly" && conflicting.anomaly,
+      "conflicting-status-labels",
+    );
+    assert.equal(
+      mismatch.kind === "anomaly" && mismatch.anomaly,
+      "status-mismatch",
+    );
   });
 
   it("maps a closed issue without a status label to Done", () => {
