@@ -18,7 +18,7 @@ No new dependency or project setup is required.
 
 **Purpose**: Define deterministic shared formatting before updating its Web views.
 
-- [X] T001 Implement fixed numeric date-only and local 24-hour timestamp formatters in `apps/web/src/i18n/format.ts`, preserving UTC calendar dates, Gregorian year, Latin digits, and zero-padded fields.
+- [x] T001 Implement fixed numeric date-only and local 24-hour timestamp formatters in `apps/web/src/i18n/format.ts`, preserving UTC calendar dates, Gregorian year, Latin digits, and zero-padded fields.
 
 ## Phase 3: User Story 1 - 快速辨識日期與時間 (Priority: P1)
 
@@ -28,12 +28,12 @@ No new dependency or project setup is required.
 
 ### Implementation
 
-- [X] T002 [US1] Update shared formatter call sites to use locale-independent date output in `apps/web/src/features/issues/IssueComments.tsx`, `apps/web/src/features/issues/IssueDetailHeader.tsx`, `apps/web/src/features/issues/IssueRow.tsx`, `apps/web/src/features/issues/ScheduleDates.tsx`, `apps/web/src/features/work-views/GanttIssueRow.tsx`, and `apps/web/src/features/work-views/GanttBoard.stories.tsx`.
-- [X] T003 [P] [US1] Format complete Gantt date tooltips, range-slider values, and accessible names with the shared calendar-date formatter while retaining existing month labels and compact cell ticks in `apps/web/src/features/work-views/GanttCalendarHeader.tsx` and `apps/web/src/features/work-views/GanttBoard.tsx`.
+- [x] T002 [US1] Update shared formatter call sites to use locale-independent date output in `apps/web/src/features/issues/IssueComments.tsx`, `apps/web/src/features/issues/IssueDetailHeader.tsx`, `apps/web/src/features/issues/IssueRow.tsx`, `apps/web/src/features/issues/ScheduleDates.tsx`, `apps/web/src/features/work-views/GanttIssueRow.tsx`, and `apps/web/src/features/work-views/GanttBoard.stories.tsx`.
+- [x] T003 [P] [US1] Format complete Gantt date tooltips, range-slider values, and accessible names with the shared calendar-date formatter while retaining existing month labels and compact cell ticks in `apps/web/src/features/work-views/GanttCalendarHeader.tsx` and `apps/web/src/features/work-views/GanttBoard.tsx`.
 
 ### Validation
 
-- [X] T004 [US1] Run `pnpm.cmd typecheck` and `pnpm.cmd build`.
+- [x] T004 [US1] Run `pnpm.cmd typecheck` and `pnpm.cmd build`.
 - [ ] T005 [US1] Complete the manual scenarios in `specs/026-date-format-standardization/quickstart.md`.
 
 ## Dependencies

@@ -22,8 +22,16 @@ const inProgressTitles = [
   "盤點跨文件規則與資料保存、下載需求",
 ];
 
-function createIssue(number: number, title: string, status: "todo" | "in-progress") {
-  const labels = [{ name: "priority:medium" }, { name: "type:task" }, { name: `status:${status}` }];
+function createIssue(
+  number: number,
+  title: string,
+  status: "todo" | "in-progress",
+) {
+  const labels = [
+    { name: "priority:medium" },
+    { name: "type:task" },
+    { name: `status:${status}` },
+  ];
   return {
     owner: repository.owner,
     name: repository.name,
@@ -59,34 +67,53 @@ const kanbanView = {
     {
       stateKey: "todo",
       displayName: "待辦",
-      cards: todoTitles.map((title, index) => createIssue(index + 1, title, "todo")),
+      cards: todoTitles.map((title, index) =>
+        createIssue(index + 1, title, "todo"),
+      ),
     },
     {
       stateKey: "in-progress",
       displayName: "處理中",
-      cards: inProgressTitles.map((title, index) => createIssue(index + 8, title, "in-progress")),
+      cards: inProgressTitles.map((title, index) =>
+        createIssue(index + 8, title, "in-progress"),
+      ),
     },
     { stateKey: "done", displayName: "已完成", cards: [] },
   ],
 };
 
-test("repository Kanban scrolls the same 9 real cards inside their status columns", async ({ page }) => {
+test("repository Kanban scrolls the same 9 real cards inside their status columns", async ({
+  page,
+}) => {
   await page.setViewportSize({ width: 1520, height: 1003 });
   await page.emulateMedia({ colorScheme: "dark" });
-  await page.addInitScript(() => sessionStorage.setItem("gitea-portal:work-view-controls-collapsed", "true"));
+  await page.addInitScript(() =>
+    sessionStorage.setItem("gitea-portal:work-view-controls-collapsed", "true"),
+  );
 
-  await page.route("**/api/session", (route) => route.fulfill({ json: { login: "engineer", displayName: "王冠暐" } }));
-  await page.route("**/api/repositories", (route) => route.fulfill({ json: [repository] }));
-  await page.route("**/api/repositories/pavctw/aim-automation/kanban", (route) => route.fulfill({ json: kanbanView }));
+  await page.route("**/api/session", (route) =>
+    route.fulfill({ json: { login: "engineer", displayName: "王冠暐" } }),
+  );
+  await page.route("**/api/repositories", (route) =>
+    route.fulfill({ json: [repository] }),
+  );
+  await page.route(
+    "**/api/repositories/pavctw/aim-automation/kanban",
+    (route) => route.fulfill({ json: kanbanView }),
+  );
 
   await page.goto("/repositories/pavctw/aim-automation/kanban");
 
   const todoCards = page.locator(".kanban-column--todo .kanban-column-cards");
-  const inProgressCards = page.locator(".kanban-column--in-progress .kanban-column-cards");
+  const inProgressCards = page.locator(
+    ".kanban-column--in-progress .kanban-column-cards",
+  );
   const lastTodoCard = page.locator(".kanban-column--todo .kanban-card").last();
   await expect(todoCards.locator(".kanban-card")).toHaveCount(7);
   await expect(inProgressCards.locator(".kanban-card")).toHaveCount(2);
-  await expect(page.locator(".kanban-column--done .kanban-card")).toHaveCount(0);
+  await expect(page.locator(".kanban-column--done .kanban-card")).toHaveCount(
+    0,
+  );
 
   const before = await todoCards.evaluate((element) => ({
     clientHeight: element.clientHeight,
@@ -105,16 +132,31 @@ test("repository Kanban scrolls the same 9 real cards inside their status column
   expect(bounds).not.toBeNull();
   expect(lastCardBeforeScroll).not.toBeNull();
   expect(inProgressBoundsBefore).not.toBeNull();
-  expect(lastCardBeforeScroll!.y + lastCardBeforeScroll!.height).toBeGreaterThan(bounds!.y + bounds!.height);
-  await page.mouse.move(bounds!.x + bounds!.width / 2, bounds!.y + bounds!.height / 2);
+  expect(
+    lastCardBeforeScroll!.y + lastCardBeforeScroll!.height,
+  ).toBeGreaterThan(bounds!.y + bounds!.height);
+  await page.mouse.move(
+    bounds!.x + bounds!.width / 2,
+    bounds!.y + bounds!.height / 2,
+  );
   await page.mouse.wheel(0, 1400);
-  await expect.poll(() => todoCards.evaluate((element) => element.scrollTop)).toBeGreaterThan(0);
-  await expect.poll(async () => {
-    const list = await todoCards.boundingBox();
-    const card = await lastTodoCard.boundingBox();
-    return list && card ? card.y + card.height <= list.y + list.height : false;
-  }).toBe(true);
-  expect(await inProgressCards.evaluate((element) => element.scrollTop)).toBe(0);
-  expect((await inProgressCards.boundingBox())?.y).toBe(inProgressBoundsBefore!.y);
+  await expect
+    .poll(() => todoCards.evaluate((element) => element.scrollTop))
+    .toBeGreaterThan(0);
+  await expect
+    .poll(async () => {
+      const list = await todoCards.boundingBox();
+      const card = await lastTodoCard.boundingBox();
+      return list && card
+        ? card.y + card.height <= list.y + list.height
+        : false;
+    })
+    .toBe(true);
+  expect(await inProgressCards.evaluate((element) => element.scrollTop)).toBe(
+    0,
+  );
+  expect((await inProgressCards.boundingBox())?.y).toBe(
+    inProgressBoundsBefore!.y,
+  );
   expect(await page.evaluate(() => document.documentElement.scrollTop)).toBe(0);
 });

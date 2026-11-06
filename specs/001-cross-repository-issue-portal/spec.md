@@ -33,7 +33,7 @@
 - Q: SC-002、SC-003、SC-005 與 SC-008 是否保留為產品成功標準，並於後續驗收階段量測，而不要求第一版建立完整使用者研究或統計系統？ → A: 是。第一版提供可執行的功能情境與必要操作證據，正式使用者成效量測留給後續驗收規劃。
 - Q: 第一版是否要求無障礙與 responsive 使用，但不要求多語系？ → A: 是。第一版 MUST 支援主要互動的鍵盤操作與適合內網瀏覽器尺寸的 responsive layout；第一版不要求 localization 或多語系切換。
 
-## User Scenarios & Testing *(mandatory)*
+## User Scenarios & Testing _(mandatory)_
 
 ### User Story 1 - 統一瀏覽與篩選 Issues (Priority: P1)
 
@@ -140,7 +140,7 @@
 - Issue 的 Label、Assignee 或 Milestone 清單為空時，Portal 應允許正常查看與管理其他可用欄位。
 - Issue 被 Gitea 直接刪除或使用者失去權限後，Portal 不應繼續顯示可操作的過時資料。
 
-## Requirements *(mandatory)*
+## Requirements _(mandatory)_
 
 ### Functional Requirements
 
@@ -191,7 +191,7 @@
 - **Workflow Convention**: 團隊定義的 Workflow 狀態集合、順序、可辨識的 Label prefix 或 namespace 與版本；不同 Convention 或不相容版本不可互相混用。
 - **Permission Context**: 使用者在 Gitea 對特定 Repository 與 Issue 可執行的查看、建立、修改、Comment 或狀態操作能力。
 
-## Success Criteria *(mandatory)*
+## Success Criteria _(mandatory)_
 
 ### Measurable Outcomes
 

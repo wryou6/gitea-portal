@@ -17,7 +17,11 @@ export function buildWorkspaceDirectory(
       id: `repository:${repository.owner}/${repository.name}`,
       kind: "repository" as const,
       name: repository.fullName,
-      href: routePaths.repositoryView(repository.owner, repository.name, "issues"),
+      href: routePaths.repositoryView(
+        repository.owner,
+        repository.name,
+        "issues",
+      ),
     })),
   ];
 }

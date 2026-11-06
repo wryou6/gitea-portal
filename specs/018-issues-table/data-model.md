@@ -4,20 +4,20 @@
 
 來源是 Gitea Issue，經 API mapping 提供以下欄位：
 
-| 欄位 | 型別／來源 | 顯示與驗證規則 |
-|---|---|---|
-| Repository identity | `owner`, `name` | 保留來源大小寫；與 number 組成 Key。 |
-| Key | `${owner}/${name}#${number}` | Table 導覽識別；預設升冪排序。 |
-| Type | labels 衍生的 `IssueType` | 沿用現有 badge、缺漏與 anomaly 呈現。 |
-| Title | Gitea `title` | Issue 詳情連結。 |
-| Assignee | Gitea assignee(s) | 未指派依現有文案顯示；排序依登入名稱。 |
-| Status | `todo | in-progress | done | anomaly` | Todo/In Progress 由 `status:` Label 解析，Done 由 Gitea Closed state 表示；異常保留可辨識呈現。 |
-| Priority | priority label 衍生值 | 沿用既有四級順序及 badge。 |
-| Created at | Gitea `created_at` | 原始 ISO 時間，不由更新時間替代。 |
-| Start Date | `startDate` label 衍生日曆日期 | 以 `YYYY-MM-DD` 排序與顯示。 |
-| Due Date | Gitea due date | 日曆日期；日期早於當地今日且 Issue 未關閉時才加逾期提示。 |
-| Author | Gitea Issue `user` | 建立者 login/full name；不以 assignee 或更新者替代。 |
-| Labels、Milestone、state | Gitea | 非表格主欄或 Status 衍生來源；不因排序或狀態遷移改動。 |
+| 欄位                     | 型別／來源                     | 顯示與驗證規則                                            |
+| ------------------------ | ------------------------------ | --------------------------------------------------------- |
+| Repository identity      | `owner`, `name`                | 保留來源大小寫；與 number 組成 Key。                      |
+| Key                      | `${owner}/${name}#${number}`   | Table 導覽識別；預設升冪排序。                            |
+| Type                     | labels 衍生的 `IssueType`      | 沿用現有 badge、缺漏與 anomaly 呈現。                     |
+| Title                    | Gitea `title`                  | Issue 詳情連結。                                          |
+| Assignee                 | Gitea assignee(s)              | 未指派依現有文案顯示；排序依登入名稱。                    |
+| Status                   | `todo                          | in-progress                                               | done | anomaly` | Todo/In Progress 由 `status:` Label 解析，Done 由 Gitea Closed state 表示；異常保留可辨識呈現。 |
+| Priority                 | priority label 衍生值          | 沿用既有四級順序及 badge。                                |
+| Created at               | Gitea `created_at`             | 原始 ISO 時間，不由更新時間替代。                         |
+| Start Date               | `startDate` label 衍生日曆日期 | 以 `YYYY-MM-DD` 排序與顯示。                              |
+| Due Date                 | Gitea due date                 | 日曆日期；日期早於當地今日且 Issue 未關閉時才加逾期提示。 |
+| Author                   | Gitea Issue `user`             | 建立者 login/full name；不以 assignee 或更新者替代。      |
+| Labels、Milestone、state | Gitea                          | 非表格主欄或 Status 衍生來源；不因排序或狀態遷移改動。    |
 
 ## Issue list query
 

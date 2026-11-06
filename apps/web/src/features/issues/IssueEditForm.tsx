@@ -55,9 +55,7 @@ export function IssueEditForm({
     if (
       labels.split(",").some((label) => label.trim().startsWith("priority:"))
     ) {
-      return setError(
-        t("priorityLabelConflict"),
-      );
+      return setError(t("priorityLabelConflict"));
     }
     setSaving(true);
     setError(undefined);

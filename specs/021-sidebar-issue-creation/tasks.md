@@ -25,17 +25,17 @@ description: "Implementation tasks for the global sidebar Issue creation entry"
 
 ### Implementation
 
-- [X] T001 [US1] Add the localized global navigation label for Traditional Chinese, English, and Japanese in `apps/web/src/i18n/resources/common.ts`.
-- [X] T002 [US1] Add the create navigation item, plus icon, context-aware destination, and create-route active state in `apps/web/src/components/layout/AppShell.tsx` using `apps/web/src/app/routes.ts`.
-- [X] T003 [US1] Remove the Issues page title create action and update its layout composition in `apps/web/src/features/issues/IssueListPage.tsx` and `apps/web/src/components/layout/Layout.stories.tsx`.
-- [X] T004 [US1] Validate the All repos, Repository, collapsed-sidebar, keyboard, and locale scenarios in `specs/021-sidebar-issue-creation/quickstart.md`.
-- [X] T006 [US1] Distinguish the Issues list navigation label from the create action in all three supported locales and update the UI contract.
+- [x] T001 [US1] Add the localized global navigation label for Traditional Chinese, English, and Japanese in `apps/web/src/i18n/resources/common.ts`.
+- [x] T002 [US1] Add the create navigation item, plus icon, context-aware destination, and create-route active state in `apps/web/src/components/layout/AppShell.tsx` using `apps/web/src/app/routes.ts`.
+- [x] T003 [US1] Remove the Issues page title create action and update its layout composition in `apps/web/src/features/issues/IssueListPage.tsx` and `apps/web/src/components/layout/Layout.stories.tsx`.
+- [x] T004 [US1] Validate the All repos, Repository, collapsed-sidebar, keyboard, and locale scenarios in `specs/021-sidebar-issue-creation/quickstart.md`.
+- [x] T006 [US1] Distinguish the Issues list navigation label from the create action in all three supported locales and update the UI contract.
 
 ## Phase 4: Polish & Cross-Cutting Concerns
 
 **Purpose**: Verify repository-wide UI quality gates.
 
-- [X] T005 Run `pnpm.cmd typecheck` and `pnpm.cmd build` from the repository root and resolve any failures caused by this feature.
+- [x] T005 Run `pnpm.cmd typecheck` and `pnpm.cmd build` from the repository root and resolve any failures caused by this feature.
 
 ## Dependencies & Execution Order
 

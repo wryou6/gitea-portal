@@ -70,7 +70,11 @@ function repositoryRef(
 
 function user(value: GiteaApiUser | null | undefined): GiteaUser | null {
   return value?.login
-    ? { login: value.login, fullName: value.full_name?.trim() || undefined, avatarUrl: userAvatarUrl(value.avatar_url) }
+    ? {
+        login: value.login,
+        fullName: value.full_name?.trim() || undefined,
+        avatarUrl: userAvatarUrl(value.avatar_url),
+      }
     : null;
 }
 

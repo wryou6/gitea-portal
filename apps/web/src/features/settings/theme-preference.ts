@@ -1,11 +1,6 @@
 export type ThemeMode = "light" | "dark" | "system";
 export type ColorPalette =
-  | "cobalt"
-  | "juniper"
-  | "iris"
-  | "carbon"
-  | "ember"
-  | "glacier";
+  "cobalt" | "juniper" | "iris" | "carbon" | "ember" | "glacier";
 
 const colorPalettes: readonly ColorPalette[] = [
   "cobalt",

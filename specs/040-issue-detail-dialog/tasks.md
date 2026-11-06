@@ -22,7 +22,7 @@ React Router 8.4 and the existing Web workspace are already configured; no proje
 
 **Purpose**: Shared navigation parsing needed by both user stories
 
-- [X] T001 Add a typed helper for parsing and validating the masked Issue path and its safe `returnTo` in `apps/web/src/app/routes.ts`.
+- [x] T001 Add a typed helper for parsing and validating the masked Issue path and its safe `returnTo` in `apps/web/src/app/routes.ts`.
 
 **Checkpoint**: Masked Issue identity and return target can be resolved without changing existing route paths or work-view query sanitization.
 
@@ -36,14 +36,14 @@ React Router 8.4 and the existing Web workspace are already configured; no proje
 
 ### Implementation for User Story 1
 
-- [X] T002 [US1] Add `Link.mask` navigation from the existing key/title links in `apps/web/src/features/issues/IssueRow.tsx`, `apps/web/src/features/work-views/KanbanCard.tsx`, `apps/web/src/features/work-views/GanttIssueRow.tsx`, and pass the sanitized current return target from `apps/web/src/features/work-views/GanttBoard.tsx`; explicitly push the source view history entry and do not make rows, cards, or timeline regions clickable.
-- [X] T003 [US1] Render the existing source view plus an Issue detail dialog for in-session masked navigation in `apps/web/src/app/App.tsx`; configure `apps/web/src/main.tsx` with Data Router APIs so `Link.mask` works at runtime, using the route helper from T001 and leaving ordinary routes unchanged.
-- [X] T004 [US1] Add a dialog presentation to `apps/web/src/features/issues/IssueDetailPage.tsx` that reuses existing Issue/Comments loading, error, edit, comment, and Status behavior while accepting the masked URL's validated return target.
-- [X] T005 [US1] Extend `apps/web/src/components/ui/Dialog.tsx` to support a right-side header action, focus return, and topmost-only Escape/focus trapping for nested Status transition dialogs without breaking existing dialogs.
-- [X] T006 [P] [US1] Add localized expand action text and accessible labels for zh-TW, en, and ja in `apps/web/src/i18n/resources/issues.ts`.
-- [X] T007 [US1] Replace address-bar-dependent work-view URL reads with Router location reads in `apps/web/src/features/issues/IssueListPage.tsx` and `apps/web/src/features/work-views/KanbanBoard.tsx`, so filter/sort and return targets use the unmasked work-view location.
-- [X] T008 [P] [US1] Add responsive large-dialog styles in `apps/web/src/index.css`, including a vertically scrollable body and visible header controls on narrow screens.
-- [X] T009 [US1] Add or update Storybook coverage for loading, loaded, error, modal actions, nested Status transition dialog, and keyboard focus states in `apps/web/src/features/issues/IssueDetailPage.stories.tsx` and affected Issue/work-view stories.
+- [x] T002 [US1] Add `Link.mask` navigation from the existing key/title links in `apps/web/src/features/issues/IssueRow.tsx`, `apps/web/src/features/work-views/KanbanCard.tsx`, `apps/web/src/features/work-views/GanttIssueRow.tsx`, and pass the sanitized current return target from `apps/web/src/features/work-views/GanttBoard.tsx`; explicitly push the source view history entry and do not make rows, cards, or timeline regions clickable.
+- [x] T003 [US1] Render the existing source view plus an Issue detail dialog for in-session masked navigation in `apps/web/src/app/App.tsx`; configure `apps/web/src/main.tsx` with Data Router APIs so `Link.mask` works at runtime, using the route helper from T001 and leaving ordinary routes unchanged.
+- [x] T004 [US1] Add a dialog presentation to `apps/web/src/features/issues/IssueDetailPage.tsx` that reuses existing Issue/Comments loading, error, edit, comment, and Status behavior while accepting the masked URL's validated return target.
+- [x] T005 [US1] Extend `apps/web/src/components/ui/Dialog.tsx` to support a right-side header action, focus return, and topmost-only Escape/focus trapping for nested Status transition dialogs without breaking existing dialogs.
+- [x] T006 [P] [US1] Add localized expand action text and accessible labels for zh-TW, en, and ja in `apps/web/src/i18n/resources/issues.ts`.
+- [x] T007 [US1] Replace address-bar-dependent work-view URL reads with Router location reads in `apps/web/src/features/issues/IssueListPage.tsx` and `apps/web/src/features/work-views/KanbanBoard.tsx`, so filter/sort and return targets use the unmasked work-view location.
+- [x] T008 [P] [US1] Add responsive large-dialog styles in `apps/web/src/index.css`, including a vertically scrollable body and visible header controls on narrow screens.
+- [x] T009 [US1] Add or update Storybook coverage for loading, loaded, error, modal actions, nested Status transition dialog, and keyboard focus states in `apps/web/src/features/issues/IssueDetailPage.stories.tsx` and affected Issue/work-view stories.
 
 **Checkpoint**: Each of the three work views opens complete Issue details; closing by control, Escape, backdrop, or browser Back returns to the source view without intercepting Kanban/Gantt gestures.
 
@@ -57,9 +57,9 @@ React Router 8.4 and the existing Web workspace are already configured; no proje
 
 ### Implementation for User Story 2
 
-- [X] T010 [US2] Distinguish first application render from in-session masked navigation in `apps/web/src/app/App.tsx`; on first render resolve `location.mask` as a full Issue route, including after refresh.
-- [X] T011 [US2] Implement the modal expand action in `apps/web/src/features/issues/IssueDetailPage.tsx` to replace the masked history entry with its Issue path/search and clear the mask while retaining the safe `returnTo`.
-- [X] T012 [US2] Pass the resolved masked Issue route and return target to `AppShell` in `apps/web/src/app/App.tsx` so a full-page masked reload shows the correct Issue route and return navigation.
+- [x] T010 [US2] Distinguish first application render from in-session masked navigation in `apps/web/src/app/App.tsx`; on first render resolve `location.mask` as a full Issue route, including after refresh.
+- [x] T011 [US2] Implement the modal expand action in `apps/web/src/features/issues/IssueDetailPage.tsx` to replace the masked history entry with its Issue path/search and clear the mask while retaining the safe `returnTo`.
+- [x] T012 [US2] Pass the resolved masked Issue route and return target to `AppShell` in `apps/web/src/app/App.tsx` so a full-page masked reload shows the correct Issue route and return navigation.
 
 **Checkpoint**: Direct URL, reload, expand, and Back behavior all match the navigation contract.
 
@@ -69,9 +69,9 @@ React Router 8.4 and the existing Web workspace are already configured; no proje
 
 **Purpose**: Validate the complete feature against the design and project constraints
 
-- [X] T013 [P] Update the runnable acceptance steps in `specs/040-issue-detail-dialog/quickstart.md` to match the implemented dialog and history behavior.
-- [X] T014 Run `pnpm.cmd typecheck`, `pnpm.cmd build`, and `pnpm.cmd --filter @gitea-portal/web exec storybook build`; resolve feature-caused failures and record outcomes in `specs/040-issue-detail-dialog/quickstart.md`.
-- [X] T015 Complete the browser scenarios in `specs/040-issue-detail-dialog/quickstart.md` for all three views, reload/direct URLs, keyboard access, all locales, narrow layout, and preserved Kanban/Gantt operations.
+- [x] T013 [P] Update the runnable acceptance steps in `specs/040-issue-detail-dialog/quickstart.md` to match the implemented dialog and history behavior.
+- [x] T014 Run `pnpm.cmd typecheck`, `pnpm.cmd build`, and `pnpm.cmd --filter @gitea-portal/web exec storybook build`; resolve feature-caused failures and record outcomes in `specs/040-issue-detail-dialog/quickstart.md`.
+- [x] T015 Complete the browser scenarios in `specs/040-issue-detail-dialog/quickstart.md` for all three views, reload/direct URLs, keyboard access, all locales, narrow layout, and preserved Kanban/Gantt operations.
 
 ---
 

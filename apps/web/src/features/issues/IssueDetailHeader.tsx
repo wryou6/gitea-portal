@@ -32,8 +32,16 @@ export function IssueDetailHeader({ issue }: { issue: Issue }) {
       </div>
       <div className="meta">
         <IssueStatusBadge status={issue.status} />
-        <span>{t("nextAction", { action: t(statusNextActionTranslationKey(issue.nextActionKey)) })}</span>
-        {action && <span>{t("lastReason")}：{t(statusReasonTranslationKey(action.key))}</span>}
+        <span>
+          {t("nextAction", {
+            action: t(statusNextActionTranslationKey(issue.nextActionKey)),
+          })}
+        </span>
+        {action && (
+          <span>
+            {t("lastReason")}：{t(statusReasonTranslationKey(action.key))}
+          </span>
+        )}
         <ScheduleDates
           startDate={issue.startDate}
           dueDate={issue.dueDate}
@@ -41,7 +49,9 @@ export function IssueDetailHeader({ issue }: { issue: Issue }) {
           className="schedule-dates--compact"
           overdue={isIssueOverdue(issue)}
         />
-        <span>{t("milestone")}：{issue.milestone ?? t("notSet")}</span>
+        <span>
+          {t("milestone")}：{issue.milestone ?? t("notSet")}
+        </span>
         <time dateTime={issue.updatedAt}>
           {t("updatedAt", {
             date: formatDateTime(issue.updatedAt),
@@ -54,7 +64,10 @@ export function IssueDetailHeader({ issue }: { issue: Issue }) {
         </p>
       )}
       <IssueAssigneeRoster issue={issue} />
-      <p className="issue-author"><strong>{t("author")}:</strong><UserIdentity user={profileFor(issue.userProfiles, issue.author)} /></p>
+      <p className="issue-author">
+        <strong>{t("author")}:</strong>
+        <UserIdentity user={profileFor(issue.userProfiles, issue.author)} />
+      </p>
       <LabelList labels={issue.labels} />
     </>
   );

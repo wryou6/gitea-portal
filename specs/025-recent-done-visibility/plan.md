@@ -30,15 +30,15 @@ Apply a transient, default-on 30-local-calendar-day due-date filter to Done item
 
 ## Constitution Check
 
-| Principle | Status | Evidence / constraint |
-|-----------|--------|-----------------------|
-| I. Gitea is the sole Issue source | PASS | Read the existing Gitea due date; no Issue mirror or persistence |
-| II. Follow current user permissions | PASS | Reuse the delegated Gitea client and existing repository access scope |
-| III. Safe Gitea writes | PASS | This feature performs no Gitea writes |
-| IV. Aggregate results are complete or fail | PASS | Preserve all-pages reads and fail the request if a required read fails |
-| V. Fixed Issue Status semantics | PASS | Apply date filtering only when resolved Portal Status is `done` |
-| VI. Clear work scope | PASS | Preserve repository identity in All repos and existing workspace boundaries |
-| VII. Localized accessible UI | PASS | Add localized checkbox labels and accessible state in all supported locales |
+| Principle                                  | Status | Evidence / constraint                                                       |
+| ------------------------------------------ | ------ | --------------------------------------------------------------------------- |
+| I. Gitea is the sole Issue source          | PASS   | Read the existing Gitea due date; no Issue mirror or persistence            |
+| II. Follow current user permissions        | PASS   | Reuse the delegated Gitea client and existing repository access scope       |
+| III. Safe Gitea writes                     | PASS   | This feature performs no Gitea writes                                       |
+| IV. Aggregate results are complete or fail | PASS   | Preserve all-pages reads and fail the request if a required read fails      |
+| V. Fixed Issue Status semantics            | PASS   | Apply date filtering only when resolved Portal Status is `done`             |
+| VI. Clear work scope                       | PASS   | Preserve repository identity in All repos and existing workspace boundaries |
+| VII. Localized accessible UI               | PASS   | Add localized checkbox labels and accessible state in all supported locales |
 
 No constitution violations identified.
 

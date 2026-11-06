@@ -4,12 +4,12 @@
 
 The current workspace and view remain identified by the existing route. Shared filter keys are:
 
-| Query key | Accepted values |
-|---|---|
-| `priority` | `critical`, `high`, `medium`, `low` |
-| `issueType` | `bug`, `feature`, `task` |
-| `state` | `todo`, `in-progress`, `done` |
-| `assignee` | `unassigned` or a Gitea login |
+| Query key   | Accepted values                     |
+| ----------- | ----------------------------------- |
+| `priority`  | `critical`, `high`, `medium`, `low` |
+| `issueType` | `bug`, `feature`, `task`            |
+| `state`     | `todo`, `in-progress`, `done`       |
+| `assignee`  | `unassigned` or a Gitea login       |
 
 Absent keys mean unfiltered. Invalid keys/values are ignored. A changed filter is reflected in the current URL immediately. The current route's workspace boundary remains in effect for shared filters. Navigation among List, Kanban, and Gantt preserves the shared keys. The top workspace selector determines Repository scope and does not carry legacy `repository`, `label`, or `milestone` values. Gantt retains `gantt_start` and `gantt_scale`; the prior `gantt_open`, `gantt_closed`, and `gantt_assignee` keys are no longer controls.
 

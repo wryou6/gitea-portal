@@ -13,7 +13,8 @@ export const issues = defineLocaleResource({
     setDefaultPropertyOrder: "設為預設欄位順序",
     setDefaultSort: "設為預設排序",
     restoreViewDefaults: "恢復預設",
-    columnReorderHelp: "拖曳表頭任一處可調整欄位順序；鍵盤按 Shift 加空白鍵抓取，使用左右方向鍵移動，按空白鍵放下或按 Esc 取消。",
+    columnReorderHelp:
+      "拖曳表頭任一處可調整欄位順序；鍵盤按 Shift 加空白鍵抓取，使用左右方向鍵移動，按空白鍵放下或按 Esc 取消。",
     hiddenProperty: "隱藏",
     columnPickedUp: "已抓取{{column}}欄位，請用左右方向鍵移動；按空白鍵放下",
     columnDropped: "已將{{column}}欄位放在第 {{position}} 欄",
@@ -73,7 +74,8 @@ export const issues = defineLocaleResource({
     issueRepositoryRequired: "目前使用者無法在目標儲存庫建立問題",
     repositoriesUnavailable: "無法取得可用儲存庫",
     requiredIssueFields: "請選擇儲存庫、輸入標題，並選擇問題類型與優先級",
-    priorityLabelConflict: "請使用優先級欄位設定優先級，不要將 priority:* 加入一般標籤",
+    priorityLabelConflict:
+      "請使用優先級欄位設定優先級，不要將 priority:* 加入一般標籤",
     createIssueFailed: "建立問題失敗",
     titleRequired: "標題不可為空白",
     typeRequired: "請選擇問題類型",
@@ -148,7 +150,8 @@ export const issues = defineLocaleResource({
     conflictingTypeBeforeSave: "問題的類型有衝突，請選擇一種以修正。",
     choosePriority: "選擇優先級",
     missingPriorityBeforeSave: "問題尚未設定優先級，儲存前請選擇一級。",
-    conflictingPriorityBeforeSave: "問題的優先級有衝突或無效標籤，請選擇一級以修正。",
+    conflictingPriorityBeforeSave:
+      "問題的優先級有衝突或無效標籤，請選擇一級以修正。",
     transitionDialogTitle: "選擇狀態轉換原因",
     currentIssueStatus: "目前 Status：{{status}}",
     transitionReason: "轉換原因",
@@ -218,9 +221,11 @@ export const issues = defineLocaleResource({
     setDefaultPropertyOrder: "Set as default column order",
     setDefaultSort: "Set as default sort",
     restoreViewDefaults: "Restore defaults",
-    columnReorderHelp: "Drag anywhere in a column header to reorder it. Keyboard: press Shift+Space to pick it up, use Left/Right Arrow to move it, press Space to drop, or Escape to cancel.",
+    columnReorderHelp:
+      "Drag anywhere in a column header to reorder it. Keyboard: press Shift+Space to pick it up, use Left/Right Arrow to move it, press Space to drop, or Escape to cancel.",
     hiddenProperty: "Hidden",
-    columnPickedUp: "Grabbed {{column}}. Use the left and right arrow keys to move it, then press Space to drop.",
+    columnPickedUp:
+      "Grabbed {{column}}. Use the left and right arrow keys to move it, then press Space to drop.",
     columnDropped: "Dropped {{column}} in column {{position}}",
     columnMovedPosition: "{{column}} moved to column {{position}}",
     columnMoveCanceled: "Canceled moving {{column}}",
@@ -238,7 +243,8 @@ export const issues = defineLocaleResource({
     overdue: "Overdue",
     issueListLoadError: "Could not load Gitea issues.",
     repositoryIssueDescription: "View Gitea issues in this repository.",
-    allReposIssueDescription: "View Gitea issues from every readable repository.",
+    allReposIssueDescription:
+      "View Gitea issues from every readable repository.",
     createIssue: "Create issue",
     noMatchingIssues: "No issues match these filters",
     previousPage: "Previous page",
@@ -256,7 +262,8 @@ export const issues = defineLocaleResource({
     allStatuses: "All statuses",
     search: "Search",
     returnToWorkspace: "Back to workspace",
-    issueUnavailable: "Issue does not exist, is not accessible, or Gitea is unavailable",
+    issueUnavailable:
+      "Issue does not exist, is not accessible, or Gitea is unavailable",
     noDescription: "No description",
     openInGitea: "Open in Gitea",
     cancelEdit: "Cancel editing",
@@ -265,7 +272,8 @@ export const issues = defineLocaleResource({
     recordStatusAction: "Record Status action",
     comments: "Comments",
     createIssueEyebrow: "NEW GITEA ISSUE",
-    createIssueDescription: "This creates a Gitea issue in the selected repository.",
+    createIssueDescription:
+      "This creates a Gitea issue in the selected repository.",
     selectRepository: "Select a repository",
     title: "Title",
     description: "Description",
@@ -275,10 +283,13 @@ export const issues = defineLocaleResource({
     commaSeparated: "Separate with commas",
     milestoneOptional: "Milestone (optional)",
     milestoneTitleOrId: "Milestone title or ID",
-    issueRepositoryRequired: "Your account cannot create an issue in the selected repository",
+    issueRepositoryRequired:
+      "Your account cannot create an issue in the selected repository",
     repositoriesUnavailable: "Could not load available repositories",
-    requiredIssueFields: "Select a repository, enter a title, and choose an issue type and priority",
-    priorityLabelConflict: "Set priority with the priority field; do not add priority:* as a regular label",
+    requiredIssueFields:
+      "Select a repository, enter a title, and choose an issue type and priority",
+    priorityLabelConflict:
+      "Set priority with the priority field; do not add priority:* as a regular label",
     createIssueFailed: "Could not create issue",
     titleRequired: "Title cannot be empty",
     typeRequired: "Select an issue type",
@@ -346,19 +357,24 @@ export const issues = defineLocaleResource({
     savingIssueMetadata: "Saving…",
     retryIssueMetadata: "Retry",
     cancelIssueMetadata: "Cancel",
-    issueMetadataSaveFailed: "Could not update the issue field. Check the current value and retry.",
+    issueMetadataSaveFailed:
+      "Could not update the issue field. Check the current value and retry.",
     issueType: "Issue type",
     chooseType: "Choose a type",
     missingTypeBeforeSave: "Issue type is not set. Choose one before saving.",
-    conflictingTypeBeforeSave: "Issue has conflicting types. Choose one to fix it.",
+    conflictingTypeBeforeSave:
+      "Issue has conflicting types. Choose one to fix it.",
     choosePriority: "Choose a priority",
-    missingPriorityBeforeSave: "Issue priority is not set. Choose one before saving.",
-    conflictingPriorityBeforeSave: "Issue has conflicting or invalid priority labels. Choose one to fix them.",
+    missingPriorityBeforeSave:
+      "Issue priority is not set. Choose one before saving.",
+    conflictingPriorityBeforeSave:
+      "Issue has conflicting or invalid priority labels. Choose one to fix them.",
     transitionDialogTitle: "Choose a reason for the Status change",
     currentIssueStatus: "Current Status: {{status}}",
     transitionReason: "Transition reason",
     chooseReason: "Choose a reason",
-    noTransitionReasons: "There are no transition reasons for the current state.",
+    noTransitionReasons:
+      "There are no transition reasons for the current state.",
     nextAssignee: "Next assignee",
     optionalReviewer: "Reviewer (optional)",
     choosePerson: "Choose a person",
@@ -423,9 +439,11 @@ export const issues = defineLocaleResource({
     setDefaultPropertyOrder: "デフォルトの列順に設定",
     setDefaultSort: "デフォルトの並べ替えに設定",
     restoreViewDefaults: "デフォルトに戻す",
-    columnReorderHelp: "列見出しのどこからでもドラッグして並べ替えられます。キーボードでは Shift+Space でつかみ、左右の方向キーで移動し、Space で配置、Esc でキャンセルします。",
+    columnReorderHelp:
+      "列見出しのどこからでもドラッグして並べ替えられます。キーボードでは Shift+Space でつかみ、左右の方向キーで移動し、Space で配置、Esc でキャンセルします。",
     hiddenProperty: "非表示",
-    columnPickedUp: "{{column}}をつかみました。左右の方向キーで移動し、Space で配置します。",
+    columnPickedUp:
+      "{{column}}をつかみました。左右の方向キーで移動し、Space で配置します。",
     columnDropped: "{{column}}を{{position}}列目に配置しました",
     columnMovedPosition: "{{column}}を{{position}}列目に移動しました",
     columnMoveCanceled: "{{column}}の移動をキャンセルしました",
@@ -443,7 +461,8 @@ export const issues = defineLocaleResource({
     overdue: "期限超過",
     issueListLoadError: "Gitea の課題を読み込めません。",
     repositoryIssueDescription: "このリポジトリの Gitea 課題を表示します。",
-    allReposIssueDescription: "現在読み取り可能なすべてのリポジトリの Gitea 課題を表示します。",
+    allReposIssueDescription:
+      "現在読み取り可能なすべてのリポジトリの Gitea 課題を表示します。",
     createIssue: "課題を作成",
     noMatchingIssues: "条件に一致する課題はありません",
     previousPage: "前のページ",
@@ -461,7 +480,8 @@ export const issues = defineLocaleResource({
     allStatuses: "すべて",
     search: "検索",
     returnToWorkspace: "ワークスペースに戻る",
-    issueUnavailable: "課題が存在しないか、アクセスできないか、Gitea を利用できません",
+    issueUnavailable:
+      "課題が存在しないか、アクセスできないか、Gitea を利用できません",
     noDescription: "説明はありません",
     openInGitea: "Gitea で開く",
     cancelEdit: "編集をキャンセル",
@@ -480,10 +500,13 @@ export const issues = defineLocaleResource({
     commaSeparated: "カンマで区切る",
     milestoneOptional: "マイルストーン（任意）",
     milestoneTitleOrId: "マイルストーンのタイトルまたは ID",
-    issueRepositoryRequired: "現在のアカウントでは選択したリポジトリに課題を作成できません",
+    issueRepositoryRequired:
+      "現在のアカウントでは選択したリポジトリに課題を作成できません",
     repositoriesUnavailable: "利用可能なリポジトリを読み込めません",
-    requiredIssueFields: "リポジトリを選択し、タイトルを入力して、課題の種類と優先度を選択してください",
-    priorityLabelConflict: "優先度欄で優先度を設定し、通常のラベルに priority:* を追加しないでください",
+    requiredIssueFields:
+      "リポジトリを選択し、タイトルを入力して、課題の種類と優先度を選択してください",
+    priorityLabelConflict:
+      "優先度欄で優先度を設定し、通常のラベルに priority:* を追加しないでください",
     createIssueFailed: "課題を作成できませんでした",
     titleRequired: "タイトルは空欄にできません",
     typeRequired: "課題の種類を選択してください",
@@ -551,14 +574,18 @@ export const issues = defineLocaleResource({
     savingIssueMetadata: "保存中…",
     retryIssueMetadata: "再試行",
     cancelIssueMetadata: "キャンセル",
-    issueMetadataSaveFailed: "Issue の項目を更新できませんでした。現在値を確認して再試行してください。",
+    issueMetadataSaveFailed:
+      "Issue の項目を更新できませんでした。現在値を確認して再試行してください。",
     issueType: "課題の種類",
     chooseType: "種類を選択",
     missingTypeBeforeSave: "課題の種類が未設定です。保存前に選択してください。",
-    conflictingTypeBeforeSave: "課題の種類が競合しています。選択して修正してください。",
+    conflictingTypeBeforeSave:
+      "課題の種類が競合しています。選択して修正してください。",
     choosePriority: "優先度を選択",
-    missingPriorityBeforeSave: "課題の優先度が未設定です。保存前に選択してください。",
-    conflictingPriorityBeforeSave: "課題の優先度ラベルが競合または無効です。選択して修正してください。",
+    missingPriorityBeforeSave:
+      "課題の優先度が未設定です。保存前に選択してください。",
+    conflictingPriorityBeforeSave:
+      "課題の優先度ラベルが競合または無効です。選択して修正してください。",
     transitionDialogTitle: "状態遷移の理由を選択",
     currentIssueStatus: "現在の Status：{{status}}",
     transitionReason: "遷移理由",

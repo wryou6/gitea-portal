@@ -15,7 +15,7 @@
 - Q: Board 載入時，`visibleLabels` 的計算與既有 Workflow 自動修復行為應如何區分？ → A: `visibleLabels` 計算本身絕不修改資料，但既有 Workflow 自動修復仍可依原規則寫回 Gitea。
 - Q: 這個 feature 是否需要新增正式的 Board 載入效能目標？ → A: 不新增正式效能目標；沿用既有載入行為與無額外 Gitea round trip 的限制。
 
-## User Scenarios & Testing *(mandatory)*
+## User Scenarios & Testing _(mandatory)_
 
 ### User Story 1 - 以欄位辨識工作狀態 (Priority: P1)
 
@@ -68,7 +68,7 @@
 - Board 所選 Workflow Convention 的狀態名稱或 Label 命名格式改變時，顯示行為仍依該 Convention 的定義判斷，不依賴固定文字前綴。
 - 隱藏 Label 只影響 Board Card 呈現；`visibleLabels` 計算不得觸發 Label 新增、刪除、替換或其他 Issue mutation。既有 Workflow 自動修復若因缺失或衝突而執行，仍可依原規則更新 Gitea Workflow Labels。
 
-## Requirements *(mandatory)*
+## Requirements _(mandatory)_
 
 ### Functional Requirements
 
@@ -89,7 +89,7 @@
 - **Workflow Convention**: 定義 Board 狀態欄位及其對應 Workflow Labels 的規則。
 - **Gitea Issue Labels**: Issue 在 Gitea 中實際保存的完整 Labels；Board Card 的隱藏不會改變這組資料。
 
-## Success Criteria *(mandatory)*
+## Success Criteria _(mandatory)_
 
 ### Measurable Outcomes
 

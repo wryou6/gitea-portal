@@ -15,7 +15,8 @@ export const dashboard = defineLocaleResource({
   en: {
     eyebrow: "WORKSPACES",
     title: "Dashboard",
-    description: "Browse All repos and each Repository workspace you can access.",
+    description:
+      "Browse All repos and each Repository workspace you can access.",
     listLabel: "All available workspaces",
     repository: "Repository workspace",
     allRepositories: "All repos",
@@ -26,7 +27,8 @@ export const dashboard = defineLocaleResource({
   ja: {
     eyebrow: "ワークスペース一覧",
     title: "ダッシュボード",
-    description: "すべてのリポジトリと、アクセス可能な各リポジトリのワークスペースを表示します。",
+    description:
+      "すべてのリポジトリと、アクセス可能な各リポジトリのワークスペースを表示します。",
     listLabel: "利用可能なすべてのワークスペース",
     repository: "リポジトリのワークスペース",
     allRepositories: "すべてのリポジトリ",

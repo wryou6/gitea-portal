@@ -66,9 +66,11 @@ const preview: Preview = {
         <MemoryRouter>
           <StorybookFrame
             theme={context.globals.theme === "dark" ? "dark" : "light"}
-            locale={context.globals.locale === "en" || context.globals.locale === "ja"
-              ? context.globals.locale
-              : "zh-TW"}
+            locale={
+              context.globals.locale === "en" || context.globals.locale === "ja"
+                ? context.globals.locale
+                : "zh-TW"
+            }
           >
             <Story />
           </StorybookFrame>

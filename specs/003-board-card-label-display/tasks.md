@@ -1,5 +1,4 @@
 ---
-
 description: "Implementation tasks for hiding Workflow Labels on Board Cards"
 ---
 
@@ -17,7 +16,7 @@ description: "Implementation tasks for hiding Workflow Labels on Board Cards"
 
 **Purpose**: 確認沿用既有 monorepo 與 read-through 邊界，不引入本 feature 不需要的依賴或持久化。
 
-- [X] T001 [P] 確認 `package.json`、`pnpm-workspace.yaml` 與 `specs/003-board-card-label-display/plan.md` 維持既有 TypeScript/React 工作區、無新增套件、無資料庫或 Board JSON schema 變更。
+- [x] T001 [P] 確認 `package.json`、`pnpm-workspace.yaml` 與 `specs/003-board-card-label-display/plan.md` 維持既有 TypeScript/React 工作區、無新增套件、無資料庫或 Board JSON schema 變更。
 
 ---
 
@@ -27,8 +26,8 @@ description: "Implementation tasks for hiding Workflow Labels on Board Cards"
 
 **⚠️ CRITICAL**: 本階段完成前不可開始 User Story 實作。
 
-- [X] T002 定義 `BoardCard` read-time view type 於 `packages/domain/src/board.ts`，令 Board columns 使用 `BoardCard[]`，並新增必要的 `visibleLabels: IssueLabel[]`；保留完整 `labels`，且遵守 `visibleLabels` 是目前 Issue `labels` 子集的 invariant。
-- [X] T003 同步 `BoardCard` 與 `GET /api/boards/:id` 的 `visibleLabels` response contract 於 `packages/gitea-contracts/src/portal.ts` 與 `apps/web/src/features/boards/types.ts`；`apps/web/src/lib/api.ts` 的一般 `Issue.labels` 必須繼續代表完整 Labels，不套用 Board Card 過濾。
+- [x] T002 定義 `BoardCard` read-time view type 於 `packages/domain/src/board.ts`，令 Board columns 使用 `BoardCard[]`，並新增必要的 `visibleLabels: IssueLabel[]`；保留完整 `labels`，且遵守 `visibleLabels` 是目前 Issue `labels` 子集的 invariant。
+- [x] T003 同步 `BoardCard` 與 `GET /api/boards/:id` 的 `visibleLabels` response contract 於 `packages/gitea-contracts/src/portal.ts` 與 `apps/web/src/features/boards/types.ts`；`apps/web/src/lib/api.ts` 的一般 `Issue.labels` 必須繼續代表完整 Labels，不套用 Board Card 過濾。
 
 **Checkpoint**: Shared Board Card view contract ready - API 與 Web 可開始分別實作。
 
@@ -42,8 +41,8 @@ description: "Implementation tasks for hiding Workflow Labels on Board Cards"
 
 ### Implementation for User Story 1
 
-- [X] T004 [US1] 在 `apps/api/src/boards/board-view-service.ts` 的 Board view 組合階段，依 exact `convention.states[].labelName` 建立 Workflow Label name set，為每張 repaired card 產生 `visibleLabels`；不得依固定 prefix、display name 或硬編碼狀態猜測，`visibleLabels` 衍生不得新增 Gitea 或 Portal write，既有 Workflow auto-repair write 維持不變。
-- [X] T005 [US1] 更新 `apps/web/src/features/boards/KanbanBoard.tsx`、`apps/web/src/features/boards/KanbanColumn.tsx` 與 `apps/web/src/features/boards/KanbanCard.tsx` 使用 `BoardCard` view data；Card 狀態仍由欄位 `stateKey`/`displayName` 表達，Label render 改用 `visibleLabels`，並保留 Repository、Issue number、Title、Assignee、原有 drag transition 與 repair/error 顯示。
+- [x] T004 [US1] 在 `apps/api/src/boards/board-view-service.ts` 的 Board view 組合階段，依 exact `convention.states[].labelName` 建立 Workflow Label name set，為每張 repaired card 產生 `visibleLabels`；不得依固定 prefix、display name 或硬編碼狀態猜測，`visibleLabels` 衍生不得新增 Gitea 或 Portal write，既有 Workflow auto-repair write 維持不變。
+- [x] T005 [US1] 更新 `apps/web/src/features/boards/KanbanBoard.tsx`、`apps/web/src/features/boards/KanbanColumn.tsx` 與 `apps/web/src/features/boards/KanbanCard.tsx` 使用 `BoardCard` view data；Card 狀態仍由欄位 `stateKey`/`displayName` 表達，Label render 改用 `visibleLabels`，並保留 Repository、Issue number、Title、Assignee、原有 drag transition 與 repair/error 顯示。
 
 **Checkpoint**: User Story 1 可獨立展示欄位狀態，且不顯示所選 Convention 的 Workflow Labels。
 
@@ -57,7 +56,7 @@ description: "Implementation tasks for hiding Workflow Labels on Board Cards"
 
 ### Implementation for User Story 2
 
-- [X] T006 [US2] 在 `apps/web/src/features/boards/KanbanCard.tsx` 以 `visibleLabels.length > 0` 條件渲染 Label container，顯示 `visibleLabels` 中每一個非 Workflow Label；空陣列時省略 container，但不得影響 `apps/web/src/features/boards/KanbanColumn.tsx` 的欄位、Card identity、Assignee、repair annotation 或 error message。
+- [x] T006 [US2] 在 `apps/web/src/features/boards/KanbanCard.tsx` 以 `visibleLabels.length > 0` 條件渲染 Label container，顯示 `visibleLabels` 中每一個非 Workflow Label；空陣列時省略 container，但不得影響 `apps/web/src/features/boards/KanbanColumn.tsx` 的欄位、Card identity、Assignee、repair annotation 或 error message。
 
 **Checkpoint**: User Stories 1 and 2 可同時驗證；Board Card 只隱藏所選 Convention Workflow Labels，普通分類 Labels 與核心 Card 資訊仍完整。
 
@@ -71,7 +70,7 @@ description: "Implementation tasks for hiding Workflow Labels on Board Cards"
 
 ### Implementation for User Story 3
 
-- [X] T007 [P] [US3] 保持 `apps/api/src/issues/issue-search-service.ts`、`apps/api/src/issues/issue-service.ts`、`apps/web/src/features/issues/IssueListPage.tsx`、`apps/web/src/features/issues/IssueRow.tsx`、`apps/web/src/features/issues/IssueDetailHeader.tsx` 與 `apps/web/src/features/issues/IssueDetailPage.tsx` 使用完整 `Issue.labels`；保留 Board Card 前往 Portal detail 及 detail page 前往原始 Gitea URL 的既有路徑，不將 `visibleLabels` 過濾規則洩漏到 Issue list/detail。
+- [x] T007 [P] [US3] 保持 `apps/api/src/issues/issue-search-service.ts`、`apps/api/src/issues/issue-service.ts`、`apps/web/src/features/issues/IssueListPage.tsx`、`apps/web/src/features/issues/IssueRow.tsx`、`apps/web/src/features/issues/IssueDetailHeader.tsx` 與 `apps/web/src/features/issues/IssueDetailPage.tsx` 使用完整 `Issue.labels`；保留 Board Card 前往 Portal detail 及 detail page 前往原始 Gitea URL 的既有路徑，不將 `visibleLabels` 過濾規則洩漏到 Issue list/detail。
 
 **Checkpoint**: User Stories 1–3 均可獨立驗證，且 Board 簡化不會造成完整 Issue metadata 遺失。
 
@@ -81,9 +80,9 @@ description: "Implementation tasks for hiding Workflow Labels on Board Cards"
 
 **Purpose**: 驗證 presentation-only 邊界、既有 Board 行為與交付文件。
 
-- [X] T008 [P] 檢查 `apps/api/src/boards/board-view-service.ts`、`apps/web/src/features/boards/card-transition.ts` 與 `packages/domain/src/board.ts`，確認 `visibleLabels` 不會修改 Gitea Labels、Issue state、Board JSON 設定或新增 Workflow repair 行為；既有 Workflow auto-repair side effect 維持不變，並修正任何因型別調整造成的相容性問題。
-- [X] T009 執行 `specs/003-board-card-label-display/quickstart.md` 的六個情境，並從 repository root 執行 `pnpm.cmd typecheck` 與 `pnpm.cmd build`；Scenario 5 使用有效 Workflow state 驗證呈現不 mutation，Scenario 3 分開驗證既有 repair/anomaly 行為，以及 Board Card、Issue list/detail、Gitea URL 與空 Label container。
-- [X] T010 [P] 更新 `specs/003-board-card-label-display/quickstart.md` 與 `specs/003-board-card-label-display/contracts/board-card-label-display.md`，使文件中的 response shape、顯示規則與實際 `visibleLabels` 實作一致。
+- [x] T008 [P] 檢查 `apps/api/src/boards/board-view-service.ts`、`apps/web/src/features/boards/card-transition.ts` 與 `packages/domain/src/board.ts`，確認 `visibleLabels` 不會修改 Gitea Labels、Issue state、Board JSON 設定或新增 Workflow repair 行為；既有 Workflow auto-repair side effect 維持不變，並修正任何因型別調整造成的相容性問題。
+- [x] T009 執行 `specs/003-board-card-label-display/quickstart.md` 的六個情境，並從 repository root 執行 `pnpm.cmd typecheck` 與 `pnpm.cmd build`；Scenario 5 使用有效 Workflow state 驗證呈現不 mutation，Scenario 3 分開驗證既有 repair/anomaly 行為，以及 Board Card、Issue list/detail、Gitea URL 與空 Label container。
+- [x] T010 [P] 更新 `specs/003-board-card-label-display/quickstart.md` 與 `specs/003-board-card-label-display/contracts/board-card-label-display.md`，使文件中的 response shape、顯示規則與實際 `visibleLabels` 實作一致。
 
 ---
 

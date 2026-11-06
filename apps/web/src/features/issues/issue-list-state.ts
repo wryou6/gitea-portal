@@ -1,5 +1,13 @@
 import { useCallback, useState } from "react";
-import { queryIssues, toUserFacingError, type Issue, type IssueSearchResult, type IssueSortField, type SortDirection, type UserFacingError } from "../../lib/api";
+import {
+  queryIssues,
+  toUserFacingError,
+  type Issue,
+  type IssueSearchResult,
+  type IssueSortField,
+  type SortDirection,
+  type UserFacingError,
+} from "../../lib/api";
 import { useTranslation } from "react-i18next";
 import type { WorkViewFilters } from "../work-views/work-view-filters";
 import { serializeWorkViewFilters } from "../work-views/work-view-filters";
@@ -23,7 +31,12 @@ export function useIssueListState(
   direction: SortDirection;
   loading: boolean;
   error?: UserFacingError;
-  load: (next?: IssueFiltersValue, sort?: IssueSortField, direction?: SortDirection, addHistoryEntry?: boolean) => Promise<void>;
+  load: (
+    next?: IssueFiltersValue,
+    sort?: IssueSortField,
+    direction?: SortDirection,
+    addHistoryEntry?: boolean,
+  ) => Promise<void>;
 } {
   const { t } = useTranslation("issues");
   const location = useLocation();
@@ -35,11 +48,18 @@ export function useIssueListState(
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<UserFacingError>();
   const load = useCallback(
-    async (next = filters, requestedSort = sort, requestedDirection = direction, addHistoryEntry = false) => {
+    async (
+      next = filters,
+      requestedSort = sort,
+      requestedDirection = direction,
+      addHistoryEntry = false,
+    ) => {
       setFilters(next);
       setSort(requestedSort);
       setDirection(requestedDirection);
-      const params = new URLSearchParams(serializeWorkViewFilters(next, location.search, "issues"));
+      const params = new URLSearchParams(
+        serializeWorkViewFilters(next, location.search, "issues"),
+      );
       params.delete("page");
       params.set("sort", requestedSort);
       params.set("direction", requestedDirection);
@@ -56,7 +76,8 @@ export function useIssueListState(
             requestFilters[key] = value;
           }
         }
-        if (next.assignee === "me" && currentUserLogin) requestFilters.assignee = currentUserLogin;
+        if (next.assignee === "me" && currentUserLogin)
+          requestFilters.assignee = currentUserLogin;
         const result = await loader({
           ...requestFilters,
           sort: requestedSort,
@@ -70,7 +91,17 @@ export function useIssueListState(
         setLoading(false);
       }
     },
-    [currentUserLogin, direction, filters, loader, location.pathname, location.search, navigate, sort, t],
+    [
+      currentUserLogin,
+      direction,
+      filters,
+      loader,
+      location.pathname,
+      location.search,
+      navigate,
+      sort,
+      t,
+    ],
   );
   return { issues, filters, sort, direction, loading, error, load };
 }

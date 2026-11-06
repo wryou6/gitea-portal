@@ -13,14 +13,14 @@ Gitea is the terminology authority for concepts that exist in both products. Por
 
 These Portal labels use the matching Gitea locale catalog entries from release `v1.27.3`; check the mapped key in each locale file before changing any value.
 
-| Portal resource key | Gitea catalog key | zh-TW | en | ja |
-| --- | --- | --- | --- | --- |
-| `issues.repository` | `repo.repo_name` | 儲存庫 | Repository | リポジトリ |
-| `issues.assignee` | `repo.issues.filter_assignee` | 負責人 | Assignee | 担当者 |
-| `issues.label` | `repo.issues.filter_label` | 標籤 | Label | ラベル |
-| `issues.milestone` | `repo.issues.filter_milestone` | 里程碑 | Milestone | マイルストーン |
-| `work-views.open` | `repo.issues.open_title` | 開啟 | Open | オープン |
-| `work-views.closed` | `repo.issues.closed_title` | 已關閉 | Closed | クローズ |
+| Portal resource key | Gitea catalog key              | zh-TW  | en         | ja             |
+| ------------------- | ------------------------------ | ------ | ---------- | -------------- |
+| `issues.repository` | `repo.repo_name`               | 儲存庫 | Repository | リポジトリ     |
+| `issues.assignee`   | `repo.issues.filter_assignee`  | 負責人 | Assignee   | 担当者         |
+| `issues.label`      | `repo.issues.filter_label`     | 標籤   | Label      | ラベル         |
+| `issues.milestone`  | `repo.issues.filter_milestone` | 里程碑 | Milestone  | マイルストーン |
+| `work-views.open`   | `repo.issues.open_title`       | 開啟   | Open       | オープン       |
+| `work-views.closed` | `repo.issues.closed_title`     | 已關閉 | Closed     | クローズ       |
 
 ## Maintenance
 
@@ -28,7 +28,7 @@ For each shared concept added to a resource, record its resource key, Gitea cata
 
 ## Portal-only concepts
 
-| Resource key | zh-TW | en | ja | Source |
-| --- | --- | --- | --- | --- |
-| `common.globalNavigation` | 全域導覽 | Global navigation | グローバルナビゲーション | Portal navigation structure |
-| `common.allRepos` | 所有儲存庫 | All repos | すべてのリポジトリ | Aggregated accessible Repository workspace |
+| Resource key              | zh-TW      | en                | ja                       | Source                                     |
+| ------------------------- | ---------- | ----------------- | ------------------------ | ------------------------------------------ |
+| `common.globalNavigation` | 全域導覽   | Global navigation | グローバルナビゲーション | Portal navigation structure                |
+| `common.allRepos`         | 所有儲存庫 | All repos         | すべてのリポジトリ       | Aggregated accessible Repository workspace |

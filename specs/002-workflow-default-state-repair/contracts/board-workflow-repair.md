@@ -69,11 +69,11 @@ Contract rules:
 
 ### Error responses
 
-| Status | Meaning |
-|---|---|
-| `401` | Current Gitea session is unavailable |
-| `404` | Board does not exist |
-| `422` | Board references an unavailable Workflow Convention |
+| Status      | Meaning                                                                                                      |
+| ----------- | ------------------------------------------------------------------------------------------------------------ |
+| `401`       | Current Gitea session is unavailable                                                                         |
+| `404`       | Board does not exist                                                                                         |
+| `422`       | Board references an unavailable Workflow Convention                                                          |
 | `502`/`504` | Gitea cannot provide required Board Issue/Repository data; no incomplete Board or repair success is returned |
 
 ## `POST /api/boards/:id/cards/:owner/:repo/:number/transition`
@@ -92,12 +92,12 @@ Returns the re-read Gitea Issue after label replacement. The returned Issue must
 
 ### Error responses
 
-| Status | Meaning |
-|---|---|
-| `403` | User lacks Gitea Label modification permission |
-| `404` | Board or Issue does not exist |
-| `409` | Issue changed concurrently or Gitea did not persist requested labels; UI must retain/reload real state |
-| `422` | `stateKey` is missing or not defined, or target Label is unavailable |
-| `502`/`504` | Gitea unavailable; UI must not show a successful transition |
+| Status      | Meaning                                                                                                |
+| ----------- | ------------------------------------------------------------------------------------------------------ |
+| `403`       | User lacks Gitea Label modification permission                                                         |
+| `404`       | Board or Issue does not exist                                                                          |
+| `409`       | Issue changed concurrently or Gitea did not persist requested labels; UI must retain/reload real state |
+| `422`       | `stateKey` is missing or not defined, or target Label is unavailable                                   |
+| `502`/`504` | Gitea unavailable; UI must not show a successful transition                                            |
 
 The transition uses the same permission check, current version/labels preflight, atomic replacement and post-write verification as automatic repair.

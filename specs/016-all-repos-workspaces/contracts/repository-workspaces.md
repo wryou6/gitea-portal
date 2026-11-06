@@ -4,17 +4,17 @@ All API requests use the signed-in session's Gitea delegated credentials. Reposi
 
 ## Web routes
 
-| Route | Meaning |
-|---|---|
-| `/` | All repos Gantt, the default signed-in view |
-| `/issues` | All repos Issues; current query/filter/page parameters retained |
-| `/kanban` | All repos Kanban |
-| `/gantt` | All repos Gantt |
-| `/dashboard` | Optional directory of All repos and readable Repositories |
-| `/repositories/:owner/:repo/issues` | One Repository Issues |
-| `/repositories/:owner/:repo/kanban` | One Repository Kanban |
-| `/repositories/:owner/:repo/gantt` | One Repository Gantt |
-| `/issues/:owner/:repo/:number` | Gitea Issue detail; `returnTo` must preserve the source scope/view/query |
+| Route                               | Meaning                                                                  |
+| ----------------------------------- | ------------------------------------------------------------------------ |
+| `/`                                 | All repos Gantt, the default signed-in view                              |
+| `/issues`                           | All repos Issues; current query/filter/page parameters retained          |
+| `/kanban`                           | All repos Kanban                                                         |
+| `/gantt`                            | All repos Gantt                                                          |
+| `/dashboard`                        | Optional directory of All repos and readable Repositories                |
+| `/repositories/:owner/:repo/issues` | One Repository Issues                                                    |
+| `/repositories/:owner/:repo/kanban` | One Repository Kanban                                                    |
+| `/repositories/:owner/:repo/gantt`  | One Repository Gantt                                                     |
+| `/issues/:owner/:repo/:number`      | Gitea Issue detail; `returnTo` must preserve the source scope/view/query |
 
 Unknown paths, including `/boards` and `/boards/:id/...`, return a regular not-found page and make no retired API request. `/kanban` and `/gantt` no longer open selection/settings pages; they are All repos views.
 

@@ -30,13 +30,13 @@
 
 ## Constitution Check
 
-| 原則 | 設計符合方式 | 狀態 |
-|---|---|---|
-| I. Gitea 是唯一來源 | 使用既有讀寫路徑，成功後重載 Gitea 資料；無 Portal Issue mirror | PASS |
-| II. 權限跟隨目前使用者 | 沿用 delegated request 與 API 權限檢查，不提供額外高權限操作 | PASS |
-| III. 保全資料並可驗證 | PATCH 帶版本戳，欄位標籤沿用 atomic replacement；Status 使用既有 transition rollback/error path | PASS |
-| V. 固定 Status 語意 | 不新增或改寫狀態值；anomaly 不可操作 | PASS |
-| VII. 使用者可見文字多語系 | 新選單、錯誤、無障礙名稱同步 zh-TW/en/ja | PASS |
+| 原則                      | 設計符合方式                                                                                    | 狀態 |
+| ------------------------- | ----------------------------------------------------------------------------------------------- | ---- |
+| I. Gitea 是唯一來源       | 使用既有讀寫路徑，成功後重載 Gitea 資料；無 Portal Issue mirror                                 | PASS |
+| II. 權限跟隨目前使用者    | 沿用 delegated request 與 API 權限檢查，不提供額外高權限操作                                    | PASS |
+| III. 保全資料並可驗證     | PATCH 帶版本戳，欄位標籤沿用 atomic replacement；Status 使用既有 transition rollback/error path | PASS |
+| V. 固定 Status 語意       | 不新增或改寫狀態值；anomaly 不可操作                                                            | PASS |
+| VII. 使用者可見文字多語系 | 新選單、錯誤、無障礙名稱同步 zh-TW/en/ja                                                        | PASS |
 
 **Post-design gate**: PASS；不新增持久資料、API contract 或資料庫變更。
 

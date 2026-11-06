@@ -4,10 +4,10 @@
 
 ## Sidebar Layout Preference
 
-| Field | Type | Rule |
-|---|---|---|
-| `expanded` | boolean | `true` 表示顯示圖示與文字；`false` 表示只顯示圖示。新工作階段預設 `true`。 |
-| lifetime | browser session | 同一工作階段內的頁面導覽與重新載入維持狀態；新工作階段重設為展開。 |
+| Field      | Type            | Rule                                                                       |
+| ---------- | --------------- | -------------------------------------------------------------------------- |
+| `expanded` | boolean         | `true` 表示顯示圖示與文字；`false` 表示只顯示圖示。新工作階段預設 `true`。 |
+| lifetime   | browser session | 同一工作階段內的頁面導覽與重新載入維持狀態；新工作階段重設為展開。         |
 
 ### Transitions
 
@@ -17,10 +17,10 @@
 
 ## Board Navigation Context
 
-| Field | Type | Rule |
-|---|---|---|
-| `activeBoardId` | existing Board ID or absent | 由目前 `/boards/<id>/...` 路徑取得；不新增全域或持久化選擇。 |
-| `viewIntent` | `kanban` \| `gantt` or absent | 使用者沒有目前 Board 時，由 `/kanban` 或 `/gantt` route 暫時表達要開啟的檢視；舊 `/boards?view=...` 仍相容。 |
+| Field           | Type                          | Rule                                                                                                         |
+| --------------- | ----------------------------- | ------------------------------------------------------------------------------------------------------------ |
+| `activeBoardId` | existing Board ID or absent   | 由目前 `/boards/<id>/...` 路徑取得；不新增全域或持久化選擇。                                                 |
+| `viewIntent`    | `kanban` \| `gantt` or absent | 使用者沒有目前 Board 時，由 `/kanban` 或 `/gantt` route 暫時表達要開啟的檢視；舊 `/boards?view=...` 仍相容。 |
 
 ### Navigation Rules
 

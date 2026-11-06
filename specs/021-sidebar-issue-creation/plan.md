@@ -30,7 +30,7 @@
 
 ## Constitution Check
 
-*GATE: Must pass before Phase 0 research. Re-check after Phase 1 design.*
+_GATE: Must pass before Phase 0 research. Re-check after Phase 1 design._
 
 - **I. Gitea is the Issue source of truth**: Pass — the existing Issue create page remains the only write path.
 - **II. Operations follow current user permissions**: Pass — no new endpoint or elevated identity is introduced.

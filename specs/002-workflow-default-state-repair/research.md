@@ -78,19 +78,19 @@
 
 ## Resolved Unknowns
 
-| Topic | Resolution |
-|---|---|
-| New technology | None; use existing TypeScript/Fastify/React/Vite monorepo |
-| Persistence | No new persistence; existing Board JSON remains unchanged |
-| Repair trigger | Board load only |
-| Rendering timing | Wait for all repairs before returning Board view |
-| Failure behavior | Preserve anomaly, show per-card error, continue other cards |
-| Retry behavior | Reload/retry reads current Gitea data |
-| Workflow default | State with minimum unique `order` |
-| Missing default label | Do not create it automatically |
-| Manual repair | Failed anomaly Card may be dragged to a valid state |
-| Non-workflow labels | Preserve unchanged |
-| Gitea read failure | Whole Board external-service error |
-| Gitea repair write failure | Per-Card error after Issue read succeeds |
-| 3-second outcome | Validate in quickstart from load start to visible result |
-| Convention validation | Loader boundary plus defensive domain validation |
+| Topic                      | Resolution                                                  |
+| -------------------------- | ----------------------------------------------------------- |
+| New technology             | None; use existing TypeScript/Fastify/React/Vite monorepo   |
+| Persistence                | No new persistence; existing Board JSON remains unchanged   |
+| Repair trigger             | Board load only                                             |
+| Rendering timing           | Wait for all repairs before returning Board view            |
+| Failure behavior           | Preserve anomaly, show per-card error, continue other cards |
+| Retry behavior             | Reload/retry reads current Gitea data                       |
+| Workflow default           | State with minimum unique `order`                           |
+| Missing default label      | Do not create it automatically                              |
+| Manual repair              | Failed anomaly Card may be dragged to a valid state         |
+| Non-workflow labels        | Preserve unchanged                                          |
+| Gitea read failure         | Whole Board external-service error                          |
+| Gitea repair write failure | Per-Card error after Issue read succeeds                    |
+| 3-second outcome           | Validate in quickstart from load start to visible result    |
+| Convention validation      | Loader boundary plus defensive domain validation            |

@@ -36,7 +36,7 @@
 - 決策：從表頭更改排序後，若目前欄位或方向不同於已保存預設，工具列顯示「設為預設排序」按鈕。
 - 決策：「恢復預設」一次還原欄位顯示、預設欄序、預設排序與目前排序至產品初始值，並同步更新 URL。保存欄序與排序的按鈕小型醒目、可同時顯示，窄視窗可換行。
 
-## User Scenarios & Testing *(mandatory)*
+## User Scenarios & Testing _(mandatory)_
 
 ### User Story 1 - 掃描與辨識 Issues (Priority: P1)
 
@@ -148,7 +148,7 @@
 - 隱藏欄位時 Key 與 Title 仍固定顯示；欄序、欄位顯示或預設排序偏好無效或缺漏時，使用者仍可載入預設 Issues table。
 - 使用者可直接拖曳表頭欄位名稱調整欄序；鍵盤使用者在排序表頭按鈕上以 Shift+Space 抓取、左右方向鍵移動、Space 放下，或按 Esc 取消。互動狀態須有明確焦點、位置回饋與重排動態效果，並尊重減少動態效果偏好。
 
-## Requirements *(mandatory)*
+## Requirements _(mandatory)_
 
 ### Functional Requirements
 
@@ -186,14 +186,14 @@
 - **FR-022**: 遷移 MUST 保留 Todo／In Progress 對應 Gitea Open、Done 對應 Gitea Closed 的語意；MUST NOT 新增 `status:done` Label。
 - **FR-023**: Status Label 遷移 MUST 僅由 Gitea `admin` 帳號透過 Portal 管理入口啟動、續跑及驗證；遷移清單 MUST 完整列舉該帳號範圍內的目標 Repository 與全部 Issues，並逐項呈現成功、失敗及衝突。Portal MUST 使用該帳號目前登入的 Gitea 權限，MUST NOT 保存或使用其密碼或其他持久憑證。
 
-### Key Entities *(include if feature involves data)*
+### Key Entities _(include if feature involves data)_
 
 - **Issue 列**：Gitea Issue 在表格中的呈現資料，包含 Repository 身分、number、標題、建立時間、建立者、指派對象、Gitea state、Labels 衍生值與排程日期。
 - **排序狀態**：目前排序欄位及遞增／遞減方向；預設為 Key 遞增，並與篩選、頁碼共同識別可分享的清單檢視。
 - **Issues table 偏好**：依登入帳號保存的欄位可見性、預設欄序，以及單一預設排序欄位和方向；Key 與 Title 為固定可見欄位。
 - **分頁結果**：依篩選及排序後的 Issue 集合，以每頁最多 50 筆呈現的連續頁面。
 
-## Success Criteria *(mandatory)*
+## Success Criteria _(mandatory)_
 
 ### Measurable Outcomes
 

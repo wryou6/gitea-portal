@@ -7,9 +7,7 @@ import { useTranslation } from "react-i18next";
 import { formatCalendarDate } from "../../i18n/format";
 import { OverdueIndicator } from "./OverdueIndicator";
 
-export function formatScheduleDate(
-  value: string | null,
-): string | null {
+export function formatScheduleDate(value: string | null): string | null {
   if (!value || !isCalendarDate(value)) return null;
   return formatCalendarDate(value);
 }
@@ -47,7 +45,11 @@ function displayValue(
   if (!date) return translate("notSet");
 
   const formatted = formatScheduleDate(date);
-  return formatted ? <time dateTime={date}>{formatted}</time> : translate("dateInvalid");
+  return formatted ? (
+    <time dateTime={date}>{formatted}</time>
+  ) : (
+    translate("dateInvalid")
+  );
 }
 
 export function ScheduleDates({

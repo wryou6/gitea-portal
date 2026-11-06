@@ -32,10 +32,10 @@ No tasks.
 
 ### Implementation for User Story 1
 
-- [X] T001 [US1] Add a due-only presentation option that reuses current date formatting, missing-value, and anomaly behavior in `apps/web/src/features/issues/ScheduleDates.tsx`.
-- [X] T002 [US1] Arrange Type, Priority, next action, title, Repository/Issue key, assignee, Due date, and annotations in the specified order in `apps/web/src/features/work-views/KanbanCard.tsx`.
-- [X] T003 [P] Add a locale toolbar for zh-TW, en, and ja to the Storybook provider in `apps/web/.storybook/preview.tsx`.
-- [X] T004 [US1] Add full, missing-metadata, long-text, and schedule-anomaly card stories in `apps/web/src/features/work-views/KanbanCard.stories.tsx`.
+- [x] T001 [US1] Add a due-only presentation option that reuses current date formatting, missing-value, and anomaly behavior in `apps/web/src/features/issues/ScheduleDates.tsx`.
+- [x] T002 [US1] Arrange Type, Priority, next action, title, Repository/Issue key, assignee, Due date, and annotations in the specified order in `apps/web/src/features/work-views/KanbanCard.tsx`.
+- [x] T003 [P] Add a locale toolbar for zh-TW, en, and ja to the Storybook provider in `apps/web/.storybook/preview.tsx`.
+- [x] T004 [US1] Add full, missing-metadata, long-text, and schedule-anomaly card stories in `apps/web/src/features/work-views/KanbanCard.stories.tsx`.
 
 **Checkpoint**: Card content follows the contract and remains readable with missing data and translated text.
 
@@ -49,8 +49,8 @@ No tasks.
 
 ### Implementation for User Story 2
 
-- [X] T005 [P] [US2] Change desktop Kanban grid tracks to equally fill available width for all visible columns and preserve the mobile override in `apps/web/src/index.css`.
-- [X] T006 [US2] Add three-Status-column and four-column-with-Anomaly Storybook fixtures in `apps/web/src/features/work-views/KanbanBoard.stories.tsx`.
+- [x] T005 [P] [US2] Change desktop Kanban grid tracks to equally fill available width for all visible columns and preserve the mobile override in `apps/web/src/index.css`.
+- [x] T006 [US2] Add three-Status-column and four-column-with-Anomaly Storybook fixtures in `apps/web/src/features/work-views/KanbanBoard.stories.tsx`.
 
 **Checkpoint**: Three or four desktop columns are equally sized; narrow-screen single-column behavior remains usable.
 
@@ -64,9 +64,9 @@ No tasks.
 
 ### Implementation for User Story 3
 
-- [X] T007 [US3] Replace the card's `Move to Status` select with a localized, focus-visible disclosure trigger and destination buttons that call the existing `onMove` callback in `apps/web/src/features/work-views/KanbanCard.tsx`.
-- [X] T008 [US3] Prevent Anomaly cards from receiving Status destinations while preserving existing drag/drop restrictions in `apps/web/src/features/work-views/KanbanColumn.tsx`.
-- [X] T009 [US3] Add Storybook coverage for keyboard-operable Status choices and Anomaly cards without transition controls in `apps/web/src/features/work-views/KanbanCard.stories.tsx` and `apps/web/src/features/work-views/KanbanBoard.stories.tsx`.
+- [x] T007 [US3] Replace the card's `Move to Status` select with a localized, focus-visible disclosure trigger and destination buttons that call the existing `onMove` callback in `apps/web/src/features/work-views/KanbanCard.tsx`.
+- [x] T008 [US3] Prevent Anomaly cards from receiving Status destinations while preserving existing drag/drop restrictions in `apps/web/src/features/work-views/KanbanColumn.tsx`.
+- [x] T009 [US3] Add Storybook coverage for keyboard-operable Status choices and Anomaly cards without transition controls in `apps/web/src/features/work-views/KanbanCard.stories.tsx` and `apps/web/src/features/work-views/KanbanBoard.stories.tsx`.
 
 **Checkpoint**: Regular Status cards retain drag and dialog-based transitions; Anomaly cards remain non-transitionable.
 
@@ -76,15 +76,15 @@ No tasks.
 
 **Purpose**: Validate all stories together and preserve the project's UI quality gates.
 
-- [X] T010 Run `pnpm.cmd typecheck`, `pnpm.cmd build`, and `pnpm.cmd --filter @gitea-portal/web build-storybook`; record results in `specs/020-kanban-card-layout/quickstart.md`.
-- [X] T011 Inspect Kanban card/board stories in Storybook across zh-TW, en, ja, light/dark, desktop, tablet, narrow viewport, keyboard focus, and Status affordances; record any acceptance gaps in `specs/020-kanban-card-layout/quickstart.md`.
+- [x] T010 Run `pnpm.cmd typecheck`, `pnpm.cmd build`, and `pnpm.cmd --filter @gitea-portal/web build-storybook`; record results in `specs/020-kanban-card-layout/quickstart.md`.
+- [x] T011 Inspect Kanban card/board stories in Storybook across zh-TW, en, ja, light/dark, desktop, tablet, narrow viewport, keyboard focus, and Status affordances; record any acceptance gaps in `specs/020-kanban-card-layout/quickstart.md`.
 - [ ] T012 Validate the Issue detail keyboard action and Kanban drag transition separately with disposable local Issues; confirm both open the existing Status transition dialog and defer Gitea writes until confirmation using `specs/020-kanban-card-layout/quickstart.md`.
 
 ---
 
 ## Card footer revision
 
-- [X] T022 [US1] Remove current/last assignee labels, give the title its own row, move the next action to the right side of the footer after Due date, add long-footer Storybook coverage, and update the card contract in `apps/web/src/features/work-views/KanbanCard.tsx`, `apps/web/src/features/work-views/KanbanCard.stories.tsx`, `apps/web/src/index.css`, and `specs/020-kanban-card-layout/`.
+- [x] T022 [US1] Remove current/last assignee labels, give the title its own row, move the next action to the right side of the footer after Due date, add long-footer Storybook coverage, and update the card contract in `apps/web/src/features/work-views/KanbanCard.tsx`, `apps/web/src/features/work-views/KanbanCard.stories.tsx`, `apps/web/src/index.css`, and `specs/020-kanban-card-layout/`.
 
 ## Dependencies & Execution Order
 
@@ -135,13 +135,13 @@ No tasks.
 
 **Purpose**: Close a remaining Anomaly transition path found during code review.
 
-- [X] T013 [US3] Prevent Anomaly-column cards from being dragged as a source into a Status column, and add Storybook coverage that confirms they have no drag or menu transition affordance in `apps/web/src/features/work-views/KanbanCard.tsx`, `apps/web/src/features/work-views/KanbanColumn.tsx`, and `apps/web/src/features/work-views/KanbanBoard.stories.tsx`.
-- [X] T014 [US3] Exclude Anomaly from regular cards' Status destinations and verify the Storybook disclosure offers only Todo, In Progress, and Done in `apps/web/src/features/work-views/KanbanColumn.tsx`.
-- [X] T015 [US1][US3] Remove the card Status disclosure, organize Issue key/Type/Priority, title/next action, and assignee/due date into three main rows, truncate long titles with an ellipsis, update zh-TW 看板 terminology, and revise the feature contract and Storybook fixtures in `apps/web/src/features/work-views/KanbanCard.tsx`, `apps/web/src/features/work-views/KanbanColumn.tsx`, `apps/web/src/features/work-views/KanbanCard.stories.tsx`, `apps/web/src/index.css`, `apps/web/src/i18n/resources/common.ts`, and `apps/web/src/i18n/resources/work-views.ts`.
-- [X] T016 [US1] Show the first retained Gitea Assignee as 「最後負責人」 on Done cards, keep 「目前負責人」 on open cards, add the empty-roster presentation and three-locale Storybook coverage, and update the card contract in `apps/web/src/features/work-views/KanbanCard.tsx`, `apps/web/src/features/work-views/KanbanCard.stories.tsx`, `apps/web/src/i18n/resources/work-views.ts`, and `specs/020-kanban-card-layout/`.
-- [X] T017 [US1] Hide generic Gitea Label chips that are not used by Kanban Card fields while preserving the complete Label set in Issue list/detail, and update the card contract in `apps/web/src/features/work-views/KanbanCard.tsx` and `specs/020-kanban-card-layout/`.
-- [X] T018 [US1] Separate the assignee and Due date groups in the third card row with consistent spacing and a subtle divider; verify desktop and narrow widths in Storybook in `apps/web/src/features/work-views/KanbanCard.tsx` and `apps/web/src/index.css`.
-- [X] T019 [US1] Align Type and Priority badges to the left of the first row and the Repository/Issue key to the right; review wrapping of long keys in Storybook in `apps/web/src/features/work-views/KanbanCard.tsx` and `apps/web/src/index.css`.
-- [X] T020 [US1] Order the left-side badges Priority then Type, preserve the right-aligned key, and verify the final first row in Storybook in `apps/web/src/features/work-views/KanbanCard.tsx` and `specs/020-kanban-card-layout/`.
-- [X] T021 [US1] Sort Todo/In Progress/Anomaly cards by Priority, valid Due date, and oldest update; sort Done by most recent update, with stable Repository/Issue tie-breakers in `apps/api/src/work-views/kanban-service.ts` and `specs/020-kanban-card-layout/`.
-- [X] T022 [US1] Render Next as an unpunctuated label/value group matching the Due date typography and divider, update zh-TW/en/ja labels, and verify the card footer in Storybook in `apps/web/src/features/work-views/KanbanCard.tsx`, `apps/web/src/i18n/resources/work-views.ts`, `apps/web/src/index.css`, and `specs/020-kanban-card-layout/`.
+- [x] T013 [US3] Prevent Anomaly-column cards from being dragged as a source into a Status column, and add Storybook coverage that confirms they have no drag or menu transition affordance in `apps/web/src/features/work-views/KanbanCard.tsx`, `apps/web/src/features/work-views/KanbanColumn.tsx`, and `apps/web/src/features/work-views/KanbanBoard.stories.tsx`.
+- [x] T014 [US3] Exclude Anomaly from regular cards' Status destinations and verify the Storybook disclosure offers only Todo, In Progress, and Done in `apps/web/src/features/work-views/KanbanColumn.tsx`.
+- [x] T015 [US1][US3] Remove the card Status disclosure, organize Issue key/Type/Priority, title/next action, and assignee/due date into three main rows, truncate long titles with an ellipsis, update zh-TW 看板 terminology, and revise the feature contract and Storybook fixtures in `apps/web/src/features/work-views/KanbanCard.tsx`, `apps/web/src/features/work-views/KanbanColumn.tsx`, `apps/web/src/features/work-views/KanbanCard.stories.tsx`, `apps/web/src/index.css`, `apps/web/src/i18n/resources/common.ts`, and `apps/web/src/i18n/resources/work-views.ts`.
+- [x] T016 [US1] Show the first retained Gitea Assignee as 「最後負責人」 on Done cards, keep 「目前負責人」 on open cards, add the empty-roster presentation and three-locale Storybook coverage, and update the card contract in `apps/web/src/features/work-views/KanbanCard.tsx`, `apps/web/src/features/work-views/KanbanCard.stories.tsx`, `apps/web/src/i18n/resources/work-views.ts`, and `specs/020-kanban-card-layout/`.
+- [x] T017 [US1] Hide generic Gitea Label chips that are not used by Kanban Card fields while preserving the complete Label set in Issue list/detail, and update the card contract in `apps/web/src/features/work-views/KanbanCard.tsx` and `specs/020-kanban-card-layout/`.
+- [x] T018 [US1] Separate the assignee and Due date groups in the third card row with consistent spacing and a subtle divider; verify desktop and narrow widths in Storybook in `apps/web/src/features/work-views/KanbanCard.tsx` and `apps/web/src/index.css`.
+- [x] T019 [US1] Align Type and Priority badges to the left of the first row and the Repository/Issue key to the right; review wrapping of long keys in Storybook in `apps/web/src/features/work-views/KanbanCard.tsx` and `apps/web/src/index.css`.
+- [x] T020 [US1] Order the left-side badges Priority then Type, preserve the right-aligned key, and verify the final first row in Storybook in `apps/web/src/features/work-views/KanbanCard.tsx` and `specs/020-kanban-card-layout/`.
+- [x] T021 [US1] Sort Todo/In Progress/Anomaly cards by Priority, valid Due date, and oldest update; sort Done by most recent update, with stable Repository/Issue tie-breakers in `apps/api/src/work-views/kanban-service.ts` and `specs/020-kanban-card-layout/`.
+- [x] T022 [US1] Render Next as an unpunctuated label/value group matching the Due date typography and divider, update zh-TW/en/ja labels, and verify the card footer in Storybook in `apps/web/src/features/work-views/KanbanCard.tsx`, `apps/web/src/i18n/resources/work-views.ts`, `apps/web/src/index.css`, and `specs/020-kanban-card-layout/`.

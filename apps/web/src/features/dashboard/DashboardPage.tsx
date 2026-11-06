@@ -75,12 +75,8 @@ export function DashboardPage() {
           {workspaces.map((workspace) => (
             <li key={workspace.id}>
               <Link className="workspace-card" to={workspace.href}>
-                <span className="workspace-card-kind">
-                  {t(workspace.kind)}
-                </span>
-                <strong>
-                  {workspace.name ?? t("allRepositories")}
-                </strong>
+                <span className="workspace-card-kind">{t(workspace.kind)}</span>
+                <strong>{workspace.name ?? t("allRepositories")}</strong>
               </Link>
             </li>
           ))}

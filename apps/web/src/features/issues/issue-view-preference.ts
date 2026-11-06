@@ -49,7 +49,10 @@ function cookieName(login: string): string {
 }
 
 function isIssueSortField(value: unknown): value is IssueSortField {
-  return typeof value === "string" && ISSUE_VIEW_FIELDS.includes(value as IssueSortField);
+  return (
+    typeof value === "string" &&
+    ISSUE_VIEW_FIELDS.includes(value as IssueSortField)
+  );
 }
 
 function isPreference(value: unknown): value is IssueViewPreference {
@@ -62,8 +65,10 @@ function isPreference(value: unknown): value is IssueViewPreference {
     !preference.visibleFields.every(isIssueSortField) ||
     !preference.columnOrder.every(isIssueSortField) ||
     !isIssueSortField(preference.defaultSortField) ||
-    (preference.defaultSortDirection !== "asc" && preference.defaultSortDirection !== "desc")
-  ) return false;
+    (preference.defaultSortDirection !== "asc" &&
+      preference.defaultSortDirection !== "desc")
+  )
+    return false;
 
   const visible = preference.visibleFields;
   const order = preference.columnOrder;
@@ -87,7 +92,9 @@ export function readIssueViewPreference(login?: string): IssueViewPreference {
       .find((cookie) => cookie.startsWith(prefix));
     if (!entry) return defaultIssueViewPreference();
 
-    const value: unknown = JSON.parse(decodeURIComponent(entry.slice(prefix.length)));
+    const value: unknown = JSON.parse(
+      decodeURIComponent(entry.slice(prefix.length)),
+    );
     return isPreference(value)
       ? {
           ...value,

@@ -1,6 +1,15 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { api, toUserFacingError, type Issue, type UserFacingError } from "../../lib/api";
-import type { WorkViewCard, WorkspaceGanttView, WorkspaceKanbanView } from "./types";
+import {
+  api,
+  toUserFacingError,
+  type Issue,
+  type UserFacingError,
+} from "../../lib/api";
+import type {
+  WorkViewCard,
+  WorkspaceGanttView,
+  WorkspaceKanbanView,
+} from "./types";
 import { GanttBoard } from "./GanttBoard";
 import { KanbanColumn } from "./KanbanColumn";
 import { transitionIssue } from "../../lib/api";
@@ -12,9 +21,18 @@ import { StatusTransitionDialog } from "../issues/StatusTransitionDialog";
 import { useTranslation } from "react-i18next";
 import { useLocation, useNavigate } from "react-router";
 import { formatNumber } from "../../i18n/format";
-import { WorkViewFilterBar, WorkViewRecentDoneFilter } from "./WorkViewFilterBar";
+import {
+  WorkViewFilterBar,
+  WorkViewRecentDoneFilter,
+} from "./WorkViewFilterBar";
 import { WorkViewLayout } from "./WorkViewLayout";
-import { matchesRecentDoneVisibility, matchesWorkViewFilters, parseWorkViewFilters, serializeWorkViewFilters, type WorkViewFilters } from "./work-view-filters";
+import {
+  matchesRecentDoneVisibility,
+  matchesWorkViewFilters,
+  parseWorkViewFilters,
+  serializeWorkViewFilters,
+  type WorkViewFilters,
+} from "./work-view-filters";
 import { mergeUserProfiles } from "../../lib/user-profiles";
 import { buildWorkViewReturnTo } from "./work-view-url-state";
 
@@ -31,7 +49,9 @@ export function KanbanBoard({
   const navigate = useNavigate();
   const { t, i18n } = useTranslation("work-views");
   const { t: tCommon } = useTranslation("common");
-  const [filters, setFilters] = useState<WorkViewFilters>(() => parseWorkViewFilters(location.search));
+  const [filters, setFilters] = useState<WorkViewFilters>(() =>
+    parseWorkViewFilters(location.search),
+  );
   const [recentDoneOnly, setRecentDoneOnly] = useState(true);
   const [view, setView] = useState<WorkspaceKanbanView>();
   const [ganttView, setGanttView] = useState<WorkspaceGanttView>();
@@ -86,7 +106,9 @@ export function KanbanBoard({
         } else if (viewMode === "kanban")
           setView(await api<WorkspaceKanbanView>("/api/repositories/kanban"));
         else
-          setGanttView(await api<WorkspaceGanttView>("/api/repositories/gantt"));
+          setGanttView(
+            await api<WorkspaceGanttView>("/api/repositories/gantt"),
+          );
         if (clearError) setError(undefined);
       } catch (cause) {
         setError(
@@ -120,7 +142,9 @@ export function KanbanBoard({
       ? currentView.repository
       : undefined;
   const hasNoReadableRepositories = Boolean(
-    currentView && "repositories" in currentView && currentView.repositories.length === 0,
+    currentView &&
+    "repositories" in currentView &&
+    currentView.repositories.length === 0,
   );
   const selectedColumnKey = view?.columns.some(
     (column) => column.stateKey === activeColumnKey,
@@ -133,15 +157,40 @@ export function KanbanBoard({
       ) ?? [])
     : (view?.columns ?? []);
   const allCards = view?.columns.flatMap((column) => column.cards) ?? [];
-  const assignees = [...new Set((viewMode === "gantt" ? ganttView?.issues ?? [] : allCards).flatMap((issue) => issue.assignees))].sort((a, b) => a.localeCompare(b));
-  const profileIssues = viewMode === "gantt" ? ganttView?.issues ?? [] : allCards;
-  const userProfiles = mergeUserProfiles(profileIssues.map((issue) => issue.userProfiles));
-  const filteredColumns = useMemo(() => visibleColumns.map((column) => ({
-    ...column,
-    cards: column.cards.filter((issue) => matchesWorkViewFilters(issue, filters, login) && matchesRecentDoneVisibility(issue, recentDoneOnly)),
-  })), [visibleColumns, filters, recentDoneOnly]);
+  const assignees = [
+    ...new Set(
+      (viewMode === "gantt" ? (ganttView?.issues ?? []) : allCards).flatMap(
+        (issue) => issue.assignees,
+      ),
+    ),
+  ].sort((a, b) => a.localeCompare(b));
+  const profileIssues =
+    viewMode === "gantt" ? (ganttView?.issues ?? []) : allCards;
+  const userProfiles = mergeUserProfiles(
+    profileIssues.map((issue) => issue.userProfiles),
+  );
+  const filteredColumns = useMemo(
+    () =>
+      visibleColumns.map((column) => ({
+        ...column,
+        cards: column.cards.filter(
+          (issue) =>
+            matchesWorkViewFilters(issue, filters, login) &&
+            matchesRecentDoneVisibility(issue, recentDoneOnly),
+        ),
+      })),
+    [visibleColumns, filters, recentDoneOnly],
+  );
 
-  if (error && !currentView) return <section><ErrorNotice message={error} /><button type="button" onClick={() => void load()}>{t("retry")}</button></section>;
+  if (error && !currentView)
+    return (
+      <section>
+        <ErrorNotice message={error} />
+        <button type="button" onClick={() => void load()}>
+          {t("retry")}
+        </button>
+      </section>
+    );
   if (!currentView) return <LoadingState />;
 
   function updateFilters(next: WorkViewFilters) {
@@ -155,8 +204,22 @@ export function KanbanBoard({
     setPendingTransition({ issue, targetState: stateKey });
   };
 
-  const commonFilters = <WorkViewFilterBar filters={filters} onChange={updateFilters} assignees={assignees} userProfiles={userProfiles} currentUserLogin={login} repositoryFixed={Boolean(repository)} />;
-  const controls = <WorkViewRecentDoneFilter checked={recentDoneOnly} onChange={setRecentDoneOnly} />;
+  const commonFilters = (
+    <WorkViewFilterBar
+      filters={filters}
+      onChange={updateFilters}
+      assignees={assignees}
+      userProfiles={userProfiles}
+      currentUserLogin={login}
+      repositoryFixed={Boolean(repository)}
+    />
+  );
+  const controls = (
+    <WorkViewRecentDoneFilter
+      checked={recentDoneOnly}
+      onChange={setRecentDoneOnly}
+    />
+  );
 
   const submitTransition = async (
     actionKey: string,
@@ -171,7 +234,8 @@ export function KanbanBoard({
         actionKey,
         selectedAssignee,
       );
-      if (pendingTransition.targetState) setActiveColumnKey(pendingTransition.targetState);
+      if (pendingTransition.targetState)
+        setActiveColumnKey(pendingTransition.targetState);
       await load(true, true);
     } catch (cause) {
       setError(toUserFacingError(cause, t("transitionRejected")));
@@ -185,13 +249,16 @@ export function KanbanBoard({
     schedule: { startDate?: string | null; dueDate?: string | null },
   ) => {
     try {
-      await api(`/api/issues/${encodeURIComponent(issue.owner)}/${encodeURIComponent(issue.name)}/${issue.number}`, {
-        method: "PATCH",
-        body: JSON.stringify({
-          expectedUpdatedAt: issue.updatedAt,
-          ...schedule,
-        }),
-      });
+      await api(
+        `/api/issues/${encodeURIComponent(issue.owner)}/${encodeURIComponent(issue.name)}/${issue.number}`,
+        {
+          method: "PATCH",
+          body: JSON.stringify({
+            expectedUpdatedAt: issue.updatedAt,
+            ...schedule,
+          }),
+        },
+      );
       await load(true, true);
     } catch (cause) {
       setError(toUserFacingError(cause, t("ganttScheduleSaveFailed")));
@@ -200,12 +267,22 @@ export function KanbanBoard({
     }
   };
 
-  const saveIssueMetadata = async (issue: Issue, field: "type" | "priority", value: string) => {
+  const saveIssueMetadata = async (
+    issue: Issue,
+    field: "type" | "priority",
+    value: string,
+  ) => {
     try {
-      await api(`/api/issues/${encodeURIComponent(issue.owner)}/${encodeURIComponent(issue.name)}/${issue.number}`, {
-        method: "PATCH",
-        body: JSON.stringify({ expectedUpdatedAt: issue.updatedAt, [field]: value }),
-      });
+      await api(
+        `/api/issues/${encodeURIComponent(issue.owner)}/${encodeURIComponent(issue.name)}/${issue.number}`,
+        {
+          method: "PATCH",
+          body: JSON.stringify({
+            expectedUpdatedAt: issue.updatedAt,
+            [field]: value,
+          }),
+        },
+      );
       await load(true, true);
     } catch (cause) {
       await load(false, true);
@@ -214,10 +291,26 @@ export function KanbanBoard({
   };
 
   return (
-    <section className={viewMode === "gantt" ? "workspace-view workspace-view--gantt" : "workspace-view"}>
-      {error && <><ErrorNotice message={error} /><button type="button" onClick={() => void load(true, true)}>{t("retry")}</button></>}
+    <section
+      className={
+        viewMode === "gantt"
+          ? "workspace-view workspace-view--gantt"
+          : "workspace-view"
+      }
+    >
+      {error && (
+        <>
+          <ErrorNotice message={error} />
+          <button type="button" onClick={() => void load(true, true)}>
+            {t("retry")}
+          </button>
+        </>
+      )}
       <PageHeader
-        title={repositoryView?.fullName ?? tCommon(viewMode === "gantt" ? "gantt" : "kanban")}
+        title={
+          repositoryView?.fullName ??
+          tCommon(viewMode === "gantt" ? "gantt" : "kanban")
+        }
         compact
       />
       {viewMode === "gantt" ? (
@@ -225,8 +318,16 @@ export function KanbanBoard({
           <GanttBoard
             issues={ganttView.issues}
             repository={repository}
-            emptyMessage={"repositories" in ganttView && ganttView.repositories.length === 0 ? t("noReadableRepositories") : undefined}
-            returnTo={buildWorkViewReturnTo(location.pathname, location.search, "gantt")}
+            emptyMessage={
+              "repositories" in ganttView && ganttView.repositories.length === 0
+                ? t("noReadableRepositories")
+                : undefined
+            }
+            returnTo={buildWorkViewReturnTo(
+              location.pathname,
+              location.search,
+              "gantt",
+            )}
             filters={filters}
             commonFilters={commonFilters}
             currentUserLogin={login}
@@ -241,8 +342,26 @@ export function KanbanBoard({
           <LoadingState />
         )
       ) : (
-        <WorkViewLayout controls={controls} commonFilters={commonFilters} collapseCommonFiltersOnMobile filters={filters} repositoryFixed={Boolean(repository)} resultCount={allCards.filter((issue) => matchesWorkViewFilters(issue, filters, login) && matchesRecentDoneVisibility(issue, recentDoneOnly)).length} recentDoneOnly={recentDoneOnly} error={Boolean(error)} userProfiles={userProfiles}>
-          {hasNoReadableRepositories && <EmptyState>{t("noReadableRepositories")}</EmptyState>}
+        <WorkViewLayout
+          controls={controls}
+          commonFilters={commonFilters}
+          collapseCommonFiltersOnMobile
+          filters={filters}
+          repositoryFixed={Boolean(repository)}
+          resultCount={
+            allCards.filter(
+              (issue) =>
+                matchesWorkViewFilters(issue, filters, login) &&
+                matchesRecentDoneVisibility(issue, recentDoneOnly),
+            ).length
+          }
+          recentDoneOnly={recentDoneOnly}
+          error={Boolean(error)}
+          userProfiles={userProfiles}
+        >
+          {hasNoReadableRepositories && (
+            <EmptyState>{t("noReadableRepositories")}</EmptyState>
+          )}
           {isMobileViewport && (view?.columns.length ?? 0) > 0 && (
             <div className="field kanban-lane-picker">
               <label htmlFor="kanban-active-column">{t("statusColumn")}</label>
@@ -253,7 +372,8 @@ export function KanbanBoard({
               >
                 {view?.columns.map((column) => (
                   <option key={column.stateKey} value={column.stateKey}>
-                    {column.displayName}（{formatNumber(column.cards.length, i18n.language)}）
+                    {column.displayName}（
+                    {formatNumber(column.cards.length, i18n.language)}）
                   </option>
                 ))}
               </select>
@@ -262,18 +382,23 @@ export function KanbanBoard({
           <div
             className={`kanban-board${isMobileViewport ? " kanban-board-mobile" : ""}`}
           >
-            {!hasNoReadableRepositories && filteredColumns.map((column) => (
-              <KanbanColumn
-                key={column.stateKey}
-                column={column}
-                dragged={dragged}
-                onDragStart={setDragged}
-                onDropCard={move}
-                returnTo={buildWorkViewReturnTo(location.pathname, location.search, "kanban")}
-                onMetadataSave={saveIssueMetadata}
-                showIssueNumber
-              />
-            ))}
+            {!hasNoReadableRepositories &&
+              filteredColumns.map((column) => (
+                <KanbanColumn
+                  key={column.stateKey}
+                  column={column}
+                  dragged={dragged}
+                  onDragStart={setDragged}
+                  onDropCard={move}
+                  returnTo={buildWorkViewReturnTo(
+                    location.pathname,
+                    location.search,
+                    "kanban",
+                  )}
+                  onMetadataSave={saveIssueMetadata}
+                  showIssueNumber
+                />
+              ))}
           </div>
         </WorkViewLayout>
       )}

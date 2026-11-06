@@ -19,28 +19,37 @@ export const apiErrors = defineLocaleResource({
     title: "The request could not be completed",
     detail: "Source details",
     "auth.required": "Sign in to continue.",
-    "auth.csrf_failed": "Security validation failed. Reload the page and try again.",
+    "auth.csrf_failed":
+      "Security validation failed. Reload the page and try again.",
     "auth.oauth_code_required": "The OAuth authorization code is missing.",
     "auth.oauth_login_failed": "Gitea sign-in failed. Try again later.",
     "permission.denied": "You do not have permission to perform this action.",
     "resource.not_found": "The requested resource was not found.",
     "resource.conflict": "The data has changed. Reload and try again.",
-    "validation.invalid_request": "The submitted data is invalid. Check it and try again.",
+    "validation.invalid_request":
+      "The submitted data is invalid. Check it and try again.",
     "gitea.unavailable": "Gitea is temporarily unavailable. Try again later.",
-    "server.internal_error": "The Portal encountered an internal error. Try again later.",
+    "server.internal_error":
+      "The Portal encountered an internal error. Try again later.",
   },
   ja: {
     title: "リクエストを完了できませんでした",
     detail: "接続先の詳細",
     "auth.required": "続行するにはログインしてください。",
-    "auth.csrf_failed": "セキュリティ検証に失敗しました。ページを再読み込みして、もう一度お試しください。",
+    "auth.csrf_failed":
+      "セキュリティ検証に失敗しました。ページを再読み込みして、もう一度お試しください。",
     "auth.oauth_code_required": "OAuth 認証コードがありません。",
-    "auth.oauth_login_failed": "Gitea へのログインに失敗しました。しばらくしてからもう一度お試しください。",
+    "auth.oauth_login_failed":
+      "Gitea へのログインに失敗しました。しばらくしてからもう一度お試しください。",
     "permission.denied": "この操作を実行する権限がありません。",
     "resource.not_found": "指定されたリソースが見つかりません。",
-    "resource.conflict": "データが更新されています。再読み込みして、もう一度お試しください。",
-    "validation.invalid_request": "入力内容が無効です。確認して、もう一度お試しください。",
-    "gitea.unavailable": "Gitea は一時的に利用できません。しばらくしてからもう一度お試しください。",
-    "server.internal_error": "Portal で内部エラーが発生しました。しばらくしてからもう一度お試しください。",
+    "resource.conflict":
+      "データが更新されています。再読み込みして、もう一度お試しください。",
+    "validation.invalid_request":
+      "入力内容が無効です。確認して、もう一度お試しください。",
+    "gitea.unavailable":
+      "Gitea は一時的に利用できません。しばらくしてからもう一度お試しください。",
+    "server.internal_error":
+      "Portal で内部エラーが発生しました。しばらくしてからもう一度お試しください。",
   },
 });

@@ -2,7 +2,12 @@ import { useEffect, useState } from "react";
 import { ErrorNotice } from "../../components/feedback/ErrorNotice";
 import { LoadingState } from "../../components/feedback/LoadingState";
 import { routePaths } from "../../app/routes";
-import { api, toUserFacingError, type Repository, type UserFacingError } from "../../lib/api";
+import {
+  api,
+  toUserFacingError,
+  type Repository,
+  type UserFacingError,
+} from "../../lib/api";
 import { IssueListPage } from "../issues/IssueListPage";
 import { KanbanBoard } from "../work-views/KanbanBoard";
 import { useTranslation } from "react-i18next";
@@ -63,7 +68,11 @@ export function RepositoryWorkspacePage({
         <IssueListPage repository={{ owner, name: repo }} login={login} />
       )}
       {(view === "kanban" || view === "gantt") && (
-        <KanbanBoard repository={{ owner, name: repo }} viewMode={view} login={login} />
+        <KanbanBoard
+          repository={{ owner, name: repo }}
+          viewMode={view}
+          login={login}
+        />
       )}
     </section>
   );

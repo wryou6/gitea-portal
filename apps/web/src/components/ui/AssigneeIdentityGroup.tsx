@@ -1,8 +1,5 @@
 import { useTranslation } from "react-i18next";
-import {
-  userDisplayName,
-  type UserProfile,
-} from "../../lib/user-profiles";
+import { userDisplayName, type UserProfile } from "../../lib/user-profiles";
 import { UserAvatar } from "./UserAvatar";
 import { UserIdentity } from "./UserIdentity";
 

@@ -14,7 +14,7 @@ description: "Implementation tasks for Portal multilingual interface"
 
 **Purpose**: Add the selected i18n runtime dependency.
 
-- [X] T001 Add `i18next` and `react-i18next` to `apps/web/package.json` and update `pnpm-lock.yaml`.
+- [x] T001 Add `i18next` and `react-i18next` to `apps/web/package.json` and update `pnpm-lock.yaml`.
 
 ---
 
@@ -22,8 +22,8 @@ description: "Implementation tasks for Portal multilingual interface"
 
 **Purpose**: Provide locale identifiers, typed static resources, and the shared translator required by every story.
 
-- [X] T002 Create supported locale resolution and the typed i18next singleton in `apps/web/src/i18n/locales.ts` and `apps/web/src/i18n/index.ts`, with namespace resource modules under `apps/web/src/i18n/resources/`.
-- [X] T003 Record Gitea release, locale catalog keys, and Portal-only terminology provenance in `apps/web/src/i18n/terminology.md`.
+- [x] T002 Create supported locale resolution and the typed i18next singleton in `apps/web/src/i18n/locales.ts` and `apps/web/src/i18n/index.ts`, with namespace resource modules under `apps/web/src/i18n/resources/`.
+- [x] T003 Record Gitea release, locale catalog keys, and Portal-only terminology provenance in `apps/web/src/i18n/terminology.md`.
 
 **Checkpoint**: Shared locale runtime and terminology source map are ready.
 
@@ -37,9 +37,9 @@ description: "Implementation tasks for Portal multilingual interface"
 
 ### Implementation
 
-- [X] T004 [US1] Implement browser-language resolution, account-keyed localStorage persistence, and storage-failure fallback in `apps/web/src/features/settings/locale-preference.ts`.
-- [X] T005 [US1] Resolve the authenticated login locale before React mount in `apps/web/src/main.tsx`, initialize the i18n runtime, and synchronize document `lang` in `apps/web/src/app/App.tsx`.
-- [X] T006 [US1] Add the accessible language selector and immediate locale switching to `apps/web/src/features/settings/SettingsPage.tsx`, with translated labels in `apps/web/src/i18n/resources/settings.ts`.
+- [x] T004 [US1] Implement browser-language resolution, account-keyed localStorage persistence, and storage-failure fallback in `apps/web/src/features/settings/locale-preference.ts`.
+- [x] T005 [US1] Resolve the authenticated login locale before React mount in `apps/web/src/main.tsx`, initialize the i18n runtime, and synchronize document `lang` in `apps/web/src/app/App.tsx`.
+- [x] T006 [US1] Add the accessible language selector and immediate locale switching to `apps/web/src/features/settings/SettingsPage.tsx`, with translated labels in `apps/web/src/i18n/resources/settings.ts`.
 
 **Checkpoint**: Locale selection, account isolation, reload restoration, and browser fallback work independently of the localized feature surfaces.
 
@@ -53,12 +53,12 @@ description: "Implementation tasks for Portal multilingual interface"
 
 ### Implementation
 
-- [X] T007 [P] [US2] Localize application navigation, shared page chrome, workspace selection, and repository workspace messages in `apps/web/src/components/layout/AppShell.tsx`, `apps/web/src/components/layout/WorkspaceSelector.tsx`, `apps/web/src/features/repositories/RepositoryWorkspacePage.tsx`, and `apps/web/src/i18n/resources/common.ts`.
-- [X] T008 [P] [US2] Localize issue list/detail/create/edit/filter/comment forms, validation, and accessibility copy in `apps/web/src/features/issues/` and `apps/web/src/i18n/resources/issues.ts`.
-- [X] T009 [P] [US2] Localize Board list/editor/issues, Kanban, Gantt, empty/loading states, and accessibility copy in `apps/web/src/features/boards/` and `apps/web/src/i18n/resources/boards.ts`.
-- [X] T010 [P] [US2] Localize shared loading, empty, permission-denied, and general feedback components in `apps/web/src/components/feedback/` and `apps/web/src/i18n/resources/feedback.ts`.
-- [X] T011 [US2] Replace hardcoded Issue Type, Priority, fixed workflow state, transition reason, and next-action display text with locale keys; add stable `nextActionKey` through `packages/domain/src/workflow.ts`, `packages/domain/src/issue.ts`, `apps/api/src/issues/issue-service.ts`, `apps/web/src/lib/api.ts`, and the relevant issue/board components.
-- [X] T012 [US2] Format dates, timestamps, counts, and pluralized copy with `Intl` using the active locale while preserving date-only calendar values in `apps/web/src/features/issues/IssueComments.tsx`, `apps/web/src/features/issues/IssueDetailHeader.tsx`, `apps/web/src/features/issues/IssueRow.tsx`, `apps/web/src/features/issues/ScheduleDates.tsx`, and `apps/web/src/features/boards/GanttBoard.tsx`.
+- [x] T007 [P] [US2] Localize application navigation, shared page chrome, workspace selection, and repository workspace messages in `apps/web/src/components/layout/AppShell.tsx`, `apps/web/src/components/layout/WorkspaceSelector.tsx`, `apps/web/src/features/repositories/RepositoryWorkspacePage.tsx`, and `apps/web/src/i18n/resources/common.ts`.
+- [x] T008 [P] [US2] Localize issue list/detail/create/edit/filter/comment forms, validation, and accessibility copy in `apps/web/src/features/issues/` and `apps/web/src/i18n/resources/issues.ts`.
+- [x] T009 [P] [US2] Localize Board list/editor/issues, Kanban, Gantt, empty/loading states, and accessibility copy in `apps/web/src/features/boards/` and `apps/web/src/i18n/resources/boards.ts`.
+- [x] T010 [P] [US2] Localize shared loading, empty, permission-denied, and general feedback components in `apps/web/src/components/feedback/` and `apps/web/src/i18n/resources/feedback.ts`.
+- [x] T011 [US2] Replace hardcoded Issue Type, Priority, fixed workflow state, transition reason, and next-action display text with locale keys; add stable `nextActionKey` through `packages/domain/src/workflow.ts`, `packages/domain/src/issue.ts`, `apps/api/src/issues/issue-service.ts`, `apps/web/src/lib/api.ts`, and the relevant issue/board components.
+- [x] T012 [US2] Format dates, timestamps, counts, and pluralized copy with `Intl` using the active locale while preserving date-only calendar values in `apps/web/src/features/issues/IssueComments.tsx`, `apps/web/src/features/issues/IssueDetailHeader.tsx`, `apps/web/src/features/issues/IssueRow.tsx`, `apps/web/src/features/issues/ScheduleDates.tsx`, and `apps/web/src/features/boards/GanttBoard.tsx`.
 
 **Checkpoint**: All Portal-owned primary surfaces display the selected locale, and all Gitea-backed content and workflow values remain unchanged.
 
@@ -72,10 +72,10 @@ description: "Implementation tasks for Portal multilingual interface"
 
 ### Implementation
 
-- [X] T013 [US3] Define shared Portal API error code, parameter, and response types and export them from `packages/domain/src/api-error.ts` and `packages/domain/src/index.ts`.
-- [X] T014 [US3] Emit stable codes and optional interpolation parameters from Portal errors while preserving HTTP status and the legacy `error` field in `apps/api/src/errors.ts`, `apps/api/src/http/error-handler.ts`, and API route/service error call sites under `apps/api/src/`.
-- [X] T015 [US3] Parse typed error code, parameters, and raw upstream detail without discarding compatibility fields in `apps/web/src/lib/api.ts`.
-- [X] T016 [US3] Translate known error summaries and render raw upstream detail separately in `apps/web/src/components/feedback/ErrorNotice.tsx` and `apps/web/src/i18n/resources/api-errors.ts`.
+- [x] T013 [US3] Define shared Portal API error code, parameter, and response types and export them from `packages/domain/src/api-error.ts` and `packages/domain/src/index.ts`.
+- [x] T014 [US3] Emit stable codes and optional interpolation parameters from Portal errors while preserving HTTP status and the legacy `error` field in `apps/api/src/errors.ts`, `apps/api/src/http/error-handler.ts`, and API route/service error call sites under `apps/api/src/`.
+- [x] T015 [US3] Parse typed error code, parameters, and raw upstream detail without discarding compatibility fields in `apps/web/src/lib/api.ts`.
+- [x] T016 [US3] Translate known error summaries and render raw upstream detail separately in `apps/web/src/components/feedback/ErrorNotice.tsx` and `apps/web/src/i18n/resources/api-errors.ts`.
 
 **Checkpoint**: Portal error summaries follow the selected locale; upstream Gitea content remains visible in its original language.
 
@@ -85,9 +85,9 @@ description: "Implementation tasks for Portal multilingual interface"
 
 **Purpose**: Close translation gaps and verify the complete feature against the design artifacts.
 
-- [X] T017 Review user-visible strings and locale-key parity across `apps/web/src/`, then complete terminology provenance in `apps/web/src/i18n/terminology.md`.
-- [X] T018 Run `pnpm.cmd typecheck`, `pnpm.cmd build`, and the manual scenarios in `specs/014-multilingual-interface/quickstart.md`; record results and resolve any feature regressions.
-    - Root typecheck/build passed. Authenticated manual results, the two translation fixes and the protected-label edit fix are recorded in `quickstart.md`.
+- [x] T017 Review user-visible strings and locale-key parity across `apps/web/src/`, then complete terminology provenance in `apps/web/src/i18n/terminology.md`.
+- [x] T018 Run `pnpm.cmd typecheck`, `pnpm.cmd build`, and the manual scenarios in `specs/014-multilingual-interface/quickstart.md`; record results and resolve any feature regressions.
+  - Root typecheck/build passed. Authenticated manual results, the two translation fixes and the protected-label edit fix are recorded in `quickstart.md`.
 
 ## Dependencies & Execution Order
 
@@ -138,5 +138,5 @@ Task: T010 shared feedback components and feedback resources
 
 ## Phase 7: Convergence
 
-- [X] T019 Run authenticated end-to-end locale, account-preference, source-data-preservation, and localized-error scenarios from `quickstart.md` against an available API/Gitea instance; record results and resolve surfaced implementation gaps per SC-001, SC-002, SC-003, and SC-005.
-    - Authenticated Portal/Gitea checks passed; account switching used a mocked session identity for the second locale key. Error summaries/details and source-data fingerprints are recorded in `quickstart.md`.
+- [x] T019 Run authenticated end-to-end locale, account-preference, source-data-preservation, and localized-error scenarios from `quickstart.md` against an available API/Gitea instance; record results and resolve surfaced implementation gaps per SC-001, SC-002, SC-003, and SC-005.
+  - Authenticated Portal/Gitea checks passed; account switching used a mocked session identity for the second locale key. Error summaries/details and source-data fingerprints are recorded in `quickstart.md`.

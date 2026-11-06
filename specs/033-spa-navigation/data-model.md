@@ -4,12 +4,12 @@ This feature adds no persisted data and no API entities. Navigation state remain
 
 ## Portal Location
 
-| Field | Meaning |
-|---|---|
-| `pathname` | Current Portal destination; parsed by the existing route resolver. |
-| `search` | Existing route-specific query state, including filters, List sorting, Gantt date/scale, repository selection, and Issue `returnTo`. |
-| `hash` | Browser fragment when present; preserve as part of normal link navigation. |
-| `state` | Optional transient browser-history state; no new feature data is stored here. |
+| Field      | Meaning                                                                                                                             |
+| ---------- | ----------------------------------------------------------------------------------------------------------------------------------- |
+| `pathname` | Current Portal destination; parsed by the existing route resolver.                                                                  |
+| `search`   | Existing route-specific query state, including filters, List sorting, Gantt date/scale, repository selection, and Issue `returnTo`. |
+| `hash`     | Browser fragment when present; preserve as part of normal link navigation.                                                          |
+| `state`    | Optional transient browser-history state; no new feature data is stored here.                                                       |
 
 ## History Entry
 

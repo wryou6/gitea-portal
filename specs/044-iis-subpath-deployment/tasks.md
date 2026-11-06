@@ -28,11 +28,11 @@ description: "IIS 子路徑部署支援 implementation tasks"
 
 ### Implementation for User Story 1
 
-- [X] T001 [P] [US1] Apply the configured Vite base path to production assets, React Router basename, API requests, login/logout navigation, and favicon references in `apps/web/vite.config.ts`, `apps/web/src/vite-env.d.ts`, `apps/web/src/main.tsx`, `apps/web/src/lib/api.ts`, `apps/web/src/features/auth/LoginPage.tsx`, and `apps/web/src/components/layout/AppShell.tsx`.
-- [X] T002 [P] [US1] Derive the public child path from `WEB_ORIGIN` and use it consistently for session/CSRF and OAuth transaction cookie creation and clearing in `apps/api/src/config/web-path.ts`, `apps/api/src/auth/session.ts`, `apps/api/src/auth/oauth-state.ts`, `apps/api/src/http/error-handler.ts`, and `apps/api/src/http/routes.ts`.
-- [X] T003 [US1] Preserve safe OAuth return destinations under the configured child path, including the default, callback success, cancellation, and failure paths, in `apps/api/src/auth/oauth-return-to.ts` and `apps/api/src/http/routes.ts`.
-- [X] T004 [P] [US1] Document `/issue` build settings, public `WEB_ORIGIN` and OAuth callback values, host forwarding, and SPA fallback prerequisites in `README.md`, `specs/044-iis-subpath-deployment/contracts/deployment-path.md`, and `specs/044-iis-subpath-deployment/quickstart.md`.
-- [X] T005 [P] [US1] Add an IIS `web.config` fallback rule to `apps/web/public/web.config` that rewrites only missing SPA routes to `index.html`, preserves existing files/directories, and excludes `api` and `auth` paths.
+- [x] T001 [P] [US1] Apply the configured Vite base path to production assets, React Router basename, API requests, login/logout navigation, and favicon references in `apps/web/vite.config.ts`, `apps/web/src/vite-env.d.ts`, `apps/web/src/main.tsx`, `apps/web/src/lib/api.ts`, `apps/web/src/features/auth/LoginPage.tsx`, and `apps/web/src/components/layout/AppShell.tsx`.
+- [x] T002 [P] [US1] Derive the public child path from `WEB_ORIGIN` and use it consistently for session/CSRF and OAuth transaction cookie creation and clearing in `apps/api/src/config/web-path.ts`, `apps/api/src/auth/session.ts`, `apps/api/src/auth/oauth-state.ts`, `apps/api/src/http/error-handler.ts`, and `apps/api/src/http/routes.ts`.
+- [x] T003 [US1] Preserve safe OAuth return destinations under the configured child path, including the default, callback success, cancellation, and failure paths, in `apps/api/src/auth/oauth-return-to.ts` and `apps/api/src/http/routes.ts`.
+- [x] T004 [P] [US1] Document `/issue` build settings, public `WEB_ORIGIN` and OAuth callback values, host forwarding, and SPA fallback prerequisites in `README.md`, `specs/044-iis-subpath-deployment/contracts/deployment-path.md`, and `specs/044-iis-subpath-deployment/quickstart.md`.
+- [x] T005 [P] [US1] Add an IIS `web.config` fallback rule to `apps/web/public/web.config` that rewrites only missing SPA routes to `index.html`, preserves existing files/directories, and excludes `api` and `auth` paths.
 
 **Checkpoint**: `/issue` build emits scoped assets and browser URLs; API callbacks, return destinations, and cookies preserve the same public path.
 
@@ -46,8 +46,8 @@ description: "IIS 子路徑部署支援 implementation tasks"
 
 ### Implementation for User Story 2
 
-- [X] T006 [US2] Preserve root defaults and normalize root/child path separators in `apps/web/vite.config.ts`, `apps/web/src/lib/api.ts`, `apps/web/src/main.tsx`, `apps/api/src/config/web-path.ts`, and `apps/api/src/auth/oauth-return-to.ts`.
-- [X] T007 [US2] Run the root and `/issue/` build scenarios and workspace typecheck, inspect `apps/web/dist/index.html`, generated assets, and copied `apps/web/dist/web.config`, and record any remaining host-only acceptance boundary in `specs/044-iis-subpath-deployment/quickstart.md`.
+- [x] T006 [US2] Preserve root defaults and normalize root/child path separators in `apps/web/vite.config.ts`, `apps/web/src/lib/api.ts`, `apps/web/src/main.tsx`, `apps/api/src/config/web-path.ts`, and `apps/api/src/auth/oauth-return-to.ts`.
+- [x] T007 [US2] Run the root and `/issue/` build scenarios and workspace typecheck, inspect `apps/web/dist/index.html`, generated assets, and copied `apps/web/dist/web.config`, and record any remaining host-only acceptance boundary in `specs/044-iis-subpath-deployment/quickstart.md`.
 
 **Checkpoint**: Root and child deployments produce matching paths without changing existing API route names.
 

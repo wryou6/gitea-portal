@@ -11,7 +11,12 @@ import {
 import { buildTimelineCells } from "./gantt-timeline";
 import { GANTT_FIXED_FIELDS } from "./gantt-view-preference";
 
-const cells = buildTimelineCells("2026-09-01", "2026-10-15", "day", "2026-09-15");
+const cells = buildTimelineCells(
+  "2026-09-01",
+  "2026-10-15",
+  "day",
+  "2026-09-15",
+);
 const columns = [
   { field: "repository" as const, label: "Repository" },
   ...GANTT_FIXED_FIELDS.map((field) => ({ field, label: field })),
@@ -21,7 +26,10 @@ function LocalizedGanttIssueRow(props: ComponentProps<typeof GanttIssueRow>) {
   const { t } = useTranslation("issues");
   const localizedColumns = props.columns.map(({ field }) => ({
     field,
-    label: field === "repository" ? t("repository") : t(field === "priority" ? "priorityLabel" : field),
+    label:
+      field === "repository"
+        ? t("repository")
+        : t(field === "priority" ? "priorityLabel" : field),
   }));
   return <GanttIssueRow {...props} columns={localizedColumns} />;
 }
@@ -107,7 +115,12 @@ export const FutureDueDate: Story = {
 };
 
 export const ClosedIssueWithPastDueDate: Story = {
-  args: { issue: { ...demoCompletedIssueWithMultipleAssignees, dueDate: "2026-09-24" } },
+  args: {
+    issue: {
+      ...demoCompletedIssueWithMultipleAssignees,
+      dueDate: "2026-09-24",
+    },
+  },
 };
 
 export const MultipleAssignees: Story = {
@@ -178,7 +191,9 @@ export const StartDateOnly: Story = {
 };
 
 export const DueDateOnly: Story = {
-  args: { issue: { ...demoIssue, startDate: null, scheduleStatus: "scheduled" } },
+  args: {
+    issue: { ...demoIssue, startDate: null, scheduleStatus: "scheduled" },
+  },
 };
 
 export const MissingType: Story = {
@@ -201,7 +216,9 @@ export const ConflictingTypeInDateAnomaly: Story = {
 };
 
 export const MissingPriority: Story = {
-  args: { issue: { ...demoIssue, priority: null, labels: [{ name: "type:feature" }] } },
+  args: {
+    issue: { ...demoIssue, priority: null, labels: [{ name: "type:feature" }] },
+  },
 };
 
 export const UnknownPriority: Story = {

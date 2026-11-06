@@ -29,13 +29,23 @@ export function registerRepositoryRoutes(
   app.get("/api/repositories/gantt", async (request) => {
     const client = giteaFor(request, config.giteaBaseUrl, config);
     const repositories = await client.repositories();
-    const groups = await Promise.all(repositories.map((repository) =>
-      client.repositoryIssuesAllPages(repository, { state: "all", type: "issues" }),
-    ));
-    const issues = groups.flatMap((group) => group.map(mapIssue)).sort((left, right) =>
-      Date.parse(right.updatedAt) - Date.parse(left.updatedAt) ||
-      left.owner.localeCompare(right.owner) || left.name.localeCompare(right.name) || left.number - right.number,
+    const groups = await Promise.all(
+      repositories.map((repository) =>
+        client.repositoryIssuesAllPages(repository, {
+          state: "all",
+          type: "issues",
+        }),
+      ),
     );
+    const issues = groups
+      .flatMap((group) => group.map(mapIssue))
+      .sort(
+        (left, right) =>
+          Date.parse(right.updatedAt) - Date.parse(left.updatedAt) ||
+          left.owner.localeCompare(right.owner) ||
+          left.name.localeCompare(right.name) ||
+          left.number - right.number,
+      );
     return { repositories, issues } satisfies AllRepositoriesGanttView;
   });
 
@@ -55,11 +65,13 @@ export function registerRepositoryRoutes(
     const repository = { owner: params.owner, name: params.repo };
     if (!(await canAccessRepository(client, repository, "read")))
       throw new PortalError(403, "目前使用者沒有讀取此 Repository 的權限");
-    return (await client.assignees(repository)).map(({ login, fullName, avatarUrl }) => ({
-      login,
-      fullName,
-      avatarUrl,
-    }));
+    return (await client.assignees(repository)).map(
+      ({ login, fullName, avatarUrl }) => ({
+        login,
+        fullName,
+        avatarUrl,
+      }),
+    );
   });
 
   app.get("/api/repositories/:owner/:repo/gantt", async (request) => {

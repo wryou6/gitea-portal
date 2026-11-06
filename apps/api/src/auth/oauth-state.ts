@@ -40,7 +40,9 @@ export function createOAuthTransaction(
     returnTo,
     expiresAt: Date.now() + TRANSACTION_LIFETIME_MS,
   };
-  const payload = Buffer.from(JSON.stringify(transaction)).toString("base64url");
+  const payload = Buffer.from(JSON.stringify(transaction)).toString(
+    "base64url",
+  );
   const value = `${payload}.${sign(payload, config.sessionSecret)}`;
   const secure = secureCookie(config) ? "; Secure" : "";
   const cookiePath = `${webBasePath(config)}/auth/callback`;

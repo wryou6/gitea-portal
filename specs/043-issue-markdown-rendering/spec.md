@@ -8,7 +8,7 @@
 
 **Input**: User description: "想要 issue page 可以渲染 markdown"
 
-## User Scenarios & Testing *(mandatory)*
+## User Scenarios & Testing _(mandatory)_
 
 ### User Story 1 - 閱讀 Issue 描述與留言 (Priority: P1)
 
@@ -31,7 +31,7 @@
 - Markdown 內含不支援或不安全的 URI scheme 時，不得形成可執行導覽。
 - 原始 HTML 標籤與事件處理屬性不得被當成可執行元素插入頁面。
 
-## Requirements *(mandatory)*
+## Requirements _(mandatory)_
 
 ### Functional Requirements
 
@@ -42,12 +42,12 @@
 - **FR-005**: 一般純文字、空描述及無留言情況 MUST 保持可辨識且符合目前空內容呈現。
 - **FR-006**: Markdown 內容的長程式碼行、長網址與寬表格 MUST 在 Issue 詳情版面中保持可閱讀，不得造成整頁非預期的水平溢出。
 
-### Key Entities *(include if feature involves data)*
+### Key Entities _(include if feature involves data)_
 
 - **Issue 描述**：Gitea Issue 提供的原始 Markdown 文字，由 Issue 詳情頁讀取並呈現。
 - **Issue 留言**：Gitea Issue 提供的留言原始 Markdown 文字；留言者與建立時間仍依既有資料呈現。
 
-## Success Criteria *(mandatory)*
+## Success Criteria _(mandatory)_
 
 ### Measurable Outcomes
 

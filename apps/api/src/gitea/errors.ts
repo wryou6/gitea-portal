@@ -1,7 +1,10 @@
 export class GiteaError extends Error {
-  constructor(public readonly status: number, message: string) {
+  constructor(
+    public readonly status: number,
+    message: string,
+  ) {
     super(message);
-    this.name = 'GiteaError';
+    this.name = "GiteaError";
   }
 }
 

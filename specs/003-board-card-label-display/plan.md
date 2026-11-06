@@ -30,7 +30,7 @@ Board Card 需要隱藏 Board 所選 Workflow Convention 的 Workflow Labels，�
 
 ## Constitution Check
 
-*GATE: Must pass before Phase 0 research. Re-check after Phase 1 design.*
+_GATE: Must pass before Phase 0 research. Re-check after Phase 1 design._
 
 **Result: PASS / no active gates.** `.specify/memory/constitution.md` 仍是未填寫的 Spec Kit 模板，沒有可執行的專案原則或禁止事項。設計遵守 feature spec 的 Gitea Source of Truth、不新增持久化資料與不修改 Issue 的限制。
 

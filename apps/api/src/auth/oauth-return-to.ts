@@ -18,10 +18,7 @@ function isKnownPortalPath(path: string): boolean {
   );
 }
 
-export function safePortalReturnTo(
-  value: unknown,
-  webOrigin: string,
-): string {
+export function safePortalReturnTo(value: unknown, webOrigin: string): string {
   const webUrl = new URL(webOrigin);
   const basePath = webBasePath({ webOrigin });
   const defaultReturnTo = basePath ? `${basePath}/` : DEFAULT_RETURN_TO;
@@ -37,12 +34,14 @@ export function safePortalReturnTo(
   try {
     const origin = webUrl.origin;
     const url = new URL(value, origin);
-    const externalPath = url.pathname.length > 1 ? url.pathname.replace(/\/+$/, "") : url.pathname;
-    const path = basePath && externalPath.startsWith(`${basePath}/`)
-      ? externalPath.slice(basePath.length)
-      : externalPath === basePath
-        ? "/"
-        : externalPath;
+    const externalPath =
+      url.pathname.length > 1 ? url.pathname.replace(/\/+$/, "") : url.pathname;
+    const path =
+      basePath && externalPath.startsWith(`${basePath}/`)
+        ? externalPath.slice(basePath.length)
+        : externalPath === basePath
+          ? "/"
+          : externalPath;
     if (url.origin !== origin || !isKnownPortalPath(path))
       return defaultReturnTo;
 
@@ -53,7 +52,10 @@ export function safePortalReturnTo(
   }
 }
 
-export function withAuthError(returnTo: string, error: "denied" | "failed"): string {
+export function withAuthError(
+  returnTo: string,
+  error: "denied" | "failed",
+): string {
   const url = new URL(returnTo, "http://portal.local");
   url.searchParams.set(AUTH_ERROR_QUERY, error);
   return `${url.pathname}${url.search}`;

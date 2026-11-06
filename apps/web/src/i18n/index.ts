@@ -50,7 +50,16 @@ void i18n.use(initReactI18next).init({
   lng: defaultLocale,
   fallbackLng: defaultLocale,
   defaultNS: "common",
-  ns: ["common", "dashboard", "settings", "auth", "issues", "work-views", "feedback", "api-errors"],
+  ns: [
+    "common",
+    "dashboard",
+    "settings",
+    "auth",
+    "issues",
+    "work-views",
+    "feedback",
+    "api-errors",
+  ],
   interpolation: { escapeValue: false },
   initAsync: false,
 });

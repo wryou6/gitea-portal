@@ -4,12 +4,12 @@
 
 ## 部署拓撲
 
-| 元件 | 部署位置／網址 | 用途 |
-| --- | --- | --- |
-| Portal 前端 | IIS `/issue` 應用程式；實體路徑以 IIS 設定為準 | 提供 `apps/web/dist` 的靜態檔案與 SPA 深層路徑回退 |
-| Portal API | `FCSVR`，`C:\gitea-portal`，TCP `3001` | Node.js/Fastify API，入口 `apps/api/dist/server.js` |
-| Gitea | `http://10.90.108.137:3000` | OAuth 授權與 Gitea API |
-| 使用者入口 | `http://10.90.108.137/issue/` | Portal 公開網址 |
+| 元件        | 部署位置／網址                                 | 用途                                                |
+| ----------- | ---------------------------------------------- | --------------------------------------------------- |
+| Portal 前端 | IIS `/issue` 應用程式；實體路徑以 IIS 設定為準 | 提供 `apps/web/dist` 的靜態檔案與 SPA 深層路徑回退  |
+| Portal API  | `FCSVR`，`C:\gitea-portal`，TCP `3001`         | Node.js/Fastify API，入口 `apps/api/dist/server.js` |
+| Gitea       | `http://10.90.108.137:3000`                    | OAuth 授權與 Gitea API                              |
+| 使用者入口  | `http://10.90.108.137/issue/`                  | Portal 公開網址                                     |
 
 IIS 直接提供前端靜態檔，並將公開 `/issue/api/*`、`/issue/auth/*` 反向代理至本機 `http://127.0.0.1:3001/api/*`、`http://127.0.0.1:3001/auth/*`。API 是獨立 Node.js 程序，不是 IIS 靜態檔。
 
@@ -66,14 +66,14 @@ IIS 伺服器需啟用 URL Rewrite 與 ARR。ARR Proxy 設定如下：
 
 在 IIS `/issue` 應用程式層級建立輸入規則：
 
-| 欄位 | 值 |
-| --- | --- |
-| 名稱 | `Gitea Portal API and Auth Proxy` |
-| 模式 | `^(api|auth)(/.*)?$` |
-| 動作類型 | Rewrite |
-| 重寫 URL | `http://127.0.0.1:3001/{R:1}{R:2}` |
-| 附加查詢字串 | 是 |
-| 停止處理後續規則 | 是 |
+| 欄位             | 值                                 |
+| ---------------- | ---------------------------------- |
+| 名稱             | `Gitea Portal API and Auth Proxy`  |
+| 模式             | `^(api                             | auth)(/.*)?$` |
+| 動作類型         | Rewrite                            |
+| 重寫 URL         | `http://127.0.0.1:3001/{R:1}{R:2}` |
+| 附加查詢字串     | 是                                 |
+| 停止處理後續規則 | 是                                 |
 
 規則必須設在 `/issue` 應用程式層級，因為模式是相對於該應用程式路徑。
 

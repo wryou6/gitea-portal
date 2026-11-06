@@ -1,6 +1,10 @@
 import { useTranslation } from "react-i18next";
 import type { WorkViewFilters } from "./work-view-filters";
-import { profileFor, userDisplayName, type UserProfiles } from "../../lib/user-profiles";
+import {
+  profileFor,
+  userDisplayName,
+  type UserProfiles,
+} from "../../lib/user-profiles";
 
 export function useWorkViewFilterLabels(
   filters: WorkViewFilters,
@@ -36,7 +40,8 @@ export function useWorkViewFilterLabels(
       );
     if (key === "assignee" && value === "unassigned")
       return String(t("unassigned", { ns: "work-views" }));
-    if (key === "assignee") return userDisplayName(profileFor(userProfiles, value));
+    if (key === "assignee")
+      return userDisplayName(profileFor(userProfiles, value));
     return value;
   };
   const filterHeading = (key: string) =>

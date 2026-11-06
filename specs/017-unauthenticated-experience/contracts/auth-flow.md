@@ -2,11 +2,11 @@
 
 ## Session bootstrap
 
-| Result | Web state | User-visible result |
-|---|---|---|
-| Session identity returned | Authenticated | Render current Portal route and shell |
-| Explicit `401 auth.required` | Anonymous | Render standalone login experience; do not render protected route data or shell |
-| Network, `5xx`, malformed response, or any other failure | Unavailable | Render localized service error and retry action; do not label the user unauthenticated |
+| Result                                                   | Web state     | User-visible result                                                                    |
+| -------------------------------------------------------- | ------------- | -------------------------------------------------------------------------------------- |
+| Session identity returned                                | Authenticated | Render current Portal route and shell                                                  |
+| Explicit `401 auth.required`                             | Anonymous     | Render standalone login experience; do not render protected route data or shell        |
+| Network, `5xx`, malformed response, or any other failure | Unavailable   | Render localized service error and retry action; do not label the user unauthenticated |
 
 The bootstrap keeps the existing single session lookup before the first app render. Retrying repeats that lookup.
 

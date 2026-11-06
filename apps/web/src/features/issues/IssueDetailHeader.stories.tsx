@@ -32,7 +32,14 @@ export const FutureDueDate: Story = {
 };
 
 export const ClosedIssueWithPastDueDate: Story = {
-  args: { issue: { ...demoIssue, state: "closed", status: "done", dueDate: localDateOffset(-1) } },
+  args: {
+    issue: {
+      ...demoIssue,
+      state: "closed",
+      status: "done",
+      dueDate: localDateOffset(-1),
+    },
+  },
 };
 
 export const StartDateAnomalyWithOverdueDueDate: Story = {

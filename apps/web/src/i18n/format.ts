@@ -16,7 +16,9 @@ function formatNumericDate(
       ...(includeTime
         ? { hour: "2-digit", minute: "2-digit", hourCycle: "h23" as const }
         : {}),
-    }).formatToParts(date).map(({ type, value }) => [type, value]),
+    })
+      .formatToParts(date)
+      .map(({ type, value }) => [type, value]),
   );
   const year = (parts.year ?? "").padStart(4, "0");
   const month = parts.month ?? "";

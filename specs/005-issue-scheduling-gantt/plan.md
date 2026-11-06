@@ -104,13 +104,13 @@ Gitea due date 與 Issue Labels 是分開的 Gitea mutation，無跨欄位交易
 
 ## Risks and Mitigations
 
-| Risk | Mitigation |
-|---|---|
-| Repository date labels 需要建立/重用共用 Label definitions，可能隨日期累積 | 採精確格式與冪等查找/建立；依確認事項保留未使用 Label，不做自動清理 |
-| Issue due date 更新與 Label PUT 無跨欄位交易 | 更新後重新讀取實際 Gitea 資料；回傳欄位級部分失敗，不宣稱整體成功 |
-| Board 多 Repository、全部分頁讀取延遲或中途失敗 | 併發限制需依現有 API pattern 實作；任何必要分頁失敗顯示整體載入錯誤，不回傳看似完整的部分 Board |
-| Gitea instance 版本與 due_date API 行為可能不同 | Gitea 官方 API 定義 `Issue.due_date` 與建立/編輯欄位；整合驗收仍需在目標內網 Gitea instance 執行 |
-| Issue 的 start date label 被一般使用者改壞或重複 | Strict parser 將錯誤/重複/倒序日期標成 anomaly；不挑一個值當正確排程 |
+| Risk                                                                       | Mitigation                                                                                       |
+| -------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------ |
+| Repository date labels 需要建立/重用共用 Label definitions，可能隨日期累積 | 採精確格式與冪等查找/建立；依確認事項保留未使用 Label，不做自動清理                              |
+| Issue due date 更新與 Label PUT 無跨欄位交易                               | 更新後重新讀取實際 Gitea 資料；回傳欄位級部分失敗，不宣稱整體成功                                |
+| Board 多 Repository、全部分頁讀取延遲或中途失敗                            | 併發限制需依現有 API pattern 實作；任何必要分頁失敗顯示整體載入錯誤，不回傳看似完整的部分 Board  |
+| Gitea instance 版本與 due_date API 行為可能不同                            | Gitea 官方 API 定義 `Issue.due_date` 與建立/編輯欄位；整合驗收仍需在目標內網 Gitea instance 執行 |
+| Issue 的 start date label 被一般使用者改壞或重複                           | Strict parser 將錯誤/重複/倒序日期標成 anomaly；不挑一個值當正確排程                             |
 
 ## Complexity Tracking
 

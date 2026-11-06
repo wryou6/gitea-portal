@@ -145,10 +145,7 @@ export async function transitionIssue(
     throw new PortalError(409, "Issue 已在 Gitea 更新，請重新載入");
   const resolved = resolveIssueStatus(original.state, original.labels);
   if (resolved.kind !== "status")
-    throw new PortalError(
-      409,
-      "Issue Status 異常，請先修正 Gitea Labels",
-    );
+    throw new PortalError(409, "Issue Status 異常，請先修正 Gitea Labels");
   if (resolved.key !== action.fromState)
     throw new PortalError(409, "此原因不適用於 Issue 目前狀態，請重新載入");
 
@@ -169,8 +166,7 @@ export async function transitionIssue(
   const targetState = FIXED_ISSUE_STATUSES.find(
     (state) => state.key === action.toState,
   );
-  if (!targetState)
-    throw new PortalError(422, "Status 動作的目標狀態不存在");
+  if (!targetState) throw new PortalError(422, "Status 動作的目標狀態不存在");
   const actionName = statusActionLabel(action.key);
   await client.ensureLabel(
     repository,

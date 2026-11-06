@@ -33,37 +33,90 @@ const issue: Issue = {
 
 const statusDefinition = {
   states: [
-    { key: "todo", labelName: "status:todo", displayName: "To do", order: 1, giteaState: "open" },
-    { key: "in-progress", labelName: "status:in-progress", displayName: "In progress", order: 2, giteaState: "open" },
-    { key: "done", labelName: null, displayName: "Done", order: 3, giteaState: "closed" },
+    {
+      key: "todo",
+      labelName: "status:todo",
+      displayName: "To do",
+      order: 1,
+      giteaState: "open",
+    },
+    {
+      key: "in-progress",
+      labelName: "status:in-progress",
+      displayName: "In progress",
+      order: 2,
+      giteaState: "open",
+    },
+    {
+      key: "done",
+      labelName: null,
+      displayName: "Done",
+      order: 3,
+      giteaState: "closed",
+    },
   ],
   actions: [
-    { key: "start", fromState: "todo", toState: "in-progress", reasonLabel: "status-action:start", nextAction: "Continue", nextActionKey: "continue", assigneePolicy: "keep-current", labelName: "status:in-progress" },
+    {
+      key: "start",
+      fromState: "todo",
+      toState: "in-progress",
+      reasonLabel: "status-action:start",
+      nextAction: "Continue",
+      nextActionKey: "continue",
+      assigneePolicy: "keep-current",
+      labelName: "status:in-progress",
+    },
   ],
 };
 
-function MockIssueApi({ mode, children }: { mode: "loaded" | "error" | "loading"; children: ReactNode }) {
+function MockIssueApi({
+  mode,
+  children,
+}: {
+  mode: "loaded" | "error" | "loading";
+  children: ReactNode;
+}) {
   useLayoutEffect(() => {
     const originalFetch = window.fetch;
     window.fetch = async (input) => {
       if (mode === "loading") return new Promise<Response>(() => undefined);
-      if (mode === "error") return new Response(JSON.stringify({ error: "Issue unavailable" }), { status: 503 });
+      if (mode === "error")
+        return new Response(JSON.stringify({ error: "Issue unavailable" }), {
+          status: 503,
+        });
       const path = String(input);
       const payload = path.endsWith("/comments")
-        ? [{ id: 1, user: { login: "sam", fullName: "Sam Lee" }, body: "I will review the interaction details.", createdAt: "2026-10-10T09:00:00Z" }]
+        ? [
+            {
+              id: 1,
+              user: { login: "sam", fullName: "Sam Lee" },
+              body: "I will review the interaction details.",
+              createdAt: "2026-10-10T09:00:00Z",
+            },
+          ]
         : path.endsWith("/status-definition")
           ? statusDefinition
           : path.endsWith("/assignees")
             ? [{ login: "sam", fullName: "Sam Lee" }]
             : issue;
-      return new Response(JSON.stringify(payload), { headers: { "Content-Type": "application/json" } });
+      return new Response(JSON.stringify(payload), {
+        headers: { "Content-Type": "application/json" },
+      });
     };
-    return () => { window.fetch = originalFetch; };
+    return () => {
+      window.fetch = originalFetch;
+    };
   }, [mode]);
   return children;
 }
 
-function IssueDetailStory({ mode = "loaded", presentation = "dialog" }: { mode?: "loaded" | "error" | "loading"; presentation?: "dialog" | "page" }) {
+function IssueDetailStory({
+  mode = "loaded",
+  presentation = "dialog",
+}: {
+  mode?: "loaded" | "error" | "loading";
+  presentation?: "dialog" | "page";
+}) {
   return (
     <MockIssueApi mode={mode}>
       <IssueDetailPage
@@ -79,7 +132,10 @@ function IssueDetailStory({ mode = "loaded", presentation = "dialog" }: { mode?:
   );
 }
 
-const meta = { title: "Issues/Issue detail dialog", component: IssueDetailStory } satisfies Meta<typeof IssueDetailStory>;
+const meta = {
+  title: "Issues/Issue detail dialog",
+  component: IssueDetailStory,
+} satisfies Meta<typeof IssueDetailStory>;
 export default meta;
 type Story = StoryObj<typeof meta>;
 
@@ -93,4 +149,6 @@ export const NestedStatusDialogAndFocus: Story = {
     canvasElement.querySelectorAll<HTMLButtonElement>("button")[3]?.click();
   },
 };
-export const DirectFullPage: Story = { args: { mode: "loaded", presentation: "page" } };
+export const DirectFullPage: Story = {
+  args: { mode: "loaded", presentation: "page" },
+};

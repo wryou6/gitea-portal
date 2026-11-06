@@ -1,14 +1,39 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { useState } from "react";
-import { WorkViewFilterBar, WorkViewRecentDoneFilter } from "./WorkViewFilterBar";
-import { createDefaultWorkViewFilters, defaultWorkViewFilters, matchesRecentDoneVisibility, parseWorkViewFilters, type WorkViewFilters } from "./work-view-filters";
+import {
+  WorkViewFilterBar,
+  WorkViewRecentDoneFilter,
+} from "./WorkViewFilterBar";
+import {
+  createDefaultWorkViewFilters,
+  defaultWorkViewFilters,
+  matchesRecentDoneVisibility,
+  parseWorkViewFilters,
+  type WorkViewFilters,
+} from "./work-view-filters";
 import { WorkViewLayout } from "./WorkViewLayout";
 import { demoIssue } from "../../stories/fixtures";
 
-function FilterBarStory({ repositoryFixed = false }: { repositoryFixed?: boolean }) {
+function FilterBarStory({
+  repositoryFixed = false,
+}: {
+  repositoryFixed?: boolean;
+}) {
   const currentUserLogin = "alex";
-  const [filters, setFilters] = useState<WorkViewFilters>(() => parseWorkViewFilters("?priority=high&issueType=bug&state=todo&state=in-progress&assignee=me"));
-  return <WorkViewFilterBar filters={filters} onChange={setFilters} assignees={["alex", "mei"]} currentUserLogin={currentUserLogin} repositoryFixed={repositoryFixed} />;
+  const [filters, setFilters] = useState<WorkViewFilters>(() =>
+    parseWorkViewFilters(
+      "?priority=high&issueType=bug&state=todo&state=in-progress&assignee=me",
+    ),
+  );
+  return (
+    <WorkViewFilterBar
+      filters={filters}
+      onChange={setFilters}
+      assignees={["alex", "mei"]}
+      currentUserLogin={currentUserLogin}
+      repositoryFixed={repositoryFixed}
+    />
+  );
 }
 
 const meta = {
@@ -21,33 +46,82 @@ type Story = StoryObj<typeof meta>;
 export const AllRepositories: Story = {};
 export const RepositoryWorkspace: Story = { args: { repositoryFixed: true } };
 export const SharedFiltersActive: Story = {
-  render: () => <WorkViewFilterBar
-    filters={{ ...createDefaultWorkViewFilters(), assignee: "me", priority: ["high"], issueType: ["bug"], state: ["in-progress"] }}
-    onChange={() => undefined}
-    assignees={["alex", "mei"]}
-    currentUserLogin="alex"
-  />,
+  render: () => (
+    <WorkViewFilterBar
+      filters={{
+        ...createDefaultWorkViewFilters(),
+        assignee: "me",
+        priority: ["high"],
+        issueType: ["bug"],
+        state: ["in-progress"],
+      }}
+      onChange={() => undefined}
+      assignees={["alex", "mei"]}
+      currentUserLogin="alex"
+    />
+  ),
 };
 export const RestoredSharedUrl: Story = {
-  render: () => <WorkViewFilterBar filters={parseWorkViewFilters("?priority=invalid&priority=high&issueType=bug&issueType=task&state=todo&state=in-progress&assignee=mei&repository=old%2Frepo&label=legacy&milestone=legacy")} onChange={() => undefined} assignees={["alex", "mei"]} currentUserLogin="alex" />,
+  render: () => (
+    <WorkViewFilterBar
+      filters={parseWorkViewFilters(
+        "?priority=invalid&priority=high&issueType=bug&issueType=task&state=todo&state=in-progress&assignee=mei&repository=old%2Frepo&label=legacy&milestone=legacy",
+      )}
+      onChange={() => undefined}
+      assignees={["alex", "mei"]}
+      currentUserLogin="alex"
+    />
+  ),
 };
 export const UnfinishedShortcut: Story = {
   render: () => {
-    const [filters, setFilters] = useState(() => parseWorkViewFilters("?state=done"));
-    return <WorkViewFilterBar filters={filters} onChange={setFilters} assignees={["alex", "mei"]} currentUserLogin="alex" />;
+    const [filters, setFilters] = useState(() =>
+      parseWorkViewFilters("?state=done"),
+    );
+    return (
+      <WorkViewFilterBar
+        filters={filters}
+        onChange={setFilters}
+        assignees={["alex", "mei"]}
+        currentUserLogin="alex"
+      />
+    );
   },
 };
 export const UnfinishedWithOneStatusRemoved: Story = {
   render: () => {
-    const [filters, setFilters] = useState(() => parseWorkViewFilters("?state=todo&state=in-progress"));
-    return <WorkViewFilterBar filters={filters} onChange={setFilters} assignees={["alex", "mei"]} currentUserLogin="alex" />;
+    const [filters, setFilters] = useState(() =>
+      parseWorkViewFilters("?state=todo&state=in-progress"),
+    );
+    return (
+      <WorkViewFilterBar
+        filters={filters}
+        onChange={setFilters}
+        assignees={["alex", "mei"]}
+        currentUserLogin="alex"
+      />
+    );
   },
 };
 export const ExplicitAllAssignees: Story = {
-  render: () => <WorkViewFilterBar filters={{ ...defaultWorkViewFilters, assignee: "all" }} onChange={() => undefined} assignees={["alex", "mei"]} currentUserLogin="alex" />,
+  render: () => (
+    <WorkViewFilterBar
+      filters={{ ...defaultWorkViewFilters, assignee: "all" }}
+      onChange={() => undefined}
+      assignees={["alex", "mei"]}
+      currentUserLogin="alex"
+    />
+  ),
 };
 export const QuerylessAllAssignees: Story = {
-  render: () => <WorkViewFilterBar filters={parseWorkViewFilters("")} onChange={() => undefined} assignees={["alex", "mei"]} currentUserLogin="alex" />,
+  render: () => (
+    <WorkViewFilterBar
+      filters={parseWorkViewFilters("")}
+      onChange={() => undefined}
+      assignees={["alex", "mei"]}
+      currentUserLogin="alex"
+    />
+  ),
 };
 export const NarrowLayout: Story = {
   parameters: { viewport: { defaultViewport: "mobile1" } },
@@ -60,25 +134,83 @@ function localDueDate(daysAgo: number): string {
 }
 
 const recentDoneExamples = [
-  { ...demoIssue, number: 101, title: "截止日期為今天", status: "done" as const, state: "closed" as const, dueDate: localDueDate(0) },
-  { ...demoIssue, number: 102, title: "截止日期在起始日（第 30 天）", status: "done" as const, state: "closed" as const, dueDate: localDueDate(29) },
-  { ...demoIssue, number: 103, title: "截止日期超出範圍一天", status: "done" as const, state: "closed" as const, dueDate: localDueDate(30) },
-  { ...demoIssue, number: 104, title: "沒有截止日期", status: "done" as const, state: "closed" as const, dueDate: null },
-  { ...demoIssue, number: 105, title: "未完成項目不受日期限制", status: "todo" as const, dueDate: null },
+  {
+    ...demoIssue,
+    number: 101,
+    title: "截止日期為今天",
+    status: "done" as const,
+    state: "closed" as const,
+    dueDate: localDueDate(0),
+  },
+  {
+    ...demoIssue,
+    number: 102,
+    title: "截止日期在起始日（第 30 天）",
+    status: "done" as const,
+    state: "closed" as const,
+    dueDate: localDueDate(29),
+  },
+  {
+    ...demoIssue,
+    number: 103,
+    title: "截止日期超出範圍一天",
+    status: "done" as const,
+    state: "closed" as const,
+    dueDate: localDueDate(30),
+  },
+  {
+    ...demoIssue,
+    number: 104,
+    title: "沒有截止日期",
+    status: "done" as const,
+    state: "closed" as const,
+    dueDate: null,
+  },
+  {
+    ...demoIssue,
+    number: 105,
+    title: "未完成項目不受日期限制",
+    status: "todo" as const,
+    dueDate: null,
+  },
 ];
 
 function RecentDoneSummaryDemo() {
   const [recentDoneOnly, setRecentDoneOnly] = useState(true);
-  const visible = recentDoneExamples.filter((issue) => matchesRecentDoneVisibility(issue, recentDoneOnly));
+  const visible = recentDoneExamples.filter((issue) =>
+    matchesRecentDoneVisibility(issue, recentDoneOnly),
+  );
   return (
     <WorkViewLayout
-      controls={<WorkViewRecentDoneFilter checked={recentDoneOnly} onChange={setRecentDoneOnly} />}
-      commonFilters={<WorkViewFilterBar filters={{ ...defaultWorkViewFilters, assignee: "me", priority: ["high"], issueType: ["bug"], state: ["todo", "in-progress"] }} onChange={() => undefined} assignees={["alex", "mei"]} currentUserLogin="alex" />}
+      controls={
+        <WorkViewRecentDoneFilter
+          checked={recentDoneOnly}
+          onChange={setRecentDoneOnly}
+        />
+      }
+      commonFilters={
+        <WorkViewFilterBar
+          filters={{
+            ...defaultWorkViewFilters,
+            assignee: "me",
+            priority: ["high"],
+            issueType: ["bug"],
+            state: ["todo", "in-progress"],
+          }}
+          onChange={() => undefined}
+          assignees={["alex", "mei"]}
+          currentUserLogin="alex"
+        />
+      }
       filters={defaultWorkViewFilters}
       resultCount={visible.length}
       recentDoneOnly={recentDoneOnly}
     >
-      <ul>{visible.map((issue) => <li key={issue.number}>{issue.title}</li>)}</ul>
+      <ul>
+        {visible.map((issue) => (
+          <li key={issue.number}>{issue.title}</li>
+        ))}
+      </ul>
     </WorkViewLayout>
   );
 }

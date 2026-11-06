@@ -13,7 +13,15 @@ export function IssueAssigneeRoster({ issue }: { issue: Issue }) {
       {issue.state === "open" && (
         <div>
           <strong>{t("currentAssignee")}</strong>
-          <span>{issue.currentOwner ? <UserIdentity user={profileFor(issue.userProfiles, issue.currentOwner)} /> : t("notAssigned")}</span>
+          <span>
+            {issue.currentOwner ? (
+              <UserIdentity
+                user={profileFor(issue.userProfiles, issue.currentOwner)}
+              />
+            ) : (
+              t("notAssigned")
+            )}
+          </span>
         </div>
       )}
       <div>
@@ -21,7 +29,9 @@ export function IssueAssigneeRoster({ issue }: { issue: Issue }) {
         {issue.assignees.length ? (
           <ol>
             {issue.assignees.map((login) => (
-              <li key={login}><UserIdentity user={profileFor(issue.userProfiles, login)} /></li>
+              <li key={login}>
+                <UserIdentity user={profileFor(issue.userProfiles, login)} />
+              </li>
             ))}
           </ol>
         ) : (

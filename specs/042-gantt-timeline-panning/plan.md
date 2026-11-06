@@ -30,15 +30,15 @@
 
 ## Constitution Check
 
-| Gate | 規範 | 設計處理 | 狀態 |
-|---|---|---|---|
-| I | Gitea 是 Issue 資料唯一來源 | 平移只改變 DOM 水平位置，不儲存位置或建立 Issue mirror | PASS |
-| II | 操作權限必須跟隨目前使用者 | 不新增 API 或 Gitea 操作 | PASS |
-| III | Gitea 寫入必須保全資料並可驗證 | 保留既有未排程建立排程與 bar move/resize 寫入路徑；平移不得觸發寫入 | PASS |
-| IV | 跨來源彙整不得呈現部分結果 | 不改變載入、資料彙整或錯誤處理 | PASS |
-| V-VI | Status 與工作範圍語意 | 不改變 Issue 欄位、Status、Repository 或資料來源呈現 | PASS |
-| VII | 使用者可見文字必須納入多語系 | 不新增可見字串；圖表延續既有 aria-label，新增焦點樣式遵循共用 token | PASS |
-| Process | Spec、plan、tasks、analyze 須先於實作 | 依序完成 plan、tasks、analyze 後才進入實作 | PASS |
+| Gate    | 規範                                  | 設計處理                                                            | 狀態 |
+| ------- | ------------------------------------- | ------------------------------------------------------------------- | ---- |
+| I       | Gitea 是 Issue 資料唯一來源           | 平移只改變 DOM 水平位置，不儲存位置或建立 Issue mirror              | PASS |
+| II      | 操作權限必須跟隨目前使用者            | 不新增 API 或 Gitea 操作                                            | PASS |
+| III     | Gitea 寫入必須保全資料並可驗證        | 保留既有未排程建立排程與 bar move/resize 寫入路徑；平移不得觸發寫入 | PASS |
+| IV      | 跨來源彙整不得呈現部分結果            | 不改變載入、資料彙整或錯誤處理                                      | PASS |
+| V-VI    | Status 與工作範圍語意                 | 不改變 Issue 欄位、Status、Repository 或資料來源呈現                | PASS |
+| VII     | 使用者可見文字必須納入多語系          | 不新增可見字串；圖表延續既有 aria-label，新增焦點樣式遵循共用 token | PASS |
+| Process | Spec、plan、tasks、analyze 須先於實作 | 依序完成 plan、tasks、analyze 後才進入實作                          | PASS |
 
 ## Project Structure
 

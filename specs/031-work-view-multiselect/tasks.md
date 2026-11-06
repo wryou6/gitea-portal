@@ -30,8 +30,8 @@ No setup tasks.
 
 **Purpose**: Establish multi-value state, validation, serialization, and shared match semantics before view controls and API integration.
 
-- [X] T001 Convert `WorkViewFilters` Priority, Issue Type, and Status fields to validated value sets; update parse/serialize, deduplication, empty-set defaults, active-filter counting, and shared matcher in `apps/web/src/features/work-views/work-view-filters.ts`.
-- [X] T002 Preserve repeated Priority, Issue Type, and Status query values and validate each value independently during cross-view navigation and URL sanitization in `apps/web/src/features/work-views/work-view-url-state.ts`.
+- [x] T001 Convert `WorkViewFilters` Priority, Issue Type, and Status fields to validated value sets; update parse/serialize, deduplication, empty-set defaults, active-filter counting, and shared matcher in `apps/web/src/features/work-views/work-view-filters.ts`.
+- [x] T002 Preserve repeated Priority, Issue Type, and Status query values and validate each value independently during cross-view navigation and URL sanitization in `apps/web/src/features/work-views/work-view-url-state.ts`.
 
 **Checkpoint**: All views can read the same validated multi-select URL state and apply OR-within/AND-across matching semantics.
 
@@ -45,9 +45,9 @@ No setup tasks.
 
 ### Implementation for User Story 1
 
-- [X] T003 Add independently toggleable Status Badges, an Unfinished shortcut that replaces the Status set with Todo and In Progress, an All reset, pressed-state accessibility, and individual Status chips in `apps/web/src/features/work-views/WorkViewFilterBar.tsx` and `apps/web/src/features/work-views/work-view-filter-labels.ts` (depends on T001).
-- [X] T004 Add localized Unfinished text and accessible names in `apps/web/src/i18n/resources/work-views.ts` (depends on T003).
-- [X] T005 Add Storybook scenarios for selecting/resetting Unfinished and removing one Status in `apps/web/src/features/work-views/WorkViewFilterBar.stories.tsx` (depends on T003, T004).
+- [x] T003 Add independently toggleable Status Badges, an Unfinished shortcut that replaces the Status set with Todo and In Progress, an All reset, pressed-state accessibility, and individual Status chips in `apps/web/src/features/work-views/WorkViewFilterBar.tsx` and `apps/web/src/features/work-views/work-view-filter-labels.ts` (depends on T001).
+- [x] T004 Add localized Unfinished text and accessible names in `apps/web/src/i18n/resources/work-views.ts` (depends on T003).
+- [x] T005 Add Storybook scenarios for selecting/resetting Unfinished and removing one Status in `apps/web/src/features/work-views/WorkViewFilterBar.stories.tsx` (depends on T003, T004).
 
 **Checkpoint**: The Unfinished shortcut maps to the two underlying selected Statuses; individual Status changes immediately update the shared filter state.
 
@@ -61,10 +61,10 @@ No setup tasks.
 
 ### Implementation for User Story 2
 
-- [X] T006 Make existing Priority and Type Badge choices independently toggleable, provide category-level All reset and per-value removable chips, and preserve Status behavior in `apps/web/src/features/work-views/WorkViewFilterBar.tsx` and `apps/web/src/features/work-views/work-view-filter-labels.ts` (depends on T001, T003).
-- [X] T007 Parse repeated `priority`, `issueType`, and `state` parameters and apply OR within each category and AND across categories to the complete result in `apps/api/src/issues/issue-routes.ts`, `apps/api/src/gitea/client.ts`, and `apps/api/src/issues/issue-search-service.ts` (depends on T001).
-- [X] T008 Encode each selected List filter as a repeated query parameter and remove individual values from List filter state in `apps/web/src/lib/api.ts` and `apps/web/src/features/issues/issue-list-state.ts` (depends on T001, T007).
-- [X] T009 Update the List, Kanban, and Gantt filter stories and fixtures to demonstrate multiple Priority, Type, and Status values plus combined category matching in `apps/web/src/features/issues/IssueListPage.stories.tsx`, `apps/web/src/features/work-views/KanbanBoard.stories.tsx`, `apps/web/src/features/work-views/GanttBoard.stories.tsx`, and `apps/web/src/features/work-views/WorkViewFilterBar.stories.tsx` (depends on T006, T007, T008).
+- [x] T006 Make existing Priority and Type Badge choices independently toggleable, provide category-level All reset and per-value removable chips, and preserve Status behavior in `apps/web/src/features/work-views/WorkViewFilterBar.tsx` and `apps/web/src/features/work-views/work-view-filter-labels.ts` (depends on T001, T003).
+- [x] T007 Parse repeated `priority`, `issueType`, and `state` parameters and apply OR within each category and AND across categories to the complete result in `apps/api/src/issues/issue-routes.ts`, `apps/api/src/gitea/client.ts`, and `apps/api/src/issues/issue-search-service.ts` (depends on T001).
+- [x] T008 Encode each selected List filter as a repeated query parameter and remove individual values from List filter state in `apps/web/src/lib/api.ts` and `apps/web/src/features/issues/issue-list-state.ts` (depends on T001, T007).
+- [x] T009 Update the List, Kanban, and Gantt filter stories and fixtures to demonstrate multiple Priority, Type, and Status values plus combined category matching in `apps/web/src/features/issues/IssueListPage.stories.tsx`, `apps/web/src/features/work-views/KanbanBoard.stories.tsx`, `apps/web/src/features/work-views/GanttBoard.stories.tsx`, and `apps/web/src/features/work-views/WorkViewFilterBar.stories.tsx` (depends on T006, T007, T008).
 
 **Checkpoint**: Priority, Type, and Status multi-selects yield equivalent results in List, Kanban, and Gantt; removing a selected value preserves the other selections.
 
@@ -78,9 +78,9 @@ No setup tasks.
 
 ### Implementation for User Story 3
 
-- [X] T010 Create a browser history entry for each filter change and restore the matching selection/results on `popstate` in `apps/web/src/features/issues/issue-list-state.ts`, `apps/web/src/features/work-views/KanbanBoard.tsx`, and `apps/web/src/features/work-views/GanttBoard.tsx` (depends on T002, T008).
-- [X] T011 Add Storybook coverage for repeated URL restoration, invalid sibling values, and retained multi-selects across List/Kanban/Gantt in `apps/web/src/features/work-views/WorkViewFilterBar.stories.tsx`, `apps/web/src/features/work-views/KanbanBoard.stories.tsx`, and `apps/web/src/features/work-views/GanttBoard.stories.tsx` (depends on T009, T010).
-- [X] T012 Confirm applied-filter summaries, clear-all behavior, and empty-state result counts handle value sets across all three view integrations in `apps/web/src/features/issues/IssueListPage.tsx`, `apps/web/src/features/work-views/KanbanBoard.tsx`, and `apps/web/src/features/work-views/GanttBoard.tsx` (depends on T006, T008, T009). The shared work-view summary uses a value-qualified React key for repeated category entries.
+- [x] T010 Create a browser history entry for each filter change and restore the matching selection/results on `popstate` in `apps/web/src/features/issues/issue-list-state.ts`, `apps/web/src/features/work-views/KanbanBoard.tsx`, and `apps/web/src/features/work-views/GanttBoard.tsx` (depends on T002, T008).
+- [x] T011 Add Storybook coverage for repeated URL restoration, invalid sibling values, and retained multi-selects across List/Kanban/Gantt in `apps/web/src/features/work-views/WorkViewFilterBar.stories.tsx`, `apps/web/src/features/work-views/KanbanBoard.stories.tsx`, and `apps/web/src/features/work-views/GanttBoard.stories.tsx` (depends on T009, T010).
+- [x] T012 Confirm applied-filter summaries, clear-all behavior, and empty-state result counts handle value sets across all three view integrations in `apps/web/src/features/issues/IssueListPage.tsx`, `apps/web/src/features/work-views/KanbanBoard.tsx`, and `apps/web/src/features/work-views/GanttBoard.tsx` (depends on T006, T008, T009). The shared work-view summary uses a value-qualified React key for repeated category entries.
 
 **Checkpoint**: Shared filter sets survive reload and cross-view navigation; summaries and empty states describe the filtered result.
 
@@ -90,8 +90,8 @@ No setup tasks.
 
 **Purpose**: Verify accessible presentation, responsive layout, localization, and the complete workspace build.
 
-- [X] T013 Review multi-select pressed/focus states and narrow layout in `apps/web/src/index.css`; update affected zh-TW, en, and ja strings in `apps/web/src/i18n/resources/work-views.ts` and `apps/web/src/i18n/resources/issues.ts`.
-- [X] T014 Run `pnpm.cmd typecheck`, `pnpm.cmd build`, and `pnpm.cmd --filter @gitea-portal/web build-storybook`; resolve failures in the owning files and record actual outcomes in `specs/031-work-view-multiselect/quickstart.md`.
+- [x] T013 Review multi-select pressed/focus states and narrow layout in `apps/web/src/index.css`; update affected zh-TW, en, and ja strings in `apps/web/src/i18n/resources/work-views.ts` and `apps/web/src/i18n/resources/issues.ts`.
+- [x] T014 Run `pnpm.cmd typecheck`, `pnpm.cmd build`, and `pnpm.cmd --filter @gitea-portal/web build-storybook`; resolve failures in the owning files and record actual outcomes in `specs/031-work-view-multiselect/quickstart.md`.
 
 ## Dependencies & Execution Order
 

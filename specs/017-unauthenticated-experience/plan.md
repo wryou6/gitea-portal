@@ -30,7 +30,7 @@
 
 ## Constitution Check
 
-*GATE: Must pass before Phase 0 research. Re-check after Phase 1 design.*
+_GATE: Must pass before Phase 0 research. Re-check after Phase 1 design._
 
 - **Gitea 為權限與資料來源**: PASS — 續用登入者的 Gitea OAuth 身分，不新增共享憑證或 Issue mirror。
 - **不擴大登入者權限**: PASS — 所有受保護 API 仍以目前使用者的 delegated session 執行；401 只觸發重新登入，不重試原寫入。

@@ -22,9 +22,9 @@ No shared infrastructure or data contract changes are required.
 
 ### Implementation
 
-- [X] T001 [US1] Wrap the cards and empty message in a named, keyboard-focusable scroll region associated with the translated column heading in `apps/web/src/features/work-views/KanbanColumn.tsx`.
-- [X] T002 [US1] Make `.kanban-column` a bounded flex column with a fixed heading and independently scrollable card-list region, including visible focus styling, in `apps/web/src/index.css`.
-- [X] T003 [P] [US1] Extend the Kanban Storybook fixture with enough cards to exercise independent scrolling across statuses and the Anomaly column in `apps/web/src/features/work-views/KanbanBoard.stories.tsx`.
+- [x] T001 [US1] Wrap the cards and empty message in a named, keyboard-focusable scroll region associated with the translated column heading in `apps/web/src/features/work-views/KanbanColumn.tsx`.
+- [x] T002 [US1] Make `.kanban-column` a bounded flex column with a fixed heading and independently scrollable card-list region, including visible focus styling, in `apps/web/src/index.css`.
+- [x] T003 [P] [US1] Extend the Kanban Storybook fixture with enough cards to exercise independent scrolling across statuses and the Anomaly column in `apps/web/src/features/work-views/KanbanBoard.stories.tsx`.
 
 **Checkpoint**: Each status and anomaly list can scroll independently and remains accessible by keyboard.
 
@@ -36,11 +36,11 @@ No shared infrastructure or data contract changes are required.
 
 ### Implementation
 
-- [X] T004 [US2] Constrain Kanban board and Kanban-only work-view content to the available height, disable shared content vertical scrolling only for Kanban, and retain horizontal overflow in `apps/web/src/index.css`.
-- [X] T005 [US2] Adjust the narrow-screen board and selected column to fill the available height beneath the lane picker while retaining the existing single-lane selection behavior in `apps/web/src/index.css`.
-- [X] T006 [US2] Add an opt-in narrow-screen filter disclosure in `apps/web/src/features/work-views/WorkViewLayout.tsx` and enable it only for Kanban in `apps/web/src/features/work-views/KanbanBoard.tsx`; start collapsed on narrow screens, preserve filter state, and keep desktop filters visible.
-- [X] T007 [P] [US2] Add localized expand/collapse labels for the narrow Kanban filters in zh-TW, English, and Japanese in `apps/web/src/i18n/resources/work-views.ts`.
-- [X] T008 [US2] Add a narrow-screen long-list Storybook scenario that verifies the collapsed filter state, expand/collapse behavior, retained filters, lane selection, and internal scrolling in `apps/web/src/features/work-views/KanbanBoard.stories.tsx`.
+- [x] T004 [US2] Constrain Kanban board and Kanban-only work-view content to the available height, disable shared content vertical scrolling only for Kanban, and retain horizontal overflow in `apps/web/src/index.css`.
+- [x] T005 [US2] Adjust the narrow-screen board and selected column to fill the available height beneath the lane picker while retaining the existing single-lane selection behavior in `apps/web/src/index.css`.
+- [x] T006 [US2] Add an opt-in narrow-screen filter disclosure in `apps/web/src/features/work-views/WorkViewLayout.tsx` and enable it only for Kanban in `apps/web/src/features/work-views/KanbanBoard.tsx`; start collapsed on narrow screens, preserve filter state, and keep desktop filters visible.
+- [x] T007 [P] [US2] Add localized expand/collapse labels for the narrow Kanban filters in zh-TW, English, and Japanese in `apps/web/src/i18n/resources/work-views.ts`.
+- [x] T008 [US2] Add a narrow-screen long-list Storybook scenario that verifies the collapsed filter state, expand/collapse behavior, retained filters, lane selection, and internal scrolling in `apps/web/src/features/work-views/KanbanBoard.stories.tsx`.
 
 **Checkpoint**: Desktop and narrow Kanban layouts remain viewport-contained; horizontal browsing, lane selection, and card transitions still work.
 
@@ -48,10 +48,10 @@ No shared infrastructure or data contract changes are required.
 
 **Purpose**: Verify the feature against the project quality gates and manual scenarios.
 
-- [X] T009 Run `pnpm.cmd typecheck` and `pnpm.cmd build` from the repository root; resolve any regressions in the changed Web files.
-- [X] T010 Review the scenarios in `specs/036-kanban-independent-scroll/quickstart.md` against the Storybook examples, including empty lanes, Anomaly behavior, focus visibility, filter disclosure, and drag/drop.
-- [X] T011 Constrain the Repository workspace wrapper to the available height when it contains a work-view layout, so Kanban card lists retain their independent vertical scrolling.
-- [X] T012 Replace invalid nested `:has()` selectors in the Repository workspace height chain and verify independent scrolling in the actual React route with 9 mocked Issues.
+- [x] T009 Run `pnpm.cmd typecheck` and `pnpm.cmd build` from the repository root; resolve any regressions in the changed Web files.
+- [x] T010 Review the scenarios in `specs/036-kanban-independent-scroll/quickstart.md` against the Storybook examples, including empty lanes, Anomaly behavior, focus visibility, filter disclosure, and drag/drop.
+- [x] T011 Constrain the Repository workspace wrapper to the available height when it contains a work-view layout, so Kanban card lists retain their independent vertical scrolling.
+- [x] T012 Replace invalid nested `:has()` selectors in the Repository workspace height chain and verify independent scrolling in the actual React route with 9 mocked Issues.
 
 ## Dependencies & Execution Order
 

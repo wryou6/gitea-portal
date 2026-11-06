@@ -4,7 +4,9 @@ export type Locale = (typeof supportedLocales)[number];
 
 export const defaultLocale: Locale = "zh-TW";
 
-export function resolveLocale(value: string | null | undefined): Locale | undefined {
+export function resolveLocale(
+  value: string | null | undefined,
+): Locale | undefined {
   if (!value) return undefined;
 
   const language = value.trim().replaceAll("_", "-").toLowerCase();
@@ -15,8 +17,9 @@ export function resolveLocale(value: string | null | undefined): Locale | undefi
 }
 
 export function resolveBrowserLocale(
-  languages: readonly string[] =
-    typeof navigator === "undefined" ? [] : navigator.languages,
+  languages: readonly string[] = typeof navigator === "undefined"
+    ? []
+    : navigator.languages,
 ): Locale {
   for (const language of languages) {
     const locale = resolveLocale(language);

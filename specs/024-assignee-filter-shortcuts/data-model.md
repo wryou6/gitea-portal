@@ -4,14 +4,14 @@
 
 ## Work View Filters
 
-| 欄位 | 值 | 語意 |
-|---|---|---|
-| `assignee` | login 字串 | 僅顯示指派給該登入名稱的 Issue |
-| `assignee` | `me` | 僅顯示指派給目前登入者的 Issue；分享後依收件者身分解析 |
-| `assignee` | `unassigned` | 僅顯示沒有負責人的 Issue；沿用既有語意 |
-| `assignee` | `all` | 內部篩選狀態不依負責人限制；網址不輸出此值 |
-| `assignee` | 缺省 | 網址狀態不依負責人限制；Portal 預設導覽連結另帶 `assignee=me` |
-| `priority`, `issueType`, `state`, `repository`, `label`, `milestone` | 現有 filter 值 | 快速切換負責人時原值保留 |
+| 欄位                                                                 | 值             | 語意                                                          |
+| -------------------------------------------------------------------- | -------------- | ------------------------------------------------------------- |
+| `assignee`                                                           | login 字串     | 僅顯示指派給該登入名稱的 Issue                                |
+| `assignee`                                                           | `me`           | 僅顯示指派給目前登入者的 Issue；分享後依收件者身分解析        |
+| `assignee`                                                           | `unassigned`   | 僅顯示沒有負責人的 Issue；沿用既有語意                        |
+| `assignee`                                                           | `all`          | 內部篩選狀態不依負責人限制；網址不輸出此值                    |
+| `assignee`                                                           | 缺省           | 網址狀態不依負責人限制；Portal 預設導覽連結另帶 `assignee=me` |
+| `priority`, `issueType`, `state`, `repository`, `label`, `milestone` | 現有 filter 值 | 快速切換負責人時原值保留                                      |
 
 ## URL Rules
 

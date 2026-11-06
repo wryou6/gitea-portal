@@ -17,7 +17,7 @@
 - Q: Gitea 的 Start date Label 和 Due date 分開寫入，若第二次寫入失敗可能只保存一端；這次拖曳功能要如何界定？ → A: 先另行修訂憲章，再保留完整拖曳；接受兩欄分開寫入，失敗時重新讀取 Gitea 實際值。
 - Q: 哪一筆 Gitea Issue 可用於排程寫入驗收？ → A: 驗收環境中的所有 Issue 都是假資料，可任選一筆測試。
 
-## User Scenarios & Testing *(mandatory)*
+## User Scenarios & Testing _(mandatory)_
 
 ### User Story 1 - 快速辨識今天 (Priority: P1)
 
@@ -65,7 +65,7 @@
 - 今天標記與週末底色重疊時，今天底色優先；排程 bar 仍顯示於底色上方。
 - 日期對齊須以使用者當地日曆日判定，避免跨時區或夏令時間造成偏移。
 
-## Requirements *(mandatory)*
+## Requirements _(mandatory)_
 
 ### Functional Requirements
 
@@ -84,13 +84,13 @@
 - **FR-013**: 本功能 MUST NOT 建立 Portal Issue 副本或改變既有 Issue 篩選、排序及其他檢視資料。
 - **FR-014**: 使用者只修改排程日期時，系統 MUST 保留既有 Type、Priority 與其他未修改 Labels；日期更新 MUST NOT 要求使用者補填不相關欄位。
 
-### Key Entities *(include if data is involved)*
+### Key Entities _(include if data is involved)_
 
 - **Issue 排程**：Gitea 管理的 Start date 與 Due date；可為區間、單日或未排程狀態。
 - **拖曳預覽**：使用者拖曳期間暫時呈現的候選日期，不是已保存資料；拖曳完成並成功保存後才成為 Gitea 排程。
 - **今天標示**：依使用者當地日曆日期定位的時間軸呈現狀態，不另行保存。
 
-## Success Criteria *(mandatory)*
+## Success Criteria _(mandatory)_
 
 ### Measurable Outcomes
 

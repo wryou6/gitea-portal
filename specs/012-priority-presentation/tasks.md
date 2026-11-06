@@ -18,9 +18,9 @@
 
 **Purpose**: Define Priority in the shared domain and make it available through every existing Issue response before implementing form or display stories.
 
-- [X] T001 [P] Define `IssuePriority`, canonical label names, localized display names, resolver, and status in `packages/domain/src/issue-priority.ts`; export it from `packages/domain/src/index.ts`.
-- [X] T002 Extend `IssueSummary` with nullable `priority` in `packages/domain/src/issue.ts`; confirm `packages/gitea-contracts/src/portal.ts` exposes it through its existing `IssueSummary` contract.
-- [X] T003 Derive `priority` from live Gitea Labels in `apps/api/src/issues/issue-service.ts` and expose it through the frontend `Issue` type in `apps/web/src/lib/api.ts`.
+- [x] T001 [P] Define `IssuePriority`, canonical label names, localized display names, resolver, and status in `packages/domain/src/issue-priority.ts`; export it from `packages/domain/src/index.ts`.
+- [x] T002 Extend `IssueSummary` with nullable `priority` in `packages/domain/src/issue.ts`; confirm `packages/gitea-contracts/src/portal.ts` exposes it through its existing `IssueSummary` contract.
+- [x] T003 Derive `priority` from live Gitea Labels in `apps/api/src/issues/issue-service.ts` and expose it through the frontend `Issue` type in `apps/web/src/lib/api.ts`.
 
 **Checkpoint**: Existing Issue responses expose a nullable Priority derived from Labels without an extra Label request or Portal persistence.
 
@@ -34,12 +34,12 @@
 
 ### Implementation
 
-- [X] T004 [US1] Validate required `priority` and reject invalid values or generic Labels beginning with `priority:` in `apps/api/src/issues/issue-validation.ts`.
-- [X] T005 [US1] Ensure the selected Repository Priority Label exists during create and include its Label ID in `apps/api/src/issues/issue-command-service.ts` and `apps/api/src/issues/issue-schedule-service.ts`.
-- [X] T006 [US1] Include Priority in the existing complete atomic Label replacement, preserving Type, Workflow, schedule, and requested ordinary Labels with optimistic concurrency/readback checks in `apps/api/src/issues/issue-schedule-service.ts`.
-- [X] T007 [P] [US1] Add the accessible four-level selector with missing/conflict repair status in `apps/web/src/features/issues/PriorityField.tsx`.
-- [X] T008 [P] [US1] Add Priority selection and request payload handling to `apps/web/src/features/issues/IssueCreatePage.tsx`.
-- [X] T009 [P] [US1] Initialize and submit Priority, and exclude reserved Priority Labels from the ordinary-label input in `apps/web/src/features/issues/IssueEditForm.tsx`.
+- [x] T004 [US1] Validate required `priority` and reject invalid values or generic Labels beginning with `priority:` in `apps/api/src/issues/issue-validation.ts`.
+- [x] T005 [US1] Ensure the selected Repository Priority Label exists during create and include its Label ID in `apps/api/src/issues/issue-command-service.ts` and `apps/api/src/issues/issue-schedule-service.ts`.
+- [x] T006 [US1] Include Priority in the existing complete atomic Label replacement, preserving Type, Workflow, schedule, and requested ordinary Labels with optimistic concurrency/readback checks in `apps/api/src/issues/issue-schedule-service.ts`.
+- [x] T007 [P] [US1] Add the accessible four-level selector with missing/conflict repair status in `apps/web/src/features/issues/PriorityField.tsx`.
+- [x] T008 [P] [US1] Add Priority selection and request payload handling to `apps/web/src/features/issues/IssueCreatePage.tsx`.
+- [x] T009 [P] [US1] Initialize and submit Priority, and exclude reserved Priority Labels from the ordinary-label input in `apps/web/src/features/issues/IssueEditForm.tsx`.
 
 **Checkpoint**: Create and edit persist exactly one canonical Priority Label; missing/conflicting existing Issues can be repaired, and failures remain visible.
 
@@ -53,15 +53,15 @@
 
 ### Implementation
 
-- [X] T010 [US2] Create a shared Priority badge for the four levels and missing/conflict states using semantic theme tokens in `apps/web/src/components/ui/PriorityBadge.tsx` and `apps/web/src/index.css`.
-- [X] T011 [P] [US2] Render Priority in Issue rows and details and omit reserved Priority Labels from duplicate generic-label presentation in `apps/web/src/features/issues/IssueRow.tsx`, `apps/web/src/features/issues/IssueDetailHeader.tsx`, and `apps/web/src/features/issues/issueLabelPresentation.ts`.
-- [X] T012 [P] [US2] Render Priority in Kanban cards while preserving Board-visible label behavior in `apps/web/src/features/boards/KanbanCard.tsx`.
-- [X] T013 [P] [US2] Render Priority in scheduled, unscheduled, and anomaly Gantt rows in `apps/web/src/features/boards/GanttIssueRow.tsx`.
-- [X] T014 [P] [US2] Add fictional Storybook fixtures for all four Priority values plus missing, multiple, and unknown labels in `apps/web/src/stories/fixtures.ts`.
-- [X] T015 [P] [US2] Add Storybook coverage for Priority badge levels and anomalous states in `apps/web/src/components/ui/PriorityBadge.stories.tsx`.
-- [X] T016 [P] [US2] Add Storybook coverage for the Priority field in `apps/web/src/features/issues/PriorityField.stories.tsx`.
-- [X] T017 [P] [US2] Extend Issue row and detail stories with Priority variants in `apps/web/src/features/issues/IssueRow.stories.tsx` and `apps/web/src/features/issues/IssueDetailHeader.stories.tsx`.
-- [X] T018 [P] [US2] Extend Kanban and Gantt stories with Priority variants in `apps/web/src/features/boards/KanbanCard.stories.tsx` and `apps/web/src/features/boards/GanttIssueRow.stories.tsx`.
+- [x] T010 [US2] Create a shared Priority badge for the four levels and missing/conflict states using semantic theme tokens in `apps/web/src/components/ui/PriorityBadge.tsx` and `apps/web/src/index.css`.
+- [x] T011 [P] [US2] Render Priority in Issue rows and details and omit reserved Priority Labels from duplicate generic-label presentation in `apps/web/src/features/issues/IssueRow.tsx`, `apps/web/src/features/issues/IssueDetailHeader.tsx`, and `apps/web/src/features/issues/issueLabelPresentation.ts`.
+- [x] T012 [P] [US2] Render Priority in Kanban cards while preserving Board-visible label behavior in `apps/web/src/features/boards/KanbanCard.tsx`.
+- [x] T013 [P] [US2] Render Priority in scheduled, unscheduled, and anomaly Gantt rows in `apps/web/src/features/boards/GanttIssueRow.tsx`.
+- [x] T014 [P] [US2] Add fictional Storybook fixtures for all four Priority values plus missing, multiple, and unknown labels in `apps/web/src/stories/fixtures.ts`.
+- [x] T015 [P] [US2] Add Storybook coverage for Priority badge levels and anomalous states in `apps/web/src/components/ui/PriorityBadge.stories.tsx`.
+- [x] T016 [P] [US2] Add Storybook coverage for the Priority field in `apps/web/src/features/issues/PriorityField.stories.tsx`.
+- [x] T017 [P] [US2] Extend Issue row and detail stories with Priority variants in `apps/web/src/features/issues/IssueRow.stories.tsx` and `apps/web/src/features/issues/IssueDetailHeader.stories.tsx`.
+- [x] T018 [P] [US2] Extend Kanban and Gantt stories with Priority variants in `apps/web/src/features/boards/KanbanCard.stories.tsx` and `apps/web/src/features/boards/GanttIssueRow.stories.tsx`.
 
 **Checkpoint**: All four Priority levels and anomalous states remain identifiable and consistent across the four work views, forms, and Storybook light/dark themes.
 
@@ -71,8 +71,8 @@
 
 **Purpose**: Validate contract, build, accessibility, and manual Gitea behavior across both stories.
 
-- [X] T019 Run `pnpm.cmd typecheck`, `pnpm.cmd build`, and `pnpm.cmd --filter @gitea-portal/web build-storybook`; resolve any failures in the affected source/story files.
-- [X] T020 Review keyboard-native selection, text-based Priority meaning, light/dark token pairs, and wrapping behavior in `apps/web/src/components/ui/PriorityBadge.stories.tsx` and `apps/web/src/features/issues/PriorityField.stories.tsx`.
+- [x] T019 Run `pnpm.cmd typecheck`, `pnpm.cmd build`, and `pnpm.cmd --filter @gitea-portal/web build-storybook`; resolve any failures in the affected source/story files.
+- [x] T020 Review keyboard-native selection, text-based Priority meaning, light/dark token pairs, and wrapping behavior in `apps/web/src/components/ui/PriorityBadge.stories.tsx` and `apps/web/src/features/issues/PriorityField.stories.tsx`.
 - [ ] T021 Run the Gitea scenarios in `specs/012-priority-presentation/quickstart.md` against a designated non-production test Repository and record results in that file.
 
 **Pending validation**: The target dummy Repository is designated and Gitea-side write/read scenarios were exercised. Portal-authenticated create/edit, optimistic concurrency, permission-failure, and page-view checks remain pending because the unauthenticated local Portal API returned HTTP 401.
@@ -129,4 +129,4 @@ Every actionable task uses a checkbox, sequential task ID, required story label 
 
 ## Phase 6: Convergence
 
-- [X] T022 Designate and document the non-production Gitea Repository and Issue/Label write access required to unblock T021 in `specs/012-priority-presentation/quickstart.md` per SC-001 and SC-005 (partial)
+- [x] T022 Designate and document the non-production Gitea Repository and Issue/Label write access required to unblock T021 in `specs/012-priority-presentation/quickstart.md` per SC-001 and SC-005 (partial)

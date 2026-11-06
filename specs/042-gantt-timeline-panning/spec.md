@@ -15,7 +15,7 @@
 - Q: 在窄螢幕觸控裝置上，時間軸空白處是否也要支援以手指拖曳平移？ → A: 觸控裝置空白處可平移；未排程列仍可拖曳建立排程。
 - Q: 在 390px 手機寬度下，固定欄位遮住日期格時，手指應如何開始平移時間軸？ → A: 允許從非互動欄位空白處拖曳；連結、按鈕與未排程建立區仍保留原操作。
 
-## User Scenarios & Testing *(mandatory)*
+## User Scenarios & Testing _(mandatory)_
 
 ### User Story 1 - 用單一捲軸瀏覽時間軸 (Priority: P1)
 
@@ -53,7 +53,7 @@
 - 觸控裝置在未排程 Issue 列上拖曳時，仍執行建立排程；在其他空白區拖曳時執行平移。
 - 窄螢幕上的固定欄位遮住日期格時，觸控平移可從非互動欄位空白處開始；互動控制及未排程建立區不觸發平移。
 
-## Requirements *(mandatory)*
+## Requirements _(mandatory)_
 
 ### Functional Requirements
 
@@ -69,7 +69,7 @@
 - **Gantt 檢視位置**：使用者目前瀏覽的水平日期位置；只影響畫面呈現，不是 Issue 資料。
 - **Issue 排程**：既有 Gitea 開始日與到期日；本功能不改變其來源或寫入行為。
 
-## Success Criteria *(mandatory)*
+## Success Criteria _(mandatory)_
 
 ### Measurable Outcomes
 

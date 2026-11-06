@@ -18,7 +18,7 @@
 
 **Purpose**: Add the selected navigation dependency.
 
-- [X] T001 Add the React Router declarative `react-router` dependency compatible with React 19 to `apps/web/package.json` and update the root `pnpm-lock.yaml`.
+- [x] T001 Add the React Router declarative `react-router` dependency compatible with React 19 to `apps/web/package.json` and update the root `pnpm-lock.yaml`.
 
 ---
 
@@ -26,7 +26,7 @@
 
 **Purpose**: Establish Router context and make location changes render through the existing route resolver.
 
-- [X] T002 Mount one `BrowserRouter` around `App` in `apps/web/src/main.tsx` after session bootstrap, then read Router location in `apps/web/src/app/App.tsx` and pass current pathname/search to `AppShell` while retaining `resolveAppRoute`.
+- [x] T002 Mount one `BrowserRouter` around `App` in `apps/web/src/main.tsx` after session bootstrap, then read Router location in `apps/web/src/app/App.tsx` and pass current pathname/search to `AppShell` while retaining `resolveAppRoute`.
 
 **Checkpoint**: `App` and its shared shell respond to Router location updates; auth bootstrap still occurs once per document load.
 
@@ -38,10 +38,10 @@
 
 **Independent Test**: Use the sidebar, Dashboard, workspace selector, search, and Issue links to navigate among Portal pages; confirm no new document navigation and the shell remains visible.
 
-- [X] T003 [P] [US1] Convert Dashboard, Settings, sidebar, account-menu, and Repository workspace return links to Router `Link` in `apps/web/src/components/layout/AppShell.tsx`, `apps/web/src/features/dashboard/DashboardPage.tsx`, and `apps/web/src/features/repositories/RepositoryWorkspacePage.tsx`.
-- [X] T004 [P] [US1] Convert Issue List, Kanban, Gantt, Issue detail, and Issue return anchors to Router `Link` in `apps/web/src/features/issues/IssueRow.tsx`, `apps/web/src/features/issues/IssueDetailPage.tsx`, `apps/web/src/features/issues/IssueCreatePage.tsx`, `apps/web/src/features/work-views/KanbanCard.tsx`, and `apps/web/src/features/work-views/GanttIssueRow.tsx`.
-- [X] T005 [US1] Convert Global Issue Search result links and replace event-driven full-page navigation with `useNavigate` for sidebar view changes, workspace selection, keyboard-selected search results, and successful Issue creation in `apps/web/src/components/layout/AppShell.tsx`, `apps/web/src/components/layout/WorkspaceSelector.tsx`, `apps/web/src/components/layout/GlobalIssueSearch.tsx`, and `apps/web/src/features/issues/IssueCreatePage.tsx`, reusing existing route and work-view URL builders.
-- [X] T006 [US1] Keep OAuth, logout, and external Gitea destinations as document navigations and verify modifier-click/new-tab behavior for Router links in `apps/web/src/components/layout/AppShell.tsx`, `apps/web/src/features/auth/LoginPage.tsx`, and `apps/web/src/features/issues/IssueDetailPage.tsx`.
+- [x] T003 [P] [US1] Convert Dashboard, Settings, sidebar, account-menu, and Repository workspace return links to Router `Link` in `apps/web/src/components/layout/AppShell.tsx`, `apps/web/src/features/dashboard/DashboardPage.tsx`, and `apps/web/src/features/repositories/RepositoryWorkspacePage.tsx`.
+- [x] T004 [P] [US1] Convert Issue List, Kanban, Gantt, Issue detail, and Issue return anchors to Router `Link` in `apps/web/src/features/issues/IssueRow.tsx`, `apps/web/src/features/issues/IssueDetailPage.tsx`, `apps/web/src/features/issues/IssueCreatePage.tsx`, `apps/web/src/features/work-views/KanbanCard.tsx`, and `apps/web/src/features/work-views/GanttIssueRow.tsx`.
+- [x] T005 [US1] Convert Global Issue Search result links and replace event-driven full-page navigation with `useNavigate` for sidebar view changes, workspace selection, keyboard-selected search results, and successful Issue creation in `apps/web/src/components/layout/AppShell.tsx`, `apps/web/src/components/layout/WorkspaceSelector.tsx`, `apps/web/src/components/layout/GlobalIssueSearch.tsx`, and `apps/web/src/features/issues/IssueCreatePage.tsx`, reusing existing route and work-view URL builders.
+- [x] T006 [US1] Keep OAuth, logout, and external Gitea destinations as document navigations and verify modifier-click/new-tab behavior for Router links in `apps/web/src/components/layout/AppShell.tsx`, `apps/web/src/features/auth/LoginPage.tsx`, and `apps/web/src/features/issues/IssueDetailPage.tsx`.
 
 ---
 
@@ -51,10 +51,10 @@
 
 **Independent Test**: Apply repeated filters, List sorting, and Gantt date/scale; navigate between workspaces/views and Issue pages; verify URLs, results, and Back/Forward restoration against Features 030 and 031.
 
-- [X] T007 [P] [US2] Route List query writes through `useNavigate` with the existing push-versus-replace behavior in `apps/web/src/features/issues/issue-list-state.ts` while continuing to serialize filters with `work-view-url-state.ts` helpers.
-- [X] T008 [P] [US2] Route Kanban filter history updates through `useNavigate` and restore filters/results from Router location changes in `apps/web/src/features/work-views/KanbanBoard.tsx`.
-- [X] T009 [P] [US2] Route Gantt date/scale URL synchronization through `useNavigate` with replace semantics and use Router location as the current query source in `apps/web/src/features/work-views/GanttBoard.tsx`.
-- [X] T010 [US2] Update List and work-view state restoration to respond to Router POP/location changes without duplicate raw `popstate` listeners in `apps/web/src/features/issues/IssueListPage.tsx` and `apps/web/src/features/work-views/KanbanBoard.tsx`; preserve existing repeated-query and `returnTo` rules from `apps/web/src/features/work-views/work-view-url-state.ts`.
+- [x] T007 [P] [US2] Route List query writes through `useNavigate` with the existing push-versus-replace behavior in `apps/web/src/features/issues/issue-list-state.ts` while continuing to serialize filters with `work-view-url-state.ts` helpers.
+- [x] T008 [P] [US2] Route Kanban filter history updates through `useNavigate` and restore filters/results from Router location changes in `apps/web/src/features/work-views/KanbanBoard.tsx`.
+- [x] T009 [P] [US2] Route Gantt date/scale URL synchronization through `useNavigate` with replace semantics and use Router location as the current query source in `apps/web/src/features/work-views/GanttBoard.tsx`.
+- [x] T010 [US2] Update List and work-view state restoration to respond to Router POP/location changes without duplicate raw `popstate` listeners in `apps/web/src/features/issues/IssueListPage.tsx` and `apps/web/src/features/work-views/KanbanBoard.tsx`; preserve existing repeated-query and `returnTo` rules from `apps/web/src/features/work-views/work-view-url-state.ts`.
 
 ---
 
@@ -64,8 +64,8 @@
 
 **Independent Test**: Open and refresh Dashboard, work-view, Repository workspace, and Issue detail URLs; confirm invalid paths still show Not Found.
 
-- [X] T011 [P] [US3] Verify direct route loading and refresh for all route families through the Vite SPA fallback in `apps/web/vite.config.ts`; document production host fallback and API/auth routing requirements in `specs/033-spa-navigation/quickstart.md` without inventing an unconfigured host integration.
-- [X] T012 [P] [US3] Verify unknown paths remain handled by the existing `not-found` route from `apps/web/src/app/routes.ts` when rendered under Router context.
+- [x] T011 [P] [US3] Verify direct route loading and refresh for all route families through the Vite SPA fallback in `apps/web/vite.config.ts`; document production host fallback and API/auth routing requirements in `specs/033-spa-navigation/quickstart.md` without inventing an unconfigured host integration.
+- [x] T012 [P] [US3] Verify unknown paths remain handled by the existing `not-found` route from `apps/web/src/app/routes.ts` when rendered under Router context.
 
 ---
 
@@ -73,8 +73,8 @@
 
 **Purpose**: Keep isolated component stories usable and record implementation acceptance evidence.
 
-- [X] T013 [P] Add a global `MemoryRouter` wrapper to the Storybook decorator in `apps/web/.storybook/preview.tsx` so stories using Router links or hooks render with Router context.
-- [X] T014 Run `pnpm.cmd typecheck`, `pnpm.cmd build`, and `pnpm.cmd --filter @gitea-portal/web build-storybook`; confirm authenticated Issue operations still use existing APIs without permission or persistence changes, and record navigation timing/no-full-screen-blank Playwright results in `specs/033-spa-navigation/quickstart.md`.
+- [x] T013 [P] Add a global `MemoryRouter` wrapper to the Storybook decorator in `apps/web/.storybook/preview.tsx` so stories using Router links or hooks render with Router context.
+- [x] T014 Run `pnpm.cmd typecheck`, `pnpm.cmd build`, and `pnpm.cmd --filter @gitea-portal/web build-storybook`; confirm authenticated Issue operations still use existing APIs without permission or persistence changes, and record navigation timing/no-full-screen-blank Playwright results in `specs/033-spa-navigation/quickstart.md`.
 
 ## Dependencies & Execution Order
 

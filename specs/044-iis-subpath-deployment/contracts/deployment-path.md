@@ -4,13 +4,13 @@
 
 For a Portal mounted at `/issue`, the public application root is `/issue/`. At root deployment, the public application root remains `/`.
 
-| Browser request | API process route / host behavior |
-| --- | --- |
-| `/issue/` | IIS serves the Portal static entry page |
-| `/issue/assets/*`, `/issue/favicon.svg` | IIS serves files from the deployed frontend bundle |
-| `/issue/api/*` | Host forwards to the API's existing `/api/*` routes |
-| `/issue/auth/*` | Host forwards to the API's existing `/auth/*` routes |
-| `/issue/<SPA route>` | Included IIS rewrite rule serves the Portal entry page and keeps the requested path |
+| Browser request                         | API process route / host behavior                                                   |
+| --------------------------------------- | ----------------------------------------------------------------------------------- |
+| `/issue/`                               | IIS serves the Portal static entry page                                             |
+| `/issue/assets/*`, `/issue/favicon.svg` | IIS serves files from the deployed frontend bundle                                  |
+| `/issue/api/*`                          | Host forwards to the API's existing `/api/*` routes                                 |
+| `/issue/auth/*`                         | Host forwards to the API's existing `/auth/*` routes                                |
+| `/issue/<SPA route>`                    | Included IIS rewrite rule serves the Portal entry page and keeps the requested path |
 
 Representative SPA routes that must work on direct entry and refresh are `/issue/`, `/issue/issues`, `/issue/kanban`, `/issue/gantt`, `/issue/settings`, and `/issue/issues/{owner}/{repo}/{number}`.
 

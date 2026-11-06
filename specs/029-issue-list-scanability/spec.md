@@ -16,7 +16,7 @@
 - Q: 發布新預設後，使用者已保存的 Key ascending 排序應如何處理？ → A: 保留所有已保存的排序偏好；新預設只套用到尚無個人設定的使用者及恢復預設的使用者。
 - Q: 隱藏 Key 後，All repos 的每筆 Issue 應如何顯示所屬 Repository？ → A: 在 Title 下方以次要文字顯示 `owner/repo`；單一 Repository 清單使用工作區標題辨識來源。
 
-## User Scenarios & Testing *(mandatory)*
+## User Scenarios & Testing _(mandatory)_
 
 ### User Story 1 - 優先查看近期到期項目 (Priority: P1)
 
@@ -55,7 +55,7 @@
 - All repos 中不同 Repository 可能有相同 Issue number；即使 Key 隱藏，每筆 Title 下方仍顯示 `owner/repo` 以避免混淆。
 - 使用者已有個人排序偏好時，保留該偏好；明確指定的清單排序仍優先。
 
-## Requirements *(mandatory)*
+## Requirements _(mandatory)_
 
 ### Functional Requirements
 
@@ -67,13 +67,13 @@
 - **FR-006**: 恢復產品預設 MUST 同時重設 Key 欄位可見性及 Issue list 預設排序。
 - **FR-007**: Issue list MUST 在 All repos 及單一 Repository 工作區遵循一致的 Key 可見性與排序規則。
 
-### Key Entities *(include if feature involves data)*
+### Key Entities _(include if feature involves data)_
 
 - **Issue list 欄位偏好**：使用者在 Issue list 顯示或隱藏欄位的選擇，包含 Key 欄位。
 - **Issue list 排序偏好**：Issue list 使用的排序欄位與方向；本功能的產品預設為 Due Date 升冪。
 - **Issue**：保留來源 Repository、Key、Title 及 Due Date，以供辨識與排序。
 
-## Success Criteria *(mandatory)*
+## Success Criteria _(mandatory)_
 
 ### Measurable Outcomes
 

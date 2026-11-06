@@ -7,6 +7,7 @@
 **Rationale**: The app already has a centralized path resolver and does not need Router data loaders or server rendering. `BrowserRouter` uses the browser History API and supports client-side links while allowing the existing page components and API hooks to remain intact.
 
 **Alternatives considered**:
+
 - Native History API with a custom location subscription: rejected because it duplicates mature link, navigation, and history behavior.
 - Data/framework mode or server rendering: rejected because this feature is client-side navigation only and does not need server loaders or SSR.
 
@@ -19,6 +20,7 @@
 **Rationale**: Direct `window.history.pushState`/`replaceState` changes the browser URL without notifying Router state. The repository currently writes URLs directly in the List state hook, Kanban filters, and Gantt preferences; these must move together to avoid URL/render divergence and preserve Back/Forward behavior.
 
 **Alternatives considered**:
+
 - Continue direct History API updates alongside Router: rejected because it creates two state owners and fails to guarantee React re-render on route changes.
 
 **Sources**: [React Router Link](https://reactrouter.com/api/components/Link), [React Router useNavigate](https://reactrouter.com/api/hooks/useNavigate), [React Router useLocation](https://reactrouter.com/api/hooks/useLocation).

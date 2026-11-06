@@ -12,11 +12,13 @@ export function ErrorNotice({ message }: { message: string | PortalApiError }) {
       <p>{summary}</p>
       {message instanceof PortalApiError &&
         (message.message || message.detail) && (
-        <details>
-          <summary>{t("detail")}</summary>
-          <pre>{[message.message, message.detail].filter(Boolean).join("\n\n")}</pre>
-        </details>
-      )}
+          <details>
+            <summary>{t("detail")}</summary>
+            <pre>
+              {[message.message, message.detail].filter(Boolean).join("\n\n")}
+            </pre>
+          </details>
+        )}
     </div>
   );
 }

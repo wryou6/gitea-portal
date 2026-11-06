@@ -1,2 +1,2 @@
-export * from './gitea.js';
-export * from './portal.js';
+export * from "./gitea.js";
+export * from "./portal.js";

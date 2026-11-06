@@ -4,12 +4,12 @@
 
 The route continues to determine the workspace and view. Shared filter values are:
 
-| Query key | Allowed values | Multiplicity |
-|---|---|---|
-| `priority` | `critical`, `high`, `medium`, `low` | Repeat once per selected value |
-| `issueType` | `bug`, `feature`, `task` | Repeat once per selected value |
-| `state` | `todo`, `in-progress`, `done` | Repeat once per selected value |
-| `assignee` | `me`, `unassigned`, or a Gitea login | Single value |
+| Query key   | Allowed values                       | Multiplicity                   |
+| ----------- | ------------------------------------ | ------------------------------ |
+| `priority`  | `critical`, `high`, `medium`, `low`  | Repeat once per selected value |
+| `issueType` | `bug`, `feature`, `task`             | Repeat once per selected value |
+| `state`     | `todo`, `in-progress`, `done`        | Repeat once per selected value |
+| `assignee`  | `me`, `unassigned`, or a Gitea login | Single value                   |
 
 For example, two selected statuses appear as `state=todo&state=in-progress`. Missing multi-value keys mean unfiltered. Invalid values are ignored individually, and valid values remain active. Navigation among List, Kanban, and Gantt preserves every valid repeated value. Existing Gantt and List view-specific query parameters retain their established behavior.
 

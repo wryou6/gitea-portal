@@ -8,7 +8,7 @@
 
 **Input**: User description: 「列表、看板、甘特三個頁面的負責人、狀態、優先級、類型都放在主要版面上方同一行，依序排列；使用淡淡分隔與間距，不加大型底層面板以免浪費空間。」
 
-## User Scenarios & Testing *(mandatory)*
+## User Scenarios & Testing _(mandatory)_
 
 ### User Story 1 - 從主要內容上方篩選工作 (Priority: P1)
 
@@ -45,7 +45,7 @@
 - 無篩選結果、載入中或讀取失敗時，篩選列位置及操作方式維持一致，並保留各狀態原有提示。
 - Repository 工作區與 All repos 工作區均使用此版面；Repository 固定範圍的既有行為不得被誤認為可變篩選條件。
 
-## Requirements *(mandatory)*
+## Requirements _(mandatory)_
 
 ### Functional Requirements
 
@@ -59,12 +59,12 @@
 - **FR-008**: 所有支援語系中的標籤及選項 MUST 可辨識；窄螢幕及長標籤下 MUST 不得產生頁面水平溢出或遮蔽控制項。
 - **FR-009**: 篩選列版面變更 MUST NOT 改變 Gitea Issue 資料、篩選邏輯、使用者權限或篩選條件的持久化語意。
 
-### Key Entities *(include if feature involves data)*
+### Key Entities _(include if feature involves data)_
 
 - **工作檢視常用篩選列**：在列表、看板及甘特主要內容上方共用呈現的優先級、類型、狀態與負責人篩選控制。
 - **工作檢視專屬控制**：近期已完成篩選開關，以及依目前檢視而異的排序、日期或其他工具，維持原有位置及行為。
 
-## Success Criteria *(mandatory)*
+## Success Criteria _(mandatory)_
 
 ### Measurable Outcomes
 

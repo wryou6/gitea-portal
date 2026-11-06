@@ -1,5 +1,10 @@
 import { useCallback, useEffect, useState, type ReactNode } from "react";
-import { api, toUserFacingError, type Issue, type UserFacingError } from "../../lib/api";
+import {
+  api,
+  toUserFacingError,
+  type Issue,
+  type UserFacingError,
+} from "../../lib/api";
 import { CommentComposer } from "./CommentComposer";
 import { IssueComments } from "./IssueComments";
 import { IssueDetailHeader } from "./IssueDetailHeader";
@@ -34,7 +39,8 @@ export function IssueDetailPage({
 }) {
   const { t } = useTranslation("issues");
   const location = useLocation();
-  const returnTo = returnToOverride ??
+  const returnTo =
+    returnToOverride ??
     safeReturnTo(new URLSearchParams(location.search).get("returnTo")) ??
     routePaths.issues;
   const [issue, setIssue] = useState<Issue>();
@@ -59,32 +65,44 @@ export function IssueDetailPage({
   useEffect(() => {
     void load();
   }, [load]);
-  const render = (content: ReactNode) => presentation === "dialog" ? (
-    <Dialog
-      open
-      title={issue?.title ?? `${owner}/${repo}#${number}`}
-      onClose={onClose ?? (() => undefined)}
-      className="issue-detail-dialog"
-      headerAction={(
-        <Button variant="secondary" type="button" onClick={onExpand} aria-label={t("openIssuePage")}>
-          {t("openIssuePage")}
-        </Button>
-      )}
-    >
-      {content}
-    </Dialog>
-  ) : content;
+  const render = (content: ReactNode) =>
+    presentation === "dialog" ? (
+      <Dialog
+        open
+        title={issue?.title ?? `${owner}/${repo}#${number}`}
+        onClose={onClose ?? (() => undefined)}
+        className="issue-detail-dialog"
+        headerAction={
+          <Button
+            variant="secondary"
+            type="button"
+            onClick={onExpand}
+            aria-label={t("openIssuePage")}
+          >
+            {t("openIssuePage")}
+          </Button>
+        }
+      >
+        {content}
+      </Dialog>
+    ) : (
+      content
+    );
   if (error)
     return render(
       <section>
-        {presentation === "page" && <Link to={returnTo}>← {t("returnToWorkspace")}</Link>}
+        {presentation === "page" && (
+          <Link to={returnTo}>← {t("returnToWorkspace")}</Link>
+        )}
         <ErrorNotice message={error} />
-      </section>
+      </section>,
     );
   if (!issue) return render(<LoadingState />);
   return render(
     <section>
-      {presentation === "page" && <Link to={returnTo}>← {t("returnToWorkspace")}</Link>}
+      {presentation === "page" && (
+        <Link to={returnTo}>← {t("returnToWorkspace")}</Link>
+      )}
       <div className="detail-grid">
         <div className="detail-card">
           <IssueDetailHeader issue={issue} />
@@ -163,6 +181,6 @@ export function IssueDetailPage({
           }}
         />
       )}
-    </section>
+    </section>,
   );
 }

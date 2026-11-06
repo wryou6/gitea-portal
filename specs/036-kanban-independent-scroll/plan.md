@@ -30,15 +30,15 @@
 
 ## Constitution Check
 
-| Principle | Gate | Design response |
-|-----------|------|-----------------|
-| I. Gitea 是 Issue 資料唯一來源 | PASS | 只改呈現與捲動容器，不新增資料副本或持久化。 |
-| II. 操作權限跟隨目前使用者 | PASS | 不改讀取或寫入路徑及權限。 |
-| III. Gitea 寫入保全且可驗證 | PASS | 保留既有狀態轉移實作，不新增 Gitea 寫入。 |
-| IV. 聚合結果完整且狀態可辨識 | PASS | 不改載入、錯誤、空資料與聚合行為；仍使用原有畫面狀態。 |
-| V. 固定 Issue Status 語意 | PASS | 欄位與狀態值不變，Anomaly 仍維持原有不可作為 drop target 的行為。 |
-| VI. 工作範圍清楚 | PASS | 不改標題、Repository 識別及卡片內容。 |
-| VII. 使用者可見文字多語系 | PASS | 卡片清單名稱重用已翻譯的狀態欄標題；篩選器 disclosure 新增的展開/收合文字列入 zh-TW、English、Japanese 資源。 |
+| Principle                      | Gate | Design response                                                                                               |
+| ------------------------------ | ---- | ------------------------------------------------------------------------------------------------------------- |
+| I. Gitea 是 Issue 資料唯一來源 | PASS | 只改呈現與捲動容器，不新增資料副本或持久化。                                                                  |
+| II. 操作權限跟隨目前使用者     | PASS | 不改讀取或寫入路徑及權限。                                                                                    |
+| III. Gitea 寫入保全且可驗證    | PASS | 保留既有狀態轉移實作，不新增 Gitea 寫入。                                                                     |
+| IV. 聚合結果完整且狀態可辨識   | PASS | 不改載入、錯誤、空資料與聚合行為；仍使用原有畫面狀態。                                                        |
+| V. 固定 Issue Status 語意      | PASS | 欄位與狀態值不變，Anomaly 仍維持原有不可作為 drop target 的行為。                                             |
+| VI. 工作範圍清楚               | PASS | 不改標題、Repository 識別及卡片內容。                                                                         |
+| VII. 使用者可見文字多語系      | PASS | 卡片清單名稱重用已翻譯的狀態欄標題；篩選器 disclosure 新增的展開/收合文字列入 zh-TW、English、Japanese 資源。 |
 
 ## Project Structure
 

@@ -2,10 +2,19 @@ import { ISSUE_SORT_FIELDS } from "@gitea-portal/domain";
 
 export type WorkViewURLView = "issues" | "kanban" | "gantt";
 
-const sharedFilterKeys = ["priority", "issueType", "state", "assignee"] as const;
+const sharedFilterKeys = [
+  "priority",
+  "issueType",
+  "state",
+  "assignee",
+] as const;
 const ganttKeys = ["gantt_start", "gantt_scale"] as const;
 const listKeys = ["sort", "direction"] as const;
-const retiredGanttKeys = ["gantt_open", "gantt_closed", "gantt_assignee"] as const;
+const retiredGanttKeys = [
+  "gantt_open",
+  "gantt_closed",
+  "gantt_assignee",
+] as const;
 const priorities = new Set(["critical", "high", "medium", "low"]);
 const issueTypes = new Set(["bug", "feature", "task"]);
 const statuses = new Set(["todo", "in-progress", "done"]);
@@ -14,7 +23,9 @@ const scales = new Set(["day", "week", "two-weeks", "month"]);
 function isCalendarDate(value: string): boolean {
   if (!/^\d{4}-\d{2}-\d{2}$/.test(value)) return false;
   const date = new Date(`${value}T00:00:00.000Z`);
-  return Number.isFinite(date.getTime()) && date.toISOString().slice(0, 10) === value;
+  return (
+    Number.isFinite(date.getTime()) && date.toISOString().slice(0, 10) === value
+  );
 }
 
 function copySharedFilterValues(
@@ -27,7 +38,10 @@ function copySharedFilterValues(
     if (allowed.has(value)) target.append(key, value);
 }
 
-function copySharedFilters(source: URLSearchParams, target: URLSearchParams): void {
+function copySharedFilters(
+  source: URLSearchParams,
+  target: URLSearchParams,
+): void {
   copySharedFilterValues(source, target, "priority", priorities);
   copySharedFilterValues(source, target, "issueType", issueTypes);
   copySharedFilterValues(source, target, "state", statuses);
@@ -36,7 +50,10 @@ function copySharedFilters(source: URLSearchParams, target: URLSearchParams): vo
   if (assignee && assignee !== "all") target.set("assignee", assignee);
 }
 
-function copyGanttState(source: URLSearchParams, target: URLSearchParams): void {
+function copyGanttState(
+  source: URLSearchParams,
+  target: URLSearchParams,
+): void {
   const start = source.get("gantt_start");
   if (start && isCalendarDate(start)) target.set("gantt_start", start);
 
@@ -48,7 +65,8 @@ function copyListSort(source: URLSearchParams, target: URLSearchParams): void {
   const sort = source.get("sort");
   const direction = source.get("direction");
   if (
-    sort && ISSUE_SORT_FIELDS.includes(sort as (typeof ISSUE_SORT_FIELDS)[number]) &&
+    sort &&
+    ISSUE_SORT_FIELDS.includes(sort as (typeof ISSUE_SORT_FIELDS)[number]) &&
     (direction === "asc" || direction === "desc")
   ) {
     target.set("sort", sort);
@@ -68,8 +86,10 @@ export function buildWorkViewSearch(
   if (sourceView) copySharedFilters(source, target);
   else target.set("assignee", "me");
 
-  if (sourceView === "gantt" && targetView === "gantt") copyGanttState(source, target);
-  if (sourceView === "issues" && targetView === "issues") copyListSort(source, target);
+  if (sourceView === "gantt" && targetView === "gantt")
+    copyGanttState(source, target);
+  if (sourceView === "issues" && targetView === "issues")
+    copyListSort(source, target);
 
   return target.toString();
 }
@@ -89,7 +109,9 @@ export function sanitizeWorkViewSearch(
     ["issueType", issueTypes],
     ["state", statuses],
   ] as const) {
-    const validValues = [...new Set(params.getAll(key))].filter((value) => allowed.has(value));
+    const validValues = [...new Set(params.getAll(key))].filter((value) =>
+      allowed.has(value),
+    );
     params.delete(key);
     for (const value of validValues) params.append(key, value);
   }
@@ -107,7 +129,10 @@ export function sanitizeWorkViewSearch(
     const sort = params.get("sort");
     const direction = params.get("direction");
     if (
-      (sort && !ISSUE_SORT_FIELDS.includes(sort as (typeof ISSUE_SORT_FIELDS)[number])) ||
+      (sort &&
+        !ISSUE_SORT_FIELDS.includes(
+          sort as (typeof ISSUE_SORT_FIELDS)[number],
+        )) ||
       (direction && direction !== "asc" && direction !== "desc") ||
       Boolean(sort) !== Boolean(direction)
     ) {

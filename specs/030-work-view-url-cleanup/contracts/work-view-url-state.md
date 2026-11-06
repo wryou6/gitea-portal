@@ -2,12 +2,12 @@
 
 ## Portable state
 
-| State | List | Kanban | Gantt | Issue return target |
-|---|---|---|---|---|
-| Priority, Issue Type, Portal Status, Assignee | Keep | Keep | Keep | Preserve the originating view's values |
-| `gantt_start`, `gantt_scale` | Remove | Remove | Keep | Keep only when returning to an originating Gantt view |
-| `sort`, `direction` | Keep when source is List | Remove | Remove | Keep only when the origin is List |
-| Retired Gantt filters (`gantt_open`, `gantt_closed`, `gantt_assignee`) | Remove on next relevant URL update | Remove on next relevant URL update | Remove on next relevant URL update | Do not propagate |
+| State                                                                  | List                               | Kanban                             | Gantt                              | Issue return target                                   |
+| ---------------------------------------------------------------------- | ---------------------------------- | ---------------------------------- | ---------------------------------- | ----------------------------------------------------- |
+| Priority, Issue Type, Portal Status, Assignee                          | Keep                               | Keep                               | Keep                               | Preserve the originating view's values                |
+| `gantt_start`, `gantt_scale`                                           | Remove                             | Remove                             | Keep                               | Keep only when returning to an originating Gantt view |
+| `sort`, `direction`                                                    | Keep when source is List           | Remove                             | Remove                             | Keep only when the origin is List                     |
+| Retired Gantt filters (`gantt_open`, `gantt_closed`, `gantt_assignee`) | Remove on next relevant URL update | Remove on next relevant URL update | Remove on next relevant URL update | Do not propagate                                      |
 
 ## Navigation behavior
 

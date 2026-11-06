@@ -30,7 +30,7 @@
 - 決策：時間軸起始日、前後區段、回到預設起始日、Scale 與欄位設定放在獨立的時間軸工具列，不與 Issue 篩選混排；時間軸前後按鈕依目前 Scale 移動一天、七天、十四天或一個日曆月，並保留 URL state。
 - 決策：時間軸工具列採緊湊排列；桌機將日期導覽、今天、刻度及欄位設定放在單列，窄版將日期導覽與其他控制分成最多兩列，避免控制項增加 Gantt 的垂直占用。
 
-## User Scenarios & Testing *(mandatory)*
+## User Scenarios & Testing _(mandatory)_
 
 ### User Story 1 - 精簡瀏覽 Gantt Issue (Priority: P1)
 
@@ -97,7 +97,7 @@
 - 使用者無法取得登入帳號時，不得將偏好套用到另一帳號；使用產品預設值。
 - 窄螢幕、鍵盤操作及淺色／深色主題下，欄位、時間軸控制與排程狀態仍須可辨識；窄螢幕保留完整時間軸並允許水平捲動。
 
-## Requirements *(mandatory)*
+## Requirements _(mandatory)_
 
 ### Functional Requirements
 
@@ -121,13 +121,13 @@
 - **FR-018**: 使用者 MUST 能以滑鼠拖曳或鍵盤調整 Gantt Title 欄寬；預設最小寬度與彈性比例 MUST 為現行值的 1.5 倍，調整後的寬度 MUST 依登入帳號保存並跨 Repository Gantt 套用。
 - **FR-019**: All repos Gantt MUST 允許使用者以滑鼠拖曳或鍵盤調整 Repository 欄寬；調整後的寬度 MUST 依登入帳號保存並跨 All repos Gantt 工作區套用，單一 Repository Gantt MUST 不顯示 Repository 欄寬控制。
 
-### Key Entities *(include if feature involves data)*
+### Key Entities _(include if feature involves data)_
 
 - **Gantt 欄位偏好**：登入帳號的可見欄位與欄位順序；與 Issues table 偏好分開。
 - **時間軸檢視狀態**：起始日期與 Scale，用以決定日期刻度及初始定位，不改變 Issue 排程資料。
 - **Issue 排程**：由 Gitea 提供的開始日期、到期日期與異常狀態；維持既有語意及唯一來源。
 
-## Success Criteria *(mandatory)*
+## Success Criteria _(mandatory)_
 
 ### Measurable Outcomes
 

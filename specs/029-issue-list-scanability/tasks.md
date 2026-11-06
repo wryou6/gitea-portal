@@ -20,7 +20,7 @@
 
 **Purpose**: Update the shared sort default required by User Story 1.
 
-- [X] T001 Update only the default Issue view sort to `dueDate asc` in `apps/web/src/features/issues/issue-view-preference.ts`; keep current Key visibility so User Story 1 remains independently usable before the Repository label change.
+- [x] T001 Update only the default Issue view sort to `dueDate asc` in `apps/web/src/features/issues/issue-view-preference.ts`; keep current Key visibility so User Story 1 remains independently usable before the Repository label change.
 
 **Checkpoint**: New accounts and reset actions use Due Date ascending without migrating existing preferences.
 
@@ -30,7 +30,7 @@
 
 **Independent Test**: Use fixtures with earlier, later, same-day, and missing Due Dates; confirm ascending order, Key-ascending ties, missing dates last, and preserved saved Key sort. Verify explicit URL override in quickstart.
 
-- [X] T002 [US1] Add or update Storybook scenarios for default Due Date ordering, same-date Key ordering, missing dates last, and a saved Key-ascending preference in `apps/web/src/features/issues/IssueListPage.stories.tsx`.
+- [x] T002 [US1] Add or update Storybook scenarios for default Due Date ordering, same-date Key ordering, missing dates last, and a saved Key-ascending preference in `apps/web/src/features/issues/IssueListPage.stories.tsx`.
 
 **Checkpoint**: User Story 1 acceptance scenarios are demonstrable with the default and preference fixtures.
 
@@ -40,9 +40,9 @@
 
 **Independent Test**: Open View Options with the default preference, confirm Key is unchecked and toggleable while Title is fixed; confirm All repos identifies each row's Repository below the title; show Key, hide it again, then restore defaults.
 
-- [X] T003 [P] [US2] Hide Key in the product default while keeping Title visible; allow saved preferences without Key but continue accepting legacy preferences with Key in `apps/web/src/features/issues/issue-view-preference.ts`.
-- [X] T004 [P] [US2] Make Key visibility toggleable while keeping Title required in `apps/web/src/features/issues/IssueViewOptionsDialog.tsx`; show `owner/repo` below each All repos title and use the workspace heading and responsive row styling in `apps/web/src/features/issues/IssueListPage.tsx`, `apps/web/src/features/issues/IssueRow.tsx`, and `apps/web/src/index.css`.
-- [X] T005 [US2] Add or update Storybook scenarios for default hidden Key, re-enabled Key, reset-to-default, and per-row Repository identity in `apps/web/src/features/issues/IssueListPage.stories.tsx`.
+- [x] T003 [P] [US2] Hide Key in the product default while keeping Title visible; allow saved preferences without Key but continue accepting legacy preferences with Key in `apps/web/src/features/issues/issue-view-preference.ts`.
+- [x] T004 [P] [US2] Make Key visibility toggleable while keeping Title required in `apps/web/src/features/issues/IssueViewOptionsDialog.tsx`; show `owner/repo` below each All repos title and use the workspace heading and responsive row styling in `apps/web/src/features/issues/IssueListPage.tsx`, `apps/web/src/features/issues/IssueRow.tsx`, and `apps/web/src/index.css`.
+- [x] T005 [US2] Add or update Storybook scenarios for default hidden Key, re-enabled Key, reset-to-default, and per-row Repository identity in `apps/web/src/features/issues/IssueListPage.stories.tsx`.
 
 **Checkpoint**: User Story 2 acceptance scenarios are demonstrable without changing Key identity or Issue navigation.
 
@@ -50,7 +50,7 @@
 
 **Purpose**: Verify the feature across supported project checks and record the outcome.
 
-- [X] T006 Run `pnpm.cmd typecheck`, `pnpm.cmd build`, and `pnpm.cmd --filter @gitea-portal/web build-storybook`; record results and the seven quickstart scenarios in `specs/029-issue-list-scanability/quickstart.md`.
+- [x] T006 Run `pnpm.cmd typecheck`, `pnpm.cmd build`, and `pnpm.cmd --filter @gitea-portal/web build-storybook`; record results and the seven quickstart scenarios in `specs/029-issue-list-scanability/quickstart.md`.
 
 ## Dependencies & Execution Order
 

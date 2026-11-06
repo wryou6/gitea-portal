@@ -32,15 +32,15 @@ Use one web filter model/parser/predicate. List continues to use its read-throug
 
 ## Constitution Check
 
-| Principle | Gate | Plan result |
-|---|---|---|
-| I. Gitea is the Issue source of truth | No Issue mirror or persisted filter snapshot | PASS; filters and query text live in the URL, Issue data remains read-through. |
-| II. Use current user permissions | Search and work-view data use delegated Gitea access | PASS; search is limited to repositories readable by the current user. |
-| III. Safe Gitea writes | This feature is read-only | PASS; no Gitea writes are introduced. |
-| IV. Complete aggregate results | Required repository failures remain whole-view errors | PASS; existing API aggregation and retry behavior is retained. |
-| V. Fixed Issue Status | Shared filter uses Todo/In Progress/Done; Gantt removes duplicate Open/Closed control | PASS; map existing fixed Portal Status to its Gitea state semantics. |
-| VI. Clear work scope | Shared filters are workspace-scoped; global search results identify repository | PASS. |
-| VII. Multilingual user text | All added labels, feedback, and accessible names use i18n | PASS; update zh-TW/en/ja resources. |
+| Principle                             | Gate                                                                                  | Plan result                                                                    |
+| ------------------------------------- | ------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------ |
+| I. Gitea is the Issue source of truth | No Issue mirror or persisted filter snapshot                                          | PASS; filters and query text live in the URL, Issue data remains read-through. |
+| II. Use current user permissions      | Search and work-view data use delegated Gitea access                                  | PASS; search is limited to repositories readable by the current user.          |
+| III. Safe Gitea writes                | This feature is read-only                                                             | PASS; no Gitea writes are introduced.                                          |
+| IV. Complete aggregate results        | Required repository failures remain whole-view errors                                 | PASS; existing API aggregation and retry behavior is retained.                 |
+| V. Fixed Issue Status                 | Shared filter uses Todo/In Progress/Done; Gantt removes duplicate Open/Closed control | PASS; map existing fixed Portal Status to its Gitea state semantics.           |
+| VI. Clear work scope                  | Shared filters are workspace-scoped; global search results identify repository        | PASS.                                                                          |
+| VII. Multilingual user text           | All added labels, feedback, and accessible names use i18n                             | PASS; update zh-TW/en/ja resources.                                            |
 
 No constitution violations or exceptions are required.
 

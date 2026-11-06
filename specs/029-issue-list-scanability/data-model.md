@@ -10,12 +10,12 @@
 
 ## Issue view preference
 
-| 屬性 | 語意 | 本功能規則 |
-|---|---|---|
-| Visible fields | 使用者選擇顯示的 Issue list 欄位 | 產品預設包含 Title、不包含 Key；Key 可由 View Options 加入或移除。既有保存清單維持原值。 |
-| Column order | Issue list 欄位順序 | 欄位完整順序維持現有值，隱藏欄位保留原位置；既有保存順序維持原值。 |
-| Default sort field | 個人預設排序欄位 | 無已保存偏好時為 `dueDate`；舊保存值不遷移。 |
-| Default sort direction | 個人預設排序方向 | 無已保存偏好時為 `asc`；舊保存值不遷移。 |
+| 屬性                   | 語意                             | 本功能規則                                                                               |
+| ---------------------- | -------------------------------- | ---------------------------------------------------------------------------------------- |
+| Visible fields         | 使用者選擇顯示的 Issue list 欄位 | 產品預設包含 Title、不包含 Key；Key 可由 View Options 加入或移除。既有保存清單維持原值。 |
+| Column order           | Issue list 欄位順序              | 欄位完整順序維持現有值，隱藏欄位保留原位置；既有保存順序維持原值。                       |
+| Default sort field     | 個人預設排序欄位                 | 無已保存偏好時為 `dueDate`；舊保存值不遷移。                                             |
+| Default sort direction | 個人預設排序方向                 | 無已保存偏好時為 `asc`；舊保存值不遷移。                                                 |
 
 ## Issue list resolution
 

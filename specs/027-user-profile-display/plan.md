@@ -24,15 +24,15 @@
 
 設計前與設計後均 PASS：
 
-| 原則 | 實作約束 |
-| --- | --- |
-| I 唯一資料來源 | 讀 Gitea，不新增使用者／Issue persistence |
+| 原則              | 實作約束                                                                               |
+| ----------------- | -------------------------------------------------------------------------------------- |
+| I 唯一資料來源    | 讀 Gitea，不新增使用者／Issue persistence                                              |
 | II 目前使用者權限 | session 刷新直接使用 cookie 中的 delegated token；禁止 Authorization header 替換登入者 |
-| III 安全寫入 | 不修改 Issue、Labels 或 status mutation 路徑 |
-| IV 完整彙整 | 外觀更新降級只限 session；Issue／留言必要查詢仍沿用錯誤處理 |
-| V 固定狀態 | 保留 currentOwner、最後負責人、狀態及 anomaly 語意 |
-| VI 工作範圍可辨 | 保留 Repository、Issue key 與原導覽 |
-| VII 多語系 | 共用人員提示使用 common 三語系 key；姓名／login 不翻譯 |
+| III 安全寫入      | 不修改 Issue、Labels 或 status mutation 路徑                                           |
+| IV 完整彙整       | 外觀更新降級只限 session；Issue／留言必要查詢仍沿用錯誤處理                            |
+| V 固定狀態        | 保留 currentOwner、最後負責人、狀態及 anomaly 語意                                     |
+| VI 工作範圍可辨   | 保留 Repository、Issue key 與原導覽                                                    |
+| VII 多語系        | 共用人員提示使用 common 三語系 key；姓名／login 不翻譯                                 |
 
 ## Project Structure
 

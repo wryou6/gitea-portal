@@ -20,7 +20,12 @@ export function Dialog({
 }) {
   if (!open) return null;
   return (
-    <DialogContent title={title} onClose={onClose} className={className} headerAction={headerAction}>
+    <DialogContent
+      title={title}
+      onClose={onClose}
+      className={className}
+      headerAction={headerAction}
+    >
       {children}
     </DialogContent>
   );
@@ -49,9 +54,10 @@ function DialogContent({
     onCloseRef.current = onClose;
   }, [onClose]);
   useEffect(() => {
-    const previouslyFocused = document.activeElement instanceof HTMLElement
-      ? document.activeElement
-      : undefined;
+    const previouslyFocused =
+      document.activeElement instanceof HTMLElement
+        ? document.activeElement
+        : undefined;
     dialogStack.push(stackId.current);
     closeRef.current?.focus();
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -111,7 +117,12 @@ function DialogContent({
           <h2 id={titleId}>{title}</h2>
           <div className="dialog-header-actions">
             {headerAction}
-            <button ref={closeRef} type="button" className="secondary" onClick={onClose}>
+            <button
+              ref={closeRef}
+              type="button"
+              className="secondary"
+              onClick={onClose}
+            >
               {t("close")}
             </button>
           </div>

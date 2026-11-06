@@ -30,7 +30,7 @@ Render Gitea Issue descriptions and comments using a shared React Markdown view 
 
 ## Constitution Check
 
-*GATE: Must pass before Phase 0 research. Re-check after Phase 1 design.*
+_GATE: Must pass before Phase 0 research. Re-check after Phase 1 design._
 
 - I. Gitea is the only Issue data source: PASS. The renderer consumes existing values and creates no persisted copy.
 - II. Current user permissions: PASS. Existing delegated API reads remain unchanged.

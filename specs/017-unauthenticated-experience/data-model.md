@@ -6,11 +6,11 @@
 
 代表 Web 啟動時對目前 session 的判定。
 
-| 狀態 | 內容 | 生命週期 | 行為 |
-|---|---|---|---|
-| `authenticated` | Gitea login | 目前有效 session | 顯示既有 Portal shell 與頁面 |
-| `anonymous` | 無 login | 目前瀏覽狀態 | 隱藏受保護內容並顯示登入頁 |
-| `unavailable` | 非授權錯誤或網路錯誤摘要 | 到使用者重試為止 | 顯示錯誤與重新查詢操作 |
+| 狀態            | 內容                     | 生命週期         | 行為                         |
+| --------------- | ------------------------ | ---------------- | ---------------------------- |
+| `authenticated` | Gitea login              | 目前有效 session | 顯示既有 Portal shell 與頁面 |
+| `anonymous`     | 無 login                 | 目前瀏覽狀態     | 隱藏受保護內容並顯示登入頁   |
+| `unavailable`   | 非授權錯誤或網路錯誤摘要 | 到使用者重試為止 | 顯示錯誤與重新查詢操作       |
 
 只有明確 `401 auth.required` 代表 `anonymous`；其他 session 查詢失敗均為 `unavailable`。
 
@@ -22,11 +22,11 @@
 
 代表一次 Gitea OAuth 往返，保存於短效 HttpOnly transaction cookie。
 
-| 欄位 | 約束 | 說明 |
-|---|---|---|
-| `state` | 密碼學安全隨機值；單次使用 | 與 callback query state 比對 |
-| `returnTo` | 已知 Portal 路徑與原 query；同站且無 protocol-relative／反斜線目標 | callback 成功後回到原頁 |
-| `expiresAt` | 短效，建議 10 分鐘 | 超時 transaction 拒絕使用 |
+| 欄位        | 約束                                                               | 說明                         |
+| ----------- | ------------------------------------------------------------------ | ---------------------------- |
+| `state`     | 密碼學安全隨機值；單次使用                                         | 與 callback query state 比對 |
+| `returnTo`  | 已知 Portal 路徑與原 query；同站且無 protocol-relative／反斜線目標 | callback 成功後回到原頁      |
+| `expiresAt` | 短效，建議 10 分鐘                                                 | 超時 transaction 拒絕使用    |
 
 成功、拒絕或失敗的 callback 均清除 transaction cookie。state 無效時不可建立 session，也不可使用未驗證的 return target。
 

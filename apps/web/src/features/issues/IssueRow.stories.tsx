@@ -17,12 +17,20 @@ function localDateOffset(days: number): string {
 const meta = {
   title: "Issues/IssueRow",
   component: IssueRow,
-  render: (args) => <Table className="issues-table"><tbody><IssueRow {...args} /></tbody></Table>,
+  render: (args) => (
+    <Table className="issues-table">
+      <tbody>
+        <IssueRow {...args} />
+      </tbody>
+    </Table>
+  ),
 } satisfies Meta<typeof IssueRow>;
 export default meta;
 type Story = StoryObj<typeof meta>;
 export const Default: Story = { args: { issue: demoIssue } };
-export const WithIssueNumber: Story = { args: { issue: demoIssue, showIssueNumber: true } };
+export const WithIssueNumber: Story = {
+  args: { issue: demoIssue, showIssueNumber: true },
+};
 export const EditableBadges: Story = {
   args: {
     issue: demoIssue,
@@ -203,21 +211,23 @@ export const InvalidType: Story = {
 export const AllPriorityLevels: Story = {
   args: { issue: demoIssue },
   render: () => (
-    <Table className="issues-table"><tbody>
-      {(["critical", "high", "medium", "low"] as const).map((priority) => (
-        <IssueRow
-          key={priority}
-          issue={{
-            ...demoIssue,
-            priority,
-            labels: [
-              { name: "type:feature" },
-              { name: `priority:${priority}` },
-            ],
-          }}
-        />
-      ))}
-    </tbody></Table>
+    <Table className="issues-table">
+      <tbody>
+        {(["critical", "high", "medium", "low"] as const).map((priority) => (
+          <IssueRow
+            key={priority}
+            issue={{
+              ...demoIssue,
+              priority,
+              labels: [
+                { name: "type:feature" },
+                { name: `priority:${priority}` },
+              ],
+            }}
+          />
+        ))}
+      </tbody>
+    </Table>
   ),
 };
 

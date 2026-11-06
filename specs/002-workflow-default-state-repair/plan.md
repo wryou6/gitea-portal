@@ -32,7 +32,7 @@
 
 ## Constitution Check
 
-*GATE: Must pass before Phase 0 research. Re-check after Phase 1 design.*
+_GATE: Must pass before Phase 0 research. Re-check after Phase 1 design._
 
 **Result: PASS / no active gates.** `.specify/memory/constitution.md` 目前仍是 Spec Kit 的未填寫模板，只有 placeholder principles 與 governance，沒有可執行的專案原則或禁止事項。因此沒有可判定的 gate violation；本 plan 仍遵守 feature spec 的 Source of Truth、權限與不引入資料庫限制。
 

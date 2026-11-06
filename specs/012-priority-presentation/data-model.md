@@ -4,12 +4,12 @@
 
 共用 Priority 字串值及呈現名稱：
 
-| 值 | Gitea Label | 顯示名稱 | 順序 |
-| --- | --- | --- | ---: |
-| `critical` | `priority:critical` | 緊急 | 1 |
-| `high` | `priority:high` | 高 | 2 |
-| `medium` | `priority:medium` | 中 | 3 |
-| `low` | `priority:low` | 低 | 4 |
+| 值         | Gitea Label         | 顯示名稱 | 順序 |
+| ---------- | ------------------- | -------- | ---: |
+| `critical` | `priority:critical` | 緊急     |    1 |
+| `high`     | `priority:high`     | 高       |    2 |
+| `medium`   | `priority:medium`   | 中       |    3 |
+| `low`      | `priority:low`      | 低       |    4 |
 
 ## Issue Priority 狀態
 

@@ -1,6 +1,9 @@
 import type { Issue } from "../../lib/api";
 import { isCalendarDate } from "@gitea-portal/domain";
-import { sanitizeWorkViewSearch, type WorkViewURLView } from "./work-view-url-state";
+import {
+  sanitizeWorkViewSearch,
+  type WorkViewURLView,
+} from "./work-view-url-state";
 
 export type WorkViewFilters = {
   priority: ("critical" | "high" | "medium" | "low")[];
@@ -68,12 +71,18 @@ function selectedValues<T extends string>(
 export function parseWorkViewFilters(search: string): WorkViewFilters {
   const params = new URLSearchParams(search);
   const assigneeValue = params.get("assignee")?.trim() ?? "";
-  const assignee = assigneeValue === "" || assigneeValue === "all" ? "all" : assigneeValue;
+  const assignee =
+    assigneeValue === "" || assigneeValue === "all" ? "all" : assigneeValue;
   return {
     priority: selectedValues(params, "priority", priorityOptions),
     issueType: selectedValues(params, "issueType", issueTypeOptions),
     state: selectedValues(params, "state", statusOptions),
-    assignee: assignee === "unassigned" || assignee === "me" || (assignee !== "all" && assignee.trim()) ? assignee : "all",
+    assignee:
+      assignee === "unassigned" ||
+      assignee === "me" ||
+      (assignee !== "all" && assignee.trim())
+        ? assignee
+        : "all",
     repository: "all",
   };
 }
@@ -84,13 +93,24 @@ export function serializeWorkViewFilters(
   view: WorkViewURLView = "issues",
 ): string {
   const params = new URLSearchParams(existingSearch);
-  for (const key of ["priority", "issueType", "state", "assignee", "repository", "label", "milestone"])
+  for (const key of [
+    "priority",
+    "issueType",
+    "state",
+    "assignee",
+    "repository",
+    "label",
+    "milestone",
+  ])
     params.delete(key);
-  for (const key of ["gantt_open", "gantt_closed", "gantt_assignee"]) params.delete(key);
+  for (const key of ["gantt_open", "gantt_closed", "gantt_assignee"])
+    params.delete(key);
   for (const priority of priorityOptions)
-    if (filters.priority.includes(priority)) params.append("priority", priority);
+    if (filters.priority.includes(priority))
+      params.append("priority", priority);
   for (const issueType of issueTypeOptions)
-    if (filters.issueType.includes(issueType)) params.append("issueType", issueType);
+    if (filters.issueType.includes(issueType))
+      params.append("issueType", issueType);
   for (const state of statusOptions)
     if (filters.state.includes(state)) params.append("state", state);
   if (filters.assignee !== "all") params.set("assignee", filters.assignee);
@@ -98,21 +118,46 @@ export function serializeWorkViewFilters(
 }
 
 export function countActiveWorkViewFilters(filters: WorkViewFilters): number {
-  return filters.priority.length +
+  return (
+    filters.priority.length +
     filters.issueType.length +
     filters.state.length +
-    Number(filters.assignee !== "all" && filters.assignee !== "me");
+    Number(filters.assignee !== "all" && filters.assignee !== "me")
+  );
 }
 
-export function matchesWorkViewFilters(issue: Issue, filters: WorkViewFilters, currentUserLogin?: string): boolean {
-  if (filters.priority.length > 0 && (!issue.priority || !filters.priority.includes(issue.priority))) return false;
-  if (filters.issueType.length > 0 && (!issue.type || !filters.issueType.includes(issue.type))) return false;
-  if (filters.state.length > 0 && !filters.state.includes(issue.status as (typeof filters.state)[number])) return false;
+export function matchesWorkViewFilters(
+  issue: Issue,
+  filters: WorkViewFilters,
+  currentUserLogin?: string,
+): boolean {
+  if (
+    filters.priority.length > 0 &&
+    (!issue.priority || !filters.priority.includes(issue.priority))
+  )
+    return false;
+  if (
+    filters.issueType.length > 0 &&
+    (!issue.type || !filters.issueType.includes(issue.type))
+  )
+    return false;
+  if (
+    filters.state.length > 0 &&
+    !filters.state.includes(issue.status as (typeof filters.state)[number])
+  )
+    return false;
   if (filters.assignee === "me") {
-    if (!currentUserLogin || !issue.assignees.includes(currentUserLogin)) return false;
+    if (!currentUserLogin || !issue.assignees.includes(currentUserLogin))
+      return false;
   } else {
-    if (filters.assignee === "unassigned" && issue.assignees.length > 0) return false;
-    if (filters.assignee !== "all" && filters.assignee !== "unassigned" && !issue.assignees.includes(filters.assignee)) return false;
+    if (filters.assignee === "unassigned" && issue.assignees.length > 0)
+      return false;
+    if (
+      filters.assignee !== "all" &&
+      filters.assignee !== "unassigned" &&
+      !issue.assignees.includes(filters.assignee)
+    )
+      return false;
   }
   return true;
 }

@@ -4,13 +4,13 @@
 
 The schedule is a read-through view of fields stored on the canonical Gitea Issue; it is not an independently persisted Portal entity.
 
-| Field | Type | Source | Rules |
-|---|---|---|---|
-| `startDate` | `YYYY-MM-DD \| null` | One dedicated Gitea Issue Label | Strict calendar date; zero means absent; exactly one valid start-date label is allowed |
-| `dueDate` | `YYYY-MM-DD \| null` | Gitea Issue `due_date` | Convert Gitea RFC 3339 value to the same calendar date without local timezone shifting |
-| `displayStartDate` | derived `YYYY-MM-DD \| null` | API/UI projection | Use `startDate`, otherwise `dueDate`; display-only |
-| `displayEndDate` | derived `YYYY-MM-DD \| null` | API/UI projection | Use `dueDate`, otherwise `startDate`; display-only |
-| `scheduleStatus` | `scheduled \| unscheduled \| invalid` | Derived | `unscheduled` when both source dates are absent; `invalid` for malformed/multiple start labels or start after due |
+| Field              | Type                                  | Source                          | Rules                                                                                                             |
+| ------------------ | ------------------------------------- | ------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
+| `startDate`        | `YYYY-MM-DD \| null`                  | One dedicated Gitea Issue Label | Strict calendar date; zero means absent; exactly one valid start-date label is allowed                            |
+| `dueDate`          | `YYYY-MM-DD \| null`                  | Gitea Issue `due_date`          | Convert Gitea RFC 3339 value to the same calendar date without local timezone shifting                            |
+| `displayStartDate` | derived `YYYY-MM-DD \| null`          | API/UI projection               | Use `startDate`, otherwise `dueDate`; display-only                                                                |
+| `displayEndDate`   | derived `YYYY-MM-DD \| null`          | API/UI projection               | Use `dueDate`, otherwise `startDate`; display-only                                                                |
+| `scheduleStatus`   | `scheduled \| unscheduled \| invalid` | Derived                         | `unscheduled` when both source dates are absent; `invalid` for malformed/multiple start labels or start after due |
 
 ## Issue Identity and Relationships
 

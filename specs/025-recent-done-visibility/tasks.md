@@ -18,9 +18,9 @@ description: "Task list for recent Done visibility and complete Issue List"
 
 **Purpose**: Carry Gitea completion timestamps through the shared issue model before applying the filter.
 
-- [X] T001 [P] Add nullable `closed_at` normalization to `packages/gitea-contracts/src/gitea.ts` and `apps/api/src/gitea/client.ts`.
-- [X] T002 Add nullable `closedAt` to `packages/domain/src/issue.ts` and map the normalized value in `apps/api/src/issues/issue-service.ts`.
-- [X] T003 Add nullable `closedAt` to the Web `Issue` response type in `apps/web/src/lib/api.ts`.
+- [x] T001 [P] Add nullable `closed_at` normalization to `packages/gitea-contracts/src/gitea.ts` and `apps/api/src/gitea/client.ts`.
+- [x] T002 Add nullable `closedAt` to `packages/domain/src/issue.ts` and map the normalized value in `apps/api/src/issues/issue-service.ts`.
+- [x] T003 Add nullable `closedAt` to the Web `Issue` response type in `apps/web/src/lib/api.ts`.
 
 **Checkpoint**: Gitea `closed_at` is available in the shared Web issue model.
 
@@ -30,11 +30,11 @@ description: "Task list for recent Done visibility and complete Issue List"
 
 **Independent Test**: In All repos and a single Repository, verify the checked default, 30-local-calendar-day boundary, all-Done toggle, upper-left count and date-condition summary, unaffected non-Done items, and reset after navigation/reload in Issues List, Kanban, and Gantt.
 
-- [X] T004 [P] [US1] Implement a shared recent-Done date predicate in `apps/web/src/features/work-views/work-view-filters.ts` using local calendar dates and nullable `closedAt`.
-- [X] T005 [P] [US1] Add localized accessible recent-Done checkbox and completion-condition summary strings for zh-TW, en, and ja in `apps/web/src/features/work-views/WorkViewFilterBar.tsx` and `apps/web/src/i18n/resources/work-views.ts`.
-- [X] T006 [US1] Add page-local checked-by-default toggle state and upper-left result count/condition summary to Issues List in `apps/web/src/features/issues/IssueListPage.tsx`; reset on reload/navigation and keep the toggle out of URL and persisted preferences.
-- [X] T007 [US1] Wire page-local toggle state, shared filtering, and upper-left count/condition summary through `apps/web/src/features/work-views/WorkspaceViewPage.tsx`, `apps/web/src/features/work-views/KanbanBoard.tsx`, and `apps/web/src/features/work-views/GanttBoard.tsx`; preserve other filters and reset on reload/navigation.
-- [X] T008 [P] [US1] Add Storybook examples for checked recent-only, unchecked all-Done, date-boundary, missing timestamp, and upper-left summary states in `apps/web/src/features/work-views/WorkViewFilterBar.stories.tsx`, `apps/web/src/features/work-views/KanbanBoard.stories.tsx`, and `apps/web/src/features/work-views/GanttBoard.stories.tsx`.
+- [x] T004 [P] [US1] Implement a shared recent-Done date predicate in `apps/web/src/features/work-views/work-view-filters.ts` using local calendar dates and nullable `closedAt`.
+- [x] T005 [P] [US1] Add localized accessible recent-Done checkbox and completion-condition summary strings for zh-TW, en, and ja in `apps/web/src/features/work-views/WorkViewFilterBar.tsx` and `apps/web/src/i18n/resources/work-views.ts`.
+- [x] T006 [US1] Add page-local checked-by-default toggle state and upper-left result count/condition summary to Issues List in `apps/web/src/features/issues/IssueListPage.tsx`; reset on reload/navigation and keep the toggle out of URL and persisted preferences.
+- [x] T007 [US1] Wire page-local toggle state, shared filtering, and upper-left count/condition summary through `apps/web/src/features/work-views/WorkspaceViewPage.tsx`, `apps/web/src/features/work-views/KanbanBoard.tsx`, and `apps/web/src/features/work-views/GanttBoard.tsx`; preserve other filters and reset on reload/navigation.
+- [x] T008 [P] [US1] Add Storybook examples for checked recent-only, unchecked all-Done, date-boundary, missing timestamp, and upper-left summary states in `apps/web/src/features/work-views/WorkViewFilterBar.stories.tsx`, `apps/web/src/features/work-views/KanbanBoard.stories.tsx`, and `apps/web/src/features/work-views/GanttBoard.stories.tsx`.
 
 **Checkpoint**: All three work views show the correct Done range, and the upper-left summary explains the active date condition and result count.
 
@@ -44,9 +44,9 @@ description: "Task list for recent Done visibility and complete Issue List"
 
 **Independent Test**: With more than 50 matches in All repos and a single Repository, verify every sorted match is shown, filters work, and there are no page controls.
 
-- [X] T009 Return every sorted matching Issue from `apps/api/src/issues/issue-search-service.ts` and remove page metadata from `packages/gitea-contracts/src/portal.ts`, preserving all-pages Gitea reads and fail-whole-request behavior.
-- [X] T010 Remove Issue List page state and navigation in `apps/web/src/features/issues/issue-list-state.ts`, `apps/web/src/features/issues/IssueListPage.tsx`, and `apps/web/src/features/work-views/WorkViewLayout.tsx`; render the complete returned set, preserve sorting/filters, and treat existing `page` URL values as the full list.
-- [X] T011 [P] [US2] Add an Issue List Storybook scenario with more than 50 rows and no pagination in `apps/web/src/features/issues/IssueListPage.stories.tsx`.
+- [x] T009 Return every sorted matching Issue from `apps/api/src/issues/issue-search-service.ts` and remove page metadata from `packages/gitea-contracts/src/portal.ts`, preserving all-pages Gitea reads and fail-whole-request behavior.
+- [x] T010 Remove Issue List page state and navigation in `apps/web/src/features/issues/issue-list-state.ts`, `apps/web/src/features/issues/IssueListPage.tsx`, and `apps/web/src/features/work-views/WorkViewLayout.tsx`; render the complete returned set, preserve sorting/filters, and treat existing `page` URL values as the full list.
+- [x] T011 [P] [US2] Add an Issue List Storybook scenario with more than 50 rows and no pagination in `apps/web/src/features/issues/IssueListPage.stories.tsx`.
 
 **Checkpoint**: Issue List shows the complete sorted matching set without page controls.
 
@@ -54,9 +54,9 @@ description: "Task list for recent Done visibility and complete Issue List"
 
 **Purpose**: Align manual validation guidance and run required repository checks.
 
-- [X] T012 Update `specs/025-recent-done-visibility/quickstart.md` to reflect the implemented upper-left summary, checkbox, and unpaginated Issue List behavior.
-- [X] T013 Run `pnpm.cmd typecheck` and `pnpm.cmd build` from the repository root; resolve any failures caused by this feature.
-- [X] T014 Use `dueDate` instead of `closedAt` for the recent-Done date window, synchronize the controlled timeline checkbox with its parent state, and update the contract, locale summary, and validation guidance.
+- [x] T012 Update `specs/025-recent-done-visibility/quickstart.md` to reflect the implemented upper-left summary, checkbox, and unpaginated Issue List behavior.
+- [x] T013 Run `pnpm.cmd typecheck` and `pnpm.cmd build` from the repository root; resolve any failures caused by this feature.
+- [x] T014 Use `dueDate` instead of `closedAt` for the recent-Done date window, synchronize the controlled timeline checkbox with its parent state, and update the contract, locale summary, and validation guidance.
 
 ## Dependencies & Execution Order
 

@@ -8,11 +8,11 @@ This feature changes presentation only. It adds no persisted data, API fields, o
 
 Represents one existing fixed Issue Status grouping or the existing Anomaly grouping.
 
-| Attribute | Source | Constraint |
-|-----------|--------|------------|
-| State key | Existing Kanban view data | Unchanged; identifies the column and its existing transition behavior. |
+| Attribute       | Source                               | Constraint                                                               |
+| --------------- | ------------------------------------ | ------------------------------------------------------------------------ |
+| State key       | Existing Kanban view data            | Unchanged; identifies the column and its existing transition behavior.   |
 | Display heading | Existing translated status presenter | Remains visible while its cards scroll; also names the card-list region. |
-| Card list | Existing column cards | Scrolls vertically within its own column. |
+| Card list       | Existing column cards                | Scrolls vertically within its own column.                                |
 
 ### Kanban card
 

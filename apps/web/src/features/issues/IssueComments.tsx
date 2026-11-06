@@ -11,7 +11,9 @@ export function IssueComments({ comments }: { comments: Comment[] }) {
       {comments.map((item) => (
         <article className="comment" key={item.id}>
           <header>
-            <strong><UserIdentity user={item.user} /></strong>
+            <strong>
+              <UserIdentity user={item.user} />
+            </strong>
             <time dateTime={item.createdAt}>
               {formatDateTime(item.createdAt)}
             </time>

@@ -52,7 +52,10 @@ export type AppRoute =
 
 export function workViewForRoute(route: AppRoute): WorkspaceView | undefined {
   if (route.type === "issues") return "issues";
-  if (route.type === "all-repositories-view" || route.type === "repository-view")
+  if (
+    route.type === "all-repositories-view" ||
+    route.type === "repository-view"
+  )
     return route.view;
   return undefined;
 }
@@ -66,8 +69,15 @@ export function resolveMaskedIssueLocation(mask: MaskedLocation | undefined) {
   if (!mask) return undefined;
   const route = resolveAppRoute(mask.pathname, mask.search);
   if (route.type !== "issue-detail") return undefined;
-  const returnTo = safeReturnTo(new URLSearchParams(mask.search).get("returnTo"));
-  return { route, returnTo: returnTo ?? routePaths.issues, pathname: mask.pathname, search: mask.search };
+  const returnTo = safeReturnTo(
+    new URLSearchParams(mask.search).get("returnTo"),
+  );
+  return {
+    route,
+    returnTo: returnTo ?? routePaths.issues,
+    pathname: mask.pathname,
+    search: mask.search,
+  };
 }
 
 export function issueDetailMask(
@@ -89,7 +99,12 @@ export function resolveWorkViewNavigationContext(
     return { route, pathname, search };
 
   const returnTo = safeReturnTo(new URLSearchParams(search).get("returnTo"));
-  if (!returnTo) return { route: resolveAppRoute(routePaths.issues), pathname: routePaths.issues, search: "" };
+  if (!returnTo)
+    return {
+      route: resolveAppRoute(routePaths.issues),
+      pathname: routePaths.issues,
+      search: "",
+    };
 
   const target = new URL(returnTo, window.location.origin);
   return {
@@ -107,7 +122,10 @@ export function resolveAppRoute(pathname: string, _search = ""): AppRoute {
   if (path === routePaths.dashboard) return { type: "dashboard" };
   if (path === routePaths.issues) return { type: "issues" };
   if (path === routePaths.kanban || path === routePaths.gantt)
-    return { type: "all-repositories-view", view: path.slice(1) as "kanban" | "gantt" };
+    return {
+      type: "all-repositories-view",
+      view: path.slice(1) as "kanban" | "gantt",
+    };
   if (path === routePaths.issueCreate || path === "/issue/new") {
     return { type: "issue-create" };
   }

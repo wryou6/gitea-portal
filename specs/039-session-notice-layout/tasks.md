@@ -28,10 +28,10 @@ description: "Implementation tasks for the reauthentication notice layout fix"
 
 ### Implementation
 
-- [X] T001 [P] [US1] Add localized dismiss-button labels for zh-TW, en, and ja in `apps/web/src/i18n/resources/auth.ts`.
-- [X] T002 [P] [US1] Add fixed bottom-right notice styles with viewport insets, bounded width, wrapping, and pointer-event pass-through outside the panel in `apps/web/src/index.css`.
-- [X] T003 [US1] Render `SessionExpiredNotice` through a body portal, add a labelled keyboard-operable dismiss control, and retain closed state across SPA route changes in `apps/web/src/features/auth/SessionExpiredNotice.tsx` (depends on T001 and T002).
-- [X] T004 [US1] Extend the reauthenticated notice story to demonstrate dismissal and narrow viewport wrapping in `apps/web/src/features/auth/SessionExpiredNotice.stories.tsx` (depends on T003).
+- [x] T001 [P] [US1] Add localized dismiss-button labels for zh-TW, en, and ja in `apps/web/src/i18n/resources/auth.ts`.
+- [x] T002 [P] [US1] Add fixed bottom-right notice styles with viewport insets, bounded width, wrapping, and pointer-event pass-through outside the panel in `apps/web/src/index.css`.
+- [x] T003 [US1] Render `SessionExpiredNotice` through a body portal, add a labelled keyboard-operable dismiss control, and retain closed state across SPA route changes in `apps/web/src/features/auth/SessionExpiredNotice.tsx` (depends on T001 and T002).
+- [x] T004 [US1] Extend the reauthenticated notice story to demonstrate dismissal and narrow viewport wrapping in `apps/web/src/features/auth/SessionExpiredNotice.stories.tsx` (depends on T003).
 
 **Checkpoint**: User Story 1 is independently usable when the notice is visible, dismissible, localized, and does not change the workspace layout.
 
@@ -41,7 +41,7 @@ description: "Implementation tasks for the reauthentication notice layout fix"
 
 **Purpose**: Verify the feature across the supported views and responsive states.
 
-- [X] T005 Run workspace typecheck, production build, and Storybook build; record command results in `specs/039-session-notice-layout/quickstart.md`.
+- [x] T005 Run workspace typecheck, production build, and Storybook build; record command results in `specs/039-session-notice-layout/quickstart.md`.
 - [ ] T006 [US1] Complete the browser-only responsive, click-through, and dismissal scenarios and record results in `specs/039-session-notice-layout/quickstart.md`.
 
 ---

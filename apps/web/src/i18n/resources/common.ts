@@ -62,7 +62,8 @@ export const common = defineLocaleResource({
     repositoryWorkspace: "Repository workspaces",
     allRepos: "All repos",
     workspaceListLoadError: "Could not load workspaces",
-    repositoryUnavailable: "Repository does not exist, is not readable, or was removed",
+    repositoryUnavailable:
+      "Repository does not exist, is not readable, or was removed",
     repositoryWorkspaceLoadError: "Could not load the repository workspace",
     returnToIssues: "Return to issues and choose a workspace again",
     searchAllIssues: "Search all readable Issues…",
@@ -97,7 +98,8 @@ export const common = defineLocaleResource({
     repositoryWorkspace: "リポジトリのワークスペース",
     allRepos: "すべてのリポジトリ",
     workspaceListLoadError: "ワークスペースを読み込めません",
-    repositoryUnavailable: "リポジトリが存在しないか、読み取り不可、または削除されています",
+    repositoryUnavailable:
+      "リポジトリが存在しないか、読み取り不可、または削除されています",
     repositoryWorkspaceLoadError: "リポジトリのワークスペースを読み込めません",
     returnToIssues: "課題に戻ってワークスペースを選び直す",
     searchAllIssues: "読み取り可能なすべての課題を検索…",

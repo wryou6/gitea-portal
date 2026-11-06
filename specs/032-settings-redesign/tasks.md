@@ -34,10 +34,10 @@ description: "Task list for settings redesign and Status migration retirement"
 
 ### Implementation for User Story 1
 
-- [X] T001 [US1] Restructure preference groups with interface language first, then appearance mode and palette, and accessible headings in `apps/web/src/features/settings/SettingsPage.tsx`.
-- [X] T002 [US1] Replace the shared fixed-column settings layout with responsive per-group styles and visible focus treatment in `apps/web/src/index.css`.
-- [X] T003 [P] [US1] Refine localized settings headings and descriptions for natural wrapping in `apps/web/src/i18n/resources/settings.ts`.
-- [X] T004 [US1] Add Storybook coverage for zh-TW/en/ja, language-first section order, light/dark, keyboard focus and long translated copy in `apps/web/src/features/settings/SettingsPage.stories.tsx`.
+- [x] T001 [US1] Restructure preference groups with interface language first, then appearance mode and palette, and accessible headings in `apps/web/src/features/settings/SettingsPage.tsx`.
+- [x] T002 [US1] Replace the shared fixed-column settings layout with responsive per-group styles and visible focus treatment in `apps/web/src/index.css`.
+- [x] T003 [P] [US1] Refine localized settings headings and descriptions for natural wrapping in `apps/web/src/i18n/resources/settings.ts`.
+- [x] T004 [US1] Add Storybook coverage for zh-TW/en/ja, language-first section order, light/dark, keyboard focus and long translated copy in `apps/web/src/features/settings/SettingsPage.stories.tsx`.
 
 **Checkpoint**: All three preference groups are distinguishable and operable in every supported locale and target width.
 
@@ -51,13 +51,13 @@ description: "Task list for settings redesign and Status migration retirement"
 
 ### Implementation for User Story 2
 
-- [X] T005 [US2] Add Carbon, Ember and Glacier dark-first semantic tokens with readable light variants while preserving preview isolation in `apps/web/src/index.css`.
-- [X] T006 [US2] Expand Storybook scenarios to compare all six previews in light and dark themes in `apps/web/src/features/settings/SettingsPage.stories.tsx`.
-- [X] T016 [P] [US2] Extend `ColorPalette` values, preference validation and the settings palette list to support Carbon, Ember and Glacier in `apps/web/src/features/settings/theme-preference.ts` and `apps/web/src/features/settings/SettingsPage.tsx`.
-- [X] T017 [P] [US2] Add localized names and concise descriptions for the three new palettes in zh-TW/en/ja in `apps/web/src/i18n/resources/settings.ts`.
-- [X] T018 [US2] Replace duplicate palette swatches with previews that render actual surface, foreground, primary and production Status badge tokens scoped per palette in `apps/web/src/features/settings/SettingsPage.tsx` and `apps/web/src/index.css`.
-- [X] T019 [US2] Render Gitea-provided label colors as a subtle theme-aware tint and blended border while keeping theme foreground text and leaving source data unchanged in `apps/web/src/features/issues/LabelList.tsx` and `apps/web/src/index.css`.
-- [X] T020 [US2] Strengthen dark-mode Issue identifier contrast and add Storybook examples for arbitrary-color Labels and actual palette preview badge fidelity in `apps/web/src/index.css`, `apps/web/src/features/settings/SettingsPage.stories.tsx`, and `apps/web/src/components/ui/IssueBadgePalette.stories.tsx`.
+- [x] T005 [US2] Add Carbon, Ember and Glacier dark-first semantic tokens with readable light variants while preserving preview isolation in `apps/web/src/index.css`.
+- [x] T006 [US2] Expand Storybook scenarios to compare all six previews in light and dark themes in `apps/web/src/features/settings/SettingsPage.stories.tsx`.
+- [x] T016 [P] [US2] Extend `ColorPalette` values, preference validation and the settings palette list to support Carbon, Ember and Glacier in `apps/web/src/features/settings/theme-preference.ts` and `apps/web/src/features/settings/SettingsPage.tsx`.
+- [x] T017 [P] [US2] Add localized names and concise descriptions for the three new palettes in zh-TW/en/ja in `apps/web/src/i18n/resources/settings.ts`.
+- [x] T018 [US2] Replace duplicate palette swatches with previews that render actual surface, foreground, primary and production Status badge tokens scoped per palette in `apps/web/src/features/settings/SettingsPage.tsx` and `apps/web/src/index.css`.
+- [x] T019 [US2] Render Gitea-provided label colors as a subtle theme-aware tint and blended border while keeping theme foreground text and leaving source data unchanged in `apps/web/src/features/issues/LabelList.tsx` and `apps/web/src/index.css`.
+- [x] T020 [US2] Strengthen dark-mode Issue identifier contrast and add Storybook examples for arbitrary-color Labels and actual palette preview badge fidelity in `apps/web/src/index.css`, `apps/web/src/features/settings/SettingsPage.stories.tsx`, and `apps/web/src/components/ui/IssueBadgePalette.stories.tsx`.
 
 **Checkpoint**: Cobalt, Juniper and Iris remain simultaneously identifiable after any selection in both themes.
 
@@ -71,13 +71,13 @@ description: "Task list for settings redesign and Status migration retirement"
 
 ### Implementation for User Story 3
 
-- [X] T007 [US3] Remove the migration section and migration-related local state/imports from `apps/web/src/features/settings/SettingsPage.tsx`; remove migration copy and its resource type keys from `apps/web/src/i18n/resources/settings.ts`.
-- [X] T008 [P] [US3] Remove migration route registration and the route module from `apps/api/src/app.ts` and `apps/api/src/http/status-label-migration-routes.ts`.
-- [X] T009 [P] [US3] Remove the migration service module `apps/api/src/issues/status-label-migration-service.ts` and its report type from `packages/gitea-contracts/src/portal.ts`.
-- [X] T010 [P] [US3] Remove the matching migration report type from `apps/web/src/lib/api.ts`.
-- [X] T011 [US3] Remove legacy status and action fallback while preserving current-prefix resolution in `packages/domain/src/issue-status-resolver.ts` and `apps/api/src/issues/issue-service.ts`.
-- [X] T012 [US3] Remove legacy-prefix special cases while preserving current Status behavior, atomic replacement, and old Labels as unrelated data during other Issue writes in `apps/api/src/issues/issue-validation.ts`, `apps/api/src/issues/status-transition-service.ts`, `apps/api/src/issues/issue-schedule-service.ts`, and `apps/api/src/work-views/kanban-service.ts`.
-- [X] T013 [US3] Remove legacy-prefix filtering from `apps/web/src/features/issues/IssueEditForm.tsx` so old Labels remain visible and are no longer treated as managed Status data.
+- [x] T007 [US3] Remove the migration section and migration-related local state/imports from `apps/web/src/features/settings/SettingsPage.tsx`; remove migration copy and its resource type keys from `apps/web/src/i18n/resources/settings.ts`.
+- [x] T008 [P] [US3] Remove migration route registration and the route module from `apps/api/src/app.ts` and `apps/api/src/http/status-label-migration-routes.ts`.
+- [x] T009 [P] [US3] Remove the migration service module `apps/api/src/issues/status-label-migration-service.ts` and its report type from `packages/gitea-contracts/src/portal.ts`.
+- [x] T010 [P] [US3] Remove the matching migration report type from `apps/web/src/lib/api.ts`.
+- [x] T011 [US3] Remove legacy status and action fallback while preserving current-prefix resolution in `packages/domain/src/issue-status-resolver.ts` and `apps/api/src/issues/issue-service.ts`.
+- [x] T012 [US3] Remove legacy-prefix special cases while preserving current Status behavior, atomic replacement, and old Labels as unrelated data during other Issue writes in `apps/api/src/issues/issue-validation.ts`, `apps/api/src/issues/status-transition-service.ts`, `apps/api/src/issues/issue-schedule-service.ts`, and `apps/api/src/work-views/kanban-service.ts`.
+- [x] T013 [US3] Remove legacy-prefix filtering from `apps/web/src/features/issues/IssueEditForm.tsx` so old Labels remain visible and are no longer treated as managed Status data.
 
 **Checkpoint**: Portal has no migration operation or old-prefix compatibility; current `status:` / `status-action:` behavior and atomic writes remain intact.
 
@@ -87,8 +87,8 @@ description: "Task list for settings redesign and Status migration retirement"
 
 **Purpose**: Validate the combined UI, localization, current Status behavior and retired surface.
 
-- [X] T014 Run `pnpm.cmd typecheck`, `pnpm.cmd build`, and `pnpm.cmd --filter @gitea-portal/web build-storybook`; record outcomes against `specs/032-settings-redesign/quickstart.md`.
-- [X] T015 Audit `apps/` and `packages/` for `status-label-migration`, `StatusLabelMigration`, `workflow:` and `workflow-action:` references; retain only historical documentation outside runtime code and update `specs/032-settings-redesign/quickstart.md` if validation steps change.
+- [x] T014 Run `pnpm.cmd typecheck`, `pnpm.cmd build`, and `pnpm.cmd --filter @gitea-portal/web build-storybook`; record outcomes against `specs/032-settings-redesign/quickstart.md`.
+- [x] T015 Audit `apps/` and `packages/` for `status-label-migration`, `StatusLabelMigration`, `workflow:` and `workflow-action:` references; retain only historical documentation outside runtime code and update `specs/032-settings-redesign/quickstart.md` if validation steps change.
 
 ## Dependencies & Execution Order
 

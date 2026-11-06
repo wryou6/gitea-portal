@@ -26,7 +26,11 @@ async function bootstrap() {
   let initialPalette: ColorPalette = "cobalt";
   let sessionExpiredNotice = false;
   try {
-    const { login, displayName, avatarUrl } = await api<{ login: string; displayName?: string; avatarUrl?: string }>("/api/session");
+    const { login, displayName, avatarUrl } = await api<{
+      login: string;
+      displayName?: string;
+      avatarUrl?: string;
+    }>("/api/session");
     sessionState = { status: "authenticated", login, displayName, avatarUrl };
     initialTheme = readThemePreference(login);
     initialPalette = readColorPalettePreference(login);
@@ -66,23 +70,34 @@ async function bootstrap() {
   await changeLocale(initialLocale);
   applyThemePreference(initialTheme);
   applyColorPalette(initialPalette);
-  const router = createBrowserRouter([
-    {
-      path: "*",
-      element: (
-        <App
-          login={login}
-          displayName={sessionState.status === "authenticated" ? sessionState.displayName : undefined}
-          avatarUrl={sessionState.status === "authenticated" ? sessionState.avatarUrl : undefined}
-          sessionState={sessionState}
-          initialTheme={initialTheme}
-          initialPalette={initialPalette}
-          initialLocale={initialLocale}
-          sessionExpiredNotice={sessionExpiredNotice}
-        />
-      ),
-    },
-  ], { basename: import.meta.env.BASE_URL.replace(/\/$/, "") || "/" });
+  const router = createBrowserRouter(
+    [
+      {
+        path: "*",
+        element: (
+          <App
+            login={login}
+            displayName={
+              sessionState.status === "authenticated"
+                ? sessionState.displayName
+                : undefined
+            }
+            avatarUrl={
+              sessionState.status === "authenticated"
+                ? sessionState.avatarUrl
+                : undefined
+            }
+            sessionState={sessionState}
+            initialTheme={initialTheme}
+            initialPalette={initialPalette}
+            initialLocale={initialLocale}
+            sessionExpiredNotice={sessionExpiredNotice}
+          />
+        ),
+      },
+    ],
+    { basename: import.meta.env.BASE_URL.replace(/\/$/, "") || "/" },
+  );
   createRoot(document.getElementById("root")!).render(
     <StrictMode>
       <RouterProvider router={router} />

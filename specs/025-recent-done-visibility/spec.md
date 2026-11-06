@@ -19,7 +19,7 @@
 - Q: 勾選「只顯示最近完成」時，左上結果摘要要如何呈現這個日期條件？ → A: 左上摘要顯示日期條件，並隨結果更新筆數。
 - Q: Issue List 是否應取消分頁並一次呈現目前篩選下的所有 Issue？ → A: 是；以單一連續清單呈現全部符合條件的 Issue，不使用分頁。
 
-## User Scenarios & Testing *(mandatory)*
+## User Scenarios & Testing _(mandatory)_
 
 ### User Story 1 - 管理完成項目的顯示範圍 (Priority: P1)
 
@@ -58,7 +58,7 @@
 - 零筆結果是有效的篩選結果，應與讀取錯誤清楚區分。
 - 日期限制只作用於 Done；狀態為異常或其他狀態的項目不因缺少截止日期而被隱藏。
 
-## Requirements *(mandatory)*
+## Requirements _(mandatory)_
 
 ### Functional Requirements
 
@@ -75,13 +75,13 @@
 - **FR-011**: 控制項標籤、無障礙名稱及相關摘要文字 MUST 支援繁體中文、英文與日文，並可透過鍵盤操作。
 - **FR-012**: Issues List MUST 取消分頁並在同一連續清單中呈現目前 Repository 範圍及其他篩選條件下的全部符合項目；清單可垂直捲動，且不得要求使用者切換頁碼以查看剩餘項目。
 
-### Key Entities *(include if feature involves data)*
+### Key Entities _(include if feature involves data)_
 
 - **Done 項目**：狀態為 Done 的 Gitea Issue；近期範圍使用該 Issue 的截止日期判斷。
 - **近期完成範圍**：使用者當地今天及之前 29 個日曆日，合計 30 個日曆日。
 - **最近完成控制項狀態**：目前工作檢視頁面上的勾選值；預設為勾選，且不跨頁或重新載入保存。
 
-## Success Criteria *(mandatory)*
+## Success Criteria _(mandatory)_
 
 ### Measurable Outcomes
 

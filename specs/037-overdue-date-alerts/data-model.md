@@ -4,12 +4,12 @@ This feature adds no persisted or API data. It derives a view-only status from t
 
 ## Issue inputs
 
-| Field | Existing meaning | Use in this feature |
-|---|---|---|
-| `state` | Gitea Issue state: `open` or `closed` | Only `open` Issues may be overdue. |
-| `dueDate` | Optional date-only value from Gitea | Must be a valid calendar date and strictly earlier than local today. |
-| `scheduleAnomaly` | Existing schedule anomaly, when present | `invalid_due_date` and `date_range_reversed` suppress overdue; start-date-only anomalies do not suppress a valid overdue due date. |
-| local today | Browser-local calendar date (`YYYY-MM-DD`) | Compared with a validated date-only due date; equality is not overdue. |
+| Field             | Existing meaning                           | Use in this feature                                                                                                                |
+| ----------------- | ------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------- |
+| `state`           | Gitea Issue state: `open` or `closed`      | Only `open` Issues may be overdue.                                                                                                 |
+| `dueDate`         | Optional date-only value from Gitea        | Must be a valid calendar date and strictly earlier than local today.                                                               |
+| `scheduleAnomaly` | Existing schedule anomaly, when present    | `invalid_due_date` and `date_range_reversed` suppress overdue; start-date-only anomalies do not suppress a valid overdue due date. |
+| local today       | Browser-local calendar date (`YYYY-MM-DD`) | Compared with a validated date-only due date; equality is not overdue.                                                             |
 
 ## Derived presentation state
 

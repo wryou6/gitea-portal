@@ -4,12 +4,12 @@
 
 ## Pan Gesture (ephemeral UI state)
 
-| Field | Type | Constraint | Purpose |
-|---|---|---|---|
-| `pointerId` | number | 僅接受開始手勢的 pointer id | 忽略其他 pointer 的 move/up/cancel 事件 |
-| `startClientX` | number | 手勢開始時的 viewport X 座標 | 計算水平拖曳位移 |
-| `startScrollLeft` | number | 手勢開始時圖表 scrollLeft | 將拖曳位移轉換為容器水平位置 |
-| `isDragging` | boolean | pointer up/cancel/lost capture 後為 false | 控制平移樣式及避免 click/selection 副作用 |
+| Field             | Type    | Constraint                                | Purpose                                   |
+| ----------------- | ------- | ----------------------------------------- | ----------------------------------------- |
+| `pointerId`       | number  | 僅接受開始手勢的 pointer id               | 忽略其他 pointer 的 move/up/cancel 事件   |
+| `startClientX`    | number  | 手勢開始時的 viewport X 座標              | 計算水平拖曳位移                          |
+| `startScrollLeft` | number  | 手勢開始時圖表 scrollLeft                 | 將拖曳位移轉換為容器水平位置              |
+| `isDragging`      | boolean | pointer up/cancel/lost capture 後為 false | 控制平移樣式及避免 click/selection 副作用 |
 
 ## Existing Gantt Data
 

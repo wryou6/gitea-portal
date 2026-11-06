@@ -6,7 +6,9 @@ function normalizeBasePath(value: string | undefined): string {
   const path = value?.trim() ?? "/";
   if (path === "" || path === "/") return "/";
   if (!path.startsWith("/") || path.startsWith("//") || /[?#\\]/.test(path)) {
-    throw new Error("VITE_BASE_PATH must be a root-relative path, such as /issue/");
+    throw new Error(
+      "VITE_BASE_PATH must be a root-relative path, such as /issue/",
+    );
   }
 
   const segments = path.split("/").filter(Boolean);

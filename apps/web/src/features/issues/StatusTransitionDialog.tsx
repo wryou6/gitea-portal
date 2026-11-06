@@ -1,5 +1,11 @@
 import { useEffect, useState } from "react";
-import { api, toUserFacingError, type Issue, type UserFacingError, type StatusDefinition } from "../../lib/api";
+import {
+  api,
+  toUserFacingError,
+  type Issue,
+  type UserFacingError,
+  type StatusDefinition,
+} from "../../lib/api";
 import { Button } from "../../components/ui/Button";
 import { Dialog } from "../../components/ui/Dialog";
 import { ErrorNotice } from "../../components/feedback/ErrorNotice";
@@ -59,8 +65,7 @@ export function StatusTransitionDialog({
         setAssignees(repositoryAssignees);
         const applicable = statusDefinition.actions.filter(
           (action) =>
-            action.fromState === issue.status &&
-            action.toState === targetState,
+            action.fromState === issue.status && action.toState === targetState,
         );
         if (applicable.length === 1) setActionKey(applicable[0]!.key);
       })
@@ -116,8 +121,12 @@ export function StatusTransitionDialog({
             <option value="">{t("chooseReason")}</option>
             {actions.map((action) => (
               <option key={action.key} value={action.key}>
-                {t(statusReasonTranslationKey(action.key))} · {t(issueStatusTranslationKey(action.toState))} · {t("nextAction", {
-                  action: t(statusNextActionTranslationKey(action.nextActionKey)),
+                {t(statusReasonTranslationKey(action.key))} ·{" "}
+                {t(issueStatusTranslationKey(action.toState))} ·{" "}
+                {t("nextAction", {
+                  action: t(
+                    statusNextActionTranslationKey(action.nextActionKey),
+                  ),
                 })}
               </option>
             ))}
@@ -128,7 +137,9 @@ export function StatusTransitionDialog({
       )}
       {allowsAssignee && (
         <label className="field">
-          <span>{requiresAssignee ? t("nextAssignee") : t("optionalReviewer")}</span>
+          <span>
+            {requiresAssignee ? t("nextAssignee") : t("optionalReviewer")}
+          </span>
           <select
             value={selectedAssignee}
             onChange={(event) => setSelectedAssignee(event.target.value)}
@@ -138,7 +149,9 @@ export function StatusTransitionDialog({
             </option>
             {assignees.map((assignee) => (
               <option key={assignee.login} value={assignee.login}>
-                {assignee.fullName?.trim() ? `${assignee.fullName.trim()} (${assignee.login})` : assignee.login}
+                {assignee.fullName?.trim()
+                  ? `${assignee.fullName.trim()} (${assignee.login})`
+                  : assignee.login}
               </option>
             ))}
           </select>

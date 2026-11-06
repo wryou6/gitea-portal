@@ -6,13 +6,13 @@ This feature changes only transient work-view query state. It adds no persisted 
 
 Represents conditions shared by List, Kanban, and Gantt in the current workspace.
 
-| Field | Values | Meaning |
-|---|---|---|
-| `priority` | zero or more of `critical`, `high`, `medium`, `low` | An Issue passes when its normalized priority is any selected value. Empty means unfiltered. |
-| `issueType` | zero or more of `bug`, `feature`, `task` | An Issue passes when its normalized type is any selected value. Empty means unfiltered. |
-| `state` | zero or more of `todo`, `in-progress`, `done` | An Issue passes when its Portal Status is any selected value. Empty means unfiltered and retains current anomaly visibility. |
-| `assignee` | `all`, `me`, `unassigned`, or one Gitea login | Retains existing single-value matching behavior. |
-| `repository` | `all` or `owner/repository` | Internal scope for a Repository route; not a selectable shared filter. |
+| Field        | Values                                              | Meaning                                                                                                                      |
+| ------------ | --------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
+| `priority`   | zero or more of `critical`, `high`, `medium`, `low` | An Issue passes when its normalized priority is any selected value. Empty means unfiltered.                                  |
+| `issueType`  | zero or more of `bug`, `feature`, `task`            | An Issue passes when its normalized type is any selected value. Empty means unfiltered.                                      |
+| `state`      | zero or more of `todo`, `in-progress`, `done`       | An Issue passes when its Portal Status is any selected value. Empty means unfiltered and retains current anomaly visibility. |
+| `assignee`   | `all`, `me`, `unassigned`, or one Gitea login       | Retains existing single-value matching behavior.                                                                             |
+| `repository` | `all` or `owner/repository`                         | Internal scope for a Repository route; not a selectable shared filter.                                                       |
 
 Priority, Issue Type, and Status use OR within each field; all non-empty fields and Assignee use AND. When Status contains one or more values, anomalous Status Issues do not match.
 

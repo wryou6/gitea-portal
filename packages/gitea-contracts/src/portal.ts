@@ -31,15 +31,16 @@ export type AllRepositoriesGanttView = {
   issues: IssueSummary[];
 };
 export type WorkspaceKanbanView =
-  | RepositoryKanbanView
-  | AllRepositoriesKanbanView;
-export type WorkspaceGanttView =
-  | RepositoryGanttView
-  | AllRepositoriesGanttView;
+  RepositoryKanbanView | AllRepositoriesKanbanView;
+export type WorkspaceGanttView = RepositoryGanttView | AllRepositoriesGanttView;
 export type IssueViewCard = StatusViewCard;
 export type StatusTransitionInput = {
   actionKey: string;
   selectedAssignee?: string;
   expectedUpdatedAt: string;
 };
-export type Session = { login: string; displayName?: string; avatarUrl?: string };
+export type Session = {
+  login: string;
+  displayName?: string;
+  avatarUrl?: string;
+};

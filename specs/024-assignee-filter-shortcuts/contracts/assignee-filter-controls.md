@@ -4,13 +4,13 @@
 
 適用於 All repos 與 Repository workspace 的 Issues List、Kanban、Gantt。使用共用負責人欄位，不新增網路 API 或資料寫入操作。
 
-| Control | Behavior |
-|---|---|
+| Control                  | Behavior                                                                                                                                                                               |
+| ------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Priority / Type / Status | Each filter is a mutually exclusive group of directly clickable buttons, includes an all option, updates only its own filter value, and exposes its selected state with `aria-pressed` |
-| Assignee selector | 原生 select 直接列出候選人；已選一位負責人時仍可展開並改選其他人；`all` 和 `me` 由快捷按鈕顯示，不輸出 `assignee=all` |
-| 自己 button | 設定篩選狀態 `me`，網址為 `assignee=me`，依目前登入者更新結果；其他篩選保留 |
-| 所有負責人 button | 設定內部狀態 `all`，移除 URL 的 assignee 參數；其他篩選保留 |
-| Clear filters | 將負責人重設為 `me`、其餘條件重設為預設；負責人為 `me` 或 `all` 且無其他有效條件時停用；fixed Repository 維持由工作區提供 |
+| Assignee selector        | 原生 select 直接列出候選人；已選一位負責人時仍可展開並改選其他人；`all` 和 `me` 由快捷按鈕顯示，不輸出 `assignee=all`                                                                  |
+| 自己 button              | 設定篩選狀態 `me`，網址為 `assignee=me`，依目前登入者更新結果；其他篩選保留                                                                                                            |
+| 所有負責人 button        | 設定內部狀態 `all`，移除 URL 的 assignee 參數；其他篩選保留                                                                                                                            |
+| Clear filters            | 將負責人重設為 `me`、其餘條件重設為預設；負責人為 `me` 或 `all` 且無其他有效條件時停用；fixed Repository 維持由工作區提供                                                              |
 
 ## Accessibility and Localization
 

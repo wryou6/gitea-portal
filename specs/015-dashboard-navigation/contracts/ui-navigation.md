@@ -2,13 +2,13 @@
 
 ## Routes
 
-| URL | Behavior |
-|---|---|
-| `/` | Render Dashboard as the default page |
-| `/dashboard` | Render Dashboard; canonical destination of the Dashboard link |
-| `/issues` | Preserve the all-accessible-issues page |
-| `/repositories/{owner}/{repo}/{issues|kanban|gantt}` | Preserve current Repository workspace context and selected view |
-| `/boards/{boardId}/{issues|kanban|gantt}` | Preserve current cross-repository Board context and selected view |
+| URL                                   | Behavior                                                      |
+| ------------------------------------- | ------------------------------------------------------------- |
+| `/`                                   | Render Dashboard as the default page                          |
+| `/dashboard`                          | Render Dashboard; canonical destination of the Dashboard link |
+| `/issues`                             | Preserve the all-accessible-issues page                       |
+| `/repositories/{owner}/{repo}/{issues | kanban                                                        | gantt}` | Preserve current Repository workspace context and selected view   |
+| `/boards/{boardId}/{issues            | kanban                                                        | gantt}` | Preserve current cross-repository Board context and selected view |
 
 Unknown paths retain the application's existing fallback behavior unless an existing route already handles them.
 

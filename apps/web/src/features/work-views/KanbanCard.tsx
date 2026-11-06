@@ -28,13 +28,21 @@ export function KanbanCard({
   onDragStart: (issue: WorkViewCard) => void;
   canDrag?: boolean;
   returnTo?: string;
-  onMetadataSave?: (issue: WorkViewCard, field: "type" | "priority", value: string) => Promise<void>;
+  onMetadataSave?: (
+    issue: WorkViewCard,
+    field: "type" | "priority",
+    value: string,
+  ) => Promise<void>;
   showIssueNumber?: boolean;
 }) {
   const { t } = useTranslation("work-views");
   const { t: tIssues } = useTranslation("issues");
   const isDone = issue.status === "done";
-  const title = issueTitleForDisplay(issue.title, issue.number, showIssueNumber);
+  const title = issueTitleForDisplay(
+    issue.title,
+    issue.number,
+    showIssueNumber,
+  );
   const assigneeUsers = assigneeLoginsForDisplay(issue).map((login) =>
     profileFor(issue.userProfiles, login),
   );
@@ -43,7 +51,10 @@ export function KanbanCard({
       className="kanban-card"
       draggable={canDrag}
       onDragStart={(event) => {
-        if (event.target instanceof HTMLElement && event.target.closest(".issue-metadata-editor")) {
+        if (
+          event.target instanceof HTMLElement &&
+          event.target.closest(".issue-metadata-editor")
+        ) {
           event.preventDefault();
           return;
         }
@@ -53,15 +64,27 @@ export function KanbanCard({
       <div className="kanban-card-meta">
         <div className="kanban-card-type">
           {onMetadataSave ? (
-            <IssueMetadataBadgeEditor field="priority" value={issue.priority} onSave={(value) => onMetadataSave(issue, "priority", value)}>
+            <IssueMetadataBadgeEditor
+              field="priority"
+              value={issue.priority}
+              onSave={(value) => onMetadataSave(issue, "priority", value)}
+            >
               <PriorityBadge priority={issue.priority} labels={issue.labels} />
             </IssueMetadataBadgeEditor>
-          ) : <PriorityBadge priority={issue.priority} labels={issue.labels} />}
+          ) : (
+            <PriorityBadge priority={issue.priority} labels={issue.labels} />
+          )}
           {onMetadataSave ? (
-            <IssueMetadataBadgeEditor field="type" value={issue.type} onSave={(value) => onMetadataSave(issue, "type", value)}>
+            <IssueMetadataBadgeEditor
+              field="type"
+              value={issue.type}
+              onSave={(value) => onMetadataSave(issue, "type", value)}
+            >
               <IssueTypeBadge type={issue.type} labels={issue.labels} />
             </IssueMetadataBadgeEditor>
-          ) : <IssueTypeBadge type={issue.type} labels={issue.labels} />}
+          ) : (
+            <IssueTypeBadge type={issue.type} labels={issue.labels} />
+          )}
         </div>
         <small className="kanban-card-key">
           {issue.owner}/{issue.name} #{issue.number}
@@ -72,7 +95,12 @@ export function KanbanCard({
           className="kanban-card-title"
           to={returnTo ?? "/kanban"}
           replace={false}
-          mask={issueDetailMask(issue.owner, issue.name, issue.number, returnTo)}
+          mask={issueDetailMask(
+            issue.owner,
+            issue.name,
+            issue.number,
+            returnTo,
+          )}
           title={title}
         >
           {title}

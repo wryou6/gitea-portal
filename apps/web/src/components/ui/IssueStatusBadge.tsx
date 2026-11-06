@@ -16,7 +16,20 @@ export function IssueStatusBadge({
   disabled?: boolean;
 }) {
   const { t } = useTranslation("issues");
-  const badge = <Badge className={cn("issue-status", `issue-status--${status}`, className)}>{t(issueStatusTranslationKey(status))}</Badge>;
+  const badge = (
+    <Badge className={cn("issue-status", `issue-status--${status}`, className)}>
+      {t(issueStatusTranslationKey(status))}
+    </Badge>
+  );
   if (!onClick) return badge;
-  return <button type="button" className="issue-status-badge-trigger" onClick={onClick} disabled={disabled}>{badge}</button>;
+  return (
+    <button
+      type="button"
+      className="issue-status-badge-trigger"
+      onClick={onClick}
+      disabled={disabled}
+    >
+      {badge}
+    </button>
+  );
 }

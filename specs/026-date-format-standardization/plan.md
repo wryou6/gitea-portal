@@ -30,7 +30,7 @@
 
 ## Constitution Check
 
-*GATE: Must pass before Phase 0 research. Re-check after Phase 1 design.*
+_GATE: Must pass before Phase 0 research. Re-check after Phase 1 design._
 
 - **PASS — Gitea source of truth**: 日期值仍取自既有 Issue／Comment 資料；不新增 mirror、欄位或 persistence。
 - **PASS — User authorization**: 不增加 Gitea API 操作或改變目前使用者權限。

@@ -18,7 +18,7 @@
 
 - Q: 從 List 切到另一個 List（例如切換 Repository 或再次點側欄 List）時，要保留網址中的 `sort` 和 `direction` 嗎？ → A: 來源與目標都是 List 時保留；切到 Kanban/Gantt 時清除。
 
-## User Scenarios & Testing *(mandatory)*
+## User Scenarios & Testing _(mandatory)_
 
 ### User Story 1 - 切換檢視時網址只保留適用狀態 (Priority: P1)
 
@@ -59,7 +59,7 @@
 - 任何檢視切換都必須保留有效的共用篩選，且不可把前一個 Repository 的資料範圍帶入另一個工作區。
 - List 排序參數只有在導覽來源及目標都是 List 時保留；離開 List 檢視時清除。
 
-## Requirements *(mandatory)*
+## Requirements _(mandatory)_
 
 ### Functional Requirements
 
@@ -76,7 +76,7 @@
 - **工作檢視網址狀態**：目前工作區、檢視、有效共用篩選，以及僅供 Gantt 使用的日期與刻度。
 - **返回目標**：使用者暫時離開工作檢視處理 Issue 後，能返回原始工作區、檢視與適用狀態的網址。
 
-## Success Criteria *(mandatory)*
+## Success Criteria _(mandatory)_
 
 ### Measurable Outcomes
 

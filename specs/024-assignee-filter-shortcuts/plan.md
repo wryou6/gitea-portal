@@ -30,15 +30,15 @@
 
 ## Constitution Check
 
-| 原則 | Gate | 結果 |
-|---|---|---|
-| I. Gitea 是 Issue 資料唯一來源 | 不複製或持久化 Issue/Assignee | PASS；只讀取既有 Issue 並在客戶端篩選 |
-| II. 操作權限跟隨目前使用者 | 不新增或擴大 Gitea API 存取 | PASS；使用既有 session 身分與已可讀資料 |
-| III. Gitea 寫入安全 | 不新增 Gitea 寫入 | PASS；快捷按鈕僅變更檢視條件 |
-| IV. 跨來源彙整完整性 | 不更改聚合讀取或錯誤處理 | PASS；保留現有整體讀取失敗行為 |
-| V. 固定 Issue Status | 不改變 Status 語意 | PASS |
-| VI. 工作範圍可辨認 | 保留現有 workspace 與 Repository 範圍 | PASS |
-| VII. 多語系 | 新增操作文案需三語且具可及性 | PASS；納入 i18n 與 Storybook 驗收 |
+| 原則                           | Gate                                  | 結果                                    |
+| ------------------------------ | ------------------------------------- | --------------------------------------- |
+| I. Gitea 是 Issue 資料唯一來源 | 不複製或持久化 Issue/Assignee         | PASS；只讀取既有 Issue 並在客戶端篩選   |
+| II. 操作權限跟隨目前使用者     | 不新增或擴大 Gitea API 存取           | PASS；使用既有 session 身分與已可讀資料 |
+| III. Gitea 寫入安全            | 不新增 Gitea 寫入                     | PASS；快捷按鈕僅變更檢視條件            |
+| IV. 跨來源彙整完整性           | 不更改聚合讀取或錯誤處理              | PASS；保留現有整體讀取失敗行為          |
+| V. 固定 Issue Status           | 不改變 Status 語意                    | PASS                                    |
+| VI. 工作範圍可辨認             | 保留現有 workspace 與 Repository 範圍 | PASS                                    |
+| VII. 多語系                    | 新增操作文案需三語且具可及性          | PASS；納入 i18n 與 Storybook 驗收       |
 
 設計階段複核：無 constitution 違反，無需例外或複雜度豁免。
 

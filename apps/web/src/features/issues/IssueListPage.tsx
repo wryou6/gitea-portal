@@ -1,9 +1,17 @@
 import { useEffect, useRef, useState, type KeyboardEvent } from "react";
 import { useTranslation } from "react-i18next";
 import { useLocation, useNavigationType } from "react-router";
-import { WorkViewFilterBar, WorkViewRecentDoneFilter } from "../work-views/WorkViewFilterBar";
+import {
+  WorkViewFilterBar,
+  WorkViewRecentDoneFilter,
+} from "../work-views/WorkViewFilterBar";
 import { WorkViewLayout } from "../work-views/WorkViewLayout";
-import { defaultWorkViewFilters, matchesRecentDoneVisibility, matchesWorkViewFilters, parseWorkViewFilters } from "../work-views/work-view-filters";
+import {
+  defaultWorkViewFilters,
+  matchesRecentDoneVisibility,
+  matchesWorkViewFilters,
+  parseWorkViewFilters,
+} from "../work-views/work-view-filters";
 import type { WorkViewFilters } from "../work-views/work-view-filters";
 import { IssueRow } from "./IssueRow";
 import { useIssueListState, type IssueFiltersValue } from "./issue-list-state";
@@ -13,7 +21,14 @@ import { LoadingState } from "../../components/feedback/LoadingState";
 import { EmptyState } from "../../components/feedback/EmptyState";
 import { ErrorNotice } from "../../components/feedback/ErrorNotice";
 import { Table } from "../../components/ui/Table";
-import { api, transitionIssue, type Issue, type IssueSortField, type SortDirection, type UserFacingError } from "../../lib/api";
+import {
+  api,
+  transitionIssue,
+  type Issue,
+  type IssueSortField,
+  type SortDirection,
+  type UserFacingError,
+} from "../../lib/api";
 import { StatusTransitionDialog } from "./StatusTransitionDialog";
 import { IssueViewOptionsDialog } from "./IssueViewOptionsDialog";
 import {
@@ -27,25 +42,33 @@ import { useReorderAnimation } from "../../lib/use-reorder-animation";
 import { mergeUserProfiles } from "../../lib/user-profiles";
 import { buildWorkViewReturnTo } from "../work-views/work-view-url-state";
 
-export function filtersFromUrl(search = window.location.search): IssueFiltersValue {
+export function filtersFromUrl(
+  search = window.location.search,
+): IssueFiltersValue {
   return parseWorkViewFilters(search);
 }
 
-function sortFromUrl(fallback: IssueSortField, search = window.location.search): IssueSortField {
+function sortFromUrl(
+  fallback: IssueSortField,
+  search = window.location.search,
+): IssueSortField {
   const params = new URLSearchParams(search);
   const value = params.get("sort");
   return ISSUE_VIEW_FIELDS.includes(value as IssueSortField) &&
-      (params.get("direction") === "asc" || params.get("direction") === "desc")
-    ? value as IssueSortField
+    (params.get("direction") === "asc" || params.get("direction") === "desc")
+    ? (value as IssueSortField)
     : fallback;
 }
 
-function directionFromUrl(fallback: SortDirection, search = window.location.search): SortDirection {
+function directionFromUrl(
+  fallback: SortDirection,
+  search = window.location.search,
+): SortDirection {
   const params = new URLSearchParams(search);
   const value = params.get("sort");
   const direction = params.get("direction");
   return ISSUE_VIEW_FIELDS.includes(value as IssueSortField) &&
-      (direction === "asc" || direction === "desc")
+    (direction === "asc" || direction === "desc")
     ? direction
     : fallback;
 }
@@ -71,8 +94,14 @@ function reorderVisibleFields(
   });
 }
 
-function sameFieldOrder(left: IssueSortField[], right: IssueSortField[]): boolean {
-  return left.length === right.length && left.every((field, index) => field === right[index]);
+function sameFieldOrder(
+  left: IssueSortField[],
+  right: IssueSortField[],
+): boolean {
+  return (
+    left.length === right.length &&
+    left.every((field, index) => field === right[index])
+  );
 }
 
 export function IssueListPage({
@@ -104,7 +133,10 @@ export function IssueListPage({
   const [preference, setPreference] = useState<IssueViewPreference>(
     () => demoViewPreference ?? readIssueViewPreference(login),
   );
-  const initialFilters = { ...defaultWorkViewFilters, ...(demoFilterValues ?? filtersFromUrl(location.search)) };
+  const initialFilters = {
+    ...defaultWorkViewFilters,
+    ...(demoFilterValues ?? filtersFromUrl(location.search)),
+  };
   if (repository)
     initialFilters.repository = `${repository.owner}/${repository.name}`;
   const [demoFilters, setDemoFilters] = useState(initialFilters);
@@ -123,20 +155,28 @@ export function IssueListPage({
     undefined,
     login,
   );
-  const [demoSort, setDemoSort] = useState<{ sort: IssueSortField; direction: SortDirection }>(
+  const [demoSort, setDemoSort] = useState<{
+    sort: IssueSortField;
+    direction: SortDirection;
+  }>(
     initialDemoSort ?? {
       sort: preference.defaultSortField,
       direction: preference.defaultSortDirection,
     },
   );
   const [recentDoneOnly, setRecentDoneOnly] = useState(true);
-  const [sessionColumnOrder, setSessionColumnOrder] = useState<IssueSortField[] | undefined>(demoColumnOrder);
+  const [sessionColumnOrder, setSessionColumnOrder] = useState<
+    IssueSortField[] | undefined
+  >(demoColumnOrder);
   const [draggedField, setDraggedField] = useState<IssueSortField>();
   const [dragOverField, setDragOverField] = useState<IssueSortField>();
-  const [keyboardDraggedField, setKeyboardDraggedField] = useState<IssueSortField>();
+  const [keyboardDraggedField, setKeyboardDraggedField] =
+    useState<IssueSortField>();
   const [columnAnnouncement, setColumnAnnouncement] = useState("");
   const [pendingStatusIssue, setPendingStatusIssue] = useState<Issue>();
-  const keyboardOrderBeforeDrag = useRef<IssueSortField[] | undefined>(undefined);
+  const keyboardOrderBeforeDrag = useRef<IssueSortField[] | undefined>(
+    undefined,
+  );
   const [optionsOpen, setOptionsOpen] = useState(demoOptionsOpen ?? false);
   const optionsTriggerRef = useRef<HTMLButtonElement>(null);
   const tableRef = useRef<HTMLTableElement>(null);
@@ -145,27 +185,38 @@ export function IssueListPage({
   const activeDirection = demoIssues ? demoSort.direction : direction;
   const visibleFields = preference.visibleFields;
   const columnOrder = sessionColumnOrder ?? preference.columnOrder;
-  const visibleOrder = columnOrder.filter((field) => visibleFields.includes(field));
+  const visibleOrder = columnOrder.filter((field) =>
+    visibleFields.includes(field),
+  );
   const defaultPreference = defaultIssueViewPreference();
   const hasCustomView =
-    !sameFieldOrder(preference.visibleFields, defaultPreference.visibleFields) ||
+    !sameFieldOrder(
+      preference.visibleFields,
+      defaultPreference.visibleFields,
+    ) ||
     !sameFieldOrder(preference.columnOrder, defaultPreference.columnOrder) ||
     preference.defaultSortField !== defaultPreference.defaultSortField ||
-    preference.defaultSortDirection !== defaultPreference.defaultSortDirection ||
+    preference.defaultSortDirection !==
+      defaultPreference.defaultSortDirection ||
     !sameFieldOrder(columnOrder, defaultPreference.columnOrder) ||
     activeSort !== defaultPreference.defaultSortField ||
     activeDirection !== defaultPreference.defaultSortDirection;
   useReorderAnimation(tableRef, visibleOrder.join("|"));
-  const issues = (demoIssues
-    ? demoIssues.filter((issue) => matchesWorkViewFilters(issue, demoFilters, login))
-    : loadedIssues
-  ).filter((issue) => matchesRecentDoneVisibility(issue, recentDoneOnly))
+  const issues = (
+    demoIssues
+      ? demoIssues.filter((issue) =>
+          matchesWorkViewFilters(issue, demoFilters, login),
+        )
+      : loadedIssues
+  )
+    .filter((issue) => matchesRecentDoneVisibility(issue, recentDoneOnly))
     .sort((a, b) => compareIssues(a, b, activeSort, activeDirection));
-  const userProfiles = mergeUserProfiles((demoIssues ?? loadedIssues).map((issue) => issue.userProfiles));
+  const userProfiles = mergeUserProfiles(
+    (demoIssues ?? loadedIssues).map((issue) => issue.userProfiles),
+  );
   const loading = demoIssues ? demoState === "loading" : isLoading;
-  const displayedError: UserFacingError | undefined = demoIssues && demoState === "error"
-    ? t("issueListLoadError")
-    : error;
+  const displayedError: UserFacingError | undefined =
+    demoIssues && demoState === "error" ? t("issueListLoadError") : error;
 
   useEffect(() => {
     if (demoIssues) return;
@@ -180,49 +231,85 @@ export function IssueListPage({
 
   const previousLocationKey = useRef(location.key);
   useEffect(() => {
-    const isPop = navigationType === "POP" && previousLocationKey.current !== location.key;
+    const isPop =
+      navigationType === "POP" && previousLocationKey.current !== location.key;
     previousLocationKey.current = location.key;
     if (demoIssues || !isPop) return;
     const params = new URLSearchParams(location.search);
     const restored = {
       ...parseWorkViewFilters(location.search),
-      ...(repository ? { repository: `${repository.owner}/${repository.name}` } : {}),
+      ...(repository
+        ? { repository: `${repository.owner}/${repository.name}` }
+        : {}),
     };
     const sortValue = params.get("sort");
     const directionValue = params.get("direction");
     const restoredSort = ISSUE_VIEW_FIELDS.includes(sortValue as IssueSortField)
-      ? sortValue as IssueSortField
+      ? (sortValue as IssueSortField)
       : preference.defaultSortField;
     const restoredDirection = directionValue === "desc" ? "desc" : "asc";
     void load(restored, restoredSort, restoredDirection);
-  }, [demoIssues, load, location.key, location.search, navigationType, preference.defaultSortField, repository?.name, repository?.owner]);
+  }, [
+    demoIssues,
+    load,
+    location.key,
+    location.search,
+    navigationType,
+    preference.defaultSortField,
+    repository?.name,
+    repository?.owner,
+  ]);
 
   useEffect(() => {
     setRecentDoneOnly(true);
   }, [repository?.owner, repository?.name]);
 
   useEffect(() => {
-    if (wasOptionsOpen.current && !optionsOpen) optionsTriggerRef.current?.focus();
+    if (wasOptionsOpen.current && !optionsOpen)
+      optionsTriggerRef.current?.focus();
     wasOptionsOpen.current = optionsOpen;
   }, [optionsOpen]);
 
-  const returnTo = buildWorkViewReturnTo(location.pathname, location.search, "issues");
-  const saveIssueMetadata = async (issue: Issue, field: "type" | "priority", value: string) => {
+  const returnTo = buildWorkViewReturnTo(
+    location.pathname,
+    location.search,
+    "issues",
+  );
+  const saveIssueMetadata = async (
+    issue: Issue,
+    field: "type" | "priority",
+    value: string,
+  ) => {
     try {
-      await api(`/api/issues/${encodeURIComponent(issue.owner)}/${encodeURIComponent(issue.name)}/${issue.number}`, {
-        method: "PATCH",
-        body: JSON.stringify({ expectedUpdatedAt: issue.updatedAt, [field]: value }),
-      });
+      await api(
+        `/api/issues/${encodeURIComponent(issue.owner)}/${encodeURIComponent(issue.name)}/${issue.number}`,
+        {
+          method: "PATCH",
+          body: JSON.stringify({
+            expectedUpdatedAt: issue.updatedAt,
+            [field]: value,
+          }),
+        },
+      );
       await load();
     } catch (cause) {
       await load();
       throw cause;
     }
   };
-  const submitStatusTransition = async (actionKey: string, selectedAssignee?: string) => {
+  const submitStatusTransition = async (
+    actionKey: string,
+    selectedAssignee?: string,
+  ) => {
     if (!pendingStatusIssue) return;
     try {
-      await transitionIssue(pendingStatusIssue.owner, pendingStatusIssue.name, pendingStatusIssue, actionKey, selectedAssignee);
+      await transitionIssue(
+        pendingStatusIssue.owner,
+        pendingStatusIssue.name,
+        pendingStatusIssue,
+        actionKey,
+        selectedAssignee,
+      );
       setPendingStatusIssue(undefined);
       await load();
     } catch (cause) {
@@ -242,12 +329,17 @@ export function IssueListPage({
     { field: "dueDate", label: t("dueDate") },
     { field: "author", label: t("author") },
   ];
-  const headingByField = new Map(headings.map((heading) => [heading.field, heading.label]));
+  const headingByField = new Map(
+    headings.map((heading) => [heading.field, heading.label]),
+  );
 
   function sortBy(field: IssueSortField) {
-    const nextDirection: SortDirection = field === activeSort
-      ? activeDirection === "asc" ? "desc" : "asc"
-      : "asc";
+    const nextDirection: SortDirection =
+      field === activeSort
+        ? activeDirection === "asc"
+          ? "desc"
+          : "asc"
+        : "asc";
     if (demoIssues) setDemoSort({ sort: field, direction: nextDirection });
     else void load(filters, field, nextDirection);
   }
@@ -262,34 +354,50 @@ export function IssueListPage({
     const next = defaultIssueViewPreference();
     savePreference(next);
     setSessionColumnOrder(undefined);
-    if (demoIssues) setDemoSort({ sort: next.defaultSortField, direction: next.defaultSortDirection });
+    if (demoIssues)
+      setDemoSort({
+        sort: next.defaultSortField,
+        direction: next.defaultSortDirection,
+      });
     else void load(filters, next.defaultSortField, next.defaultSortDirection);
   }
 
-  function handleColumnMoveKeyDown(event: KeyboardEvent<HTMLButtonElement>, field: IssueSortField) {
+  function handleColumnMoveKeyDown(
+    event: KeyboardEvent<HTMLButtonElement>,
+    field: IssueSortField,
+  ) {
     if (event.key === "Escape" && keyboardDraggedField === field) {
       event.preventDefault();
       event.stopPropagation();
       setSessionColumnOrder(keyboardOrderBeforeDrag.current);
       keyboardOrderBeforeDrag.current = undefined;
       setKeyboardDraggedField(undefined);
-      setColumnAnnouncement(t("columnMoveCanceled", { column: headingByField.get(field) ?? field }));
+      setColumnAnnouncement(
+        t("columnMoveCanceled", { column: headingByField.get(field) ?? field }),
+      );
       return;
     }
 
-    if (event.key === " " && (keyboardDraggedField === field || event.shiftKey)) {
+    if (
+      event.key === " " &&
+      (keyboardDraggedField === field || event.shiftKey)
+    ) {
       event.preventDefault();
       if (keyboardDraggedField === field) {
         keyboardOrderBeforeDrag.current = undefined;
         setKeyboardDraggedField(undefined);
-        setColumnAnnouncement(t("columnDropped", {
-          column: headingByField.get(field) ?? field,
-          position: visibleOrder.indexOf(field) + 1,
-        }));
+        setColumnAnnouncement(
+          t("columnDropped", {
+            column: headingByField.get(field) ?? field,
+            position: visibleOrder.indexOf(field) + 1,
+          }),
+        );
       } else if (!keyboardDraggedField) {
         keyboardOrderBeforeDrag.current = [...columnOrder];
         setKeyboardDraggedField(field);
-        setColumnAnnouncement(t("columnPickedUp", { column: headingByField.get(field) ?? field }));
+        setColumnAnnouncement(
+          t("columnPickedUp", { column: headingByField.get(field) ?? field }),
+        );
       }
       return;
     }
@@ -299,27 +407,43 @@ export function IssueListPage({
       return;
     }
 
-    if (keyboardDraggedField && keyboardDraggedField !== field && (event.key === " " || event.key === "Enter")) {
+    if (
+      keyboardDraggedField &&
+      keyboardDraggedField !== field &&
+      (event.key === " " || event.key === "Enter")
+    ) {
       event.preventDefault();
       return;
     }
 
-    if (keyboardDraggedField !== field || (event.key !== "ArrowLeft" && event.key !== "ArrowRight")) return;
+    if (
+      keyboardDraggedField !== field ||
+      (event.key !== "ArrowLeft" && event.key !== "ArrowRight")
+    )
+      return;
     event.preventDefault();
     const index = visibleOrder.indexOf(field);
     const target = visibleOrder[index + (event.key === "ArrowLeft" ? -1 : 1)];
     if (!target) return;
-    setSessionColumnOrder(reorderVisibleFields(columnOrder, visibleOrder, field, target));
-    setColumnAnnouncement(t("columnMovedPosition", {
-      column: headingByField.get(field) ?? field,
-      position: visibleOrder.indexOf(target) + 1,
-    }));
+    setSessionColumnOrder(
+      reorderVisibleFields(columnOrder, visibleOrder, field, target),
+    );
+    setColumnAnnouncement(
+      t("columnMovedPosition", {
+        column: headingByField.get(field) ?? field,
+        position: visibleOrder.indexOf(target) + 1,
+      }),
+    );
   }
 
   return (
     <section className="workspace-view workspace-view--issues">
       <PageHeader
-        title={repository ? `${repository.owner}/${repository.name}` : t("issueListTitle")}
+        title={
+          repository
+            ? `${repository.owner}/${repository.name}`
+            : t("issueListTitle")
+        }
         compact
       />
       <WorkViewLayout
@@ -330,192 +454,322 @@ export function IssueListPage({
         loading={loading}
         error={Boolean(displayedError)}
         userProfiles={userProfiles}
-        commonFilters={<WorkViewFilterBar
-          filters={demoIssues ? demoFilters : filters}
-          repositoryFixed={Boolean(repository)}
-          assignees={[...new Set((demoIssues ?? loadedIssues).flatMap((issue) => issue.assignees))].sort((a, b) => a.localeCompare(b))}
-          userProfiles={userProfiles}
-          currentUserLogin={login}
-          onChange={(next) => {
-            const fixed = repository ? { ...next, repository: `${repository.owner}/${repository.name}` } : next;
-            if (demoIssues) {
-              setDemoFilters(fixed);
-              return;
-            }
-            void load(fixed, sort, direction, true);
-          }}
-        />}
-        controls={<>
-      <WorkViewRecentDoneFilter checked={recentDoneOnly} onChange={setRecentDoneOnly} />
-      <div className="issues-table-toolbar">
-        <h3 className="work-view-controls-section-title">{t("viewOptions")}</h3>
-        <div className="issues-table-toolbar-actions">
-          {!sameFieldOrder(columnOrder, preference.columnOrder) && (
-            <button className="issues-table-toolbar-save" type="button" onClick={() => {
-              savePreference({ ...preference, columnOrder });
-              setSessionColumnOrder(undefined);
-            }}>
-              {t("setDefaultPropertyOrder")}
-            </button>
-          )}
-          {(activeSort !== preference.defaultSortField || activeDirection !== preference.defaultSortDirection) && (
-            <button className="issues-table-toolbar-save" type="button" onClick={() => savePreference({
-              ...preference,
-              defaultSortField: activeSort,
-              defaultSortDirection: activeDirection,
-            })}>
-              {t("setDefaultSort")}
-            </button>
-          )}
-          {hasCustomView && (
-            <button className="issues-table-toolbar-reset" type="button" onClick={restoreDefaults}>
-              {t("restoreViewDefaults")}
-            </button>
-          )}
-        </div>
-        <button ref={optionsTriggerRef} className="secondary" type="button" onClick={() => setOptionsOpen(true)}>
-          {t("viewOptions")}
-        </button>
-      </div>
-        </>}
-      >
-      {displayedError && <><ErrorNotice message={displayedError} />{!demoIssues && <Button variant="secondary" type="button" onClick={() => void load(filters)}>{t("retry")}</Button>}</>}
-      {loading && <LoadingState />}
-      {(issues.length > 0 || (!loading && !displayedError) || demoState === "loading" || demoState === "error") && (
-        <Table
-          ref={tableRef}
-          className="issues-table"
-          ariaLabel={t("issueTable")}
-          style={{ minWidth: `${Math.max(460, visibleOrder.length * 116)}px` }}
-        >
-          <thead>
-            <tr>
-              {visibleOrder.map((field) => {
-                const label = headingByField.get(field) ?? field;
-                return (
-                  <th
-                    key={field}
-                    data-column-field={field}
-                    data-reorder-key={field}
-                    data-column-align={field === "type" || field === "status" || field === "priority" ? "center" : undefined}
-                    scope="col"
-                    draggable
-                    aria-sort={activeSort === field ? activeDirection === "asc" ? "ascending" : "descending" : "none"}
-                    className={[
-                      dragOverField === field && "issues-table-drop-target",
-                      draggedField === field && "issues-table-dragging",
-                      keyboardDraggedField === field && "issues-table-keyboard-dragging",
-                    ].filter(Boolean).join(" ") || undefined}
-                    onDragStart={(event) => {
-                      event.dataTransfer.effectAllowed = "move";
-                      event.dataTransfer.setData("text/plain", field);
-                      setDraggedField(field);
-                    }}
-                    onDragOver={(event) => {
-                      event.preventDefault();
-                      event.dataTransfer.dropEffect = "move";
-                      setDragOverField(field);
-                    }}
-                    onDragLeave={() => setDragOverField(undefined)}
-                    onDrop={(event) => {
-                      event.preventDefault();
-                      const source = draggedField ?? event.dataTransfer.getData("text/plain") as IssueSortField;
-                      const nextOrder = reorderVisibleFields(columnOrder, visibleOrder, source, field);
-                      setSessionColumnOrder(nextOrder);
-                      setColumnAnnouncement(t("columnDropped", {
-                        column: headingByField.get(source) ?? source,
-                        position: nextOrder.filter((candidate) => visibleFields.includes(candidate)).indexOf(source) + 1,
-                      }));
-                      setDraggedField(undefined);
-                      setDragOverField(undefined);
-                    }}
-                    onDragEnd={() => {
-                      setDraggedField(undefined);
-                      setDragOverField(undefined);
+        commonFilters={
+          <WorkViewFilterBar
+            filters={demoIssues ? demoFilters : filters}
+            repositoryFixed={Boolean(repository)}
+            assignees={[
+              ...new Set(
+                (demoIssues ?? loadedIssues).flatMap(
+                  (issue) => issue.assignees,
+                ),
+              ),
+            ].sort((a, b) => a.localeCompare(b))}
+            userProfiles={userProfiles}
+            currentUserLogin={login}
+            onChange={(next) => {
+              const fixed = repository
+                ? {
+                    ...next,
+                    repository: `${repository.owner}/${repository.name}`,
+                  }
+                : next;
+              if (demoIssues) {
+                setDemoFilters(fixed);
+                return;
+              }
+              void load(fixed, sort, direction, true);
+            }}
+          />
+        }
+        controls={
+          <>
+            <WorkViewRecentDoneFilter
+              checked={recentDoneOnly}
+              onChange={setRecentDoneOnly}
+            />
+            <div className="issues-table-toolbar">
+              <h3 className="work-view-controls-section-title">
+                {t("viewOptions")}
+              </h3>
+              <div className="issues-table-toolbar-actions">
+                {!sameFieldOrder(columnOrder, preference.columnOrder) && (
+                  <button
+                    className="issues-table-toolbar-save"
+                    type="button"
+                    onClick={() => {
+                      savePreference({ ...preference, columnOrder });
+                      setSessionColumnOrder(undefined);
                     }}
                   >
-                    <div className="issues-table-header-controls">
-                      <button
-                        className="issues-table-sort"
-                        type="button"
-                        aria-label={t("sortByColumn", { column: label, direction: activeSort === field ? t(activeDirection) : t("notSorted") })}
-                        aria-description={t("columnReorderHelp")}
-                        aria-pressed={keyboardDraggedField === field}
-                        onKeyDown={(event) => handleColumnMoveKeyDown(event, field)}
-                        onClick={() => sortBy(field)}
-                      >
-                        <span className="issues-table-drag-label">{label}</span>
-                        {activeSort === field && (
-                          <span className="sort-indicator" aria-hidden="true">
-                            {activeDirection === "asc" ? "↑" : "↓"}
-                          </span>
-                        )}
-                      </button>
-                    </div>
-                  </th>
-                );
-              })}
-            </tr>
-          </thead>
-          <tbody>
-            {issues.map((issue) => (
-              <IssueRow
-                key={`${issue.owner}/${issue.name}#${issue.number}`}
-                issue={issue}
-                returnTo={returnTo}
-                columnOrder={columnOrder}
-                visibleFields={visibleFields}
-                showRepositoryIdentity={!repository}
-                showIssueNumber
-                onMetadataSave={demoIssues ? undefined : saveIssueMetadata}
-                onStatusClick={demoIssues ? undefined : setPendingStatusIssue}
-              />
-            ))}
-            {!issues.length && !loading && !displayedError && (
-              <tr><td className="issues-table-empty" colSpan={visibleOrder.length}><EmptyState>{t("noMatchingIssues")}</EmptyState></td></tr>
+                    {t("setDefaultPropertyOrder")}
+                  </button>
+                )}
+                {(activeSort !== preference.defaultSortField ||
+                  activeDirection !== preference.defaultSortDirection) && (
+                  <button
+                    className="issues-table-toolbar-save"
+                    type="button"
+                    onClick={() =>
+                      savePreference({
+                        ...preference,
+                        defaultSortField: activeSort,
+                        defaultSortDirection: activeDirection,
+                      })
+                    }
+                  >
+                    {t("setDefaultSort")}
+                  </button>
+                )}
+                {hasCustomView && (
+                  <button
+                    className="issues-table-toolbar-reset"
+                    type="button"
+                    onClick={restoreDefaults}
+                  >
+                    {t("restoreViewDefaults")}
+                  </button>
+                )}
+              </div>
+              <button
+                ref={optionsTriggerRef}
+                className="secondary"
+                type="button"
+                onClick={() => setOptionsOpen(true)}
+              >
+                {t("viewOptions")}
+              </button>
+            </div>
+          </>
+        }
+      >
+        {displayedError && (
+          <>
+            <ErrorNotice message={displayedError} />
+            {!demoIssues && (
+              <Button
+                variant="secondary"
+                type="button"
+                onClick={() => void load(filters)}
+              >
+                {t("retry")}
+              </Button>
             )}
-          </tbody>
-        </Table>
-      )}
-      <IssueViewOptionsDialog
-        open={optionsOpen}
-        preference={preference}
-        onClose={() => setOptionsOpen(false)}
-        onChange={savePreference}
-      />
-      {pendingStatusIssue && (
-        <StatusTransitionDialog
-          issue={pendingStatusIssue}
-          onClose={() => setPendingStatusIssue(undefined)}
-          onSubmit={submitStatusTransition}
+          </>
+        )}
+        {loading && <LoadingState />}
+        {(issues.length > 0 ||
+          (!loading && !displayedError) ||
+          demoState === "loading" ||
+          demoState === "error") && (
+          <Table
+            ref={tableRef}
+            className="issues-table"
+            ariaLabel={t("issueTable")}
+            style={{
+              minWidth: `${Math.max(460, visibleOrder.length * 116)}px`,
+            }}
+          >
+            <thead>
+              <tr>
+                {visibleOrder.map((field) => {
+                  const label = headingByField.get(field) ?? field;
+                  return (
+                    <th
+                      key={field}
+                      data-column-field={field}
+                      data-reorder-key={field}
+                      data-column-align={
+                        field === "type" ||
+                        field === "status" ||
+                        field === "priority"
+                          ? "center"
+                          : undefined
+                      }
+                      scope="col"
+                      draggable
+                      aria-sort={
+                        activeSort === field
+                          ? activeDirection === "asc"
+                            ? "ascending"
+                            : "descending"
+                          : "none"
+                      }
+                      className={
+                        [
+                          dragOverField === field && "issues-table-drop-target",
+                          draggedField === field && "issues-table-dragging",
+                          keyboardDraggedField === field &&
+                            "issues-table-keyboard-dragging",
+                        ]
+                          .filter(Boolean)
+                          .join(" ") || undefined
+                      }
+                      onDragStart={(event) => {
+                        event.dataTransfer.effectAllowed = "move";
+                        event.dataTransfer.setData("text/plain", field);
+                        setDraggedField(field);
+                      }}
+                      onDragOver={(event) => {
+                        event.preventDefault();
+                        event.dataTransfer.dropEffect = "move";
+                        setDragOverField(field);
+                      }}
+                      onDragLeave={() => setDragOverField(undefined)}
+                      onDrop={(event) => {
+                        event.preventDefault();
+                        const source =
+                          draggedField ??
+                          (event.dataTransfer.getData(
+                            "text/plain",
+                          ) as IssueSortField);
+                        const nextOrder = reorderVisibleFields(
+                          columnOrder,
+                          visibleOrder,
+                          source,
+                          field,
+                        );
+                        setSessionColumnOrder(nextOrder);
+                        setColumnAnnouncement(
+                          t("columnDropped", {
+                            column: headingByField.get(source) ?? source,
+                            position:
+                              nextOrder
+                                .filter((candidate) =>
+                                  visibleFields.includes(candidate),
+                                )
+                                .indexOf(source) + 1,
+                          }),
+                        );
+                        setDraggedField(undefined);
+                        setDragOverField(undefined);
+                      }}
+                      onDragEnd={() => {
+                        setDraggedField(undefined);
+                        setDragOverField(undefined);
+                      }}
+                    >
+                      <div className="issues-table-header-controls">
+                        <button
+                          className="issues-table-sort"
+                          type="button"
+                          aria-label={t("sortByColumn", {
+                            column: label,
+                            direction:
+                              activeSort === field
+                                ? t(activeDirection)
+                                : t("notSorted"),
+                          })}
+                          aria-description={t("columnReorderHelp")}
+                          aria-pressed={keyboardDraggedField === field}
+                          onKeyDown={(event) =>
+                            handleColumnMoveKeyDown(event, field)
+                          }
+                          onClick={() => sortBy(field)}
+                        >
+                          <span className="issues-table-drag-label">
+                            {label}
+                          </span>
+                          {activeSort === field && (
+                            <span className="sort-indicator" aria-hidden="true">
+                              {activeDirection === "asc" ? "↑" : "↓"}
+                            </span>
+                          )}
+                        </button>
+                      </div>
+                    </th>
+                  );
+                })}
+              </tr>
+            </thead>
+            <tbody>
+              {issues.map((issue) => (
+                <IssueRow
+                  key={`${issue.owner}/${issue.name}#${issue.number}`}
+                  issue={issue}
+                  returnTo={returnTo}
+                  columnOrder={columnOrder}
+                  visibleFields={visibleFields}
+                  showRepositoryIdentity={!repository}
+                  showIssueNumber
+                  onMetadataSave={demoIssues ? undefined : saveIssueMetadata}
+                  onStatusClick={demoIssues ? undefined : setPendingStatusIssue}
+                />
+              ))}
+              {!issues.length && !loading && !displayedError && (
+                <tr>
+                  <td
+                    className="issues-table-empty"
+                    colSpan={visibleOrder.length}
+                  >
+                    <EmptyState>{t("noMatchingIssues")}</EmptyState>
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </Table>
+        )}
+        <IssueViewOptionsDialog
+          open={optionsOpen}
+          preference={preference}
+          onClose={() => setOptionsOpen(false)}
+          onChange={savePreference}
         />
-      )}
-      <p className="sr-only" role="status" aria-live="polite">{columnAnnouncement}</p>
+        {pendingStatusIssue && (
+          <StatusTransitionDialog
+            issue={pendingStatusIssue}
+            onClose={() => setPendingStatusIssue(undefined)}
+            onSubmit={submitStatusTransition}
+          />
+        )}
+        <p className="sr-only" role="status" aria-live="polite">
+          {columnAnnouncement}
+        </p>
       </WorkViewLayout>
     </section>
   );
 }
 
-function compareIssues(a: Issue, b: Issue, field: IssueSortField, direction: SortDirection): number {
+function compareIssues(
+  a: Issue,
+  b: Issue,
+  field: IssueSortField,
+  direction: SortDirection,
+): number {
   const get = (issue: Issue): string | number | null => {
     switch (field) {
-      case "type": return issue.type;
-      case "key": return `${issue.owner}/${issue.name}#${String(issue.number).padStart(8, "0")}`;
-      case "title": return issue.title;
-      case "assignee": return issue.assignee;
-      case "status": return issue.status;
-      case "priority": return issue.priority;
-      case "createdAt": return issue.createdAt;
-      case "startDate": return issue.startDate;
-      case "dueDate": return issue.dueDate;
-      case "author": return issue.author;
+      case "type":
+        return issue.type;
+      case "key":
+        return `${issue.owner}/${issue.name}#${String(issue.number).padStart(8, "0")}`;
+      case "title":
+        return issue.title;
+      case "assignee":
+        return issue.assignee;
+      case "status":
+        return issue.status;
+      case "priority":
+        return issue.priority;
+      case "createdAt":
+        return issue.createdAt;
+      case "startDate":
+        return issue.startDate;
+      case "dueDate":
+        return issue.dueDate;
+      case "author":
+        return issue.author;
     }
   };
   const left = get(a);
   const right = get(b);
-  if (left === null || right === null) return left === right ? 0 : left === null ? 1 : -1;
-  const compared = typeof left === "number" && typeof right === "number"
-    ? left - right
-    : String(left).localeCompare(String(right), undefined, { numeric: true, sensitivity: "base" });
+  if (left === null || right === null)
+    return left === right ? 0 : left === null ? 1 : -1;
+  const compared =
+    typeof left === "number" && typeof right === "number"
+      ? left - right
+      : String(left).localeCompare(String(right), undefined, {
+          numeric: true,
+          sensitivity: "base",
+        });
   return direction === "asc" ? compared : -compared;
 }

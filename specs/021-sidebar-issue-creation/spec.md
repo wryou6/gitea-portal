@@ -15,7 +15,7 @@
 - Q: 左側「建立問題」要在哪些工作區顯示？ → A: 全域顯示於所有登入後頁面；Repository 工作區沿用目前 Repository，All repos 沿用既有 Repository 選擇流程。
 - Q: 將建立入口移到側欄是否也要改變建立流程的返回行為？ → A: 不需要；本功能只移動入口，既有建立與返回行為維持不變。
 
-## User Scenarios & Testing *(mandatory)*
+## User Scenarios & Testing _(mandatory)_
 
 ### User Story 1 - 從左側導覽建立問題 (Priority: P1)
 
@@ -40,7 +40,7 @@
 - 建立流程頁面載入或送出失敗時，側邊導覽仍可用，且錯誤不應被誤認為建立成功。
 - 使用者尚未登入時不顯示登入後的建立入口。
 
-## Requirements *(mandatory)*
+## Requirements _(mandatory)_
 
 ### Functional Requirements
 
@@ -52,12 +52,12 @@
 - **FR-006**: 新增或修改的使用者可見文字 MUST 使用現有 i18n 資源並支援所有支援語系。
 - **FR-007**: Issues 清單導覽標籤 MUST 與建立問題入口區分，並在繁體中文、英文、日文分別顯示「問題清單」、「Issue list」、「課題一覧」。
 
-### Key Entities *(include if data involved)*
+### Key Entities _(include if data involved)_
 
 - **建立問題入口**：全域側邊導覽中的操作項目，開啟 Issue 建立流程並依目前工作區保留建立目標脈絡。
 - **建立目標 Repository**：Issue 寫入的 Gitea Repository；可由目前 Repository 工作區帶入，或由 All repos 建立流程選取。
 
-## Success Criteria *(mandatory)*
+## Success Criteria _(mandatory)_
 
 ### Measurable Outcomes
 

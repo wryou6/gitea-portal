@@ -11,12 +11,14 @@ export const feedback = defineLocaleResource({
     loading: "Loading…",
     empty: "No data",
     permissionDenied: "Permission denied",
-    permissionDeniedDescription: "Your current Gitea account cannot perform this action.",
+    permissionDeniedDescription:
+      "Your current Gitea account cannot perform this action.",
   },
   ja: {
     loading: "読み込み中…",
     empty: "データがありません",
     permissionDenied: "権限がありません",
-    permissionDeniedDescription: "現在の Gitea アカウントではこの操作を実行できません。",
+    permissionDeniedDescription:
+      "現在の Gitea アカウントではこの操作を実行できません。",
   },
 });

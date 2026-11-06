@@ -21,7 +21,11 @@ import {
   type ThemeMode,
 } from "../features/settings/theme-preference";
 import { saveLocalePreference } from "../features/settings/locale-preference";
-import { resolveAppRoute, resolveMaskedIssueLocation, safeReturnTo } from "./routes";
+import {
+  resolveAppRoute,
+  resolveMaskedIssueLocation,
+  safeReturnTo,
+} from "./routes";
 import { LoginPage } from "../features/auth/LoginPage";
 import { SessionExpiredNotice } from "../features/auth/SessionExpiredNotice";
 import { SessionUnavailable } from "../features/auth/SessionUnavailable";
@@ -80,17 +84,22 @@ export function App({
   };
 
   const maskedIssue = resolveMaskedIssueLocation(location.mask);
-  const isInitialMaskedIssue = Boolean(maskedIssue && location.key === initialLocationKey.current);
-  const modalIssue = maskedIssue && !isInitialMaskedIssue ? maskedIssue : undefined;
-  const pagePathname = isInitialMaskedIssue ? maskedIssue!.pathname : location.pathname;
-  const pageSearch = isInitialMaskedIssue ? maskedIssue!.search : location.search;
+  const isInitialMaskedIssue = Boolean(
+    maskedIssue && location.key === initialLocationKey.current,
+  );
+  const modalIssue =
+    maskedIssue && !isInitialMaskedIssue ? maskedIssue : undefined;
+  const pagePathname = isInitialMaskedIssue
+    ? maskedIssue!.pathname
+    : location.pathname;
+  const pageSearch = isInitialMaskedIssue
+    ? maskedIssue!.search
+    : location.search;
   const route = isInitialMaskedIssue
     ? maskedIssue!.route
     : resolveAppRoute(location.pathname, location.search);
   if (sessionState.status === "anonymous") {
-    const returnTo = safeReturnTo(
-      `${pagePathname}${pageSearch}`,
-    );
+    const returnTo = safeReturnTo(`${pagePathname}${pageSearch}`);
     return (
       <LoginPage
         returnTo={returnTo ?? "/"}
@@ -128,7 +137,9 @@ export function App({
             owner={route.owner}
             repo={route.repo}
             number={route.number}
-            returnToOverride={isInitialMaskedIssue ? maskedIssue?.returnTo : undefined}
+            returnToOverride={
+              isInitialMaskedIssue ? maskedIssue?.returnTo : undefined
+            }
           />
         );
       case "all-repositories-view":
@@ -153,7 +164,13 @@ export function App({
     }
   })();
   return (
-    <AppShell login={login} displayName={displayName} avatarUrl={avatarUrl} routePathname={pagePathname} routeSearch={pageSearch}>
+    <AppShell
+      login={login}
+      displayName={displayName}
+      avatarUrl={avatarUrl}
+      routePathname={pagePathname}
+      routeSearch={pageSearch}
+    >
       {sessionExpiredNotice && <SessionExpiredNotice />}
       {content}
       {modalIssue && (
@@ -165,7 +182,11 @@ export function App({
           presentation="dialog"
           returnToOverride={modalIssue.returnTo}
           onClose={() => navigate(-1)}
-          onExpand={() => navigate(`${modalIssue.pathname}${modalIssue.search}`, { replace: true })}
+          onExpand={() =>
+            navigate(`${modalIssue.pathname}${modalIssue.search}`, {
+              replace: true,
+            })
+          }
         />
       )}
     </AppShell>

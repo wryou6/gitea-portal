@@ -2,7 +2,10 @@ import type { FastifyInstance } from "fastify";
 import type { AppConfig } from "../config/env.js";
 import { giteaFor } from "../gitea/request.js";
 import { getIssue } from "./issue-service.js";
-import { isIssueSortField, searchIssuesReadThrough } from "./issue-search-service.js";
+import {
+  isIssueSortField,
+  searchIssuesReadThrough,
+} from "./issue-search-service.js";
 import { getIssueComments } from "./comment-query-service.js";
 import { addIssueComment } from "./comment-command-service.js";
 import { listRepositories } from "../repositories/repository-service.js";
@@ -15,7 +18,9 @@ import { PortalError } from "../errors.js";
 
 function queryValues(value: unknown): string[] {
   if (typeof value === "string") return [value];
-  return Array.isArray(value) ? value.filter((item): item is string => typeof item === "string") : [];
+  return Array.isArray(value)
+    ? value.filter((item): item is string => typeof item === "string")
+    : [];
 }
 
 function queryString(value: unknown): string | undefined {
@@ -37,21 +42,42 @@ export async function registerIssueRoutes(
     const query = request.query as Record<string, unknown>;
     const sort = queryString(query.sort) ?? "key";
     const direction = queryString(query.direction) ?? "asc";
-    if (!isIssueSortField(sort)) throw new PortalError(422, "Invalid issue sort field");
-    if (direction !== "asc" && direction !== "desc") throw new PortalError(422, "Invalid sort direction");
+    if (!isIssueSortField(sort))
+      throw new PortalError(422, "Invalid issue sort field");
+    if (direction !== "asc" && direction !== "desc")
+      throw new PortalError(422, "Invalid sort direction");
     const stateValues = queryValues(query.state);
-    const selectedStatuses = [...new Set(stateValues.filter((value) => portalStatuses.has(value)))];
-    const legacyState = stateValues.find((value) => value === "open" || value === "closed" || value === "all");
+    const selectedStatuses = [
+      ...new Set(stateValues.filter((value) => portalStatuses.has(value))),
+    ];
+    const legacyState = stateValues.find(
+      (value) => value === "open" || value === "closed" || value === "all",
+    );
     return searchIssuesReadThrough(
       giteaFor(request, config.giteaBaseUrl, config),
       {
         q: queryString(query.q),
         repository: queryString(query.repository),
-        state: selectedStatuses.length > 0 ? "all" : legacyState as "open" | "closed" | "all" | undefined,
+        state:
+          selectedStatuses.length > 0
+            ? "all"
+            : (legacyState as "open" | "closed" | "all" | undefined),
         portalStatuses: selectedStatuses as ("todo" | "in-progress" | "done")[],
         assignee: queryString(query.assignee),
-        priority: [...new Set(queryValues(query.priority).filter((value) => priorities.has(value)))] as ("critical" | "high" | "medium" | "low")[],
-        issueType: [...new Set(queryValues(query.issueType).filter((value) => issueTypes.has(value)))] as ("bug" | "feature" | "task")[],
+        priority: [
+          ...new Set(
+            queryValues(query.priority).filter((value) =>
+              priorities.has(value),
+            ),
+          ),
+        ] as ("critical" | "high" | "medium" | "low")[],
+        issueType: [
+          ...new Set(
+            queryValues(query.issueType).filter((value) =>
+              issueTypes.has(value),
+            ),
+          ),
+        ] as ("bug" | "feature" | "task")[],
         milestone: queryString(query.milestone),
         labels: [
           ...(queryString(query.label)?.split(",").filter(Boolean) ?? []),
@@ -78,7 +104,9 @@ export async function registerIssueRoutes(
     const client = giteaFor(request, config.giteaBaseUrl, config);
     const repository = { owner: params.owner, name: params.repo };
     if (!(await canAccessRepository(client, repository, "create")))
-      return reply.code(403).send(apiErrorResponse("permission.denied", "Permission denied"));
+      return reply
+        .code(403)
+        .send(apiErrorResponse("permission.denied", "Permission denied"));
     const issue = await createIssue(client, repository, request.body);
     return reply.code(201).send(issue);
   });
@@ -91,7 +119,9 @@ export async function registerIssueRoutes(
     const client = giteaFor(request, config.giteaBaseUrl, config);
     const repository = { owner: params.owner, name: params.repo };
     if (!(await canAccessRepository(client, repository, "update")))
-      return reply.code(403).send(apiErrorResponse("permission.denied", "Permission denied"));
+      return reply
+        .code(403)
+        .send(apiErrorResponse("permission.denied", "Permission denied"));
     return updateIssue(client, repository, Number(params.number), request.body);
   });
   app.post(
@@ -141,12 +171,23 @@ export async function registerIssueRoutes(
       try {
         body = validateComment((request.body as { body?: unknown }).body);
       } catch (error) {
-        return reply.code(422).send(apiErrorResponse("validation.invalid_request", error instanceof Error ? error.message : "Comment body is required"));
+        return reply
+          .code(422)
+          .send(
+            apiErrorResponse(
+              "validation.invalid_request",
+              error instanceof Error
+                ? error.message
+                : "Comment body is required",
+            ),
+          );
       }
       const client = giteaFor(request, config.giteaBaseUrl, config);
       const repository = { owner: params.owner, name: params.repo };
       if (!(await canAccessRepository(client, repository, "comment")))
-        return reply.code(403).send(apiErrorResponse("permission.denied", "Permission denied"));
+        return reply
+          .code(403)
+          .send(apiErrorResponse("permission.denied", "Permission denied"));
       const comment = await addIssueComment(
         client,
         repository,

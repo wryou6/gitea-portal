@@ -30,7 +30,7 @@ No setup tasks.
 
 **Purpose**: Define one URL-backed filter model and matching rule before integrating view-specific controls.
 
-- [X] T001 Create `WorkViewFilters`, URL parsing/serialization, invalid-value normalization, active-filter counting, and shared Issue matcher in `apps/web/src/features/work-views/work-view-filters.ts`.
+- [x] T001 Create `WorkViewFilters`, URL parsing/serialization, invalid-value normalization, active-filter counting, and shared Issue matcher in `apps/web/src/features/work-views/work-view-filters.ts`.
 
 **Checkpoint**: All view-specific work can consume the same typed values and matching semantics.
 
@@ -44,11 +44,11 @@ No setup tasks.
 
 ### Implementation for User Story 1
 
-- [X] T002 [P] [US1] Add Priority and Issue Type query parsing in `apps/api/src/issues/issue-routes.ts`, query fields in `apps/api/src/gitea/client.ts`, and pre-pagination filtering in `apps/api/src/issues/issue-search-service.ts`.
-- [X] T003 [P] [US1] Build the common Priority, Type, Status, Assignee controls and removable active-filter chips in `apps/web/src/features/work-views/WorkViewFilterBar.tsx`.
-- [X] T004 [US1] Replace the List-only filter form with `WorkViewFilterBar` and immediate filter loading in `apps/web/src/features/issues/IssueListPage.tsx` and `apps/web/src/features/issues/issue-list-state.ts` (depends on T002, T003).
-- [X] T005 [P] [US1] Integrate the common filters into Kanban and Gantt, apply the shared matcher to complete Issue sets, and remove Gantt Open/Closed and Assignee controls in `apps/web/src/features/work-views/KanbanBoard.tsx` and `apps/web/src/features/work-views/GanttBoard.tsx` (depends on T003).
-- [X] T006 [US1] Add fixture-based common-filter stories for List, Kanban, and Gantt in `apps/web/src/features/work-views/WorkViewFilterBar.stories.tsx`, `apps/web/src/features/issues/IssueListPage.stories.tsx`, `apps/web/src/features/work-views/KanbanBoard.stories.tsx`, and `apps/web/src/features/work-views/GanttBoard.stories.tsx` (depends on T004, T005).
+- [x] T002 [P] [US1] Add Priority and Issue Type query parsing in `apps/api/src/issues/issue-routes.ts`, query fields in `apps/api/src/gitea/client.ts`, and pre-pagination filtering in `apps/api/src/issues/issue-search-service.ts`.
+- [x] T003 [P] [US1] Build the common Priority, Type, Status, Assignee controls and removable active-filter chips in `apps/web/src/features/work-views/WorkViewFilterBar.tsx`.
+- [x] T004 [US1] Replace the List-only filter form with `WorkViewFilterBar` and immediate filter loading in `apps/web/src/features/issues/IssueListPage.tsx` and `apps/web/src/features/issues/issue-list-state.ts` (depends on T002, T003).
+- [x] T005 [P] [US1] Integrate the common filters into Kanban and Gantt, apply the shared matcher to complete Issue sets, and remove Gantt Open/Closed and Assignee controls in `apps/web/src/features/work-views/KanbanBoard.tsx` and `apps/web/src/features/work-views/GanttBoard.tsx` (depends on T003).
+- [x] T006 [US1] Add fixture-based common-filter stories for List, Kanban, and Gantt in `apps/web/src/features/work-views/WorkViewFilterBar.stories.tsx`, `apps/web/src/features/issues/IssueListPage.stories.tsx`, `apps/web/src/features/work-views/KanbanBoard.stories.tsx`, and `apps/web/src/features/work-views/GanttBoard.stories.tsx` (depends on T004, T005).
 
 **Checkpoint**: The four common filters work in all three views and Gantt retains its date/scale controls.
 
@@ -62,9 +62,9 @@ No setup tasks.
 
 ### Implementation for User Story 4
 
-- [X] T007 [P] [US4] Build an accessible, debounced global Issue search dropdown with loading, empty, error, keyboard, and Escape states in `apps/web/src/components/layout/GlobalIssueSearch.tsx`.
-- [X] T008 [US4] Integrate global search beside `WorkspaceSelector` in `apps/web/src/components/layout/AppShell.tsx` and use the all-readable-repository search query with `returnTo` links from `apps/web/src/lib/api.ts` and `apps/web/src/app/routes.ts` (depends on T007).
-- [X] T009 [US4] Add fixture-based top-bar search stories for results, empty, loading, error, keyboard focus, and Repository identity in `apps/web/src/components/layout/GlobalIssueSearch.stories.tsx` (depends on T007).
+- [x] T007 [P] [US4] Build an accessible, debounced global Issue search dropdown with loading, empty, error, keyboard, and Escape states in `apps/web/src/components/layout/GlobalIssueSearch.tsx`.
+- [x] T008 [US4] Integrate global search beside `WorkspaceSelector` in `apps/web/src/components/layout/AppShell.tsx` and use the all-readable-repository search query with `returnTo` links from `apps/web/src/lib/api.ts` and `apps/web/src/app/routes.ts` (depends on T007).
+- [x] T009 [US4] Add fixture-based top-bar search stories for results, empty, loading, error, keyboard focus, and Repository identity in `apps/web/src/components/layout/GlobalIssueSearch.stories.tsx` (depends on T007).
 
 **Checkpoint**: Search results cover all readable repositories, identify their source Repository, and return to the original route after Issue detail.
 
@@ -78,9 +78,9 @@ No setup tasks.
 
 ### Implementation for User Story 2
 
-- [X] T010 [US2] Add the collapsed Advanced filters section, active-condition count, clear-all action, All repos Repository selector, Label and Milestone controls in `apps/web/src/features/work-views/WorkViewFilterBar.tsx` (depends on T003).
-- [X] T011 [US2] Apply Repository, Label, and Milestone values to List API requests and the Kanban/Gantt shared matcher in `apps/web/src/features/issues/IssueListPage.tsx`, `apps/web/src/features/work-views/KanbanBoard.tsx`, and `apps/web/src/features/work-views/GanttBoard.tsx` (depends on T004, T005, T010).
-- [X] T012 [US2] Add collapsed, expanded, active-count, and All repos/Repository workspace stories in `apps/web/src/features/work-views/WorkViewFilterBar.stories.tsx` (depends on T010, T011).
+- [x] T010 [US2] Add the collapsed Advanced filters section, active-condition count, clear-all action, All repos Repository selector, Label and Milestone controls in `apps/web/src/features/work-views/WorkViewFilterBar.tsx` (depends on T003).
+- [x] T011 [US2] Apply Repository, Label, and Milestone values to List API requests and the Kanban/Gantt shared matcher in `apps/web/src/features/issues/IssueListPage.tsx`, `apps/web/src/features/work-views/KanbanBoard.tsx`, and `apps/web/src/features/work-views/GanttBoard.tsx` (depends on T004, T005, T010).
+- [x] T012 [US2] Add collapsed, expanded, active-count, and All repos/Repository workspace stories in `apps/web/src/features/work-views/WorkViewFilterBar.stories.tsx` (depends on T010, T011).
 
 **Checkpoint**: Advanced filters remain applied while collapsed and behave consistently in all three views.
 
@@ -96,9 +96,9 @@ The tasks in this phase record the earlier implementation. The 2026-10-02 scope 
 
 ### Implementation for User Story 3
 
-- [X] T013 [US3] Preserve shared filter query parameters on List/Kanban/Gantt sidebar links in `apps/web/src/components/layout/AppShell.tsx` without changing workspace or Create Issue navigation behavior (depends on T004, T005, T008, T011).
-- [X] T014 [US3] Synchronize filter changes and restored filter state with existing List and Gantt URL parameters in `apps/web/src/features/work-views/work-view-filters.ts`, `apps/web/src/features/issues/IssueListPage.tsx`, `apps/web/src/features/issues/issue-list-state.ts`, and `apps/web/src/features/work-views/GanttBoard.tsx` (depends on T004, T005, T011, T013).
-- [X] T015 [US3] Add URL restoration, invalid-value, view-navigation, and Gantt date/scale retention stories in `apps/web/src/features/work-views/WorkViewFilterBar.stories.tsx` and `apps/web/src/features/work-views/GanttBoard.stories.tsx` (depends on T014).
+- [x] T013 [US3] Preserve shared filter query parameters on List/Kanban/Gantt sidebar links in `apps/web/src/components/layout/AppShell.tsx` without changing workspace or Create Issue navigation behavior (depends on T004, T005, T008, T011).
+- [x] T014 [US3] Synchronize filter changes and restored filter state with existing List and Gantt URL parameters in `apps/web/src/features/work-views/work-view-filters.ts`, `apps/web/src/features/issues/IssueListPage.tsx`, `apps/web/src/features/issues/issue-list-state.ts`, and `apps/web/src/features/work-views/GanttBoard.tsx` (depends on T004, T005, T011, T013).
+- [x] T015 [US3] Add URL restoration, invalid-value, view-navigation, and Gantt date/scale retention stories in `apps/web/src/features/work-views/WorkViewFilterBar.stories.tsx` and `apps/web/src/features/work-views/GanttBoard.stories.tsx` (depends on T014).
 
 **Checkpoint**: Share/reload/back navigation restores valid conditions, and view navigation carries them without dropping Gantt-specific query state.
 
@@ -108,12 +108,12 @@ The tasks in this phase record the earlier implementation. The 2026-10-02 scope 
 
 **Purpose**: Finish localization, responsive presentation, accessibility review, and required validation.
 
-- [X] T016 [P] Add and verify zh-TW, en, and ja labels, chips, search feedback, accessible names, and empty/error text in `apps/web/src/i18n/resources/common.ts`, `apps/web/src/i18n/resources/issues.ts`, and `apps/web/src/i18n/resources/work-views.ts`.
-- [X] T017 [P] Style the shared filter bar and top-bar dropdown for 375px, tablet, and desktop without horizontal page overflow in `apps/web/src/index.css`.
-- [X] T020 Simplify the Issues List, Kanban, and Gantt page headers to one compact, localized title matching the left navigation in All repos, without eyebrow or subtitle in `apps/web/src/components/layout/PageHeader.tsx`, `apps/web/src/features/issues/IssueListPage.tsx`, `apps/web/src/features/work-views/KanbanBoard.tsx`, `apps/web/src/i18n/resources/issues.ts`, and `apps/web/src/index.css`; align the view stories.
-- [X] T021 移除 Issues List、Kanban 與 Gantt compact 頁首的可見標題及下方 margin，保留輔助工具可讀取的標題；在 1440×900 桌機 Storybook 確認三語頁首高度與下方 margin 均為 0，並完成 workspace typecheck 與 build。
-- [X] T022 在 `WorkViewLayout.tsx` 與 `work-view-filter-labels.ts` 建立共用左側控制面板及純文字結果摘要；串接 List、Kanban、Gantt，將日期、刻度與檢視操作移至面板，保留篩選網址、分頁、欄位偏好與狀態轉移行為，補齊三語文字與桌機明暗主題 stories。
-- [X] T023 確認三檢視桌機版面、收合、篩選摘要、進階條件與檢視設定，並執行 workspace typecheck、build 及 Storybook build；在 `quickstart.md` 記錄實際驗證邊界。
+- [x] T016 [P] Add and verify zh-TW, en, and ja labels, chips, search feedback, accessible names, and empty/error text in `apps/web/src/i18n/resources/common.ts`, `apps/web/src/i18n/resources/issues.ts`, and `apps/web/src/i18n/resources/work-views.ts`.
+- [x] T017 [P] Style the shared filter bar and top-bar dropdown for 375px, tablet, and desktop without horizontal page overflow in `apps/web/src/index.css`.
+- [x] T020 Simplify the Issues List, Kanban, and Gantt page headers to one compact, localized title matching the left navigation in All repos, without eyebrow or subtitle in `apps/web/src/components/layout/PageHeader.tsx`, `apps/web/src/features/issues/IssueListPage.tsx`, `apps/web/src/features/work-views/KanbanBoard.tsx`, `apps/web/src/i18n/resources/issues.ts`, and `apps/web/src/index.css`; align the view stories.
+- [x] T021 移除 Issues List、Kanban 與 Gantt compact 頁首的可見標題及下方 margin，保留輔助工具可讀取的標題；在 1440×900 桌機 Storybook 確認三語頁首高度與下方 margin 均為 0，並完成 workspace typecheck 與 build。
+- [x] T022 在 `WorkViewLayout.tsx` 與 `work-view-filter-labels.ts` 建立共用左側控制面板及純文字結果摘要；串接 List、Kanban、Gantt，將日期、刻度與檢視操作移至面板，保留篩選網址、分頁、欄位偏好與狀態轉移行為，補齊三語文字與桌機明暗主題 stories。
+- [x] T023 確認三檢視桌機版面、收合、篩選摘要、進階條件與檢視設定，並執行 workspace typecheck、build 及 Storybook build；在 `quickstart.md` 記錄實際驗證邊界。
 - [ ] T018 Run `pnpm.cmd typecheck`, `pnpm.cmd build`, `pnpm.cmd --filter @gitea-portal/web build-storybook`, and scenarios in `specs/022-shared-work-view-filters/quickstart.md`; correct failures in their owning source files.
 
 ## Phase 8: Convergence
@@ -122,10 +122,10 @@ The tasks in this phase record the earlier implementation. The 2026-10-02 scope 
 
 ## Phase 9: User Requested Scope Update (2026-10-02)
 
-- [X] T024 Remove the Repository, Label, and Milestone advanced controls, URL parsing, and client-side matching from the shared work-view filter bar; retain Repository only as the internal scope for single-Repository Issue List reads.
-- [X] T025 Make the top workspace selector authoritative by dropping legacy Repository, Label, and Milestone query values when switching workspaces or views; update the shared-filter story to cover ignored legacy values.
-- [X] T026 Update the current specification, data model, contract, plan, and quickstart to document the reduced filter set and workspace scope behavior.
-- [X] T027 Run the required workspace typecheck and production build, then review the final diff.
+- [x] T024 Remove the Repository, Label, and Milestone advanced controls, URL parsing, and client-side matching from the shared work-view filter bar; retain Repository only as the internal scope for single-Repository Issue List reads.
+- [x] T025 Make the top workspace selector authoritative by dropping legacy Repository, Label, and Milestone query values when switching workspaces or views; update the shared-filter story to cover ignored legacy values.
+- [x] T026 Update the current specification, data model, contract, plan, and quickstart to document the reduced filter set and workspace scope behavior.
+- [x] T027 Run the required workspace typecheck and production build, then review the final diff.
 
 ---
 

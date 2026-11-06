@@ -22,10 +22,7 @@ The existing Board view response gains a read-time `visibleLabels` field on each
             { "name": "priority-high" },
             { "name": "workflow-a:todo" }
           ],
-          "visibleLabels": [
-            { "name": "bug" },
-            { "name": "priority-high" }
-          ]
+          "visibleLabels": [{ "name": "bug" }, { "name": "priority-high" }]
         }
       ]
     }

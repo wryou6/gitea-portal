@@ -30,9 +30,9 @@
 
 ## Constitution Check
 
-*Gate before Phase 0*: PASS — 此功能只讀取既有 Issue 欄位作為 UI 派生狀態，不建立 Issue mirror 或 Portal persistence；不操作 Gitea 寫入；保留目前使用者權限；使用 i18n 資源顯示所有使用者可見文字。
+_Gate before Phase 0_: PASS — 此功能只讀取既有 Issue 欄位作為 UI 派生狀態，不建立 Issue mirror 或 Portal persistence；不操作 Gitea 寫入；保留目前使用者權限；使用 i18n 資源顯示所有使用者可見文字。
 
-*Post-design*: PASS — 設計沒有 API/domain contract、資料持久化、權限或 Gitea mutation 變更；UI 變更以 typecheck、build 和視覺驗收確認。
+_Post-design_: PASS — 設計沒有 API/domain contract、資料持久化、權限或 Gitea mutation 變更；UI 變更以 typecheck、build 和視覺驗收確認。
 
 ## Project Structure
 

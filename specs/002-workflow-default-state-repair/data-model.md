@@ -6,15 +6,15 @@
 
 ## Workflow Convention
 
-| Field | Rule |
-|---|---|
-| `id` | Convention identity；Board 以 `id + version` 精確選取 |
-| `version` | Convention version；不可與 Board 選取的版本混用 |
-| `states[]` | 至少一個 Workflow State |
-| `states[].key` | 同一 Convention 內唯一 |
-| `states[].labelName` | 同一 Convention 內唯一，且是 Gitea Repository 中應存在的 Label 名稱 |
-| `states[].displayName` | Board 欄位顯示文字 |
-| `states[].order` | 非負且唯一；最小值代表 default state |
+| Field                  | Rule                                                                |
+| ---------------------- | ------------------------------------------------------------------- |
+| `id`                   | Convention identity；Board 以 `id + version` 精確選取               |
+| `version`              | Convention version；不可與 Board 選取的版本混用                     |
+| `states[]`             | 至少一個 Workflow State                                             |
+| `states[].key`         | 同一 Convention 內唯一                                              |
+| `states[].labelName`   | 同一 Convention 內唯一，且是 Gitea Repository 中應存在的 Label 名稱 |
+| `states[].displayName` | Board 欄位顯示文字                                                  |
+| `states[].order`       | 非負且唯一；最小值代表 default state                                |
 
 ## Workflow State
 

@@ -161,7 +161,12 @@ export function WorkViewLayout({
           aria-atomic="true"
         >
           <span>{countText}</span>
-          {recentDoneOnly && <span><span aria-hidden="true"> · </span>{t("recentDoneSummary")}</span>}
+          {recentDoneOnly && (
+            <span>
+              <span aria-hidden="true"> · </span>
+              {t("recentDoneSummary")}
+            </span>
+          )}
           {activeFilters.length === 0 && !recentDoneOnly ? (
             <>
               <span aria-hidden="true"> · </span>

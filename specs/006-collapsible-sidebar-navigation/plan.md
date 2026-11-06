@@ -34,13 +34,13 @@
 
 `.specify/memory/constitution.md` 目前仍是未填寫的模板，沒有已 ratify 的原則可作為額外 gate。依專案 `AGENTS.md` 檢查：
 
-| Gate | 結果 | 理由 |
-|---|---|---|
-| Gitea 是 Issue 資料唯一來源，不建立 mirror | PASS | 只調整導覽呈現與暫時性側欄偏好。 |
-| Board JSON 保存規則與資料格式不變 | PASS | 不修改 Board store、API 或 Board schema。 |
-| Gitea authorization 不變 | PASS | 不新增 Gitea 操作或後端身份。 |
-| Workflow Label、Kanban transition 與 Issue Labels 規則不變 | PASS | 不修改 Board Card 或 Issue 編輯行為。 |
-| UI 修改後執行 typecheck/build | PASS | Quickstart 列出兩項專案規定的驗證命令。 |
+| Gate                                                       | 結果 | 理由                                      |
+| ---------------------------------------------------------- | ---- | ----------------------------------------- |
+| Gitea 是 Issue 資料唯一來源，不建立 mirror                 | PASS | 只調整導覽呈現與暫時性側欄偏好。          |
+| Board JSON 保存規則與資料格式不變                          | PASS | 不修改 Board store、API 或 Board schema。 |
+| Gitea authorization 不變                                   | PASS | 不新增 Gitea 操作或後端身份。             |
+| Workflow Label、Kanban transition 與 Issue Labels 規則不變 | PASS | 不修改 Board Card 或 Issue 編輯行為。     |
+| UI 修改後執行 typecheck/build                              | PASS | Quickstart 列出兩項專案規定的驗證命令。   |
 
 **Pre-design gate**: PASS。無 Constitution Check 違規或需複雜度例外的變更。
 

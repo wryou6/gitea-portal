@@ -33,35 +33,50 @@ export const EditableBadges: Story = {
 export const MultipleAssignees: Story = {
   args: {
     ...Default.args,
-    issue: { ...demoIssueWithThreeAssignees, visibleLabels: demoIssueWithThreeAssignees.labels },
+    issue: {
+      ...demoIssueWithThreeAssignees,
+      visibleLabels: demoIssueWithThreeAssignees.labels,
+    },
   },
 };
 
 export const AssigneeOverflow: Story = {
   args: {
     ...Default.args,
-    issue: { ...demoIssueWithMultipleAssignees, visibleLabels: demoIssueWithMultipleAssignees.labels },
+    issue: {
+      ...demoIssueWithMultipleAssignees,
+      visibleLabels: demoIssueWithMultipleAssignees.labels,
+    },
   },
 };
 
 export const CompletedWithMultipleAssignees: Story = {
   args: {
     ...Default.args,
-    issue: { ...demoCompletedIssueWithMultipleAssignees, visibleLabels: demoCompletedIssueWithMultipleAssignees.labels },
+    issue: {
+      ...demoCompletedIssueWithMultipleAssignees,
+      visibleLabels: demoCompletedIssueWithMultipleAssignees.labels,
+    },
   },
 };
 
 function cardWithSchedule(
   dueDate: string,
   state: "open" | "closed" = "open",
-  scheduleAnomaly?: "invalid_start_date" | "multiple_start_dates" | "invalid_due_date" | "date_range_reversed",
+  scheduleAnomaly?:
+    | "invalid_start_date"
+    | "multiple_start_dates"
+    | "invalid_due_date"
+    | "date_range_reversed",
 ) {
   const issue = {
     ...card,
     state,
-    status: state === "closed" ? "done" as const : card.status,
+    status: state === "closed" ? ("done" as const) : card.status,
     dueDate,
-    scheduleStatus: scheduleAnomaly ? "invalid" as const : "scheduled" as const,
+    scheduleStatus: scheduleAnomaly
+      ? ("invalid" as const)
+      : ("scheduled" as const),
     scheduleAnomaly,
   };
   return { ...issue, visibleLabels: issue.labels };
@@ -86,11 +101,17 @@ export const FutureDueDate: Story = {
 };
 
 export const ClosedIssueWithPastDueDate: Story = {
-  args: { ...Default.args, issue: cardWithSchedule(localDateOffset(-1), "closed") },
+  args: {
+    ...Default.args,
+    issue: cardWithSchedule(localDateOffset(-1), "closed"),
+  },
 };
 
 export const InvalidDueDate: Story = {
-  args: { ...Default.args, issue: cardWithSchedule("2026-09-25", "open", "invalid_due_date") },
+  args: {
+    ...Default.args,
+    issue: cardWithSchedule("2026-09-25", "open", "invalid_due_date"),
+  },
 };
 
 export const ReversedRange: Story = {
@@ -105,7 +126,10 @@ export const ReversedRange: Story = {
 };
 
 export const StartDateAnomalyWithOverdueDueDate: Story = {
-  args: { ...Default.args, issue: cardWithSchedule(localDateOffset(-1), "open", "invalid_start_date") },
+  args: {
+    ...Default.args,
+    issue: cardWithSchedule(localDateOffset(-1), "open", "invalid_start_date"),
+  },
 };
 
 export const StartDateOnly: Story = {

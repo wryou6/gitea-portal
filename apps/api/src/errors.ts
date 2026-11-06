@@ -6,7 +6,9 @@ import type {
 
 export type PortalErrorStatus = 401 | 403 | 404 | 409 | 422 | 502;
 
-export function errorCodeForStatus(status: PortalErrorStatus): PortalApiErrorCode {
+export function errorCodeForStatus(
+  status: PortalErrorStatus,
+): PortalApiErrorCode {
   switch (status) {
     case 401:
       return "auth.required";
@@ -48,6 +50,6 @@ export class PortalError extends Error {
   ) {
     super(message);
     this.code = code;
-    this.name = 'PortalError';
+    this.name = "PortalError";
   }
 }

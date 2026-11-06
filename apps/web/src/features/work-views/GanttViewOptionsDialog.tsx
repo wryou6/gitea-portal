@@ -49,12 +49,16 @@ export function GanttViewOptionsDialog({
                     onChange={(event) => {
                       const visibleFields = event.target.checked
                         ? [...preference.visibleFields, field]
-                        : preference.visibleFields.filter((visible) => visible !== field);
+                        : preference.visibleFields.filter(
+                            (visible) => visible !== field,
+                          );
                       onChange({ ...preference, visibleFields });
                     }}
                   />
                   <span>{label(field)}</span>
-                  {fixed && <span className="muted">{t("ganttFixedColumn")}</span>}
+                  {fixed && (
+                    <span className="muted">{t("ganttFixedColumn")}</span>
+                  )}
                 </label>
               );
             })}

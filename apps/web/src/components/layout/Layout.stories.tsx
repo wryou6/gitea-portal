@@ -15,8 +15,18 @@ export const PageComposition: Story = {
       routePathname="/issues"
       routeSearch=""
       workspaceRepositories={[
-        { owner: "engineering", name: "portal", fullName: "engineering/portal", htmlUrl: "#" },
-        { owner: "platform", name: "service-api", fullName: "platform/service-api", htmlUrl: "#" },
+        {
+          owner: "engineering",
+          name: "portal",
+          fullName: "engineering/portal",
+          htmlUrl: "#",
+        },
+        {
+          owner: "platform",
+          name: "service-api",
+          fullName: "platform/service-api",
+          htmlUrl: "#",
+        },
       ]}
     >
       <PageHeader
@@ -42,7 +52,12 @@ export const RepositoryWorkspace: Story = {
       routePathname="/repositories/engineering/portal/kanban"
       routeSearch=""
       workspaceRepositories={[
-        { owner: "engineering", name: "portal", fullName: "engineering/portal", htmlUrl: "#" },
+        {
+          owner: "engineering",
+          name: "portal",
+          fullName: "engineering/portal",
+          htmlUrl: "#",
+        },
       ]}
     >
       <PageHeader
@@ -61,7 +76,12 @@ export const SidebarOverlayInteraction: Story = {
       routePathname="/repositories/engineering/portal/gantt"
       routeSearch="?gantt_scale=week"
       workspaceRepositories={[
-        { owner: "engineering", name: "portal", fullName: "engineering/portal", htmlUrl: "#" },
+        {
+          owner: "engineering",
+          name: "portal",
+          fullName: "engineering/portal",
+          htmlUrl: "#",
+        },
       ]}
     >
       <div className="work-view-layout">
@@ -79,7 +99,8 @@ export const SidebarOverlayInteraction: Story = {
   parameters: {
     docs: {
       description: {
-        story: "可將 viewport 調窄，再以滑鼠 hover 或鍵盤 focus 檢視 sidebar overlay。",
+        story:
+          "可將 viewport 調窄，再以滑鼠 hover 或鍵盤 focus 檢視 sidebar overlay。",
       },
     },
   },
@@ -92,8 +113,18 @@ export const AllReposCreateRoute: Story = {
       routePathname="/issues/new"
       routeSearch="?returnTo=%2Fissues"
       workspaceRepositories={[
-        { owner: "engineering", name: "portal", fullName: "engineering/portal", htmlUrl: "#" },
-        { owner: "platform", name: "service-api", fullName: "platform/service-api", htmlUrl: "#" },
+        {
+          owner: "engineering",
+          name: "portal",
+          fullName: "engineering/portal",
+          htmlUrl: "#",
+        },
+        {
+          owner: "platform",
+          name: "service-api",
+          fullName: "platform/service-api",
+          htmlUrl: "#",
+        },
       ]}
     >
       <PageHeader
@@ -112,7 +143,12 @@ export const RepositoryCreateRoute: Story = {
       routePathname="/issues/new"
       routeSearch="?repository=engineering%2Fportal&returnTo=%2Frepositories%2Fengineering%2Fportal%2Fkanban"
       workspaceRepositories={[
-        { owner: "engineering", name: "portal", fullName: "engineering/portal", htmlUrl: "#" },
+        {
+          owner: "engineering",
+          name: "portal",
+          fullName: "engineering/portal",
+          htmlUrl: "#",
+        },
       ]}
     >
       <PageHeader

@@ -6,13 +6,13 @@
 
 代表 Dashboard 可開啟的一個工作區。
 
-| Field | Type | Source / rule |
-|---|---|---|
-| `kind` | `repository` \| `board` | 由來源項目種類決定 |
-| `id` | string | Repository 使用 owner/repository name；Board 使用既有 Board ID |
-| `name` | string | Repository 使用 `owner/name`；Board 使用 Board 名稱 |
-| `href` | same-origin route | Repository 開啟 `/repositories/{owner}/{repo}/issues`；Board 開啟 `/boards/{id}/issues` |
-| `repositoryRefs` | Repository reference[] | Repository 項目含自身參照；Board 使用既有 Repository refs |
+| Field            | Type                    | Source / rule                                                                           |
+| ---------------- | ----------------------- | --------------------------------------------------------------------------------------- |
+| `kind`           | `repository` \| `board` | 由來源項目種類決定                                                                      |
+| `id`             | string                  | Repository 使用 owner/repository name；Board 使用既有 Board ID                          |
+| `name`           | string                  | Repository 使用 `owner/name`；Board 使用 Board 名稱                                     |
+| `href`           | same-origin route       | Repository 開啟 `/repositories/{owner}/{repo}/issues`；Board 開啟 `/boards/{id}/issues` |
+| `repositoryRefs` | Repository reference[]  | Repository 項目含自身參照；Board 使用既有 Repository refs                               |
 
 ## Relationships and Visibility
 

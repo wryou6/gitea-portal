@@ -12,7 +12,7 @@
 
 **Purpose**: 建立涵蓋兩種圖表狀態與既有排程互動的展示情境。
 
-- [X] T001 Add a dedicated Gantt interaction Storybook story with scheduled, unscheduled, editable-bar, and no-schedule-date fixtures in `apps/web/src/features/work-views/GanttBoard.stories.tsx`.
+- [x] T001 Add a dedicated Gantt interaction Storybook story with scheduled, unscheduled, editable-bar, and no-schedule-date fixtures in `apps/web/src/features/work-views/GanttBoard.stories.tsx`.
 
 ## Phase 2: Foundational
 
@@ -26,9 +26,9 @@
 
 ### Implementation for User Story 1
 
-- [X] T002 [US1] Remove both `.gantt-horizontal-scrollbar` inputs and slider-only `chartMaxScroll`/`chartScrollLeft` state and calculations from `apps/web/src/features/work-views/GanttBoard.tsx`; remove the custom slider rules from `apps/web/src/index.css`.
-- [X] T003 [US1] Make both `.gantt-chart-scroll` variants focusable, support ArrowLeft/ArrowRight and Home/End on the container itself in `apps/web/src/features/work-views/GanttBoard.tsx`, and add visible keyboard focus styling in `apps/web/src/index.css` without intercepting child controls.
-- [X] T004 [US1] Extend the Gantt interaction stories in `apps/web/src/features/work-views/GanttBoard.stories.tsx` to demonstrate overflowing and non-overflowing scheduled/empty timeline layouts; confirm the story entries compile in Storybook.
+- [x] T002 [US1] Remove both `.gantt-horizontal-scrollbar` inputs and slider-only `chartMaxScroll`/`chartScrollLeft` state and calculations from `apps/web/src/features/work-views/GanttBoard.tsx`; remove the custom slider rules from `apps/web/src/index.css`.
+- [x] T003 [US1] Make both `.gantt-chart-scroll` variants focusable, support ArrowLeft/ArrowRight and Home/End on the container itself in `apps/web/src/features/work-views/GanttBoard.tsx`, and add visible keyboard focus styling in `apps/web/src/index.css` without intercepting child controls.
+- [x] T004 [US1] Extend the Gantt interaction stories in `apps/web/src/features/work-views/GanttBoard.stories.tsx` to demonstrate overflowing and non-overflowing scheduled/empty timeline layouts; confirm the story entries compile in Storybook.
 
 ## Phase 4: User Story 2 - 保留未排程 Issue 的排程建立操作 (Priority: P1)
 
@@ -38,17 +38,17 @@
 
 ### Implementation for User Story 2
 
-- [X] T005 [US2] Add shared pointer-pan start/move/end/cancel/lost-capture handling to both chart containers in `apps/web/src/features/work-views/GanttBoard.tsx`; allow touch starts in non-interactive `.gantt-header-fields` and `.gantt-row-fields` whitespace when narrow fixed fields cover the timeline, exclude unscheduled create-range tracks, `.gantt-bar`, `[data-drag-mode]`, links, buttons, and form controls, and update only the chart `scrollLeft`.
-- [X] T006 [US2] Add grab/grabbing and text-selection styles plus horizontal-touch/vertical-pan behavior for `.gantt-chart-scroll` in `apps/web/src/index.css`, preserving the existing `touch-action: none` behavior on unscheduled create-range tracks and bar handles.
-- [X] T007 [US2] Extend the interaction stories in `apps/web/src/features/work-views/GanttBoard.stories.tsx` to demonstrate drag-pan, unscheduled creation, bar editing, touch/narrow viewport including fixed-field whitespace, and empty-timeline cases.
+- [x] T005 [US2] Add shared pointer-pan start/move/end/cancel/lost-capture handling to both chart containers in `apps/web/src/features/work-views/GanttBoard.tsx`; allow touch starts in non-interactive `.gantt-header-fields` and `.gantt-row-fields` whitespace when narrow fixed fields cover the timeline, exclude unscheduled create-range tracks, `.gantt-bar`, `[data-drag-mode]`, links, buttons, and form controls, and update only the chart `scrollLeft`.
+- [x] T006 [US2] Add grab/grabbing and text-selection styles plus horizontal-touch/vertical-pan behavior for `.gantt-chart-scroll` in `apps/web/src/index.css`, preserving the existing `touch-action: none` behavior on unscheduled create-range tracks and bar handles.
+- [x] T007 [US2] Extend the interaction stories in `apps/web/src/features/work-views/GanttBoard.stories.tsx` to demonstrate drag-pan, unscheduled creation, bar editing, touch/narrow viewport including fixed-field whitespace, and empty-timeline cases.
 
 ## Phase 5: Polish & Cross-Cutting Validation
 
 **Purpose**: Validate the final UI and record implementation evidence.
 
-- [X] T008 Run Web typecheck, production build, and Storybook build; resolve failures in changed `apps/web/src/` files and record build/story-catalog outcomes in `specs/042-gantt-timeline-panning/quickstart.md`.
-- [X] T009 Review `apps/web/src/features/work-views/GanttBoard.tsx`, `apps/web/src/features/work-views/GanttIssueRow.tsx`, and `apps/web/src/index.css` to confirm the new pan path introduces no schedule mutation and existing create/move/resize/repair/anomaly interactions remain available; update `specs/042-gantt-timeline-panning/spec.md` or this task list if evidence requires it.
-- [X] T010 Complete the manual mouse, touch, keyboard, and gesture-isolation scenarios in `specs/042-gantt-timeline-panning/quickstart.md` using a browser with touch emulation or a touch device; include 390px fixed-field whitespace, control/create isolation, and vertical scroll; record the observed results in that file.
+- [x] T008 Run Web typecheck, production build, and Storybook build; resolve failures in changed `apps/web/src/` files and record build/story-catalog outcomes in `specs/042-gantt-timeline-panning/quickstart.md`.
+- [x] T009 Review `apps/web/src/features/work-views/GanttBoard.tsx`, `apps/web/src/features/work-views/GanttIssueRow.tsx`, and `apps/web/src/index.css` to confirm the new pan path introduces no schedule mutation and existing create/move/resize/repair/anomaly interactions remain available; update `specs/042-gantt-timeline-panning/spec.md` or this task list if evidence requires it.
+- [x] T010 Complete the manual mouse, touch, keyboard, and gesture-isolation scenarios in `specs/042-gantt-timeline-panning/quickstart.md` using a browser with touch emulation or a touch device; include 390px fixed-field whitespace, control/create isolation, and vertical scroll; record the observed results in that file.
 
 ## Dependencies & Execution Order
 

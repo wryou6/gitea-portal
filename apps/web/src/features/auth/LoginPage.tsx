@@ -43,9 +43,13 @@ export function LoginPage({
           </div>
         )}
         <a className="auth-login-action" href={loginUrl.toString()}>
-          <span className="auth-gitea-mark" aria-hidden="true">G</span>
+          <span className="auth-gitea-mark" aria-hidden="true">
+            G
+          </span>
           <span>{t("loginAction")}</span>
-          <span className="auth-action-arrow" aria-hidden="true">→</span>
+          <span className="auth-action-arrow" aria-hidden="true">
+            →
+          </span>
         </a>
       </section>
     </main>

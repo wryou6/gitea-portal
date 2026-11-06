@@ -8,7 +8,7 @@
 
 **Input**: User description: 將左側導覽中的工作檢視排序改為 Kanban、Gantt、List，並讓側欄固定收合，滑過時覆蓋主要內容展開，而不推動工作區控制面板。
 
-## User Scenarios & Testing *(mandatory)*
+## User Scenarios & Testing _(mandatory)_
 
 ### User Story 1 - 快速切換工作檢視 (Priority: P1)
 
@@ -60,7 +60,7 @@
 - 游標仍在側欄內或鍵盤焦點仍在側欄內時，側欄須維持展開，以免使用者操作途中標籤消失。
 - 切換頁面或重新載入後，側欄仍以收合狀態開始；不保存手動展開偏好。
 
-## Requirements *(mandatory)*
+## Requirements _(mandatory)_
 
 ### Functional Requirements
 
@@ -73,12 +73,12 @@
 - **FR-007**: 沒有 hover 能力的裝置 MUST 可直接操作收合圖示前往對應頁面，不得依賴先展開側欄。
 - **FR-008**: 側欄展開或收合 MUST NOT 改變 Issue、工作區、篩選或檢視偏好資料；展開狀態不保存為使用者偏好。
 
-### Key Entities *(include if data involved)*
+### Key Entities _(include if data involved)_
 
 - **側欄呈現狀態**：由游標懸停或鍵盤焦點位置決定的暫時收合／展開畫面狀態，不作持久保存。
 - **工作檢視導覽項目**：建立問題、Kanban、Gantt、List 等具目的地、顯示名稱與目前頁面狀態的入口。
 
-## Success Criteria *(mandatory)*
+## Success Criteria _(mandatory)_
 
 ### Measurable Outcomes
 

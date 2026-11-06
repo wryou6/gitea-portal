@@ -12,7 +12,7 @@
 - Q: 繁體中文介面應把產品中的 “Issue” 統一譯為「工作項目」、「議題」，還是保留 “Issue”？ → A: 原先選擇保留 “Issue”，後修正為「問題」以配合 Gitea 中文用語；英文與日文介面沿用 Gitea 對應語系的用語。
 - Q: 若 Gitea 對相同概念已有中文、英文或日文用語，Portal 應採用哪個詞彙來源？ → A: 對應語系沿用 Gitea 用語；Gitea 沒有對應概念時才由 Portal 詞彙表定義。
 
-## User Scenarios & Testing *(mandatory)*
+## User Scenarios & Testing _(mandatory)_
 
 ### User Story 1 - 選擇並保留介面語系 (Priority: P1)
 
@@ -64,7 +64,7 @@
 - 固定 Workflow 狀態翻譯依穩定狀態識別值對應；缺少對應翻譯時保留該狀態的來源顯示名稱。
 - 文字較長的語系在窄螢幕、表單、導覽及鍵盤／輔助技術操作下仍可辨識及使用。
 
-## Requirements *(mandatory)*
+## Requirements _(mandatory)_
 
 ### Functional Requirements
 
@@ -80,13 +80,13 @@
 - **FR-010**: 語系切換不得變更登入狀態、Gitea Issue／Comment／Label／Assignee／Milestone 資料或 Workflow 狀態。
 - **FR-011**: 語系選擇與三語介面 MUST 在支援的螢幕尺寸及鍵盤／輔助技術操作下維持可辨識及可操作。
 
-### Key Entities *(include if feature involves data)*
+### Key Entities _(include if feature involves data)_
 
 - **語系偏好**：目前 Portal 帳號所選的 `zh-TW`、`en` 或 `ja`；尚未選擇時由瀏覽器語言決定。
 - **產品詞彙**：Portal 概念與三種語系之標準顯示名稱，供各功能一致使用。
 - **固定 Workflow 狀態**：Todo、In Progress、Done 的穩定識別與 Gitea 英文 Label；Portal 顯示名稱依語系呈現，不改變 Gitea 資料。
 
-## Success Criteria *(mandatory)*
+## Success Criteria _(mandatory)_
 
 ### Measurable Outcomes
 

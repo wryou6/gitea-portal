@@ -30,18 +30,18 @@
 
 ## Constitution Check
 
-| Gate | 規範 | 設計處理 | 狀態 |
-|---|---|---|---|
-| I | Gitea 是 Issue 資料唯一來源 | 表格只呈現既有 Gitea 欄位與 Label 推導值；不新增 Issue mirror 或遷移 checkpoint | PASS |
-| II | 操作遵循目前使用者權限 | 唯一遷移操作者為 Gitea `admin`；列舉、讀取、遷移都使用該請求所帶登入者 token；無後端服務身份旁路 | PASS |
-| III | Gitea 寫入保全資料並可驗證 | 僅替換目標 prefix；保留其餘 Labels；使用現有樂觀檢查、PUT 全集替換、GET 驗證；衝突不靜默修補 | PASS |
-| IV | 聚合讀取不可呈現部分結果 | 搜尋與 migration verification 的必要 Repository／Issue 頁面任一讀取失敗即整體回報錯誤，不宣布完成 | PASS |
-| V | 各 Repository 狀態語意一致 | 三態 Portal Status 對應 Todo/In Progress/Done；Done 仍由原生 Closed 表示；同步更新本原則及維護文件名稱 | PASS，文件更新屬實作範圍 |
-| VI | 工作範圍明確 | Key 固定顯示 `owner/repo#number`；遷移回報指出 repository 與 issue | PASS |
-| VII | 使用者文字多語系 | 表頭、排序名稱、逾期提示、分頁、錯誤及遷移結果更新所有現有語系 | PASS |
-| View preference | 個人化設定不屬於 Issue 資料 | 僅保存欄位可見性、順序及預設排序；不保存 Issue 或 Gitea 權限資料 | PASS |
-| Workspace constraints | 共用契約需跨層同步 | 一併檢查 domain、gitea-contracts、API、Web 型別 | PASS |
-| Spec Kit gates | UI 變更須保有 Spec Kit artifacts 並 typecheck/build | 本 feature 維護 plan/tasks/analyze，實作後依規範執行 typecheck/build | PASS |
+| Gate                  | 規範                                                | 設計處理                                                                                               | 狀態                     |
+| --------------------- | --------------------------------------------------- | ------------------------------------------------------------------------------------------------------ | ------------------------ |
+| I                     | Gitea 是 Issue 資料唯一來源                         | 表格只呈現既有 Gitea 欄位與 Label 推導值；不新增 Issue mirror 或遷移 checkpoint                        | PASS                     |
+| II                    | 操作遵循目前使用者權限                              | 唯一遷移操作者為 Gitea `admin`；列舉、讀取、遷移都使用該請求所帶登入者 token；無後端服務身份旁路       | PASS                     |
+| III                   | Gitea 寫入保全資料並可驗證                          | 僅替換目標 prefix；保留其餘 Labels；使用現有樂觀檢查、PUT 全集替換、GET 驗證；衝突不靜默修補           | PASS                     |
+| IV                    | 聚合讀取不可呈現部分結果                            | 搜尋與 migration verification 的必要 Repository／Issue 頁面任一讀取失敗即整體回報錯誤，不宣布完成      | PASS                     |
+| V                     | 各 Repository 狀態語意一致                          | 三態 Portal Status 對應 Todo/In Progress/Done；Done 仍由原生 Closed 表示；同步更新本原則及維護文件名稱 | PASS，文件更新屬實作範圍 |
+| VI                    | 工作範圍明確                                        | Key 固定顯示 `owner/repo#number`；遷移回報指出 repository 與 issue                                     | PASS                     |
+| VII                   | 使用者文字多語系                                    | 表頭、排序名稱、逾期提示、分頁、錯誤及遷移結果更新所有現有語系                                         | PASS                     |
+| View preference       | 個人化設定不屬於 Issue 資料                         | 僅保存欄位可見性、順序及預設排序；不保存 Issue 或 Gitea 權限資料                                       | PASS                     |
+| Workspace constraints | 共用契約需跨層同步                                  | 一併檢查 domain、gitea-contracts、API、Web 型別                                                        | PASS                     |
+| Spec Kit gates        | UI 變更須保有 Spec Kit artifacts 並 typecheck/build | 本 feature 維護 plan/tasks/analyze，實作後依規範執行 typecheck/build                                   | PASS                     |
 
 ## Project Structure
 

@@ -1,13 +1,22 @@
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { Link, useLocation, useNavigate } from "react-router";
-import { resolveAppRoute, resolveWorkViewNavigationContext, routePaths, safeReturnTo, workViewForRoute } from "../../app/routes";
+import {
+  resolveAppRoute,
+  resolveWorkViewNavigationContext,
+  routePaths,
+  safeReturnTo,
+  workViewForRoute,
+} from "../../app/routes";
 import { WorkspaceSelector } from "./WorkspaceSelector";
 import { useTranslation } from "react-i18next";
 import type { Repository } from "../../lib/api";
 import { api } from "../../lib/api";
 import { GlobalIssueSearch } from "./GlobalIssueSearch";
 import { UserIdentity } from "../ui/UserIdentity";
-import { buildWorkViewSearch, type WorkViewURLView } from "../../features/work-views/work-view-url-state";
+import {
+  buildWorkViewSearch,
+  type WorkViewURLView,
+} from "../../features/work-views/work-view-url-state";
 
 type NavigationIconName = "create" | "issues" | "kanban" | "gantt" | "settings";
 
@@ -74,21 +83,23 @@ export function AppShell({
   const { t: authT } = useTranslation("auth");
   const pathname = routePathname ?? location.pathname;
   const search = routeSearch ?? location.search;
-  const route = resolveAppRoute(
-    pathname,
-    search,
-  );
+  const route = resolveAppRoute(pathname, search);
   const navigationContext = resolveWorkViewNavigationContext(pathname, search);
   const contextRoute = navigationContext.route;
-  const sourceView = workViewForRoute(contextRoute) as WorkViewURLView | undefined;
+  const sourceView = workViewForRoute(contextRoute) as
+    WorkViewURLView | undefined;
   const repository =
     contextRoute.type === "repository-view" ? contextRoute : undefined;
-  const allReposView = contextRoute.type === "all-repositories-view" ? contextRoute.view : undefined;
+  const allReposView =
+    contextRoute.type === "all-repositories-view"
+      ? contextRoute.view
+      : undefined;
   const onCreateIssue = route.type === "issue-create";
   const onIssues =
     !onCreateIssue &&
     (contextRoute.type === "issues" ||
-      (contextRoute.type === "repository-view" && contextRoute.view === "issues"));
+      (contextRoute.type === "repository-view" &&
+        contextRoute.view === "issues"));
   const onDashboard = route.type === "dashboard";
   const [accountMenuOpen, setAccountMenuOpen] = useState(false);
   const [logoutPending, setLogoutPending] = useState(false);
@@ -150,14 +161,16 @@ export function AppShell({
       label: t("createIssue"),
       href: onCreateIssue
         ? `${pathname}${search}`
-          : repository
-            ? routePaths.issueCreateForRepository(
-                repository.owner,
-                repository.repo,
+        : repository
+          ? routePaths.issueCreateForRepository(
+              repository.owner,
+              repository.repo,
+              `${navigationContext.pathname}${navigationContext.search}`,
+            )
+          : sourceView
+            ? routePaths.issueCreateFrom(
                 `${navigationContext.pathname}${navigationContext.search}`,
               )
-          : sourceView
-            ? routePaths.issueCreateFrom(`${navigationContext.pathname}${navigationContext.search}`)
             : routePaths.issueCreate,
       icon: "create",
       active: onCreateIssue,
@@ -166,12 +179,8 @@ export function AppShell({
       key: "kanban",
       label: t("kanban"),
       href: repository
-          ? routePaths.repositoryView(
-              repository.owner,
-              repository.repo,
-              "kanban",
-            )
-          : routePaths.kanban,
+        ? routePaths.repositoryView(repository.owner, repository.repo, "kanban")
+        : routePaths.kanban,
       icon: "kanban",
       active:
         !onCreateIssue &&
@@ -181,12 +190,8 @@ export function AppShell({
       key: "gantt",
       label: t("gantt"),
       href: repository
-          ? routePaths.repositoryView(
-              repository.owner,
-              repository.repo,
-              "gantt",
-            )
-          : routePaths.gantt,
+        ? routePaths.repositoryView(repository.owner, repository.repo, "gantt")
+        : routePaths.gantt,
       icon: "gantt",
       active:
         !onCreateIssue &&
@@ -211,18 +216,22 @@ export function AppShell({
     url.search = buildWorkViewSearch(currentViewSearch, sourceView, targetView);
     return { ...item, href: `${url.pathname}${url.search}` };
   });
-  const globalSearchReturnTo = route.type === "issue-detail" || route.type === "issue-create"
-    ? safeReturnTo(new URLSearchParams(search).get("returnTo")) ?? routePaths.issues
-    : `${pathname}${search}`;
+  const globalSearchReturnTo =
+    route.type === "issue-detail" || route.type === "issue-create"
+      ? (safeReturnTo(new URLSearchParams(search).get("returnTo")) ??
+        routePaths.issues)
+      : `${pathname}${search}`;
 
   return (
-    <div
-      className="app-shell app-shell--collapsed"
-    >
+    <div className="app-shell app-shell--collapsed">
       <header className="topbar">
         <div className="topbar-primary">
           <div className="brand" aria-label="Gitea Portal">
-            <img className="brand-mark" src={`${import.meta.env.BASE_URL}favicon.svg`} alt="" />
+            <img
+              className="brand-mark"
+              src={`${import.meta.env.BASE_URL}favicon.svg`}
+              alt=""
+            />
             <span>Gitea Portal</span>
           </div>
           <Link
@@ -245,25 +254,40 @@ export function AppShell({
               ref={accountTriggerRef}
               className="account-menu-trigger"
               type="button"
-              aria-label={t("userIdentity", { name: displayName?.trim() || login, login })}
+              aria-label={t("userIdentity", {
+                name: displayName?.trim() || login,
+                login,
+              })}
               aria-expanded={accountMenuOpen}
               aria-controls="account-menu-panel"
               onClick={() => setAccountMenuOpen((open) => !open)}
             >
-              <UserIdentity user={{ login, fullName: displayName, avatarUrl }} size={32} focusable={false} />
+              <UserIdentity
+                user={{ login, fullName: displayName, avatarUrl }}
+                size={32}
+                focusable={false}
+              />
               <span aria-hidden="true">▾</span>
             </button>
-      <nav
+            <nav
               id="account-menu-panel"
               className="account-menu-panel"
               aria-label={t("userMenu")}
               hidden={!accountMenuOpen}
             >
               <Link to={routePaths.settings}>{t("settings")}</Link>
-              <button type="button" onClick={() => void logout()} disabled={logoutPending}>
+              <button
+                type="button"
+                onClick={() => void logout()}
+                disabled={logoutPending}
+              >
                 {t(logoutPending ? "loggingOut" : "logout")}
               </button>
-              {logoutFailed && <p className="account-menu-error" role="alert">{authT("logoutFailed")}</p>}
+              {logoutFailed && (
+                <p className="account-menu-error" role="alert">
+                  {authT("logoutFailed")}
+                </p>
+              )}
             </nav>
           </div>
         )}
@@ -285,13 +309,28 @@ export function AppShell({
                 title={item.label}
                 onClick={(event) => {
                   if (!["issues", "kanban", "gantt"].includes(item.key)) return;
-                  if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || event.button !== 0) return;
+                  if (
+                    event.metaKey ||
+                    event.ctrlKey ||
+                    event.shiftKey ||
+                    event.altKey ||
+                    event.button !== 0
+                  )
+                    return;
                   if (event.detail > 0) event.currentTarget.blur();
                   event.preventDefault();
                   const target = new URL(item.href, window.location.origin);
-                  const current = resolveWorkViewNavigationContext(pathname, search);
-                  const currentView = workViewForRoute(current.route) as WorkViewURLView | undefined;
-                  target.search = buildWorkViewSearch(current.search, currentView, item.key as WorkViewURLView);
+                  const current = resolveWorkViewNavigationContext(
+                    pathname,
+                    search,
+                  );
+                  const currentView = workViewForRoute(current.route) as
+                    WorkViewURLView | undefined;
+                  target.search = buildWorkViewSearch(
+                    current.search,
+                    currentView,
+                    item.key as WorkViewURLView,
+                  );
                   navigate(`${target.pathname}${target.search}`);
                 }}
               >

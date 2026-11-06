@@ -18,11 +18,11 @@ description: "Implementation tasks for unauthenticated and expired-session exper
 
 **Purpose**: Define route validation and session bootstrap behavior used by the login and recovery flows.
 
-- [X] T001 [P] Implement short-lived signed OAuth transaction cookie creation, state comparison, expiration, and clearing in `apps/api/src/auth/oauth-state.ts`.
-- [X] T002 [P] Implement server-side allow-list validation for known Portal return paths and safe Web-origin redirect construction in `apps/api/src/auth/oauth-return-to.ts`.
-- [X] T003 [P] Extend `safeReturnTo` in `apps/web/src/app/routes.ts` to recognize every protected route, preserve its query, and reject external, unknown, and reserved auth-flash targets.
-- [X] T004 Classify initial session lookup as authenticated, anonymous (`auth.required`), or unavailable before rendering in `apps/web/src/main.tsx`.
-- [X] T005 [P] Proxy `/auth` to the API in `apps/web/vite.config.ts` while retaining the existing `/api` proxy.
+- [x] T001 [P] Implement short-lived signed OAuth transaction cookie creation, state comparison, expiration, and clearing in `apps/api/src/auth/oauth-state.ts`.
+- [x] T002 [P] Implement server-side allow-list validation for known Portal return paths and safe Web-origin redirect construction in `apps/api/src/auth/oauth-return-to.ts`.
+- [x] T003 [P] Extend `safeReturnTo` in `apps/web/src/app/routes.ts` to recognize every protected route, preserve its query, and reject external, unknown, and reserved auth-flash targets.
+- [x] T004 Classify initial session lookup as authenticated, anonymous (`auth.required`), or unavailable before rendering in `apps/web/src/main.tsx`.
+- [x] T005 [P] Proxy `/auth` to the API in `apps/web/vite.config.ts` while retaining the existing `/api` proxy.
 
 **Checkpoint**: Bootstrap state and both redirect validators are defined before feature views are connected.
 
@@ -36,11 +36,11 @@ description: "Implementation tasks for unauthenticated and expired-session exper
 
 ### Implementation for User Story 1
 
-- [X] T006 [US1] Update `apps/api/src/http/routes.ts` so login creates a validated OAuth transaction and callback validates state, handles denial/failure, establishes session, and redirects to the configured Web origin plus safe return target.
-- [X] T007 [P] [US1] Add Traditional Chinese, English, and Japanese login, authorization-failure, and error copy in `apps/web/src/i18n/resources/auth.ts` and register the auth namespace in `apps/web/src/i18n/index.ts`.
-- [X] T008 [US1] Create the standalone login view with Gitea CTA, safe return target, and localized OAuth failure display in `apps/web/src/features/auth/LoginPage.tsx`.
-- [X] T009 [US1] Gate `AppShell` and all protected route content on session state, render the login view only for anonymous users, keep unavailable sessions fail-closed, and retain authenticated route behavior in `apps/web/src/app/App.tsx`.
-- [X] T010 [P] [US1] Add Storybook coverage for anonymous login and OAuth failure views in `apps/web/src/features/auth/LoginPage.stories.tsx`.
+- [x] T006 [US1] Update `apps/api/src/http/routes.ts` so login creates a validated OAuth transaction and callback validates state, handles denial/failure, establishes session, and redirects to the configured Web origin plus safe return target.
+- [x] T007 [P] [US1] Add Traditional Chinese, English, and Japanese login, authorization-failure, and error copy in `apps/web/src/i18n/resources/auth.ts` and register the auth namespace in `apps/web/src/i18n/index.ts`.
+- [x] T008 [US1] Create the standalone login view with Gitea CTA, safe return target, and localized OAuth failure display in `apps/web/src/features/auth/LoginPage.tsx`.
+- [x] T009 [US1] Gate `AppShell` and all protected route content on session state, render the login view only for anonymous users, keep unavailable sessions fail-closed, and retain authenticated route behavior in `apps/web/src/app/App.tsx`.
+- [x] T010 [P] [US1] Add Storybook coverage for anonymous login and OAuth failure views in `apps/web/src/features/auth/LoginPage.stories.tsx`.
 
 **Checkpoint**: Anonymous direct links show no protected content; unknown session status also stays fail-closed; successful OAuth returns to a validated Portal route.
 
@@ -54,10 +54,10 @@ description: "Implementation tasks for unauthenticated and expired-session exper
 
 ### Implementation for User Story 2
 
-- [X] T011 [US2] Clear the Portal session cookie when a delegated Gitea request returns 401 in `apps/api/src/http/error-handler.ts`; on protected API `auth.required` responses, store only a one-time expiry marker and reload the current URL, excluding `/api/session` and never retrying the failed request in `apps/web/src/lib/api.ts`.
-- [X] T012 [US2] Consume the expiry marker only after successful session bootstrap and pass a one-time reauthentication notice into the app in `apps/web/src/main.tsx` and `apps/web/src/app/App.tsx`.
-- [X] T013 [US2] Render localized session-expired and unsaved-Issue-input notices in `apps/web/src/features/auth/SessionExpiredNotice.tsx` and add all three locale strings to `apps/web/src/i18n/resources/auth.ts`.
-- [X] T014 [P] [US2] Add Storybook coverage for the session-expired and unsaved-input notice in `apps/web/src/features/auth/SessionExpiredNotice.stories.tsx`.
+- [x] T011 [US2] Clear the Portal session cookie when a delegated Gitea request returns 401 in `apps/api/src/http/error-handler.ts`; on protected API `auth.required` responses, store only a one-time expiry marker and reload the current URL, excluding `/api/session` and never retrying the failed request in `apps/web/src/lib/api.ts`.
+- [x] T012 [US2] Consume the expiry marker only after successful session bootstrap and pass a one-time reauthentication notice into the app in `apps/web/src/main.tsx` and `apps/web/src/app/App.tsx`.
+- [x] T013 [US2] Render localized session-expired and unsaved-Issue-input notices in `apps/web/src/features/auth/SessionExpiredNotice.tsx` and add all three locale strings to `apps/web/src/i18n/resources/auth.ts`.
+- [x] T014 [P] [US2] Add Storybook coverage for the session-expired and unsaved-input notice in `apps/web/src/features/auth/SessionExpiredNotice.stories.tsx`.
 
 **Checkpoint**: Session expiry returns to the same route after sign-in without saving form input or replaying the rejected mutation.
 
@@ -71,9 +71,9 @@ description: "Implementation tasks for unauthenticated and expired-session exper
 
 ### Implementation for User Story 3
 
-- [X] T015 [US3] Create a localized unavailable-state view with an accessible retry action in `apps/web/src/features/auth/SessionUnavailable.tsx`.
-- [X] T016 [US3] Render the unavailable view for non-authentication bootstrap failures and retry the session lookup without rendering `AppShell` in `apps/web/src/app/App.tsx`.
-- [X] T017 [P] [US3] Add Storybook coverage for service-unavailable and retry states in `apps/web/src/features/auth/SessionUnavailable.stories.tsx`.
+- [x] T015 [US3] Create a localized unavailable-state view with an accessible retry action in `apps/web/src/features/auth/SessionUnavailable.tsx`.
+- [x] T016 [US3] Render the unavailable view for non-authentication bootstrap failures and retry the session lookup without rendering `AppShell` in `apps/web/src/app/App.tsx`.
+- [x] T017 [P] [US3] Add Storybook coverage for service-unavailable and retry states in `apps/web/src/features/auth/SessionUnavailable.stories.tsx`.
 
 **Checkpoint**: Only an explicit unauthenticated response opens the login view; network/server failure shows a retryable service error.
 
@@ -83,9 +83,9 @@ description: "Implementation tasks for unauthenticated and expired-session exper
 
 **Purpose**: Verify localization, responsive/accessibility states, OAuth redirects, and workspace integration.
 
-- [X] T018 [P] Add responsive, light/dark, focus-visible, and reduced-motion styles for auth views in `apps/web/src/index.css`.
-- [X] T019 Run `pnpm.cmd typecheck` and `pnpm.cmd build` from the repository root `package.json`; fix any errors in feature files.
-- [X] T020 Execute the available scenarios in `specs/017-unauthenticated-experience/quickstart.md` and record any unavailable OAuth environment prerequisite or unverified live-login scenario in that guide.
+- [x] T018 [P] Add responsive, light/dark, focus-visible, and reduced-motion styles for auth views in `apps/web/src/index.css`.
+- [x] T019 Run `pnpm.cmd typecheck` and `pnpm.cmd build` from the repository root `package.json`; fix any errors in feature files.
+- [x] T020 Execute the available scenarios in `specs/017-unauthenticated-experience/quickstart.md` and record any unavailable OAuth environment prerequisite or unverified live-login scenario in that guide.
 
 ## Dependencies & Execution Order
 
@@ -134,7 +134,7 @@ Task: T010 Add login state stories in apps/web/src/features/auth/LoginPage.stori
 
 ## Phase 7: Convergence
 
-- [X] T021 Review the previously unrequested `POST /auth/logout` endpoint in `apps/api/src/http/routes.ts`; complete the specified and validated sign-out flow in T022–T025.
+- [x] T021 Review the previously unrequested `POST /auth/logout` endpoint in `apps/api/src/http/routes.ts`; complete the specified and validated sign-out flow in T022–T025.
 
 ## Phase 8: User Story 4 - 主動登出 Portal (Priority: P1)
 
@@ -144,7 +144,7 @@ Task: T010 Add login state stories in apps/web/src/features/auth/LoginPage.stori
 
 ### Implementation for User Story 4
 
-- [X] T022 [P] [US4] Add Traditional Chinese, English, and Japanese account-menu logout and logout-error messages in `apps/web/src/i18n/resources/common.ts` and `apps/web/src/i18n/resources/auth.ts`.
-- [X] T023 [US4] Add an accessible account-menu logout action in `apps/web/src/components/layout/AppShell.tsx` and show it in the authenticated `apps/web/src/components/layout/Layout.stories.tsx`; call `POST /auth/logout`, disable duplicate submission while pending, navigate to the standalone login page only after success, and retain the authenticated shell with localized retry feedback on failure.
-- [X] T024 [P] [US4] Update `clearSession` in `apps/api/src/auth/session.ts` to expire both Portal session and CSRF cookies while leaving Gitea IdP state untouched; confirm `POST /auth/logout` returns success only after both clear-cookie headers are sent in `apps/api/src/http/routes.ts`.
-- [X] T025 [US4] Exercise logout success, anonymous protected-route access, and request-failure retry; verify the Portal logout contract does not call Gitea logout or clear IdP cookies, and record the unverified live SSO round trip in `specs/017-unauthenticated-experience/quickstart.md`.
+- [x] T022 [P] [US4] Add Traditional Chinese, English, and Japanese account-menu logout and logout-error messages in `apps/web/src/i18n/resources/common.ts` and `apps/web/src/i18n/resources/auth.ts`.
+- [x] T023 [US4] Add an accessible account-menu logout action in `apps/web/src/components/layout/AppShell.tsx` and show it in the authenticated `apps/web/src/components/layout/Layout.stories.tsx`; call `POST /auth/logout`, disable duplicate submission while pending, navigate to the standalone login page only after success, and retain the authenticated shell with localized retry feedback on failure.
+- [x] T024 [P] [US4] Update `clearSession` in `apps/api/src/auth/session.ts` to expire both Portal session and CSRF cookies while leaving Gitea IdP state untouched; confirm `POST /auth/logout` returns success only after both clear-cookie headers are sent in `apps/api/src/http/routes.ts`.
+- [x] T025 [US4] Exercise logout success, anonymous protected-route access, and request-failure retry; verify the Portal logout contract does not call Gitea logout or clear IdP cookies, and record the unverified live SSO round trip in `specs/017-unauthenticated-experience/quickstart.md`.

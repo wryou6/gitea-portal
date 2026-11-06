@@ -14,7 +14,7 @@
 
 - Q: 窄螢幕下是否同意把四組篩選器收進預設收合的區域，讓 Kanban 欄位取得足夠高度？ → A: 窄螢幕預設收合篩選器，使用者可展開操作；桌面維持篩選器顯示。
 
-## User Scenarios & Testing *(mandatory)*
+## User Scenarios & Testing _(mandatory)_
 
 ### User Story 1 - 分別瀏覽各狀態欄 (Priority: P1)
 
@@ -54,7 +54,7 @@
 - 鍵盤使用者可聚焦卡片清單並捲動；焦點指示清楚可見。
 - 欄位捲動不得改變現有狀態轉移、拖放目標或卡片資料。
 
-## Requirements *(mandatory)*
+## Requirements _(mandatory)_
 
 ### Functional Requirements
 
@@ -68,12 +68,12 @@
 - **FR-008**: 欄位捲動 MUST 不改變 Issue 狀態、資料來源、權限或既有拖放狀態轉移行為。
 - **FR-009**: 窄螢幕 Kanban MUST 預設收合四組共用篩選器，並提供可辨識且可鍵盤操作的展開/收合控制；展開或收合 MUST 保留目前篩選條件。桌面版 MUST 維持篩選器顯示。
 
-### Key Entities *(include if data involved)*
+### Key Entities _(include if data involved)_
 
 - **Kanban 欄位**：代表固定 Issue Status 或 Anomaly 分組，包含欄位名稱、卡片數與卡片清單。
 - **Kanban 卡片**：代表 Gitea Issue；本功能只改變其瀏覽方式，不新增或改變 Issue 資料。
 
-## Success Criteria *(mandatory)*
+## Success Criteria _(mandatory)_
 
 ### Measurable Outcomes
 

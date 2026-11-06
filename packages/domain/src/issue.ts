@@ -7,7 +7,16 @@ import type { UserProfiles } from "./user-profile.js";
 export type IssueState = "open" | "closed";
 export type IssueIdentity = RepositoryRef & { number: number };
 export const ISSUE_SORT_FIELDS = [
-  "type", "key", "title", "assignee", "status", "priority", "createdAt", "startDate", "dueDate", "author",
+  "type",
+  "key",
+  "title",
+  "assignee",
+  "status",
+  "priority",
+  "createdAt",
+  "startDate",
+  "dueDate",
+  "author",
 ] as const;
 export type IssueSortField = (typeof ISSUE_SORT_FIELDS)[number];
 export type SortDirection = "asc" | "desc";

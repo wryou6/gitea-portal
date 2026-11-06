@@ -14,7 +14,7 @@
 
 - Q: Dashboard 預設要呈現什麼？「列出工作區」讓使用者選擇，或「彙總所有工作區的 Issues」直接顯示跨工作區內容？ → A: 列出所有工作區供選擇；進入後再看該工作區的 Issues、Kanban 或 Gantt Chart。
 
-## User Scenarios & Testing *(mandatory)*
+## User Scenarios & Testing _(mandatory)_
 
 ### User Story 1 - 從 Dashboard 瀏覽所有工作區 (Priority: P1)
 
@@ -68,7 +68,7 @@
 - 使用者從 Issue 詳情或建立頁面回到 Dashboard 時，Dashboard 仍以所有可用工作區作為預設範圍。
 - Repository 工作區與跨庫看板必須能從共通介面辨識其目前脈絡，避免切換頁面後誤以為資料範圍已改變。
 
-## Requirements *(mandatory)*
+## Requirements _(mandatory)_
 
 ### Functional Requirements
 
@@ -84,13 +84,13 @@
 - **FR-010**: 新增 Dashboard 與共通介面 MUST NOT 改變 Gitea Issues、Labels、狀態、排程或 Board 設定，也 MUST NOT 建立 Issue 資料副本。
 - **FR-011**: 品牌、Dashboard 連結、工作區入口與共通導覽 MUST 能以鍵盤操作及輔助科技辨識，並在窄視窗保持可用。
 
-### Key Entities *(include if feature involves data)*
+### Key Entities _(include if feature involves data)_
 
 - **Dashboard**：顯示目前使用者可存取之工作區的主要入口；預設範圍包含所有可用工作區。
 - **工作區項目**：Dashboard 中可供進入的 Repository 工作區或跨庫看板，保留其既有識別、名稱與資料範圍。
 - **共通頁面框架**：Dashboard、Kanban 與 Gantt Chart 共用的品牌、導覽、工作區脈絡和主要內容呈現區域。
 
-## Success Criteria *(mandatory)*
+## Success Criteria _(mandatory)_
 
 ### Measurable Outcomes
 

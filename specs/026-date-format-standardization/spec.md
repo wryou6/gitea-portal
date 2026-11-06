@@ -11,7 +11,7 @@
 
 - Q: 日期格式的窄螢幕驗收要涵蓋哪些寬度？ → A: 本次不進行窄螢幕驗收；使用者將窄螢幕檢查排除於本 feature 範圍。
 
-## User Scenarios & Testing *(mandatory)*
+## User Scenarios & Testing _(mandatory)_
 
 ### User Story 1 - 快速辨識日期與時間 (Priority: P1)
 
@@ -37,7 +37,7 @@ Portal 使用者在 Issue 清單、Issue 詳情、留言及工作檢視中查看
 - 缺少或無效的日期值沿用所在欄位既有的未設定、無效日期或錯誤呈現，不得顯示成看似有效的日期。
 - 甘特圖精簡刻度是明確的例外；其日期工具提示與無障礙日期名稱若呈現完整日期，仍使用統一數字格式。
 
-## Requirements *(mandatory)*
+## Requirements _(mandatory)_
 
 ### Functional Requirements
 
@@ -50,12 +50,12 @@ Portal 使用者在 Issue 清單、Issue 詳情、留言及工作檢視中查看
 - **FR-007**: 日期格式化 MUST 僅影響顯示，不得變更 Gitea 日期資料、Issue 行為或 Portal 持久資料。
 - **FR-008**: 缺失或無效日期 MUST 保留所在欄位既有的未設定、無效或錯誤處理，不得格式化為有效日期。
 
-### Key Entities *(include if data is involved)*
+### Key Entities _(include if data is involved)_
 
 - **日期-only 值**：代表不含時間的日曆日期，例如排程開始日與截止日。
 - **日期時間值**：代表含時區語意的時間點，例如 Issue 與 Comment 的建立時間。
 
-## Success Criteria *(mandatory)*
+## Success Criteria _(mandatory)_
 
 ### Measurable Outcomes
 

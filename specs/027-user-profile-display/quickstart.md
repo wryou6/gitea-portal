@@ -20,6 +20,7 @@ pnpm.cmd storybook
 ## 契約與回歸
 
 使用本機模擬 Gitea，不連真實修改介面，驗證：
+
 - Issue/comment/assignees 正規化完整保留資料且不增加逐人請求。
 - /api/session 更新、清空外觀、舊 cookie、timeout／503／403 fallback、401 清 session、身份不符拒絕。
 - Authorization header 不覆寫 cookie 身份；回應不含 token／CSRF／expiry。

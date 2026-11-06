@@ -1,7 +1,10 @@
 import { useTranslation } from "react-i18next";
 import { Checkbox } from "../../components/ui/Checkbox";
 import { Dialog } from "../../components/ui/Dialog";
-import { ISSUE_VIEW_FIELDS, type IssueViewPreference } from "./issue-view-preference";
+import {
+  ISSUE_VIEW_FIELDS,
+  type IssueViewPreference,
+} from "./issue-view-preference";
 
 export function IssueViewOptionsDialog({
   open,
@@ -25,7 +28,12 @@ export function IssueViewOptionsDialog({
   }
 
   return (
-    <Dialog open={open} title={t("viewOptions")} onClose={onClose} className="issue-view-options-shell">
+    <Dialog
+      open={open}
+      title={t("viewOptions")}
+      onClose={onClose}
+      className="issue-view-options-shell"
+    >
       <div className="issue-view-options-dialog">
         <section aria-labelledby="issue-view-section-heading">
           <h3 id="issue-view-section-heading">{t("visibleProperties")}</h3>
@@ -42,7 +50,9 @@ export function IssueViewOptionsDialog({
                     onChange={(event) => {
                       const visibleFields = event.target.checked
                         ? [...preference.visibleFields, field]
-                        : preference.visibleFields.filter((visible) => visible !== field);
+                        : preference.visibleFields.filter(
+                            (visible) => visible !== field,
+                          );
                       update({ visibleFields });
                     }}
                   />

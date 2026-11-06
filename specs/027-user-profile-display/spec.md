@@ -16,7 +16,7 @@
 - Q: 有設定姓名時，帳號要怎麼呈現，方便辨識同名的人？ → A: 一般畫面顯示姓名，提示中提供帳號；人員下拉選單顯示「姓名（帳號）」。
 - Q: 在 Gitea 改名字或頭貼後，Portal 要何時取得新資料？ → A: 重新載入頁面時更新登入者資料；Issue 人員隨 Issue 資料重新取得。
 
-## User Scenarios & Testing *(mandatory)*
+## User Scenarios & Testing _(mandatory)_
 
 ### User Story 1 - 辨識目前登入帳戶 (Priority: P1)
 
@@ -98,7 +98,7 @@
 - 外觀資料降級不適用於必要的 Repository、Issue 或留言讀取失敗；必要資料查詢失敗時維持既有錯誤處理，不把部分工作資料呈現為完整結果。
 - 長姓名、非拉丁文字及窄視窗下，保持頭貼與文字可辨識；圖片載入或失敗前後保留相同空間，避免表格與卡片跳動。
 
-## Requirements *(mandatory)*
+## Requirements _(mandatory)_
 
 ### Functional Requirements
 
@@ -120,14 +120,14 @@
 - **FR-016**: 新增或修改的介面文案、提示及無障礙名稱 MUST 支援繁體中文、英文與日文；Gitea 姓名與帳號 MUST 保留原文字，不作翻譯。
 - **FR-017**: 缺少新增外觀資料的既有登入階段與工作資料 MUST 仍可顯示並操作，切換帳戶後 MUST 顯示新帳戶資訊。
 
-### Key Entities *(include if feature involves data)*
+### Key Entities _(include if feature involves data)_
 
 - **使用者身份**：由唯一登入帳號辨識的 Gitea 使用者；姓名可重複，也可能未設定。
 - **使用者外觀資料**：Gitea 提供的姓名與大頭貼；用於閱讀與辨識，不作為身份或權限判斷依據。
 - **Issue 人員角色**：Issue 建立者、目前或最後負責人、有序指派人清單與留言者；各角色關聯至使用者身份。
 - **登入者資訊**：目前 Portal 登入帳戶的身份及已取得外觀資料；重新載入時更新，不跨帳戶沿用。
 
-## Success Criteria *(mandatory)*
+## Success Criteria _(mandatory)_
 
 ### Measurable Outcomes
 

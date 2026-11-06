@@ -134,7 +134,10 @@ export type AllRepositoriesKanbanView = {
   repositories: Repository[];
   columns: RepositoryKanbanView["columns"];
 };
-export type AllRepositoriesGanttView = { repositories: Repository[]; issues: Issue[] };
+export type AllRepositoriesGanttView = {
+  repositories: Repository[];
+  issues: Issue[];
+};
 
 export async function api<T>(path: string, init?: RequestInit): Promise<T> {
   const startedAt = performance.now();
@@ -152,12 +155,14 @@ export async function api<T>(path: string, init?: RequestInit): Promise<T> {
     });
     if (!response.ok) {
       const text = await response.text();
-      let payload: {
-        error?: unknown;
-        code?: unknown;
-        params?: unknown;
-        detail?: unknown;
-      } | undefined;
+      let payload:
+        | {
+            error?: unknown;
+            code?: unknown;
+            params?: unknown;
+            detail?: unknown;
+          }
+        | undefined;
       try {
         payload = JSON.parse(text) as typeof payload;
       } catch {
@@ -173,13 +178,22 @@ export async function api<T>(path: string, init?: RequestInit): Promise<T> {
           : "server.internal_error",
         legacyMessage,
         isErrorParams(payload?.params) ? payload.params : undefined,
-        [upstreamDetail, payload?.code && !isPortalApiErrorCode(payload.code) ? `Unknown error code: ${String(payload.code)}` : "", !payload ? text || `Request failed with status ${response.status}` : ""]
-        .filter(Boolean)
-        .join("\n\n") || undefined,
+        [
+          upstreamDetail,
+          payload?.code && !isPortalApiErrorCode(payload.code)
+            ? `Unknown error code: ${String(payload.code)}`
+            : "",
+          !payload
+            ? text || `Request failed with status ${response.status}`
+            : "",
+        ]
+          .filter(Boolean)
+          .join("\n\n") || undefined,
       );
       if (
         portalError.code === "auth.required" &&
-        new URL(requestPath, window.location.origin).pathname !== SESSION_PATH &&
+        new URL(requestPath, window.location.origin).pathname !==
+          SESSION_PATH &&
         !authReloadScheduled
       ) {
         authReloadScheduled = true;

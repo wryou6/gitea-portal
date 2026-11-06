@@ -1,15 +1,35 @@
-import { useEffect, useRef, useState, type CSSProperties, type KeyboardEvent, type PointerEvent, type ReactNode } from "react";
+import {
+  useEffect,
+  useRef,
+  useState,
+  type CSSProperties,
+  type KeyboardEvent,
+  type PointerEvent,
+  type ReactNode,
+} from "react";
 import { WorkViewLayout } from "./WorkViewLayout";
-import { WorkViewFilterBar, WorkViewRecentDoneFilter } from "./WorkViewFilterBar";
+import {
+  WorkViewFilterBar,
+  WorkViewRecentDoneFilter,
+} from "./WorkViewFilterBar";
 import { EmptyState } from "../../components/feedback/EmptyState";
 import { api, type Issue, type IssueSortField } from "../../lib/api";
 import { routePaths } from "../../app/routes";
 import { formatNumber } from "../../i18n/format";
 import { useTranslation } from "react-i18next";
 import { useLocation, useNavigate, useNavigationType } from "react-router";
-import { GanttIssueRow, type GanttColumn, type GanttIssueRowVariant } from "./GanttIssueRow";
+import {
+  GanttIssueRow,
+  type GanttColumn,
+  type GanttIssueRowVariant,
+} from "./GanttIssueRow";
 import { GanttCalendarHeader, GANTT_SCALE_WIDTH } from "./GanttCalendarHeader";
-import { matchesRecentDoneVisibility, matchesWorkViewFilters, parseWorkViewFilters, type WorkViewFilters } from "./work-view-filters";
+import {
+  matchesRecentDoneVisibility,
+  matchesWorkViewFilters,
+  parseWorkViewFilters,
+  type WorkViewFilters,
+} from "./work-view-filters";
 import { GanttViewOptionsDialog } from "./GanttViewOptionsDialog";
 import {
   DEFAULT_GANTT_COLUMN_ORDER,
@@ -33,12 +53,19 @@ import {
   type GanttScale,
 } from "./gantt-timeline";
 import { mergeUserProfiles } from "../../lib/user-profiles";
-import { buildWorkViewReturnTo, sanitizeWorkViewSearch } from "./work-view-url-state";
+import {
+  buildWorkViewReturnTo,
+  sanitizeWorkViewSearch,
+} from "./work-view-url-state";
 
 function compareGanttStartDate(left: Issue, right: Issue): number {
-  const dateOrder = (left.startDate ?? left.dueDate ?? "").localeCompare(right.startDate ?? right.dueDate ?? "");
+  const dateOrder = (left.startDate ?? left.dueDate ?? "").localeCompare(
+    right.startDate ?? right.dueDate ?? "",
+  );
   if (dateOrder !== 0) return dateOrder;
-  const repositoryOrder = `${left.owner}/${left.name}`.localeCompare(`${right.owner}/${right.name}`);
+  const repositoryOrder = `${left.owner}/${left.name}`.localeCompare(
+    `${right.owner}/${right.name}`,
+  );
   return repositoryOrder || left.number - right.number;
 }
 
@@ -55,17 +82,27 @@ function reorderVisibleFields(
   visibleOrder.splice(fromIndex, 1);
   visibleOrder.splice(toIndex, 0, from);
   let visibleIndex = 0;
-  return order.map((field) => visibleFields.includes(field)
-    ? visibleOrder[visibleIndex++] ?? field
-    : field);
+  return order.map((field) =>
+    visibleFields.includes(field)
+      ? (visibleOrder[visibleIndex++] ?? field)
+      : field,
+  );
 }
 
 function sameOrder(left: IssueSortField[], right: IssueSortField[]): boolean {
-  return left.length === right.length && left.every((field, index) => field === right[index]);
+  return (
+    left.length === right.length &&
+    left.every((field, index) => field === right[index])
+  );
 }
 
 function getIssueHref(issue: Issue, returnTo: string) {
-  return routePaths.issueDetailFrom(issue.owner, issue.name, issue.number, returnTo);
+  return routePaths.issueDetailFrom(
+    issue.owner,
+    issue.name,
+    issue.number,
+    returnTo,
+  );
 }
 
 type ActiveTimelinePan = {
@@ -145,7 +182,11 @@ export function GanttBoard({
   recentDoneOnly?: boolean;
   onRecentDoneOnlyChange?: (checked: boolean) => void;
   onScheduleSave?: (issue: Issue, change: GanttScheduleChange) => Promise<void>;
-  onMetadataSave?: (issue: Issue, field: "type" | "priority", value: string) => Promise<void>;
+  onMetadataSave?: (
+    issue: Issue,
+    field: "type" | "priority",
+    value: string,
+  ) => Promise<void>;
   onStatusClick?: (issue: Issue) => void;
 }) {
   const location = useLocation();
@@ -158,27 +199,49 @@ export function GanttBoard({
   const updateRecentDoneOnly = onRecentDoneOnlyChange ?? setLocalRecentDoneOnly;
   const initialQuery = new URLSearchParams(location.search);
   const [login, setLogin] = useState<string>();
-  const [localFilters, setLocalFilters] = useState(() => parseWorkViewFilters(location.search));
+  const [localFilters, setLocalFilters] = useState(() =>
+    parseWorkViewFilters(location.search),
+  );
   const filters = providedFilters ?? localFilters;
   const [initialDate, setInitialDate] = useState(() => {
-    if (demoInitialDate && isCalendarDate(demoInitialDate)) return demoInitialDate;
+    if (demoInitialDate && isCalendarDate(demoInitialDate))
+      return demoInitialDate;
     const query = initialQuery.get("gantt_start");
-    return query && isCalendarDate(query) ? query : addCalendarDays(localCalendarDate(), -7);
+    return query && isCalendarDate(query)
+      ? query
+      : addCalendarDays(localCalendarDate(), -7);
   });
-  const [scale, setScale] = useState<GanttScale>(() => demoScale ?? parseGanttScale(initialQuery.get("gantt_scale")));
-  const [preference, setPreference] = useState<GanttViewPreference>(() => demoPreference ?? defaultGanttViewPreference());
-  const [pendingOrder, setPendingOrder] = useState<IssueSortField[] | undefined>(demoPendingOrder ? [...demoPendingOrder] : undefined);
-  const [keyboardDraggedField, setKeyboardDraggedField] = useState<IssueSortField | undefined>(demoKeyboardDraggedField);
-  const [keyboardOrderBeforeDrag, setKeyboardOrderBeforeDrag] = useState<IssueSortField[] | undefined>();
+  const [scale, setScale] = useState<GanttScale>(
+    () => demoScale ?? parseGanttScale(initialQuery.get("gantt_scale")),
+  );
+  const [preference, setPreference] = useState<GanttViewPreference>(
+    () => demoPreference ?? defaultGanttViewPreference(),
+  );
+  const [pendingOrder, setPendingOrder] = useState<
+    IssueSortField[] | undefined
+  >(demoPendingOrder ? [...demoPendingOrder] : undefined);
+  const [keyboardDraggedField, setKeyboardDraggedField] = useState<
+    IssueSortField | undefined
+  >(demoKeyboardDraggedField);
+  const [keyboardOrderBeforeDrag, setKeyboardOrderBeforeDrag] = useState<
+    IssueSortField[] | undefined
+  >();
   const [columnAnnouncement, setColumnAnnouncement] = useState("");
   const [optionsOpen, setOptionsOpen] = useState(demoViewOptionsOpen);
   const [fieldsWidth, setFieldsWidth] = useState(0);
   const [titleWidth, setTitleWidth] = useState<number | undefined>();
   const [repositoryWidth, setRepositoryWidth] = useState<number | undefined>();
-  const [timelineExtension, setTimelineExtension] = useState({ before: 0, after: 0 });
+  const [timelineExtension, setTimelineExtension] = useState({
+    before: 0,
+    after: 0,
+  });
   const isExtendingTimeline = useRef(false);
-  const [maxContentColumnWidths, setMaxContentColumnWidths] = useState<Record<string, number>>({});
-  const [isNarrowViewport, setIsNarrowViewport] = useState(() => window.matchMedia("(max-width: 720px)").matches);
+  const [maxContentColumnWidths, setMaxContentColumnWidths] = useState<
+    Record<string, number>
+  >({});
+  const [isNarrowViewport, setIsNarrowViewport] = useState(
+    () => window.matchMedia("(max-width: 720px)").matches,
+  );
   const [visibleDate, setVisibleDate] = useState(initialDate);
   const visibleDateRef = useRef(initialDate);
   const previousInitialDate = useRef(initialDate);
@@ -194,10 +257,14 @@ export function GanttBoard({
       return;
     }
     let cancelled = false;
-    void api<{ login: string }>("/api/session").then((session) => {
-      if (!cancelled) setLogin(session.login);
-    }).catch(() => undefined);
-    return () => { cancelled = true; };
+    void api<{ login: string }>("/api/session")
+      .then((session) => {
+        if (!cancelled) setLogin(session.login);
+      })
+      .catch(() => undefined);
+    return () => {
+      cancelled = true;
+    };
   }, [demo]);
 
   useEffect(() => {
@@ -216,17 +283,21 @@ export function GanttBoard({
 
   useEffect(() => {
     if (demo) return;
-    const params = new URLSearchParams(sanitizeWorkViewSearch(location.search, "gantt"));
+    const params = new URLSearchParams(
+      sanitizeWorkViewSearch(location.search, "gantt"),
+    );
     params.set("gantt_start", initialDate);
     params.set("gantt_scale", scale);
     const query = params.toString();
     const search = query ? `?${query}` : "";
-    if (search !== location.search) navigate(`${location.pathname}${search}`, { replace: true });
+    if (search !== location.search)
+      navigate(`${location.pathname}${search}`, { replace: true });
   }, [demo, initialDate, location.pathname, location.search, navigate, scale]);
 
   const previousLocationKey = useRef(location.key);
   useEffect(() => {
-    const isPop = navigationType === "POP" && previousLocationKey.current !== location.key;
+    const isPop =
+      navigationType === "POP" && previousLocationKey.current !== location.key;
     previousLocationKey.current = location.key;
     if (!isPop || demo) return;
     const params = new URLSearchParams(location.search);
@@ -236,20 +307,36 @@ export function GanttBoard({
     setLocalFilters(parseWorkViewFilters(location.search));
   }, [demo, location.key, location.search, navigationType]);
 
-  const visibleIssues = issues.filter((issue) => matchesWorkViewFilters(issue, filters, currentUserLogin ?? login) && matchesRecentDoneVisibility(issue, recentDoneOnly));
-  const userProfiles = providedUserProfiles ?? mergeUserProfiles(issues.map((issue) => issue.userProfiles));
+  const visibleIssues = issues.filter(
+    (issue) =>
+      matchesWorkViewFilters(issue, filters, currentUserLogin ?? login) &&
+      matchesRecentDoneVisibility(issue, recentDoneOnly),
+  );
+  const userProfiles =
+    providedUserProfiles ??
+    mergeUserProfiles(issues.map((issue) => issue.userProfiles));
   const sortedIssues = [...visibleIssues].sort(compareGanttStartDate);
-  const scheduledIssues = sortedIssues.filter((issue) => issue.scheduleStatus === "scheduled");
-  const unscheduledIssues = sortedIssues.filter((issue) => issue.scheduleStatus === "unscheduled");
-  const anomalousIssues = sortedIssues.filter((issue) => issue.scheduleStatus === "invalid");
+  const scheduledIssues = sortedIssues.filter(
+    (issue) => issue.scheduleStatus === "scheduled",
+  );
+  const unscheduledIssues = sortedIssues.filter(
+    (issue) => issue.scheduleStatus === "unscheduled",
+  );
+  const anomalousIssues = sortedIssues.filter(
+    (issue) => issue.scheduleStatus === "invalid",
+  );
   const today = localCalendarDate();
   const scheduledDates = scheduledIssues
     .flatMap((issue) => [issue.startDate, issue.dueDate])
     .filter((date): date is string => date !== null && isCalendarDate(date));
   const firstScheduleDate = scheduledDates.sort()[0];
   const lastScheduleDate = scheduledDates.at(-1);
-  const timelineStartDates = [firstScheduleDate, initialDate, today].filter((date): date is string => Boolean(date));
-  const timelineEndDates = [lastScheduleDate, initialDate, today].filter((date): date is string => Boolean(date));
+  const timelineStartDates = [firstScheduleDate, initialDate, today].filter(
+    (date): date is string => Boolean(date),
+  );
+  const timelineEndDates = [lastScheduleDate, initialDate, today].filter(
+    (date): date is string => Boolean(date),
+  );
   const axisStart = addCalendarDays(
     timelineStartDates.sort()[0] ?? initialDate,
     -timelineExtension.before,
@@ -258,38 +345,60 @@ export function GanttBoard({
   const axisEnd = addCalendarDays(latestDate, 43 + timelineExtension.after);
   const cells = buildTimelineCells(axisStart, axisEnd, scale, initialDate);
   const columnOrder = pendingOrder ?? preference.columnOrder;
-  const visibleOrder = columnOrder.filter((field) => preference.visibleFields.includes(field));
+  const visibleOrder = columnOrder.filter((field) =>
+    preference.visibleFields.includes(field),
+  );
   const allRepositories = !repository;
   const columns: GanttColumn[] = [
-    ...(allRepositories ? [{ field: "repository" as const, label: tIssues("repository") }] : []),
+    ...(allRepositories
+      ? [{ field: "repository" as const, label: tIssues("repository") }]
+      : []),
     ...columnsForTranslation(visibleOrder, preference.visibleFields, tIssues),
   ];
-  const fieldGridTemplate = columns.map(({ field }) => isNarrowViewport
-    ? field === "title"
-      ? titleWidth ? `${titleWidth}px` : "11.25rem"
-      : field === "assignee" || field === "status" || field === "repository"
-        ? field === "repository" && repositoryWidth !== undefined
-          ? `${repositoryWidth}px`
-          : `${maxContentColumnWidths[field] ?? "max-content"}${typeof maxContentColumnWidths[field] === "number" ? "px" : ""}`
-        : "4.5rem"
-    : field === "title"
-      ? titleWidth ? `${titleWidth}px` : "minmax(19.5rem, 3fr)"
-        : field === "assignee" || field === "status" || field === "repository"
-          ? field === "repository" && repositoryWidth !== undefined
-            ? `${repositoryWidth}px`
-            : `${maxContentColumnWidths[field] ?? "max-content"}${typeof maxContentColumnWidths[field] === "number" ? "px" : ""}`
-            : "minmax(7rem, 0.9fr)").join(" ");
+  const fieldGridTemplate = columns
+    .map(({ field }) =>
+      isNarrowViewport
+        ? field === "title"
+          ? titleWidth
+            ? `${titleWidth}px`
+            : "11.25rem"
+          : field === "assignee" || field === "status" || field === "repository"
+            ? field === "repository" && repositoryWidth !== undefined
+              ? `${repositoryWidth}px`
+              : `${maxContentColumnWidths[field] ?? "max-content"}${typeof maxContentColumnWidths[field] === "number" ? "px" : ""}`
+            : "4.5rem"
+        : field === "title"
+          ? titleWidth
+            ? `${titleWidth}px`
+            : "minmax(19.5rem, 3fr)"
+          : field === "assignee" || field === "status" || field === "repository"
+            ? field === "repository" && repositoryWidth !== undefined
+              ? `${repositoryWidth}px`
+              : `${maxContentColumnWidths[field] ?? "max-content"}${typeof maxContentColumnWidths[field] === "number" ? "px" : ""}`
+            : "minmax(7rem, 0.9fr)",
+    )
+    .join(" ");
   const unitWidth = GANTT_SCALE_WIDTH[scale];
   const timelineWidth = cells.length * unitWidth;
   const selectedPosition = timelinePosition(initialDate, cells) * unitWidth;
-  const hasPendingOrder = !sameOrder(pendingOrder ?? preference.columnOrder, preference.columnOrder);
-  const needsRestore = !sameOrder(preference.columnOrder, DEFAULT_GANTT_COLUMN_ORDER) ||
+  const hasPendingOrder = !sameOrder(
+    pendingOrder ?? preference.columnOrder,
+    preference.columnOrder,
+  );
+  const needsRestore =
+    !sameOrder(preference.columnOrder, DEFAULT_GANTT_COLUMN_ORDER) ||
     !sameFields(preference.visibleFields, GANTT_FIXED_FIELDS) ||
     !sameOrder(columnOrder, DEFAULT_GANTT_COLUMN_ORDER);
-  const returnParams = new URLSearchParams(sanitizeWorkViewSearch(location.search, "gantt"));
+  const returnParams = new URLSearchParams(
+    sanitizeWorkViewSearch(location.search, "gantt"),
+  );
   returnParams.set("gantt_start", initialDate);
   returnParams.set("gantt_scale", scale);
-  const detailReturnTo = buildWorkViewReturnTo(location.pathname, returnParams.toString(), "gantt");
+  const detailReturnTo = buildWorkViewReturnTo(
+    location.pathname,
+    returnParams.toString(),
+    "gantt",
+  );
   useEffect(() => {
     const chart = chartScrollRef.current;
     const fields = chart?.querySelector<HTMLElement>(".gantt-header-fields");
@@ -298,14 +407,26 @@ export function GanttBoard({
       setFieldsWidth(fields.getBoundingClientRect().width);
       setIsNarrowViewport(window.matchMedia("(max-width: 720px)").matches);
       const nextWidths: Record<string, number> = {};
-      for (const field of ["assignee", "status", ...(allRepositories ? ["repository"] : [])]) {
-        const cells = [...chart.querySelectorAll<HTMLElement>(`.gantt-cell--${field}`)];
-        nextWidths[field] = Math.ceil(Math.max(0, ...cells.map(measureIntrinsicWidth)));
+      for (const field of [
+        "assignee",
+        "status",
+        ...(allRepositories ? ["repository"] : []),
+      ]) {
+        const cells = [
+          ...chart.querySelectorAll<HTMLElement>(`.gantt-cell--${field}`),
+        ];
+        nextWidths[field] = Math.ceil(
+          Math.max(0, ...cells.map(measureIntrinsicWidth)),
+        );
       }
-      setMaxContentColumnWidths((current) => Object.keys(nextWidths).length === Object.keys(current).length &&
-        Object.entries(nextWidths).every(([field, width]) => current[field] === width)
-        ? current
-        : nextWidths);
+      setMaxContentColumnWidths((current) =>
+        Object.keys(nextWidths).length === Object.keys(current).length &&
+        Object.entries(nextWidths).every(
+          ([field, width]) => current[field] === width,
+        )
+          ? current
+          : nextWidths,
+      );
     };
     const observer = new ResizeObserver(updateLayout);
     observer.observe(chart);
@@ -316,7 +437,15 @@ export function GanttBoard({
       observer.disconnect();
       window.removeEventListener("resize", updateLayout);
     };
-  }, [allRepositories, fieldGridTemplate, i18n.language, issues, scheduledIssues.length, unscheduledIssues.length, anomalousIssues.length]);
+  }, [
+    allRepositories,
+    fieldGridTemplate,
+    i18n.language,
+    issues,
+    scheduledIssues.length,
+    unscheduledIssues.length,
+    anomalousIssues.length,
+  ]);
 
   useEffect(() => {
     if (!chartScrollRef.current) return;
@@ -326,21 +455,45 @@ export function GanttBoard({
     }
     const initialDateChanged = previousInitialDate.current !== initialDate;
     previousInitialDate.current = initialDate;
-    const anchorDate = initialDateChanged ? initialDate : visibleDateRef.current;
-    chartScrollRef.current.scrollLeft = timelinePosition(anchorDate, cells) * unitWidth;
+    const anchorDate = initialDateChanged
+      ? initialDate
+      : visibleDateRef.current;
+    chartScrollRef.current.scrollLeft =
+      timelinePosition(anchorDate, cells) * unitWidth;
     visibleDateRef.current = anchorDate;
     setVisibleDate(anchorDate);
-  }, [selectedPosition, timelineWidth, fieldGridTemplate, fieldsWidth, isNarrowViewport, initialDate]);
+  }, [
+    selectedPosition,
+    timelineWidth,
+    fieldGridTemplate,
+    fieldsWidth,
+    isNarrowViewport,
+    initialDate,
+  ]);
 
   function extendTimeline(direction: -1 | 1): number {
-    const expandedCells = direction < 0
-      ? buildTimelineCells(addCalendarDays(axisStart, -28), axisEnd, scale, initialDate)
-      : buildTimelineCells(axisStart, addCalendarDays(axisEnd, 28), scale, initialDate);
-    const extensionWidth = Math.max(0, expandedCells.length - cells.length) * unitWidth;
+    const expandedCells =
+      direction < 0
+        ? buildTimelineCells(
+            addCalendarDays(axisStart, -28),
+            axisEnd,
+            scale,
+            initialDate,
+          )
+        : buildTimelineCells(
+            axisStart,
+            addCalendarDays(axisEnd, 28),
+            scale,
+            initialDate,
+          );
+    const extensionWidth =
+      Math.max(0, expandedCells.length - cells.length) * unitWidth;
     isExtendingTimeline.current = true;
-    setTimelineExtension((current) => direction < 0
-      ? { ...current, before: current.before + 28 }
-      : { ...current, after: current.after + 28 });
+    setTimelineExtension((current) =>
+      direction < 0
+        ? { ...current, before: current.before + 28 }
+        : { ...current, after: current.after + 28 },
+    );
     return extensionWidth;
   }
 
@@ -350,8 +503,10 @@ export function GanttBoard({
   }
 
   function updateColumnWidth(field: "title" | "repository", width: number) {
-    const minWidth = field === "title" ? GANTT_TITLE_MIN_WIDTH : GANTT_REPOSITORY_MIN_WIDTH;
-    const maxWidth = field === "title" ? GANTT_TITLE_MAX_WIDTH : GANTT_REPOSITORY_MAX_WIDTH;
+    const minWidth =
+      field === "title" ? GANTT_TITLE_MIN_WIDTH : GANTT_REPOSITORY_MIN_WIDTH;
+    const maxWidth =
+      field === "title" ? GANTT_TITLE_MAX_WIDTH : GANTT_REPOSITORY_MAX_WIDTH;
     const nextWidth = Math.min(maxWidth, Math.max(minWidth, Math.round(width)));
     if (field === "title") {
       setTitleWidth(nextWidth);
@@ -362,14 +517,22 @@ export function GanttBoard({
     }
   }
 
-  function handleColumnResizePointerDown(event: PointerEvent<HTMLDivElement>, field: "title" | "repository") {
+  function handleColumnResizePointerDown(
+    event: PointerEvent<HTMLDivElement>,
+    field: "title" | "repository",
+  ) {
     event.preventDefault();
     event.stopPropagation();
     event.currentTarget.setPointerCapture(event.pointerId);
     activeColumnResize.current = {
       pointerId: event.pointerId,
       startClientX: event.clientX,
-      startWidth: (field === "title" ? titleWidth : repositoryWidth) ?? event.currentTarget.parentElement?.getBoundingClientRect().width ?? (field === "title" && !isNarrowViewport ? GANTT_TITLE_DEFAULT_WIDTH : 180),
+      startWidth:
+        (field === "title" ? titleWidth : repositoryWidth) ??
+        event.currentTarget.parentElement?.getBoundingClientRect().width ??
+        (field === "title" && !isNarrowViewport
+          ? GANTT_TITLE_DEFAULT_WIDTH
+          : 180),
       field,
     };
   }
@@ -377,39 +540,67 @@ export function GanttBoard({
   function handleColumnResizePointerMove(event: PointerEvent<HTMLDivElement>) {
     const resize = activeColumnResize.current;
     if (!resize || resize.pointerId !== event.pointerId) return;
-    updateColumnWidth(resize.field, resize.startWidth + event.clientX - resize.startClientX);
+    updateColumnWidth(
+      resize.field,
+      resize.startWidth + event.clientX - resize.startClientX,
+    );
   }
 
   function handleColumnResizePointerUp(event: PointerEvent<HTMLDivElement>) {
     if (activeColumnResize.current?.pointerId !== event.pointerId) return;
     activeColumnResize.current = undefined;
-    if (event.currentTarget.hasPointerCapture(event.pointerId)) event.currentTarget.releasePointerCapture(event.pointerId);
+    if (event.currentTarget.hasPointerCapture(event.pointerId))
+      event.currentTarget.releasePointerCapture(event.pointerId);
   }
 
-  function handleColumnResizeKeyDown(event: KeyboardEvent<HTMLDivElement>, field: "title" | "repository") {
-    if (event.key !== "ArrowLeft" && event.key !== "ArrowRight" && event.key !== "Home" && event.key !== "End") return;
+  function handleColumnResizeKeyDown(
+    event: KeyboardEvent<HTMLDivElement>,
+    field: "title" | "repository",
+  ) {
+    if (
+      event.key !== "ArrowLeft" &&
+      event.key !== "ArrowRight" &&
+      event.key !== "Home" &&
+      event.key !== "End"
+    )
+      return;
     event.preventDefault();
-    const currentWidth = (field === "title" ? titleWidth : repositoryWidth) ?? event.currentTarget.parentElement?.getBoundingClientRect().width ?? (field === "title" && !isNarrowViewport ? GANTT_TITLE_DEFAULT_WIDTH : 180);
-    const minWidth = field === "title" ? GANTT_TITLE_MIN_WIDTH : GANTT_REPOSITORY_MIN_WIDTH;
-    const maxWidth = field === "title" ? GANTT_TITLE_MAX_WIDTH : GANTT_REPOSITORY_MAX_WIDTH;
-    const nextWidth = event.key === "Home" ? minWidth
-      : event.key === "End" ? maxWidth
-        : currentWidth + (event.key === "ArrowRight" ? 16 : -16);
+    const currentWidth =
+      (field === "title" ? titleWidth : repositoryWidth) ??
+      event.currentTarget.parentElement?.getBoundingClientRect().width ??
+      (field === "title" && !isNarrowViewport
+        ? GANTT_TITLE_DEFAULT_WIDTH
+        : 180);
+    const minWidth =
+      field === "title" ? GANTT_TITLE_MIN_WIDTH : GANTT_REPOSITORY_MIN_WIDTH;
+    const maxWidth =
+      field === "title" ? GANTT_TITLE_MAX_WIDTH : GANTT_REPOSITORY_MAX_WIDTH;
+    const nextWidth =
+      event.key === "Home"
+        ? minWidth
+        : event.key === "End"
+          ? maxWidth
+          : currentWidth + (event.key === "ArrowRight" ? 16 : -16);
     updateColumnWidth(field, nextWidth);
   }
 
   function renderColumnResizer(field: "title" | "repository") {
-    const minWidth = field === "title" ? GANTT_TITLE_MIN_WIDTH : GANTT_REPOSITORY_MIN_WIDTH;
-    const maxWidth = field === "title" ? GANTT_TITLE_MAX_WIDTH : GANTT_REPOSITORY_MAX_WIDTH;
-    const currentWidth = field === "title"
-      ? titleWidth ?? (isNarrowViewport ? 180 : GANTT_TITLE_DEFAULT_WIDTH)
-      : repositoryWidth ?? maxContentColumnWidths.repository ?? 180;
+    const minWidth =
+      field === "title" ? GANTT_TITLE_MIN_WIDTH : GANTT_REPOSITORY_MIN_WIDTH;
+    const maxWidth =
+      field === "title" ? GANTT_TITLE_MAX_WIDTH : GANTT_REPOSITORY_MAX_WIDTH;
+    const currentWidth =
+      field === "title"
+        ? (titleWidth ?? (isNarrowViewport ? 180 : GANTT_TITLE_DEFAULT_WIDTH))
+        : (repositoryWidth ?? maxContentColumnWidths.repository ?? 180);
     return (
       <div
         className="gantt-column-resizer"
         role="separator"
         aria-orientation="vertical"
-        aria-label={t(field === "title" ? "ganttResizeTitle" : "ganttResizeRepository")}
+        aria-label={t(
+          field === "title" ? "ganttResizeTitle" : "ganttResizeRepository",
+        )}
         aria-valuemin={minWidth}
         aria-valuemax={maxWidth}
         aria-valuenow={currentWidth}
@@ -438,7 +629,10 @@ export function GanttBoard({
     if (!sameOrder(next, columnOrder)) setPendingOrder(next);
   }
 
-  function handleOrderKeyDown(event: KeyboardEvent<HTMLButtonElement>, field: IssueSortField) {
+  function handleOrderKeyDown(
+    event: KeyboardEvent<HTMLButtonElement>,
+    field: IssueSortField,
+  ) {
     if (event.key === "Escape" && keyboardDraggedField === field) {
       event.preventDefault();
       setPendingOrder(keyboardOrderBeforeDrag);
@@ -457,19 +651,30 @@ export function GanttBoard({
       event.preventDefault();
       setKeyboardDraggedField(undefined);
       setKeyboardOrderBeforeDrag(undefined);
-      setColumnAnnouncement(t("ganttColumnMoved", { column: columns.find((column) => column.field === field)?.label, position: visibleOrder.indexOf(field) + 1 }));
+      setColumnAnnouncement(
+        t("ganttColumnMoved", {
+          column: columns.find((column) => column.field === field)?.label,
+          position: visibleOrder.indexOf(field) + 1,
+        }),
+      );
       return;
     }
-    if (keyboardDraggedField !== field || (event.key !== "ArrowLeft" && event.key !== "ArrowRight")) return;
+    if (
+      keyboardDraggedField !== field ||
+      (event.key !== "ArrowLeft" && event.key !== "ArrowRight")
+    )
+      return;
     event.preventDefault();
     const index = visibleOrder.indexOf(field);
     const target = visibleOrder[index + (event.key === "ArrowLeft" ? -1 : 1)];
     if (target) {
       handleOrderMove(field, target);
-      setColumnAnnouncement(t("ganttColumnMoved", {
-        column: columns.find((column) => column.field === field)?.label,
-        position: visibleOrder.indexOf(target) + 1,
-      }));
+      setColumnAnnouncement(
+        t("ganttColumnMoved", {
+          column: columns.find((column) => column.field === field)?.label,
+          position: visibleOrder.indexOf(target) + 1,
+        }),
+      );
     }
   }
 
@@ -503,7 +708,10 @@ export function GanttBoard({
       chart.scrollLeft = Math.max(0, chart.scrollLeft - 48);
     } else if (event.key === "ArrowRight") {
       event.preventDefault();
-      chart.scrollLeft = Math.min(chart.scrollWidth - chart.clientWidth, chart.scrollLeft + 48);
+      chart.scrollLeft = Math.min(
+        chart.scrollWidth - chart.clientWidth,
+        chart.scrollLeft + 48,
+      );
     } else if (event.key === "Home") {
       event.preventDefault();
       chart.scrollLeft = 0;
@@ -518,11 +726,24 @@ export function GanttBoard({
     const target = event.target instanceof Element ? event.target : null;
     if (!target) return;
     const timelineTarget = target.closest(".gantt-calendar-cell, .gantt-track");
-    const fixedFields = target.closest<HTMLElement>(".gantt-header-fields, .gantt-row-fields");
-    const fieldsCoverTimeline = fixedFields
-      && fixedFields.getBoundingClientRect().right >= event.currentTarget.getBoundingClientRect().right - 1;
-    if (!timelineTarget && !(event.pointerType === "touch" && fixedFields && fieldsCoverTimeline)) return;
-    if (target.closest(".gantt-column-resizer, .gantt-track--create-range, .gantt-bar, [data-drag-mode], a, button, input, select, textarea, [contenteditable='true']")) return;
+    const fixedFields = target.closest<HTMLElement>(
+      ".gantt-header-fields, .gantt-row-fields",
+    );
+    const fieldsCoverTimeline =
+      fixedFields &&
+      fixedFields.getBoundingClientRect().right >=
+        event.currentTarget.getBoundingClientRect().right - 1;
+    if (
+      !timelineTarget &&
+      !(event.pointerType === "touch" && fixedFields && fieldsCoverTimeline)
+    )
+      return;
+    if (
+      target.closest(
+        ".gantt-column-resizer, .gantt-track--create-range, .gantt-bar, [data-drag-mode], a, button, input, select, textarea, [contenteditable='true']",
+      )
+    )
+      return;
 
     event.preventDefault();
     activeTimelinePan.current = {
@@ -537,7 +758,8 @@ export function GanttBoard({
   function handleChartPointerMove(event: PointerEvent<HTMLDivElement>) {
     const activePan = activeTimelinePan.current;
     if (!activePan || activePan.pointerId !== event.pointerId) return;
-    event.currentTarget.scrollLeft = activePan.startScrollLeft - (event.clientX - activePan.startClientX);
+    event.currentTarget.scrollLeft =
+      activePan.startScrollLeft - (event.clientX - activePan.startClientX);
   }
 
   function finishChartPointerPan(event: PointerEvent<HTMLDivElement>) {
@@ -557,198 +779,393 @@ export function GanttBoard({
 
   return (
     <section className="gantt-view" aria-label={t("ganttLabel")}>
-      <WorkViewLayout filters={filters} commonFilters={commonFilters ?? <WorkViewFilterBar filters={filters} onChange={setLocalFilters} repositoryFixed={Boolean(repository)} assignees={[...new Set(issues.flatMap((issue) => issue.assignees))].sort()} userProfiles={userProfiles} currentUserLogin={currentUserLogin ?? login} />} resultCount={visibleIssues.length} recentDoneOnly={recentDoneOnly} repositoryFixed={Boolean(repository)} userProfiles={userProfiles} controls={<>
-      <WorkViewRecentDoneFilter checked={recentDoneOnly} onChange={updateRecentDoneOnly} />
-      <div className="gantt-toolbar" role="group" aria-label={t("timelineControls")}>
-        <h3 className="work-view-controls-section-title">{t("timeline")}</h3>
-        <div className="gantt-date-navigation">
-          <button
-            className="secondary gantt-period-button"
-            type="button"
-            aria-label={t("previousTimelinePeriod")}
-            onClick={() => setInitialDate((date) => shiftTimelineStartDate(date, scale, -1))}
-          >
-            <span aria-hidden="true">‹</span>
-          </button>
-          <label className="gantt-start-date" htmlFor="gantt-start-date">
-            <span>{t("ganttStartDate")}</span>
-            <input id="gantt-start-date" type="date" value={initialDate} onChange={(event) => {
-              if (isCalendarDate(event.target.value)) setInitialDate(event.target.value);
-            }} />
-          </label>
-          <button className="secondary gantt-today-button" type="button" onClick={goToToday}>{t("today")}</button>
-          <button
-            className="secondary gantt-period-button"
-            type="button"
-            aria-label={t("nextTimelinePeriod")}
-            onClick={() => setInitialDate((date) => shiftTimelineStartDate(date, scale, 1))}
-          >
-            <span aria-hidden="true">›</span>
-          </button>
-        </div>
-        <label className="gantt-scale" htmlFor="gantt-scale">
-          <span>{t("scale")}</span>
-          <select id="gantt-scale" value={scale} onChange={(event) => setScale(parseGanttScale(event.target.value))}>
-            <option value="day">{t("scaleDay")}</option>
-            <option value="week">{t("scaleWeek")}</option>
-            <option value="two-weeks">{t("scaleTwoWeeks")}</option>
-            <option value="month">{t("scaleMonth")}</option>
-          </select>
-        </label>
-        <h3 className="work-view-controls-section-title">{tIssues("viewOptions")}</h3>
-        <div className="gantt-toolbar-actions">
-          {hasPendingOrder && <button type="button" onClick={() => updatePreference({ ...preference, columnOrder: [...columnOrder] })}>{t("ganttSaveColumnOrder")}</button>}
-          {needsRestore && <button className="secondary" type="button" onClick={restoreDefaults}>{t("ganttRestoreColumnDefaults")}</button>}
-          <button
-            className="secondary gantt-view-options-button"
-            type="button"
-            aria-label={t("ganttViewOptions")}
-            aria-haspopup="dialog"
-            title={t("ganttViewOptions")}
-            onClick={() => setOptionsOpen(true)}
-          >
-            <svg aria-hidden="true" viewBox="0 0 16 16" fill="none">
-              <path d="M2.5 4h11M2.5 8h11M2.5 12h11" />
-              <path d="M5 2.5v3M10.5 6.5v3M7.5 10.5v3" />
-            </svg>
-            <span>{t("ganttViewOptions")}</span>
-          </button>
-        </div>
-      </div>
-      </>}>
-      {scheduledIssues.length > 0 && (
-        <div
-          ref={chartScrollRef}
-          className={`gantt-chart-scroll${isTimelinePanning ? " gantt-chart-scroll--panning" : ""}`}
-          role="grid"
-          tabIndex={0}
-          aria-label={t("ganttLabel")}
-          style={{ "--gantt-fields-template": fieldGridTemplate, "--gantt-timeline-width": `${timelineWidth}px`, "--gantt-fields-width": `${fieldsWidth}px` } as CSSProperties}
-          onKeyDown={handleChartKeyDown}
-          onPointerDown={handleChartPointerDown}
-          onPointerMove={handleChartPointerMove}
-          onPointerUp={finishChartPointerPan}
-          onPointerCancel={finishChartPointerPan}
-          onLostPointerCapture={finishChartPointerPan}
-          onScroll={(event) => {
-            const date = dateAtTimelinePosition(event.currentTarget.scrollLeft / unitWidth, cells);
-            visibleDateRef.current = date;
-            setVisibleDate(date);
-          }}
-        >
-          <div className="gantt-chart-header" role="row">
-            <div className="gantt-header-fields" role="presentation">
-              {columns.map(({ field, label }) => (
-                <div className={`gantt-column-heading${field === "title" || (field === "repository" && allRepositories) ? " gantt-column-heading--resizable" : ""}`} role="columnheader" key={field}>
-                  {field === "repository" ? (
-                    <>
-                      <span>{label}</span>
-                      {allRepositories && renderColumnResizer("repository")}
-                    </>
-                  ) : (
-                  <>
+      <WorkViewLayout
+        filters={filters}
+        commonFilters={
+          commonFilters ?? (
+            <WorkViewFilterBar
+              filters={filters}
+              onChange={setLocalFilters}
+              repositoryFixed={Boolean(repository)}
+              assignees={[
+                ...new Set(issues.flatMap((issue) => issue.assignees)),
+              ].sort()}
+              userProfiles={userProfiles}
+              currentUserLogin={currentUserLogin ?? login}
+            />
+          )
+        }
+        resultCount={visibleIssues.length}
+        recentDoneOnly={recentDoneOnly}
+        repositoryFixed={Boolean(repository)}
+        userProfiles={userProfiles}
+        controls={
+          <>
+            <WorkViewRecentDoneFilter
+              checked={recentDoneOnly}
+              onChange={updateRecentDoneOnly}
+            />
+            <div
+              className="gantt-toolbar"
+              role="group"
+              aria-label={t("timelineControls")}
+            >
+              <h3 className="work-view-controls-section-title">
+                {t("timeline")}
+              </h3>
+              <div className="gantt-date-navigation">
+                <button
+                  className="secondary gantt-period-button"
+                  type="button"
+                  aria-label={t("previousTimelinePeriod")}
+                  onClick={() =>
+                    setInitialDate((date) =>
+                      shiftTimelineStartDate(date, scale, -1),
+                    )
+                  }
+                >
+                  <span aria-hidden="true">‹</span>
+                </button>
+                <label className="gantt-start-date" htmlFor="gantt-start-date">
+                  <span>{t("ganttStartDate")}</span>
+                  <input
+                    id="gantt-start-date"
+                    type="date"
+                    value={initialDate}
+                    onChange={(event) => {
+                      if (isCalendarDate(event.target.value))
+                        setInitialDate(event.target.value);
+                    }}
+                  />
+                </label>
+                <button
+                  className="secondary gantt-today-button"
+                  type="button"
+                  onClick={goToToday}
+                >
+                  {t("today")}
+                </button>
+                <button
+                  className="secondary gantt-period-button"
+                  type="button"
+                  aria-label={t("nextTimelinePeriod")}
+                  onClick={() =>
+                    setInitialDate((date) =>
+                      shiftTimelineStartDate(date, scale, 1),
+                    )
+                  }
+                >
+                  <span aria-hidden="true">›</span>
+                </button>
+              </div>
+              <label className="gantt-scale" htmlFor="gantt-scale">
+                <span>{t("scale")}</span>
+                <select
+                  id="gantt-scale"
+                  value={scale}
+                  onChange={(event) =>
+                    setScale(parseGanttScale(event.target.value))
+                  }
+                >
+                  <option value="day">{t("scaleDay")}</option>
+                  <option value="week">{t("scaleWeek")}</option>
+                  <option value="two-weeks">{t("scaleTwoWeeks")}</option>
+                  <option value="month">{t("scaleMonth")}</option>
+                </select>
+              </label>
+              <h3 className="work-view-controls-section-title">
+                {tIssues("viewOptions")}
+              </h3>
+              <div className="gantt-toolbar-actions">
+                {hasPendingOrder && (
                   <button
                     type="button"
-                    draggable
-                    aria-label={`${label}. ${t("ganttColumnMoveHelp")}`}
-                    aria-pressed={keyboardDraggedField === field}
-                    onKeyDown={(event) => handleOrderKeyDown(event, field)}
-                    onDragStart={(event) => {
-                      event.dataTransfer.effectAllowed = "move";
-                      event.dataTransfer.setData("text/plain", field);
-                    }}
-                    onDragOver={(event) => { event.preventDefault(); event.dataTransfer.dropEffect = "move"; }}
-                    onDragEnd={() => setColumnAnnouncement("")}
-                    onDrop={(event) => {
-                      event.preventDefault();
-                      const source = event.dataTransfer.getData("text/plain") as IssueSortField;
-                      handleOrderMove(source, field);
-                      setColumnAnnouncement(t("ganttColumnMoved", {
-                        column: columns.find((column) => column.field === source)?.label,
-                        position: visibleOrder.indexOf(field) + 1,
-                      }));
-                    }}
-                  >{label}</button>
-                  {field === "title" && renderColumnResizer("title")}
-                  </>
-                  )}
-                </div>
-              ))}
+                    onClick={() =>
+                      updatePreference({
+                        ...preference,
+                        columnOrder: [...columnOrder],
+                      })
+                    }
+                  >
+                    {t("ganttSaveColumnOrder")}
+                  </button>
+                )}
+                {needsRestore && (
+                  <button
+                    className="secondary"
+                    type="button"
+                    onClick={restoreDefaults}
+                  >
+                    {t("ganttRestoreColumnDefaults")}
+                  </button>
+                )}
+                <button
+                  className="secondary gantt-view-options-button"
+                  type="button"
+                  aria-label={t("ganttViewOptions")}
+                  aria-haspopup="dialog"
+                  title={t("ganttViewOptions")}
+                  onClick={() => setOptionsOpen(true)}
+                >
+                  <svg aria-hidden="true" viewBox="0 0 16 16" fill="none">
+                    <path d="M2.5 4h11M2.5 8h11M2.5 12h11" />
+                    <path d="M5 2.5v3M10.5 6.5v3M7.5 10.5v3" />
+                  </svg>
+                  <span>{t("ganttViewOptions")}</span>
+                </button>
+              </div>
             </div>
-            <div className="gantt-calendar-cell" role="columnheader">
-              <GanttCalendarHeader cells={cells} scale={scale} today={today} visibleDate={visibleDate} />
+          </>
+        }
+      >
+        {scheduledIssues.length > 0 && (
+          <div
+            ref={chartScrollRef}
+            className={`gantt-chart-scroll${isTimelinePanning ? " gantt-chart-scroll--panning" : ""}`}
+            role="grid"
+            tabIndex={0}
+            aria-label={t("ganttLabel")}
+            style={
+              {
+                "--gantt-fields-template": fieldGridTemplate,
+                "--gantt-timeline-width": `${timelineWidth}px`,
+                "--gantt-fields-width": `${fieldsWidth}px`,
+              } as CSSProperties
+            }
+            onKeyDown={handleChartKeyDown}
+            onPointerDown={handleChartPointerDown}
+            onPointerMove={handleChartPointerMove}
+            onPointerUp={finishChartPointerPan}
+            onPointerCancel={finishChartPointerPan}
+            onLostPointerCapture={finishChartPointerPan}
+            onScroll={(event) => {
+              const date = dateAtTimelinePosition(
+                event.currentTarget.scrollLeft / unitWidth,
+                cells,
+              );
+              visibleDateRef.current = date;
+              setVisibleDate(date);
+            }}
+          >
+            <div className="gantt-chart-header" role="row">
+              <div className="gantt-header-fields" role="presentation">
+                {columns.map(({ field, label }) => (
+                  <div
+                    className={`gantt-column-heading${field === "title" || (field === "repository" && allRepositories) ? " gantt-column-heading--resizable" : ""}`}
+                    role="columnheader"
+                    key={field}
+                  >
+                    {field === "repository" ? (
+                      <>
+                        <span>{label}</span>
+                        {allRepositories && renderColumnResizer("repository")}
+                      </>
+                    ) : (
+                      <>
+                        <button
+                          type="button"
+                          draggable
+                          aria-label={`${label}. ${t("ganttColumnMoveHelp")}`}
+                          aria-pressed={keyboardDraggedField === field}
+                          onKeyDown={(event) =>
+                            handleOrderKeyDown(event, field)
+                          }
+                          onDragStart={(event) => {
+                            event.dataTransfer.effectAllowed = "move";
+                            event.dataTransfer.setData("text/plain", field);
+                          }}
+                          onDragOver={(event) => {
+                            event.preventDefault();
+                            event.dataTransfer.dropEffect = "move";
+                          }}
+                          onDragEnd={() => setColumnAnnouncement("")}
+                          onDrop={(event) => {
+                            event.preventDefault();
+                            const source = event.dataTransfer.getData(
+                              "text/plain",
+                            ) as IssueSortField;
+                            handleOrderMove(source, field);
+                            setColumnAnnouncement(
+                              t("ganttColumnMoved", {
+                                column: columns.find(
+                                  (column) => column.field === source,
+                                )?.label,
+                                position: visibleOrder.indexOf(field) + 1,
+                              }),
+                            );
+                          }}
+                        >
+                          {label}
+                        </button>
+                        {field === "title" && renderColumnResizer("title")}
+                      </>
+                    )}
+                  </div>
+                ))}
+              </div>
+              <div className="gantt-calendar-cell" role="columnheader">
+                <GanttCalendarHeader
+                  cells={cells}
+                  scale={scale}
+                  today={today}
+                  visibleDate={visibleDate}
+                />
+              </div>
             </div>
+            <div
+              className="gantt-row-group"
+              role="rowgroup"
+              aria-label={t("scheduledIssues")}
+            >
+              {scheduledIssues.map((issue) =>
+                renderIssueRow(issue, "scheduled"),
+              )}
+            </div>
+            {unscheduledIssues.length > 0 && (
+              <div
+                className="gantt-row-section"
+                role="rowgroup"
+                aria-label={`${t("unscheduled")} (${formatNumber(unscheduledIssues.length, i18n.language)})`}
+              >
+                <h2>
+                  <span className="gantt-row-section-title">
+                    {t("unscheduled")}{" "}
+                    <span>
+                      （{formatNumber(unscheduledIssues.length, i18n.language)}
+                      ）
+                    </span>
+                  </span>
+                </h2>
+                {unscheduledIssues.map((issue) =>
+                  renderIssueRow(issue, "unscheduled"),
+                )}
+              </div>
+            )}
+            {anomalousIssues.length > 0 && (
+              <div
+                className="gantt-row-section"
+                role="rowgroup"
+                aria-label={`${t("dateAnomalies")} (${formatNumber(anomalousIssues.length, i18n.language)})`}
+              >
+                <h2>
+                  <span className="gantt-row-section-title">
+                    {t("dateAnomalies")}{" "}
+                    <span>
+                      （{formatNumber(anomalousIssues.length, i18n.language)}）
+                    </span>
+                  </span>
+                </h2>
+                {anomalousIssues.map((issue) =>
+                  renderIssueRow(issue, "anomaly"),
+                )}
+              </div>
+            )}
           </div>
-          <div className="gantt-row-group" role="rowgroup" aria-label={t("scheduledIssues")}>
-            {scheduledIssues.map((issue) => renderIssueRow(issue, "scheduled"))}
+        )}
+        {scheduledIssues.length === 0 && visibleIssues.length > 0 && (
+          <div
+            ref={chartScrollRef}
+            className={`gantt-chart-scroll gantt-chart-scroll--empty${isTimelinePanning ? " gantt-chart-scroll--panning" : ""}`}
+            role="grid"
+            tabIndex={0}
+            aria-label={t("ganttLabel")}
+            style={
+              {
+                "--gantt-fields-template": fieldGridTemplate,
+                "--gantt-timeline-width": `${timelineWidth}px`,
+                "--gantt-fields-width": `${fieldsWidth}px`,
+              } as CSSProperties
+            }
+            onKeyDown={handleChartKeyDown}
+            onPointerDown={handleChartPointerDown}
+            onPointerMove={handleChartPointerMove}
+            onPointerUp={finishChartPointerPan}
+            onPointerCancel={finishChartPointerPan}
+            onLostPointerCapture={finishChartPointerPan}
+            onScroll={(event) => {
+              const date = dateAtTimelinePosition(
+                event.currentTarget.scrollLeft / unitWidth,
+                cells,
+              );
+              visibleDateRef.current = date;
+              setVisibleDate(date);
+            }}
+          >
+            <div className="gantt-chart-header" role="row">
+              <div className="gantt-header-fields" role="presentation">
+                {columns.map(({ field, label }) => (
+                  <div
+                    className="gantt-column-heading"
+                    role="columnheader"
+                    key={field}
+                  >
+                    {label}
+                  </div>
+                ))}
+              </div>
+              <div className="gantt-calendar-cell" role="columnheader">
+                <GanttCalendarHeader
+                  cells={cells}
+                  scale={scale}
+                  today={today}
+                  visibleDate={initialDate}
+                />
+              </div>
+            </div>
+            <p className="gantt-no-timeline-dates">{t("noTimelineDates")}</p>
+            {unscheduledIssues.length > 0 && (
+              <div
+                className="gantt-row-section"
+                role="rowgroup"
+                aria-label={`${t("unscheduled")} (${formatNumber(unscheduledIssues.length, i18n.language)})`}
+              >
+                <h2>
+                  <span className="gantt-row-section-title">
+                    {t("unscheduled")}{" "}
+                    <span>
+                      （{formatNumber(unscheduledIssues.length, i18n.language)}
+                      ）
+                    </span>
+                  </span>
+                </h2>
+                {unscheduledIssues.map((issue) =>
+                  renderIssueRow(issue, "unscheduled"),
+                )}
+              </div>
+            )}
+            {anomalousIssues.length > 0 && (
+              <div
+                className="gantt-row-section"
+                role="rowgroup"
+                aria-label={`${t("dateAnomalies")} (${formatNumber(anomalousIssues.length, i18n.language)})`}
+              >
+                <h2>
+                  <span className="gantt-row-section-title">
+                    {t("dateAnomalies")}{" "}
+                    <span>
+                      （{formatNumber(anomalousIssues.length, i18n.language)}）
+                    </span>
+                  </span>
+                </h2>
+                {anomalousIssues.map((issue) =>
+                  renderIssueRow(issue, "anomaly"),
+                )}
+              </div>
+            )}
           </div>
-          {unscheduledIssues.length > 0 && (
-            <div className="gantt-row-section" role="rowgroup" aria-label={`${t("unscheduled")} (${formatNumber(unscheduledIssues.length, i18n.language)})`}>
-              <h2>
-                <span className="gantt-row-section-title">
-                  {t("unscheduled")} <span>（{formatNumber(unscheduledIssues.length, i18n.language)}）</span>
-                </span>
-              </h2>
-              {unscheduledIssues.map((issue) => renderIssueRow(issue, "unscheduled"))}
-            </div>
-          )}
-          {anomalousIssues.length > 0 && (
-            <div className="gantt-row-section" role="rowgroup" aria-label={`${t("dateAnomalies")} (${formatNumber(anomalousIssues.length, i18n.language)})`}>
-              <h2>
-                <span className="gantt-row-section-title">
-                  {t("dateAnomalies")} <span>（{formatNumber(anomalousIssues.length, i18n.language)}）</span>
-                </span>
-              </h2>
-              {anomalousIssues.map((issue) => renderIssueRow(issue, "anomaly"))}
-            </div>
-          )}
+        )}
+        {visibleIssues.length === 0 && (
+          <EmptyState>{emptyMessage ?? t("noFilteredIssues")}</EmptyState>
+        )}
+        <div className="sr-only" role="status" aria-live="polite">
+          {columnAnnouncement}
         </div>
-      )}
-      {scheduledIssues.length === 0 && visibleIssues.length > 0 && (
-        <div ref={chartScrollRef} className={`gantt-chart-scroll gantt-chart-scroll--empty${isTimelinePanning ? " gantt-chart-scroll--panning" : ""}`} role="grid" tabIndex={0} aria-label={t("ganttLabel")} style={{ "--gantt-fields-template": fieldGridTemplate, "--gantt-timeline-width": `${timelineWidth}px`, "--gantt-fields-width": `${fieldsWidth}px` } as CSSProperties} onKeyDown={handleChartKeyDown} onPointerDown={handleChartPointerDown} onPointerMove={handleChartPointerMove} onPointerUp={finishChartPointerPan} onPointerCancel={finishChartPointerPan} onLostPointerCapture={finishChartPointerPan} onScroll={(event) => {
-          const date = dateAtTimelinePosition(event.currentTarget.scrollLeft / unitWidth, cells);
-          visibleDateRef.current = date;
-          setVisibleDate(date);
-        }}>
-          <div className="gantt-chart-header" role="row">
-            <div className="gantt-header-fields" role="presentation">
-              {columns.map(({ field, label }) => <div className="gantt-column-heading" role="columnheader" key={field}>{label}</div>)}
-            </div>
-            <div className="gantt-calendar-cell" role="columnheader"><GanttCalendarHeader cells={cells} scale={scale} today={today} visibleDate={initialDate} /></div>
-          </div>
-          <p className="gantt-no-timeline-dates">{t("noTimelineDates")}</p>
-          {unscheduledIssues.length > 0 && (
-            <div className="gantt-row-section" role="rowgroup" aria-label={`${t("unscheduled")} (${formatNumber(unscheduledIssues.length, i18n.language)})`}>
-              <h2>
-                <span className="gantt-row-section-title">
-                  {t("unscheduled")} <span>（{formatNumber(unscheduledIssues.length, i18n.language)}）</span>
-                </span>
-              </h2>
-              {unscheduledIssues.map((issue) => renderIssueRow(issue, "unscheduled"))}
-            </div>
-          )}
-          {anomalousIssues.length > 0 && (
-            <div className="gantt-row-section" role="rowgroup" aria-label={`${t("dateAnomalies")} (${formatNumber(anomalousIssues.length, i18n.language)})`}>
-              <h2>
-                <span className="gantt-row-section-title">
-                  {t("dateAnomalies")} <span>（{formatNumber(anomalousIssues.length, i18n.language)}）</span>
-                </span>
-              </h2>
-              {anomalousIssues.map((issue) => renderIssueRow(issue, "anomaly"))}
-            </div>
-          )}
-        </div>
-      )}
-      {visibleIssues.length === 0 && (
-        <EmptyState>{emptyMessage ?? t("noFilteredIssues")}</EmptyState>
-      )}
-      <div className="sr-only" role="status" aria-live="polite">{columnAnnouncement}</div>
-      <GanttViewOptionsDialog
-        open={optionsOpen}
-        preference={preference}
-        onClose={() => setOptionsOpen(false)}
-        onChange={updatePreference}
-      />
+        <GanttViewOptionsDialog
+          open={optionsOpen}
+          preference={preference}
+          onClose={() => setOptionsOpen(false)}
+          onChange={updatePreference}
+        />
       </WorkViewLayout>
     </section>
   );
@@ -772,5 +1189,7 @@ function measureIntrinsicWidth(element: HTMLElement): number {
 }
 
 function sameFields(left: IssueSortField[], right: IssueSortField[]): boolean {
-  return left.length === right.length && left.every((field) => right.includes(field));
+  return (
+    left.length === right.length && left.every((field) => right.includes(field))
+  );
 }

@@ -2,10 +2,10 @@
 
 ## UserProfile / UserProfiles
 
-| 欄位 | 契約 |
-| --- | --- |
-| login | 必填 string，唯一身份，不因姓名改變 |
-| fullName | 選填 string，trim 後空白視為未設定 |
+| 欄位      | 契約                                         |
+| --------- | -------------------------------------------- |
+| login     | 必填 string，唯一身份，不因姓名改變          |
+| fullName  | 選填 string，trim 後空白視為未設定           |
 | avatarUrl | 選填 string；只顯示有效 HTTP／HTTPS 圖片網址 |
 
 UserProfiles 為以 login 為 key 的 UserProfile 字典，只保存目前回應內人員。讀取必須只接受 own property，並核對 profile.login 與 key。相同姓名不合併身份；跨 Issue 合併依目前載入資料順序取最後一筆相同 login。

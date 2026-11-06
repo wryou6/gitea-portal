@@ -30,16 +30,16 @@ Extend the existing shared List/Kanban/Gantt filter model from single values to 
 
 ## Constitution Check
 
-| Principle | Gate | Plan result |
-|---|---|---|
-| I. Gitea is the Issue source of truth | No Issue mirror or persisted Issue/filter snapshot | PASS; only URL query state is used. |
-| II. Use current user permissions | All reads remain delegated and workspace-scoped | PASS; no API access scope changes. |
-| III. Safe Gitea writes | No new Gitea write behavior | PASS; feature is read-only. |
-| IV. Complete aggregate results | Required repository failures remain whole-view errors | PASS; filters apply to complete loaded data. |
-| V. Fixed Issue Status | Use Todo/In Progress/Done semantics and keep anomalies visible when Status is unfiltered | PASS; status values are not changed. |
-| VI. Clear work scope | Shared filters remain within the selected workspace | PASS. |
-| VII. Multilingual user text | All new visible/accessibility strings localized in zh-TW/en/ja | PASS. |
-| Additional: shared contracts | Keep API/web query types aligned | PASS; only filter query multiplicity changes. |
+| Principle                             | Gate                                                                                     | Plan result                                   |
+| ------------------------------------- | ---------------------------------------------------------------------------------------- | --------------------------------------------- |
+| I. Gitea is the Issue source of truth | No Issue mirror or persisted Issue/filter snapshot                                       | PASS; only URL query state is used.           |
+| II. Use current user permissions      | All reads remain delegated and workspace-scoped                                          | PASS; no API access scope changes.            |
+| III. Safe Gitea writes                | No new Gitea write behavior                                                              | PASS; feature is read-only.                   |
+| IV. Complete aggregate results        | Required repository failures remain whole-view errors                                    | PASS; filters apply to complete loaded data.  |
+| V. Fixed Issue Status                 | Use Todo/In Progress/Done semantics and keep anomalies visible when Status is unfiltered | PASS; status values are not changed.          |
+| VI. Clear work scope                  | Shared filters remain within the selected workspace                                      | PASS.                                         |
+| VII. Multilingual user text           | All new visible/accessibility strings localized in zh-TW/en/ja                           | PASS.                                         |
+| Additional: shared contracts          | Keep API/web query types aligned                                                         | PASS; only filter query multiplicity changes. |
 
 No constitution exceptions are required.
 

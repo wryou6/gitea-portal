@@ -6,11 +6,11 @@
 
 ## Workflow Convention
 
-| Field | Meaning |
-|---|---|
-| `id` | Convention identity |
-| `version` | Exact version selected by the Board |
-| `states` | Ordered states, each with `key`, `labelName`, `displayName`, `order` |
+| Field     | Meaning                                                              |
+| --------- | -------------------------------------------------------------------- |
+| `id`      | Convention identity                                                  |
+| `version` | Exact version selected by the Board                                  |
+| `states`  | Ordered states, each with `key`, `labelName`, `displayName`, `order` |
 
 The hidden Label set is exactly `{ state.labelName | state in Board.workflowConvention.states }`.
 
@@ -18,14 +18,14 @@ The hidden Label set is exactly `{ state.labelName | state in Board.workflowConv
 
 Board Card continues to represent one real Gitea Issue:
 
-| Field | Source / rule |
-|---|---|
-| Repository, number, title | Current Gitea Issue |
-| `labels` | Complete labels from the current Gitea read; not persisted by Portal |
-| `visibleLabels` | `labels` excluding labels whose names belong to the Board Convention |
-| `workflowState` | Existing Board workflow classification |
-| `workflowRepair` | Existing optional read-time repair annotation |
-| assignee, state, milestone, updated time, URL | Existing Gitea Issue read-through data |
+| Field                                         | Source / rule                                                        |
+| --------------------------------------------- | -------------------------------------------------------------------- |
+| Repository, number, title                     | Current Gitea Issue                                                  |
+| `labels`                                      | Complete labels from the current Gitea read; not persisted by Portal |
+| `visibleLabels`                               | `labels` excluding labels whose names belong to the Board Convention |
+| `workflowState`                               | Existing Board workflow classification                               |
+| `workflowRepair`                              | Existing optional read-time repair annotation                        |
+| assignee, state, milestone, updated time, URL | Existing Gitea Issue read-through data                               |
 
 Invariants:
 

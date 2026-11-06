@@ -39,7 +39,10 @@ export function useReorderAnimation(
           ],
           {
             id: "issue-column-reorder",
-            duration: Math.min(260, 160 + Math.max(Math.abs(x), Math.abs(y)) * 0.12),
+            duration: Math.min(
+              260,
+              160 + Math.max(Math.abs(x), Math.abs(y)) * 0.12,
+            ),
             easing: "cubic-bezier(0.2, 0.75, 0.25, 1)",
           },
         );
@@ -47,9 +50,11 @@ export function useReorderAnimation(
     }
 
     previousPositions.current = new Map(
-      nodes.flatMap((node) => node.dataset.reorderKey
-        ? [[node.dataset.reorderKey, node.getBoundingClientRect()] as const]
-        : []),
+      nodes.flatMap((node) =>
+        node.dataset.reorderKey
+          ? [[node.dataset.reorderKey, node.getBoundingClientRect()] as const]
+          : [],
+      ),
     );
   }, [containerRef, orderKey]);
 }

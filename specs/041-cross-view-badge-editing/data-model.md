@@ -4,12 +4,12 @@
 
 本功能不新增 persisted entity 或欄位。Gitea Issue 仍是資料唯一來源，沿用既有 `Issue` read model：
 
-| 欄位 | 用途 | 保存來源 |
-|---|---|---|
-| `owner`, `name`, `number` | 定位 Issue 與 Repository | Gitea Issue identity |
-| `updatedAt` | 樂觀並行控制 | Gitea Issue |
-| `type`, `priority`, `labels` | 顯示／替換 metadata 維度，保留其他 Labels | Gitea Issue Labels |
-| `status`, `assignees`, `lastActionKey` | 顯示目前狀態與既有轉換脈絡 | Gitea state、status Labels、Assignees |
+| 欄位                                   | 用途                                      | 保存來源                              |
+| -------------------------------------- | ----------------------------------------- | ------------------------------------- |
+| `owner`, `name`, `number`              | 定位 Issue 與 Repository                  | Gitea Issue identity                  |
+| `updatedAt`                            | 樂觀並行控制                              | Gitea Issue                           |
+| `type`, `priority`, `labels`           | 顯示／替換 metadata 維度，保留其他 Labels | Gitea Issue Labels                    |
+| `status`, `assignees`, `lastActionKey` | 顯示目前狀態與既有轉換脈絡                | Gitea state、status Labels、Assignees |
 
 ## Transient Editor State
 

@@ -49,7 +49,10 @@ function cookieName(login: string): string {
 }
 
 function isGanttField(value: unknown): value is IssueSortField {
-  return typeof value === "string" && GANTT_VIEW_FIELDS.includes(value as IssueSortField);
+  return (
+    typeof value === "string" &&
+    GANTT_VIEW_FIELDS.includes(value as IssueSortField)
+  );
 }
 
 function isGanttPreference(value: unknown): value is GanttViewPreference {
@@ -60,12 +63,19 @@ function isGanttPreference(value: unknown): value is GanttViewPreference {
     !Array.isArray(preference.visibleFields) ||
     !Array.isArray(preference.columnOrder) ||
     (preference.titleWidth !== undefined &&
-      (typeof preference.titleWidth !== "number" || !Number.isFinite(preference.titleWidth) || preference.titleWidth < 208 || preference.titleWidth > 720)) ||
+      (typeof preference.titleWidth !== "number" ||
+        !Number.isFinite(preference.titleWidth) ||
+        preference.titleWidth < 208 ||
+        preference.titleWidth > 720)) ||
     (preference.repositoryWidth !== undefined &&
-      (typeof preference.repositoryWidth !== "number" || !Number.isFinite(preference.repositoryWidth) || preference.repositoryWidth < 120 || preference.repositoryWidth > 720)) ||
+      (typeof preference.repositoryWidth !== "number" ||
+        !Number.isFinite(preference.repositoryWidth) ||
+        preference.repositoryWidth < 120 ||
+        preference.repositoryWidth > 720)) ||
     !preference.visibleFields.every(isGanttField) ||
     !preference.columnOrder.every(isGanttField)
-  ) return false;
+  )
+    return false;
 
   const visible = preference.visibleFields;
   const order = preference.columnOrder;
@@ -89,7 +99,9 @@ export function readGanttViewPreference(login?: string): GanttViewPreference {
       .find((cookie) => cookie.startsWith(prefix));
     if (!entry) return defaultGanttViewPreference();
 
-    const value: unknown = JSON.parse(decodeURIComponent(entry.slice(prefix.length)));
+    const value: unknown = JSON.parse(
+      decodeURIComponent(entry.slice(prefix.length)),
+    );
     return isGanttPreference(value)
       ? {
           ...value,

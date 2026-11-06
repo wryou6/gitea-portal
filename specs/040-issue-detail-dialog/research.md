@@ -9,6 +9,7 @@
 **Runtime Compatibility**: Although `Link.mask` typechecks with Declarative `BrowserRouter`, React Router 8.4 only forwards the mask option in Data/Framework modes. The application entrypoint now uses `createBrowserRouter` and `RouterProvider`; this makes clicks retain the source work-view location while the address bar shows the masked Issue URL.
 
 **Alternatives considered**:
+
 - 將 Issue URL 作為 Router location 並自行保留 `backgroundLocation`：會使現有 view hooks 讀到 Issue URL，需額外維護背景 location context，且易與 List/Gantt URL state 分歧。
 - 不更新網址，只以 React state 開啟對話框：不符合 Issue URL 必須代表目前 Issue 的需求，也無法支援瀏覽器返回關閉。
 
@@ -21,6 +22,7 @@
 **Rationale**: React Router 把 mask 狀態保存於瀏覽器 history，重新整理可能還原 masked location。功能規格要求 reload 顯示完整頁面，因此不能只以 `location.mask` 判斷浮窗。以應用程式首次 render 與後續 route navigation 區分即可避免額外的持久狀態或 query flag。
 
 **Alternatives considered**:
+
 - 依 `location.mask` 永遠顯示浮窗：會在重新整理後錯誤保留浮窗。
 - 在 Issue URL 加入 `modal=true`：讓分享網址包含呈現旗標，且必須增加 URL 清理及直接載入例外規則。
 
@@ -31,4 +33,5 @@
 **Rationale**: 現有完整詳情已同時載入 Issue 與 Comments，並提供既有錯誤、重試、編輯、留言及 Status transition 行為。共用內容避免浮窗形成不完整或權限不同的第二套 Issue UI。
 
 **Alternatives considered**:
+
 - 新建摘要預覽及另一份資料載入流程：與已選擇的完整詳情範圍重複，增加 UI 與資料狀態分歧。

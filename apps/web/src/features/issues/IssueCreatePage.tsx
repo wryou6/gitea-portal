@@ -1,6 +1,12 @@
 import { FormEvent, useEffect, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router";
-import { api, toUserFacingError, type Issue, type Repository, type UserFacingError } from "../../lib/api";
+import {
+  api,
+  toUserFacingError,
+  type Issue,
+  type Repository,
+  type UserFacingError,
+} from "../../lib/api";
 import { PageHeader } from "../../components/layout/PageHeader";
 import { Button } from "../../components/ui/Button";
 import { Field, FieldLabel, Input, Textarea } from "../../components/ui/Field";
@@ -13,7 +19,10 @@ import { PriorityField } from "./PriorityField";
 import { ScheduleDateFields } from "./ScheduleDateFields";
 import { useTranslation } from "react-i18next";
 
-export function IssueCreatePage({ initialRepositories, initialRepository }: { initialRepositories?: Repository[]; initialRepository?: string } = {}) {
+export function IssueCreatePage({
+  initialRepositories,
+  initialRepository,
+}: { initialRepositories?: Repository[]; initialRepository?: string } = {}) {
   const { t } = useTranslation("issues");
   const location = useLocation();
   const navigate = useNavigate();
@@ -35,16 +44,16 @@ export function IssueCreatePage({ initialRepositories, initialRepository }: { in
 
   useEffect(() => {
     const setAvailableRepositories = (items: Repository[]) => {
-        setRepositories(items);
-        const preferredRepository = initialRepository ?? requestedRepository;
-        if (
-          preferredRepository &&
-          items.some((item) => item.fullName === preferredRepository)
-        ) {
-          setRepository(preferredRepository);
-        } else if (requestedRepository) {
-          setError(t("issueRepositoryRequired"));
-        }
+      setRepositories(items);
+      const preferredRepository = initialRepository ?? requestedRepository;
+      if (
+        preferredRepository &&
+        items.some((item) => item.fullName === preferredRepository)
+      ) {
+        setRepository(preferredRepository);
+      } else if (requestedRepository) {
+        setError(t("issueRepositoryRequired"));
+      }
     };
     if (initialRepositories) {
       setAvailableRepositories(initialRepositories);
@@ -53,9 +62,7 @@ export function IssueCreatePage({ initialRepositories, initialRepository }: { in
     void api<Repository[]>("/api/repositories")
       .then(setAvailableRepositories)
       .catch((cause) =>
-        setError(
-          toUserFacingError(cause, t("repositoriesUnavailable")),
-        ),
+        setError(toUserFacingError(cause, t("repositoriesUnavailable"))),
       );
   }, [initialRepositories, initialRepository, requestedRepository, t]);
 
@@ -93,12 +100,14 @@ export function IssueCreatePage({ initialRepositories, initialRepository }: { in
           }),
         },
       );
-      navigate(routePaths.issueDetailFrom(
-        issue.owner,
-        issue.name,
-        issue.number,
-        returnTo,
-      ));
+      navigate(
+        routePaths.issueDetailFrom(
+          issue.owner,
+          issue.name,
+          issue.number,
+          returnTo,
+        ),
+      );
     } catch (cause) {
       setError(toUserFacingError(cause, t("createIssueFailed")));
     }
@@ -147,7 +156,9 @@ export function IssueCreatePage({ initialRepositories, initialRepository }: { in
             onChange={setPriority}
           />
           <Field>
-            <FieldLabel htmlFor="new-description">{t("description")}</FieldLabel>
+            <FieldLabel htmlFor="new-description">
+              {t("description")}
+            </FieldLabel>
             <Textarea
               id="new-description"
               placeholder={t("description")}
@@ -156,7 +167,9 @@ export function IssueCreatePage({ initialRepositories, initialRepository }: { in
             />
           </Field>
           <Field>
-            <FieldLabel htmlFor="new-assignee">{t("assigneeOptional")}</FieldLabel>
+            <FieldLabel htmlFor="new-assignee">
+              {t("assigneeOptional")}
+            </FieldLabel>
             <Input
               id="new-assignee"
               placeholder={t("assigneeLogin")}
@@ -182,7 +195,9 @@ export function IssueCreatePage({ initialRepositories, initialRepository }: { in
             onDueDateChange={setDueDate}
           />
           <Field>
-            <FieldLabel htmlFor="new-milestone">{t("milestoneOptional")}</FieldLabel>
+            <FieldLabel htmlFor="new-milestone">
+              {t("milestoneOptional")}
+            </FieldLabel>
             <Input
               id="new-milestone"
               placeholder={t("milestoneTitleOrId")}

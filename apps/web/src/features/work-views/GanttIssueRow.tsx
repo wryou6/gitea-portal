@@ -1,4 +1,11 @@
-import { useRef, useState, type CSSProperties, type KeyboardEvent, type PointerEvent, type ReactNode } from "react";
+import {
+  useRef,
+  useState,
+  type CSSProperties,
+  type KeyboardEvent,
+  type PointerEvent,
+  type ReactNode,
+} from "react";
 import { Link } from "react-router";
 import { useTranslation } from "react-i18next";
 import { issueDetailMask } from "../../app/routes";
@@ -8,7 +15,12 @@ import { IssueStatusBadge } from "../../components/ui/IssueStatusBadge";
 import { formatCalendarDate, formatDateTime } from "../../i18n/format";
 import type { Issue, IssueSortField } from "../../lib/api";
 import { scheduleAnomalyTranslationKey } from "../issues/ScheduleDates";
-import { addCalendarDays, calendarDayOrdinal, dateAtTimelinePosition, type GanttTimelineCell } from "./gantt-timeline";
+import {
+  addCalendarDays,
+  calendarDayOrdinal,
+  dateAtTimelinePosition,
+  type GanttTimelineCell,
+} from "./gantt-timeline";
 import { GANTT_SCALE_WIDTH } from "./GanttCalendarHeader";
 import type { GanttScale } from "./gantt-timeline";
 import { UserIdentity } from "../../components/ui/UserIdentity";
@@ -68,7 +80,11 @@ export function GanttIssueRow({
   scale: GanttScale;
   today: string;
   onScheduleSave?: (issue: Issue, change: GanttScheduleChange) => Promise<void>;
-  onMetadataSave?: (issue: Issue, field: "type" | "priority", value: string) => Promise<void>;
+  onMetadataSave?: (
+    issue: Issue,
+    field: "type" | "priority",
+    value: string,
+  ) => Promise<void>;
   onStatusClick?: (issue: Issue) => void;
   onTimelineEdge?: (direction: -1 | 1) => number;
   showIssueNumber?: boolean;
@@ -83,16 +99,31 @@ export function GanttIssueRow({
   const assigneeUsers = assigneeLoginsForDisplay(issue).map((login) =>
     profileFor(issue.userProfiles, login),
   );
-  const issueHref = href ?? issueDetailMask(issue.owner, issue.name, issue.number, returnTo);
-  const title = issueTitleForDisplay(issue.title, issue.number, showIssueNumber);
+  const issueHref =
+    href ?? issueDetailMask(issue.owner, issue.name, issue.number, returnTo);
+  const title = issueTitleForDisplay(
+    issue.title,
+    issue.number,
+    showIssueNumber,
+  );
   const workViewHref = returnTo ?? "/gantt";
   const unitWidth = GANTT_SCALE_WIDTH[scale];
   const totalWidth = cells.length * unitWidth;
-  const weekendOverlays: Array<{ date: string; left: number; width: number }> = [];
+  const weekendOverlays: Array<{ date: string; left: number; width: number }> =
+    [];
   cells.forEach((cell, index) => {
-    const days = Math.max(1, Math.round((Date.parse(`${cell.end}T00:00:00Z`) - Date.parse(`${cell.start}T00:00:00Z`)) / 86_400_000));
+    const days = Math.max(
+      1,
+      Math.round(
+        (Date.parse(`${cell.end}T00:00:00Z`) -
+          Date.parse(`${cell.start}T00:00:00Z`)) /
+          86_400_000,
+      ),
+    );
     for (let day = 0; day < days; day += 1) {
-      const date = new Date(Date.parse(`${cell.start}T00:00:00Z`) + day * 86_400_000);
+      const date = new Date(
+        Date.parse(`${cell.start}T00:00:00Z`) + day * 86_400_000,
+      );
       const weekday = date.getUTCDay();
       if (weekday === 0 || weekday === 6) {
         weekendOverlays.push({
@@ -106,23 +137,39 @@ export function GanttIssueRow({
   const vars = {
     "--gantt-unit-width": `${unitWidth}px`,
     "--gantt-timeline-width": `${totalWidth}px`,
-    "--gantt-fields-template": fieldGridTemplate ?? columns.map(({ field }) => field === "title"
-      ? "minmax(13rem, 2fr)"
-      : field === "assignee" || field === "status" || field === "repository"
-        ? "max-content"
-        : "minmax(7rem, 0.9fr)").join(" "),
+    "--gantt-fields-template":
+      fieldGridTemplate ??
+      columns
+        .map(({ field }) =>
+          field === "title"
+            ? "minmax(13rem, 2fr)"
+            : field === "assignee" ||
+                field === "status" ||
+                field === "repository"
+              ? "max-content"
+              : "minmax(7rem, 0.9fr)",
+        )
+        .join(" "),
   } as CSSProperties;
-  const scheduleStart = preview ? preview.startDate ?? preview.dueDate : issue.startDate ?? issue.dueDate;
-  const scheduleEnd = preview ? preview.dueDate ?? preview.startDate : issue.dueDate ?? issue.startDate;
-  const barStart = scheduleStart && (variant === "scheduled" || Boolean(preview))
-    ? positionForDate(scheduleStart, cells) * unitWidth
-    : undefined;
-  const barEnd = scheduleEnd && (variant === "scheduled" || Boolean(preview))
-    ? positionForDate(addCalendarDays(scheduleEnd, 1), cells) * unitWidth
-    : undefined;
+  const scheduleStart = preview
+    ? (preview.startDate ?? preview.dueDate)
+    : (issue.startDate ?? issue.dueDate);
+  const scheduleEnd = preview
+    ? (preview.dueDate ?? preview.startDate)
+    : (issue.dueDate ?? issue.startDate);
+  const barStart =
+    scheduleStart && (variant === "scheduled" || Boolean(preview))
+      ? positionForDate(scheduleStart, cells) * unitWidth
+      : undefined;
+  const barEnd =
+    scheduleEnd && (variant === "scheduled" || Boolean(preview))
+      ? positionForDate(addCalendarDays(scheduleEnd, 1), cells) * unitWidth
+      : undefined;
   const todayPosition = positionForDate(today, cells) * unitWidth;
   const todayWidth =
-    (positionForDate(addCalendarDays(today, 1), cells) - positionForDate(today, cells)) * unitWidth;
+    (positionForDate(addCalendarDays(today, 1), cells) -
+      positionForDate(today, cells)) *
+    unitWidth;
   const overdue = isIssueOverdue(issue, today);
 
   function pointerDate(clientX: number, track: HTMLElement) {
@@ -135,32 +182,43 @@ export function GanttIssueRow({
     setPreview(next);
   }
 
-  function scheduleForMode(mode: DragMode, active: ActiveDrag, date: string): SchedulePreview {
+  function scheduleForMode(
+    mode: DragMode,
+    active: ActiveDrag,
+    date: string,
+  ): SchedulePreview {
     if (mode === "create-range") {
       return date <= active.originDate
         ? { startDate: date, dueDate: active.originDate }
         : { startDate: active.originDate, dueDate: date };
     }
     if (mode === "move-range") {
-      const offset = calendarDayOrdinal(date) - calendarDayOrdinal(active.originDate);
+      const offset =
+        calendarDayOrdinal(date) - calendarDayOrdinal(active.originDate);
       return {
-        startDate: active.initial.startDate ? addCalendarDays(active.initial.startDate, offset) : null,
-        dueDate: active.initial.dueDate ? addCalendarDays(active.initial.dueDate, offset) : null,
+        startDate: active.initial.startDate
+          ? addCalendarDays(active.initial.startDate, offset)
+          : null,
+        dueDate: active.initial.dueDate
+          ? addCalendarDays(active.initial.dueDate, offset)
+          : null,
       };
     }
     if (mode === "resize-start") {
       return {
         ...active.initial,
-        startDate: active.initial.dueDate && date > active.initial.dueDate
-          ? active.initial.dueDate
-          : date,
+        startDate:
+          active.initial.dueDate && date > active.initial.dueDate
+            ? active.initial.dueDate
+            : date,
       };
     }
     return {
       ...active.initial,
-      dueDate: active.initial.startDate && date < active.initial.startDate
-        ? active.initial.startDate
-        : date,
+      dueDate:
+        active.initial.startDate && date < active.initial.startDate
+          ? active.initial.startDate
+          : date,
     };
   }
 
@@ -181,12 +239,14 @@ export function GanttIssueRow({
 
   function handlePointerDown(event: PointerEvent<HTMLDivElement>) {
     if (variant === "anomaly" || !onScheduleSave) return;
-    const target = event.target instanceof HTMLElement
-      ? event.target.closest<HTMLElement>("[data-drag-mode]")
-      : null;
-    const mode = variant === "unscheduled"
-      ? "create-range"
-      : target?.dataset.dragMode as DragMode | undefined;
+    const target =
+      event.target instanceof HTMLElement
+        ? event.target.closest<HTMLElement>("[data-drag-mode]")
+        : null;
+    const mode =
+      variant === "unscheduled"
+        ? "create-range"
+        : (target?.dataset.dragMode as DragMode | undefined);
     if (!mode) return;
     event.preventDefault();
     const initial = { startDate: issue.startDate, dueDate: issue.dueDate };
@@ -194,11 +254,16 @@ export function GanttIssueRow({
     activeDrag.current = {
       pointerId: event.pointerId,
       mode,
-      originDate: mode === "resize-start"
-        ? initial.startDate ?? initial.dueDate ?? pointerDate(event.clientX, track)
-        : mode === "resize-due"
-          ? initial.dueDate ?? initial.startDate ?? pointerDate(event.clientX, track)
-          : pointerDate(event.clientX, track),
+      originDate:
+        mode === "resize-start"
+          ? (initial.startDate ??
+            initial.dueDate ??
+            pointerDate(event.clientX, track))
+          : mode === "resize-due"
+            ? (initial.dueDate ??
+              initial.startDate ??
+              pointerDate(event.clientX, track))
+            : pointerDate(event.clientX, track),
       initial,
     };
     track.setPointerCapture(event.pointerId);
@@ -215,27 +280,45 @@ export function GanttIssueRow({
     }
     updatePreview(scheduleForMode(active.mode, active, targetDate));
 
-    const scroller = event.currentTarget.closest<HTMLElement>(".gantt-chart-scroll");
+    const scroller = event.currentTarget.closest<HTMLElement>(
+      ".gantt-chart-scroll",
+    );
     if (!scroller) return;
     const viewport = scroller.getBoundingClientRect();
     const nearLeft = event.clientX < viewport.left + 32;
     const nearRight = event.clientX > viewport.right - 32;
     if (nearLeft && scroller.scrollLeft > 0) {
       scroller.scrollLeft = Math.max(0, scroller.scrollLeft - 12);
-    } else if (nearLeft && onTimelineEdge && Date.now() - lastEdgeExtension.current > 600) {
+    } else if (
+      nearLeft &&
+      onTimelineEdge &&
+      Date.now() - lastEdgeExtension.current > 600
+    ) {
       lastEdgeExtension.current = Date.now();
       onTimelineEdge(-1);
-    } else if (nearRight && scroller.scrollLeft + scroller.clientWidth < scroller.scrollWidth - 1) {
-      scroller.scrollLeft = Math.min(scroller.scrollWidth, scroller.scrollLeft + 12);
-    } else if (nearRight && onTimelineEdge && Date.now() - lastEdgeExtension.current > 600) {
+    } else if (
+      nearRight &&
+      scroller.scrollLeft + scroller.clientWidth < scroller.scrollWidth - 1
+    ) {
+      scroller.scrollLeft = Math.min(
+        scroller.scrollWidth,
+        scroller.scrollLeft + 12,
+      );
+    } else if (
+      nearRight &&
+      onTimelineEdge &&
+      Date.now() - lastEdgeExtension.current > 600
+    ) {
       lastEdgeExtension.current = Date.now();
       const extensionWidth = onTimelineEdge(1);
-      requestAnimationFrame(() => requestAnimationFrame(() => {
-        scroller.scrollLeft = Math.min(
-          scroller.scrollWidth - scroller.clientWidth,
-          scroller.scrollLeft + extensionWidth,
-        );
-      }));
+      requestAnimationFrame(() =>
+        requestAnimationFrame(() => {
+          scroller.scrollLeft = Math.min(
+            scroller.scrollWidth - scroller.clientWidth,
+            scroller.scrollLeft + extensionWidth,
+          );
+        }),
+      );
     }
   }
 
@@ -254,7 +337,10 @@ export function GanttIssueRow({
     updatePreview(undefined);
   }
 
-  function handleHandleKeyDown(event: KeyboardEvent<HTMLSpanElement>, mode: "resize-start" | "resize-due") {
+  function handleHandleKeyDown(
+    event: KeyboardEvent<HTMLSpanElement>,
+    mode: "resize-start" | "resize-due",
+  ) {
     if (!onScheduleSave) return;
     if (event.key === "Escape") {
       event.preventDefault();
@@ -269,12 +355,19 @@ export function GanttIssueRow({
     }
     if (event.key !== "ArrowLeft" && event.key !== "ArrowRight") return;
     event.preventDefault();
-    const current = preview ?? { startDate: issue.startDate, dueDate: issue.dueDate };
-    const currentDate = mode === "resize-start"
-      ? current.startDate ?? current.dueDate
-      : current.dueDate ?? current.startDate;
+    const current = preview ?? {
+      startDate: issue.startDate,
+      dueDate: issue.dueDate,
+    };
+    const currentDate =
+      mode === "resize-start"
+        ? (current.startDate ?? current.dueDate)
+        : (current.dueDate ?? current.startDate);
     if (!currentDate) return;
-    const nextDate = addCalendarDays(currentDate, event.key === "ArrowLeft" ? -1 : 1);
+    const nextDate = addCalendarDays(
+      currentDate,
+      event.key === "ArrowLeft" ? -1 : 1,
+    );
     const active: ActiveDrag = {
       pointerId: -1,
       mode,
@@ -285,18 +378,31 @@ export function GanttIssueRow({
   }
   const values: Record<IssueSortField | "repository", ReactNode> = {
     type: onMetadataSave ? (
-      <IssueMetadataBadgeEditor field="type" value={issue.type} onSave={(value) => onMetadataSave(issue, "type", value)}>
+      <IssueMetadataBadgeEditor
+        field="type"
+        value={issue.type}
+        onSave={(value) => onMetadataSave(issue, "type", value)}
+      >
         <IssueTypeBadge type={issue.type} labels={issue.labels} />
       </IssueMetadataBadgeEditor>
-    ) : <IssueTypeBadge type={issue.type} labels={issue.labels} />,
+    ) : (
+      <IssueTypeBadge type={issue.type} labels={issue.labels} />
+    ),
     key: (
-      <Link to={workViewHref} replace={false} mask={issueHref} className="gantt-key">
+      <Link
+        to={workViewHref}
+        replace={false}
+        mask={issueHref}
+        className="gantt-key"
+      >
         {issue.owner}/{issue.name}#{issue.number}
       </Link>
     ),
     title: (
       <div className="gantt-title-cell">
-        <Link to={workViewHref} replace={false} mask={issueHref} title={title}>{title}</Link>
+        <Link to={workViewHref} replace={false} mask={issueHref} title={title}>
+          {title}
+        </Link>
         {overdue && <OverdueIndicator />}
         {variant === "anomaly" && (
           <span className="schedule-anomaly" role="status">
@@ -305,22 +411,61 @@ export function GanttIssueRow({
         )}
       </div>
     ),
-    repository: <span className="gantt-repository-value" title={`${issue.owner}/${issue.name}`}>{issue.owner}/{issue.name}</span>,
-    assignee: <AssigneeIdentityGroup users={assigneeUsers} emptyLabel={t("noAssignee")} />,
-    status: <IssueStatusBadge status={issue.status} onClick={onStatusClick && issue.status !== "anomaly" ? () => onStatusClick(issue) : undefined} disabled={issue.status === "anomaly"} />,
+    repository: (
+      <span
+        className="gantt-repository-value"
+        title={`${issue.owner}/${issue.name}`}
+      >
+        {issue.owner}/{issue.name}
+      </span>
+    ),
+    assignee: (
+      <AssigneeIdentityGroup
+        users={assigneeUsers}
+        emptyLabel={t("noAssignee")}
+      />
+    ),
+    status: (
+      <IssueStatusBadge
+        status={issue.status}
+        onClick={
+          onStatusClick && issue.status !== "anomaly"
+            ? () => onStatusClick(issue)
+            : undefined
+        }
+        disabled={issue.status === "anomaly"}
+      />
+    ),
     priority: onMetadataSave ? (
-      <IssueMetadataBadgeEditor field="priority" value={issue.priority} onSave={(value) => onMetadataSave(issue, "priority", value)}>
+      <IssueMetadataBadgeEditor
+        field="priority"
+        value={issue.priority}
+        onSave={(value) => onMetadataSave(issue, "priority", value)}
+      >
         <PriorityBadge priority={issue.priority} labels={issue.labels} />
       </IssueMetadataBadgeEditor>
-    ) : <PriorityBadge priority={issue.priority} labels={issue.labels} />,
-    createdAt: <time dateTime={issue.createdAt}>{formatDateTime(issue.createdAt)}</time>,
+    ) : (
+      <PriorityBadge priority={issue.priority} labels={issue.labels} />
+    ),
+    createdAt: (
+      <time dateTime={issue.createdAt}>{formatDateTime(issue.createdAt)}</time>
+    ),
     startDate: null,
     dueDate: null,
-    author: issue.author ? <UserIdentity user={profileFor(issue.userProfiles, issue.author)} /> : tIssues("notSet"),
+    author: issue.author ? (
+      <UserIdentity user={profileFor(issue.userProfiles, issue.author)} />
+    ) : (
+      tIssues("notSet")
+    ),
   };
 
   return (
-    <div className={`gantt-row gantt-row--${variant}`} data-status={issue.status} role="row" style={vars}>
+    <div
+      className={`gantt-row gantt-row--${variant}`}
+      data-status={issue.status}
+      role="row"
+      style={vars}
+    >
       <div className="gantt-row-fields" role="presentation">
         {columns.map((column) => (
           <div
@@ -350,60 +495,93 @@ export function GanttIssueRow({
             aria-hidden="true"
           />
         ))}
-        {today >= (cells[0]?.start ?? today) && today < (cells.at(-1)?.end ?? today) && (
-          <span
-            className="gantt-track-today"
-            style={{ left: `${todayPosition}px`, width: `${todayWidth}px` }}
-            role="img"
-            aria-label={`${formatCalendarDate(today)} ${t("todayMarker")}`}
-          />
-        )}
-        {scheduleStart && scheduleEnd && barStart !== undefined && barEnd !== undefined && (
-          <div
-            className={`gantt-bar${scheduleStart === scheduleEnd ? " gantt-bar--single-day" : ""}`}
-            style={{ left: `${barStart}px`, width: `${Math.max(barEnd - barStart, 4)}px` }}
-            aria-label={`${formatCalendarDate(scheduleStart)} – ${formatCalendarDate(scheduleEnd)}`}
-          >
-            <span className="gantt-bar-move" data-drag-mode="move-range" aria-hidden="true" />
-            {onScheduleSave && variant !== "anomaly" && (
-              <>
-                <span
-                  className="gantt-bar-handle gantt-bar-handle--start"
-                  role="slider"
-                  tabIndex={0}
-                  data-drag-mode="resize-start"
-                  aria-label={t("ganttStartHandle", { title: issue.title })}
-                  aria-valuemin={calendarDayOrdinal(cells[0]?.start ?? today)}
-                  aria-valuemax={calendarDayOrdinal(cells.at(-1)?.end ?? today)}
-                  aria-valuenow={calendarDayOrdinal(preview ? preview.startDate ?? preview.dueDate ?? today : issue.startDate ?? issue.dueDate ?? today)}
-                  aria-valuetext={`${formatCalendarDate(preview ? preview.startDate ?? preview.dueDate ?? today : issue.startDate ?? issue.dueDate ?? today)}. ${t("ganttDragKeyboardHelp")}`}
-                  onKeyDown={(event) => handleHandleKeyDown(event, "resize-start")}
-                />
-                <span
-                  className="gantt-bar-handle gantt-bar-handle--due"
-                  role="slider"
-                  tabIndex={0}
-                  data-drag-mode="resize-due"
-                  aria-label={t("ganttDueHandle", { title: issue.title })}
-                  aria-valuemin={calendarDayOrdinal(cells[0]?.start ?? today)}
-                  aria-valuemax={calendarDayOrdinal(cells.at(-1)?.end ?? today)}
-                  aria-valuenow={calendarDayOrdinal(preview ? preview.dueDate ?? preview.startDate ?? today : issue.dueDate ?? issue.startDate ?? today)}
-                  aria-valuetext={`${formatCalendarDate(preview ? preview.dueDate ?? preview.startDate ?? today : issue.dueDate ?? issue.startDate ?? today)}. ${t("ganttDragKeyboardHelp")}`}
-                  onKeyDown={(event) => handleHandleKeyDown(event, "resize-due")}
-                />
-              </>
-            )}
-          </div>
-        )}
+        {today >= (cells[0]?.start ?? today) &&
+          today < (cells.at(-1)?.end ?? today) && (
+            <span
+              className="gantt-track-today"
+              style={{ left: `${todayPosition}px`, width: `${todayWidth}px` }}
+              role="img"
+              aria-label={`${formatCalendarDate(today)} ${t("todayMarker")}`}
+            />
+          )}
+        {scheduleStart &&
+          scheduleEnd &&
+          barStart !== undefined &&
+          barEnd !== undefined && (
+            <div
+              className={`gantt-bar${scheduleStart === scheduleEnd ? " gantt-bar--single-day" : ""}`}
+              style={{
+                left: `${barStart}px`,
+                width: `${Math.max(barEnd - barStart, 4)}px`,
+              }}
+              aria-label={`${formatCalendarDate(scheduleStart)} – ${formatCalendarDate(scheduleEnd)}`}
+            >
+              <span
+                className="gantt-bar-move"
+                data-drag-mode="move-range"
+                aria-hidden="true"
+              />
+              {onScheduleSave && variant !== "anomaly" && (
+                <>
+                  <span
+                    className="gantt-bar-handle gantt-bar-handle--start"
+                    role="slider"
+                    tabIndex={0}
+                    data-drag-mode="resize-start"
+                    aria-label={t("ganttStartHandle", { title: issue.title })}
+                    aria-valuemin={calendarDayOrdinal(cells[0]?.start ?? today)}
+                    aria-valuemax={calendarDayOrdinal(
+                      cells.at(-1)?.end ?? today,
+                    )}
+                    aria-valuenow={calendarDayOrdinal(
+                      preview
+                        ? (preview.startDate ?? preview.dueDate ?? today)
+                        : (issue.startDate ?? issue.dueDate ?? today),
+                    )}
+                    aria-valuetext={`${formatCalendarDate(preview ? (preview.startDate ?? preview.dueDate ?? today) : (issue.startDate ?? issue.dueDate ?? today))}. ${t("ganttDragKeyboardHelp")}`}
+                    onKeyDown={(event) =>
+                      handleHandleKeyDown(event, "resize-start")
+                    }
+                  />
+                  <span
+                    className="gantt-bar-handle gantt-bar-handle--due"
+                    role="slider"
+                    tabIndex={0}
+                    data-drag-mode="resize-due"
+                    aria-label={t("ganttDueHandle", { title: issue.title })}
+                    aria-valuemin={calendarDayOrdinal(cells[0]?.start ?? today)}
+                    aria-valuemax={calendarDayOrdinal(
+                      cells.at(-1)?.end ?? today,
+                    )}
+                    aria-valuenow={calendarDayOrdinal(
+                      preview
+                        ? (preview.dueDate ?? preview.startDate ?? today)
+                        : (issue.dueDate ?? issue.startDate ?? today),
+                    )}
+                    aria-valuetext={`${formatCalendarDate(preview ? (preview.dueDate ?? preview.startDate ?? today) : (issue.dueDate ?? issue.startDate ?? today))}. ${t("ganttDragKeyboardHelp")}`}
+                    onKeyDown={(event) =>
+                      handleHandleKeyDown(event, "resize-due")
+                    }
+                  />
+                </>
+              )}
+            </div>
+          )}
       </div>
-      <span className="sr-only" role="status" aria-live="polite">{announcement}</span>
+      <span className="sr-only" role="status" aria-live="polite">
+        {announcement}
+      </span>
     </div>
   );
 }
 
 function positionForDate(value: string, cells: GanttTimelineCell[]): number {
   const target = Date.parse(`${value}T00:00:00Z`);
-  const index = cells.findIndex((cell) => Date.parse(`${cell.start}T00:00:00Z`) <= target && target < Date.parse(`${cell.end}T00:00:00Z`));
+  const index = cells.findIndex(
+    (cell) =>
+      Date.parse(`${cell.start}T00:00:00Z`) <= target &&
+      target < Date.parse(`${cell.end}T00:00:00Z`),
+  );
   if (index < 0) return value < (cells[0]?.start ?? value) ? 0 : cells.length;
   const cell = cells[index]!;
   const start = Date.parse(`${cell.start}T00:00:00Z`);

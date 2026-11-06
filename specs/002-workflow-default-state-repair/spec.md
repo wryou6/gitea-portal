@@ -16,7 +16,7 @@
 - Q: 自動修復失敗後，異常 Card 是否仍應允許使用者手動拖曳到有效的 Workflow 欄位？ → A: 允許手動拖曳；若 Gitea 仍拒絕，保留原異常狀態並顯示錯誤。
 - Q: 當 Board 載入時 Gitea 發生錯誤，Portal 是否應區分「無法讀取 Issue」與「已讀取 Issue 但修復失敗」兩種情況？ → A: 無法讀取 Issue 時回傳整體外部服務錯誤；已讀取 Issue 但單一修復失敗時，保留該 Card 的異常狀態與錯誤，其他 Card 繼續呈現。
 
-## User Scenarios & Testing *(mandatory)*
+## User Scenarios & Testing _(mandatory)_
 
 ### User Story 1 - 自動補上預設 Workflow 狀態 (Priority: P1)
 
@@ -83,7 +83,7 @@
 - 自動修復失敗的 Card 仍可接受使用者明確的手動拖曳修復；手動操作失敗時不得偽造成功狀態或遺失原異常資訊。
 - 同一 Issue 被多個 Board 載入時，各 Board 依其 exact Workflow Convention 判定；不建立 Portal 狀態副本。
 
-## Requirements *(mandatory)*
+## Requirements _(mandatory)_
 
 ### Functional Requirements
 
@@ -111,7 +111,7 @@
 - **Board Card**: 代表真實 Gitea Issue，包含目前 Workflow 狀態與可選的修復失敗原因。
 - **Workflow Repair Result**: Board 載入時對單一 Issue 的修復結果，表示成功、未修復的異常狀態與失敗原因，不獨立保存為 Issue 資料。
 
-## Success Criteria *(mandatory)*
+## Success Criteria _(mandatory)_
 
 ### Measurable Outcomes
 

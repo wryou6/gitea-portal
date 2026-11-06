@@ -16,13 +16,13 @@
 
 **Purpose**: Remove Board-bound foundations while preserving the Gitea workflow behavior needed by both workspace scopes.
 
-- [X] T001 [P] Add neutral workflow-column/card view types in `packages/domain/src/work-view.ts` and update `packages/domain/src/index.ts` exports; remove the Board domain export.
-- [X] T002 [P] Remove Board API types and define neutral aggregate/repository view response types in `packages/gitea-contracts/src/portal.ts`.
-- [X] T003 Move `apps/api/src/boards/board-view-service.ts` to `apps/api/src/work-views/kanban-service.ts`; retain fixed states, all-page loading, anomaly column, and `visibleLabels` semantics without Board imports.
-- [X] T004 Move `apps/api/src/boards/transition-service.ts` to `apps/api/src/issues/workflow-transition-service.ts`; preserve permission checks, atomic Label replacement, expectedUpdatedAt conflicts, assignee order, and recovery behavior, then update `apps/api/src/issues/issue-routes.ts` imports.
-- [X] T005 Remove Board store initialization and route registration from `apps/api/src/app.ts`; remove Board route imports and Board-only configuration from `apps/api/src/config/env.ts`.
-- [X] T006 Delete Board-only API files `apps/api/src/boards/board-routes.ts`, `board-service.ts`, `board-compatibility.ts`, `board-issue-service.ts`, `gantt-service.ts` and Board-only JSON store files `apps/api/src/persistence/board-repository.ts`, `database.ts` after moving reusable behavior in T003-T004.
-- [X] T007 Add neutral frontend work-view types in `apps/web/src/features/work-views/types.ts` and remove Board API/response helpers from `apps/web/src/lib/api.ts`.
+- [x] T001 [P] Add neutral workflow-column/card view types in `packages/domain/src/work-view.ts` and update `packages/domain/src/index.ts` exports; remove the Board domain export.
+- [x] T002 [P] Remove Board API types and define neutral aggregate/repository view response types in `packages/gitea-contracts/src/portal.ts`.
+- [x] T003 Move `apps/api/src/boards/board-view-service.ts` to `apps/api/src/work-views/kanban-service.ts`; retain fixed states, all-page loading, anomaly column, and `visibleLabels` semantics without Board imports.
+- [x] T004 Move `apps/api/src/boards/transition-service.ts` to `apps/api/src/issues/workflow-transition-service.ts`; preserve permission checks, atomic Label replacement, expectedUpdatedAt conflicts, assignee order, and recovery behavior, then update `apps/api/src/issues/issue-routes.ts` imports.
+- [x] T005 Remove Board store initialization and route registration from `apps/api/src/app.ts`; remove Board route imports and Board-only configuration from `apps/api/src/config/env.ts`.
+- [x] T006 Delete Board-only API files `apps/api/src/boards/board-routes.ts`, `board-service.ts`, `board-compatibility.ts`, `board-issue-service.ts`, `gantt-service.ts` and Board-only JSON store files `apps/api/src/persistence/board-repository.ts`, `database.ts` after moving reusable behavior in T003-T004.
+- [x] T007 Add neutral frontend work-view types in `apps/web/src/features/work-views/types.ts` and remove Board API/response helpers from `apps/web/src/lib/api.ts`.
 
 **Checkpoint**: No API startup dependency on Board persistence remains; neutral workflow primitives compile conceptually without any collection/settings identity.
 
@@ -34,16 +34,16 @@
 
 ### Implementation
 
-- [X] T008 [US1] Implement All repos Issue aggregation in `apps/api/src/issues/issue-search-service.ts`: enumerate readable repositories, fetch every matching Issue page, apply filters, sort updatedAt descending with owner/name/number tie-breaks, then paginate; fail the whole query on any required read failure.
-- [X] T009 [US1] Add `GET /api/repositories/kanban` and `GET /api/repositories/gantt` handlers in `apps/api/src/repositories/repository-routes.ts`; use all readable repositories, all Issue pages, neutral contracts, and whole-request failure semantics.
-- [X] T010 [US1] Rename reusable Kanban/Gantt components and stories from `apps/web/src/features/boards/` into `apps/web/src/features/work-views/`, preserving existing Repository presentation and fictional fixtures.
-- [X] T011 [US1] Add an All repos view loader in `apps/web/src/features/work-views/WorkspaceViewPage.tsx` that calls aggregate endpoints and shares loading/error/retry rendering between Kanban and Gantt.
-- [X] T012 [US1] Extend `apps/web/src/features/issues/IssueListPage.tsx`, `IssueRow.tsx`, and `IssueListPage.stories.tsx` to render All repos repository provenance, preserve aggregate filters/page in detail `returnTo`, and retain single Repository filtering.
-- [X] T013 [US1] Extend `apps/web/src/features/work-views/KanbanCard.tsx`, `GanttIssueRow.tsx`, `KanbanCard.stories.tsx`, and `GanttIssueRow.stories.tsx` to show repository identity in All repos while preserving the compact single Repository presentation and source-view return path.
-- [X] T014 [US1] Extend `apps/web/src/features/work-views/GanttBoard.tsx` and `KanbanBoard.tsx` to render aggregated rows/columns, empty states, and error/retry states while preserving schedule anomalies and keyboard alternatives to drag transitions.
-- [X] T015 [US1] Add fictional multi-repository stories for populated All repos Kanban/Gantt, colliding Issue numbers, loading, empty, and error/retry states in `apps/web/src/features/work-views/KanbanBoard.stories.tsx` and `GanttBoard.stories.tsx`.
-- [X] T016 [US1] Update `apps/web/src/app/routes.ts` so `/issues`, `/kanban`, `/gantt` represent All repos views, `/` resolves to All repos Gantt, Repository routes retain scope, `safeReturnTo` accepts supported routes, and unknown paths resolve to not-found.
-- [X] T017 [US1] Update `apps/web/src/app/App.tsx` to remove Board route/page loading and render a regular not-found page for retired `/boards...` and other unknown routes.
+- [x] T008 [US1] Implement All repos Issue aggregation in `apps/api/src/issues/issue-search-service.ts`: enumerate readable repositories, fetch every matching Issue page, apply filters, sort updatedAt descending with owner/name/number tie-breaks, then paginate; fail the whole query on any required read failure.
+- [x] T009 [US1] Add `GET /api/repositories/kanban` and `GET /api/repositories/gantt` handlers in `apps/api/src/repositories/repository-routes.ts`; use all readable repositories, all Issue pages, neutral contracts, and whole-request failure semantics.
+- [x] T010 [US1] Rename reusable Kanban/Gantt components and stories from `apps/web/src/features/boards/` into `apps/web/src/features/work-views/`, preserving existing Repository presentation and fictional fixtures.
+- [x] T011 [US1] Add an All repos view loader in `apps/web/src/features/work-views/WorkspaceViewPage.tsx` that calls aggregate endpoints and shares loading/error/retry rendering between Kanban and Gantt.
+- [x] T012 [US1] Extend `apps/web/src/features/issues/IssueListPage.tsx`, `IssueRow.tsx`, and `IssueListPage.stories.tsx` to render All repos repository provenance, preserve aggregate filters/page in detail `returnTo`, and retain single Repository filtering.
+- [x] T013 [US1] Extend `apps/web/src/features/work-views/KanbanCard.tsx`, `GanttIssueRow.tsx`, `KanbanCard.stories.tsx`, and `GanttIssueRow.stories.tsx` to show repository identity in All repos while preserving the compact single Repository presentation and source-view return path.
+- [x] T014 [US1] Extend `apps/web/src/features/work-views/GanttBoard.tsx` and `KanbanBoard.tsx` to render aggregated rows/columns, empty states, and error/retry states while preserving schedule anomalies and keyboard alternatives to drag transitions.
+- [x] T015 [US1] Add fictional multi-repository stories for populated All repos Kanban/Gantt, colliding Issue numbers, loading, empty, and error/retry states in `apps/web/src/features/work-views/KanbanBoard.stories.tsx` and `GanttBoard.stories.tsx`.
+- [x] T016 [US1] Update `apps/web/src/app/routes.ts` so `/issues`, `/kanban`, `/gantt` represent All repos views, `/` resolves to All repos Gantt, Repository routes retain scope, `safeReturnTo` accepts supported routes, and unknown paths resolve to not-found.
+- [x] T017 [US1] Update `apps/web/src/app/App.tsx` to remove Board route/page loading and render a regular not-found page for retired `/boards...` and other unknown routes.
 
 **Checkpoint**: All repos views are complete, directly navigable, fully aggregated, repository-identifiable, and fail as a unit when required data is missing.
 
@@ -55,14 +55,14 @@
 
 ### Implementation
 
-- [X] T018 [US2] Update `apps/api/src/repositories/repository-workspace-service.ts` to use neutral workflow-view services and preserve Repository-specific all-page Kanban/Gantt response shapes.
-- [X] T019 [US2] Update `apps/web/src/features/repositories/RepositoryWorkspacePage.tsx` to use the shared work-view presentation without loading or branching on Board data.
-- [X] T020 [US2] Update `apps/web/src/features/issues/IssueCreatePage.tsx` so an All repos entry starts with an empty Repository field and cannot submit until selected; retain preselection when opened from a Repository workspace.
-- [X] T021 [US2] Add Storybook stories for explicit All repos target selection and Repository-preselected Issue creation in `apps/web/src/features/issues/IssueCreatePage.stories.tsx`.
-- [X] T022 [US2] Rename the `boards` i18n resource to a neutral work-view resource and update `apps/web/src/i18n/index.ts`, `i18next.d.ts`, common/dashboard resources, and component namespaces for zh-TW, en, and ja; remove Board product strings while retaining Kanban/Gantt translations.
-- [X] T023 [US2] Update `apps/web/src/components/layout/WorkspaceSelector.tsx` to fetch readable repositories only and provide exactly All repos plus repository choices; remove Board fetch, callback, and option groups.
-- [X] T024 [US2] Update `apps/web/src/components/layout/AppShell.tsx` so Issues/Kanban/Gantt links follow current All repos or Repository scope, mark the selected workspace/view, and remove Board Settings navigation.
-- [X] T025 [US2] Add Storybook stories for All repos and Repository selector states in `apps/web/src/components/layout/WorkspaceSelector.stories.tsx`; verify scope selection, visible focus, and responsive layouts with the existing light/dark toolbar.
+- [x] T018 [US2] Update `apps/api/src/repositories/repository-workspace-service.ts` to use neutral workflow-view services and preserve Repository-specific all-page Kanban/Gantt response shapes.
+- [x] T019 [US2] Update `apps/web/src/features/repositories/RepositoryWorkspacePage.tsx` to use the shared work-view presentation without loading or branching on Board data.
+- [x] T020 [US2] Update `apps/web/src/features/issues/IssueCreatePage.tsx` so an All repos entry starts with an empty Repository field and cannot submit until selected; retain preselection when opened from a Repository workspace.
+- [x] T021 [US2] Add Storybook stories for explicit All repos target selection and Repository-preselected Issue creation in `apps/web/src/features/issues/IssueCreatePage.stories.tsx`.
+- [x] T022 [US2] Rename the `boards` i18n resource to a neutral work-view resource and update `apps/web/src/i18n/index.ts`, `i18next.d.ts`, common/dashboard resources, and component namespaces for zh-TW, en, and ja; remove Board product strings while retaining Kanban/Gantt translations.
+- [x] T023 [US2] Update `apps/web/src/components/layout/WorkspaceSelector.tsx` to fetch readable repositories only and provide exactly All repos plus repository choices; remove Board fetch, callback, and option groups.
+- [x] T024 [US2] Update `apps/web/src/components/layout/AppShell.tsx` so Issues/Kanban/Gantt links follow current All repos or Repository scope, mark the selected workspace/view, and remove Board Settings navigation.
+- [x] T025 [US2] Add Storybook stories for All repos and Repository selector states in `apps/web/src/components/layout/WorkspaceSelector.stories.tsx`; verify scope selection, visible focus, and responsive layouts with the existing light/dark toolbar.
 
 **Checkpoint**: Repository-scoped workflows remain isolated; users can switch scopes from the shared selector, and All repos creation cannot silently target the first repository.
 
@@ -74,11 +74,11 @@
 
 ### Implementation
 
-- [X] T026 [US3] Update `apps/web/src/features/dashboard/workspace-directory.ts` and `DashboardPage.tsx` to show All repos and readable Repository entries without Board API calls or Board item types; keep `/dashboard` as an optional directory.
-- [X] T027 [US3] Remove `BoardIssuesPage.tsx`, `BoardListPage.tsx`, `BoardEditor.tsx`, and `LegacyBoardNoticePage.tsx` from `apps/web/src/features/boards/`; remove their imports from `apps/web/src/app/App.tsx`, `DashboardPage.tsx`, and `WorkspaceSelector.tsx`.
-- [X] T028 [US3] Update `apps/web/src/index.css` selectors and responsive states for the renamed work-view UI; preserve semantic tokens, visible focus, reduced motion, dark mode contrast, mobile column selection, and non-drag transition controls.
-- [X] T029 [US3] Update `README.md`, `AGENTS.md`, and `.env.example` to describe All repos/Repository workspaces and the no-mirror, permission, fixed-workflow rules; remove Board persistence, URL, and configuration instructions.
-- [X] T030 [US3] Remove the configured Board JSON, lock/temp files, and `BOARD_STORE_PATH` entry from the local `.env`; delete `data/boards.json` without exposing or altering unrelated environment values.
+- [x] T026 [US3] Update `apps/web/src/features/dashboard/workspace-directory.ts` and `DashboardPage.tsx` to show All repos and readable Repository entries without Board API calls or Board item types; keep `/dashboard` as an optional directory.
+- [x] T027 [US3] Remove `BoardIssuesPage.tsx`, `BoardListPage.tsx`, `BoardEditor.tsx`, and `LegacyBoardNoticePage.tsx` from `apps/web/src/features/boards/`; remove their imports from `apps/web/src/app/App.tsx`, `DashboardPage.tsx`, and `WorkspaceSelector.tsx`.
+- [x] T028 [US3] Update `apps/web/src/index.css` selectors and responsive states for the renamed work-view UI; preserve semantic tokens, visible focus, reduced motion, dark mode contrast, mobile column selection, and non-drag transition controls.
+- [x] T029 [US3] Update `README.md`, `AGENTS.md`, and `.env.example` to describe All repos/Repository workspaces and the no-mirror, permission, fixed-workflow rules; remove Board persistence, URL, and configuration instructions.
+- [x] T030 [US3] Remove the configured Board JSON, lock/temp files, and `BOARD_STORE_PATH` entry from the local `.env`; delete `data/boards.json` without exposing or altering unrelated environment values.
 
 **Checkpoint**: The selector and current product/contributor documentation expose only All repos and Repository workspaces; retired URLs have no route or API compatibility behavior.
 
@@ -86,9 +86,9 @@
 
 **Purpose**: Validate contracts, design states, documentation, and retired-feature cleanup across the complete feature.
 
-- [X] T031 Search `apps/api/`, `apps/web/`, `packages/`, `README.md`, `AGENTS.md`, `.env.example`, and `.env` for `/api/boards`, `/boards`, active Board UI labels/types, and `BOARD_STORE_PATH`; remove active product/runtime references while leaving historical completed feature specs intact.
-- [X] T032 Run `pnpm.cmd typecheck` and `pnpm.cmd build` from the repository root; resolve errors across API, web, domain, and Gitea contracts.
-- [X] T033 Run `pnpm.cmd --filter @gitea-portal/web build-storybook`; resolve broken or missing stories for workspace, Issues, Kanban, Gantt, async states, viewport, and themes.
+- [x] T031 Search `apps/api/`, `apps/web/`, `packages/`, `README.md`, `AGENTS.md`, `.env.example`, and `.env` for `/api/boards`, `/boards`, active Board UI labels/types, and `BOARD_STORE_PATH`; remove active product/runtime references while leaving historical completed feature specs intact.
+- [x] T032 Run `pnpm.cmd typecheck` and `pnpm.cmd build` from the repository root; resolve errors across API, web, domain, and Gitea contracts.
+- [x] T033 Run `pnpm.cmd --filter @gitea-portal/web build-storybook`; resolve broken or missing stories for workspace, Issues, Kanban, Gantt, async states, viewport, and themes.
 - [ ] T034 Complete every signed-in scenario in `specs/016-all-repos-workspaces/quickstart.md` and record any unavailable Gitea permission/failure fixture instead of claiming unverified coverage.
   - 執行記錄（2026-09-28）：本機 3000、3001、5173 均無服務監聽，無法登入 Gitea 執行簽入情境；未宣稱這些情境已驗證。
 

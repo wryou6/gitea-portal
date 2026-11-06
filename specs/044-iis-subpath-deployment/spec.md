@@ -8,7 +8,7 @@
 
 **Input**: User description: "Portal 部署在 IIS 預設網站下的 `/issue` 子應用程式時，前端路由、API、OAuth 和靜態資源都必須能在該子路徑正常運作；同時保留根目錄部署能力。"
 
-## User Scenarios & Testing *(mandatory)*
+## User Scenarios & Testing _(mandatory)_
 
 ### User Story 1 - 在 IIS 子應用程式中使用 Portal (Priority: P1)
 
@@ -47,7 +47,7 @@
 - 部署主機無法套用隨前端產物提供的 SPA 回退規則時，需由主機提供等效的路徑回退行為。
 - SPA 回退不得攔截 `/issue/api/*`、`/issue/auth/*`，也不得把實際存在的靜態檔案改寫為入口頁。
 
-## Requirements *(mandatory)*
+## Requirements _(mandatory)_
 
 ### Functional Requirements
 
@@ -59,13 +59,13 @@
 - **FR-006**: 未設定公開部署路徑時，Portal MUST 維持根目錄部署行為。
 - **FR-007**: Portal 前端與 API 的公開路徑設定不一致時，部署文件 MUST 明確說明需一致設定的值與 API 路徑轉送前置條件。
 
-### Key Entities *(include if feature involves data)*
+### Key Entities _(include if feature involves data)_
 
 - **公開部署路徑**：Portal 對使用者可見的網站路徑；可為根目錄或 `/issue` 等子路徑，供資源、路由、API 和認證流程共用。
 - **Portal 檢視路徑**：使用者可直接開啟或重新載入的工作檢視及 Issue 詳情路徑，位於公開部署路徑之下。
 - **認證返回位置**：OAuth 完成、取消或失敗後使用者返回的 Portal 路徑；必須限制於同一 Portal。
 
-## Success Criteria *(mandatory)*
+## Success Criteria _(mandatory)_
 
 ### Measurable Outcomes
 

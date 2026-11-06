@@ -14,7 +14,7 @@
 
 - Q: 使用者收合側欄後，應保留這個選擇多久？ → A: 只保留目前瀏覽器工作階段；新工作階段預設展開。
 
-## User Scenarios & Testing *(mandatory)*
+## User Scenarios & Testing _(mandatory)_
 
 ### User Story 1 - 從側欄前往工作頁面 (Priority: P1)
 
@@ -77,7 +77,7 @@
 - 窄視窗、鍵盤焦點或錯誤提示出現時，展開/收合控制與導覽項目不得互相遮擋或失去焦點順序。
 - Board Settings 開啟或編輯 Board 時不得改變 Issue、Label、Assignee、狀態或排程資料。
 
-## Requirements *(mandatory)*
+## Requirements _(mandatory)_
 
 ### Functional Requirements
 
@@ -97,13 +97,13 @@
 - **FR-014**: 側欄收合/展開狀態 MUST 在目前瀏覽器工作階段的頁面導覽與重新載入後維持；新的瀏覽器工作階段 MUST 預設展開。
 - **FR-015**: Portal MUST 使用 `/issues`、`/issues/new`、`/issues/{owner}/{repo}/{number}`、`/kanban`、`/gantt`、`/boards` 與 `/boards/{boardId}/{kanban|gantt}` 作為 canonical UI routes；根路徑、既有單數 `/issue/...` 與 `/boards?view=...` 網址 MUST 保持可用並開啟對應頁面。
 
-### Key Entities *(include if data involved)*
+### Key Entities _(include if data involved)_
 
 - **導覽項目**：使用者可開啟的 Issues、Kanban、Gantt Chart 或 Board Settings 頁面入口，包含可辨識名稱、圖示和目前頁面狀態。
 - **Board 脈絡**：Kanban、甘特圖與 Board Settings 所屬的 Board；切換檢視時須保持一致，尚未選定時由使用者從 Board 清單選擇。
 - **側欄顯示狀態**：側欄展開或僅顯示圖示的呈現狀態，不包含 Issue 或 Board 業務資料。
 
-## Success Criteria *(mandatory)*
+## Success Criteria _(mandatory)_
 
 ### Measurable Outcomes
 

@@ -30,7 +30,7 @@
 
 ## Constitution Check
 
-*GATE: Must pass before Phase 0 research. Re-check after Phase 1 design.*
+_GATE: Must pass before Phase 0 research. Re-check after Phase 1 design._
 
 - **I. Gitea 是 Issue 資料的唯一來源**: PASS — 僅改唯讀清單呈現偏好，不複製或寫入 Issue 資料。
 - **II–V. 權限、原子寫入、聚合完整性及 Status 語意**: PASS — 不改 API 權限、Issue 請求範圍、Gitea 寫入或 Status 行為。

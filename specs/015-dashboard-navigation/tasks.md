@@ -24,11 +24,11 @@
 
 ### Implementation for User Story 1
 
-- [X] T001 [US1] Add `/dashboard` route resolution, map `/` to the Dashboard route, and render `DashboardPage` while preserving `/issues` in `apps/web/src/app/routes.ts` and `apps/web/src/app/App.tsx`.
-- [X] T002 [P] [US1] Build typed Repository and readable cross-repository Board directory items, with same-origin Issues destinations and full-Repository readability filtering, in `apps/web/src/features/dashboard/workspace-directory.ts`.
-- [X] T003 [US1] Implement `DashboardPage` using both existing list APIs, with loading/empty/error/retry states and no partial list presented as complete; suppress duplicate header selector errors on Dashboard in `apps/web/src/features/dashboard/DashboardPage.tsx` and `apps/web/src/components/layout/WorkspaceSelector.tsx`.
-- [X] T004 [P] [US1] Add Dashboard headings, workspace labels, loading/empty/error/retry text for zh-TW/en/ja and register the resource in `apps/web/src/i18n/resources/dashboard.ts`, `apps/web/src/i18n/index.ts`, and `apps/web/src/i18n/i18next.d.ts`.
-- [X] T005 [US1] Style responsive workspace cards and their accessible focus/hover states in `apps/web/src/index.css`.
+- [x] T001 [US1] Add `/dashboard` route resolution, map `/` to the Dashboard route, and render `DashboardPage` while preserving `/issues` in `apps/web/src/app/routes.ts` and `apps/web/src/app/App.tsx`.
+- [x] T002 [P] [US1] Build typed Repository and readable cross-repository Board directory items, with same-origin Issues destinations and full-Repository readability filtering, in `apps/web/src/features/dashboard/workspace-directory.ts`.
+- [x] T003 [US1] Implement `DashboardPage` using both existing list APIs, with loading/empty/error/retry states and no partial list presented as complete; suppress duplicate header selector errors on Dashboard in `apps/web/src/features/dashboard/DashboardPage.tsx` and `apps/web/src/components/layout/WorkspaceSelector.tsx`.
+- [x] T004 [P] [US1] Add Dashboard headings, workspace labels, loading/empty/error/retry text for zh-TW/en/ja and register the resource in `apps/web/src/i18n/resources/dashboard.ts`, `apps/web/src/i18n/index.ts`, and `apps/web/src/i18n/i18next.d.ts`.
+- [x] T005 [US1] Style responsive workspace cards and their accessible focus/hover states in `apps/web/src/index.css`.
 
 **Checkpoint**: `/` and `/dashboard` render a complete read-only directory; `/issues` and existing workspace routes remain intact.
 
@@ -42,9 +42,9 @@
 
 ### Implementation for User Story 2
 
-- [X] T006 [US2] Replace the linked `Gitea Issue Portal` brand with a non-interactive local Gitea SVG mark and `Gitea Portal` text, place the Dashboard anchor immediately beside it with correct active-page semantics, and update the tab title in `apps/web/src/components/layout/AppShell.tsx`, `apps/web/public/favicon.svg`, and `apps/web/index.html`.
-- [X] T007 [P] [US2] Add responsive brand/Dashboard navigation layout and visible focus treatment without hiding the workspace selector or account menu in `apps/web/src/index.css`.
-- [X] T008 [US2] Add Dashboard and All workspaces labels to all supported locales in `apps/web/src/i18n/resources/common.ts`.
+- [x] T006 [US2] Replace the linked `Gitea Issue Portal` brand with a non-interactive local Gitea SVG mark and `Gitea Portal` text, place the Dashboard anchor immediately beside it with correct active-page semantics, and update the tab title in `apps/web/src/components/layout/AppShell.tsx`, `apps/web/public/favicon.svg`, and `apps/web/index.html`.
+- [x] T007 [P] [US2] Add responsive brand/Dashboard navigation layout and visible focus treatment without hiding the workspace selector or account menu in `apps/web/src/index.css`.
+- [x] T008 [US2] Add Dashboard and All workspaces labels to all supported locales in `apps/web/src/i18n/resources/common.ts`.
 
 **Checkpoint**: All routes using AppShell display the same brand and Dashboard navigation; existing workspace/account controls remain usable.
 
@@ -58,9 +58,9 @@
 
 ### Implementation for User Story 3
 
-- [X] T009 [US3] Remove the Repository-specific return link from `KanbanBoard` while preserving cross-repository Board return navigation in `apps/web/src/features/boards/KanbanBoard.tsx`.
-- [X] T010 [US3] Remove the now-unused `returnToRepositoryIssues` translations in zh-TW/en/ja from `apps/web/src/i18n/resources/boards.ts`.
-- [X] T011 [US3] Align Dashboard content with the existing `PageHeader` and shared main-content spacing so Dashboard, Kanban, and Gantt use the same page hierarchy in `apps/web/src/features/dashboard/DashboardPage.tsx` and `apps/web/src/index.css`.
+- [x] T009 [US3] Remove the Repository-specific return link from `KanbanBoard` while preserving cross-repository Board return navigation in `apps/web/src/features/boards/KanbanBoard.tsx`.
+- [x] T010 [US3] Remove the now-unused `returnToRepositoryIssues` translations in zh-TW/en/ja from `apps/web/src/i18n/resources/boards.ts`.
+- [x] T011 [US3] Align Dashboard content with the existing `PageHeader` and shared main-content spacing so Dashboard, Kanban, and Gantt use the same page hierarchy in `apps/web/src/features/dashboard/DashboardPage.tsx` and `apps/web/src/index.css`.
 
 **Checkpoint**: The three pages share the same shell and page-heading pattern; view-specific content and Board return behavior remain intact.
 
@@ -70,8 +70,8 @@
 
 **Purpose**: Validate the complete navigation, workspace visibility, localization, and responsive behavior.
 
-- [X] T012 Run `pnpm.cmd typecheck` and `pnpm.cmd build` from the repository root; fix feature-related failures in the touched source files.
-- [X] T013 Execute all manual scenarios in `specs/015-dashboard-navigation/quickstart.md`; all scenarios passed, including authenticated workspace navigation, readability filtering, empty/error states, shared headers, retained Board return navigation, and 390px layout.
+- [x] T012 Run `pnpm.cmd typecheck` and `pnpm.cmd build` from the repository root; fix feature-related failures in the touched source files.
+- [x] T013 Execute all manual scenarios in `specs/015-dashboard-navigation/quickstart.md`; all scenarios passed, including authenticated workspace navigation, readability filtering, empty/error states, shared headers, retained Board return navigation, and 390px layout.
 
 ---
 

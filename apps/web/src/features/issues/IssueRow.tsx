@@ -11,7 +11,10 @@ import { scheduleAnomalyTranslationKey } from "./ScheduleDates";
 import { isCalendarDate } from "@gitea-portal/domain";
 import { OverdueIndicator } from "./OverdueIndicator";
 import { isIssueOverdue } from "./overdue-date";
-import { DEFAULT_ISSUE_COLUMN_ORDER, ISSUE_VIEW_FIELDS } from "./issue-view-preference";
+import {
+  DEFAULT_ISSUE_COLUMN_ORDER,
+  ISSUE_VIEW_FIELDS,
+} from "./issue-view-preference";
 import { UserIdentity } from "../../components/ui/UserIdentity";
 import { AssigneeIdentityGroup } from "../../components/ui/AssigneeIdentityGroup";
 import { assigneeLoginsForDisplay } from "../../lib/assignee-display";
@@ -35,11 +38,20 @@ export function IssueRow({
   visibleFields?: IssueSortField[];
   showRepositoryIdentity?: boolean;
   showIssueNumber?: boolean;
-  onMetadataSave?: (issue: Issue, field: "type" | "priority", value: string) => Promise<void>;
+  onMetadataSave?: (
+    issue: Issue,
+    field: "type" | "priority",
+    value: string,
+  ) => Promise<void>;
   onStatusClick?: (issue: Issue) => void;
 }) {
   const { t, i18n } = useTranslation("issues");
-  const issuePath = issueDetailMask(issue.owner, issue.name, issue.number, returnTo);
+  const issuePath = issueDetailMask(
+    issue.owner,
+    issue.name,
+    issue.number,
+    returnTo,
+  );
   const hasDateAnomaly = issue.scheduleStatus === "invalid";
   const assigneeUsers = assigneeLoginsForDisplay(issue).map((login) =>
     profileFor(issue.userProfiles, login),
@@ -52,75 +64,135 @@ export function IssueRow({
       ? issue.dueDate
       : null;
   const overdue = isIssueOverdue(issue);
-  const title = issueTitleForDisplay(issue.title, issue.number, showIssueNumber);
+  const title = issueTitleForDisplay(
+    issue.title,
+    issue.number,
+    showIssueNumber,
+  );
   const cells: Record<IssueSortField, ReactNode> = {
     type: onMetadataSave ? (
-      <IssueMetadataBadgeEditor field="type" value={issue.type} onSave={(value) => onMetadataSave(issue, "type", value)}>
+      <IssueMetadataBadgeEditor
+        field="type"
+        value={issue.type}
+        onSave={(value) => onMetadataSave(issue, "type", value)}
+      >
         <IssueTypeBadge type={issue.type} labels={issue.labels} />
       </IssueMetadataBadgeEditor>
-    ) : <IssueTypeBadge type={issue.type} labels={issue.labels} />,
+    ) : (
+      <IssueTypeBadge type={issue.type} labels={issue.labels} />
+    ),
     key: (
       <Link
         className="issue-key"
         to={returnTo ?? "/issues"}
         replace={false}
         mask={issuePath}
-        aria-label={t("openIssueKey", { key: `${issue.owner}/${issue.name}#${issue.number}` })}
+        aria-label={t("openIssueKey", {
+          key: `${issue.owner}/${issue.name}#${issue.number}`,
+        })}
       >
         {issue.owner}/{issue.name}#{issue.number}
       </Link>
     ),
     title: (
       <>
-        <Link className="issue-title" to={returnTo ?? "/issues"} replace={false} mask={issuePath}>{title}</Link>
+        <Link
+          className="issue-title"
+          to={returnTo ?? "/issues"}
+          replace={false}
+          mask={issuePath}
+        >
+          {title}
+        </Link>
         {showRepositoryIdentity && (
-          <span className="issue-row-repository">{issue.owner}/{issue.name}</span>
+          <span className="issue-row-repository">
+            {issue.owner}/{issue.name}
+          </span>
         )}
         {hasDateAnomaly && (
-          <span className="issue-table-anomaly" title={t(scheduleAnomalyTranslationKey(issue.scheduleAnomaly))}>
+          <span
+            className="issue-table-anomaly"
+            title={t(scheduleAnomalyTranslationKey(issue.scheduleAnomaly))}
+          >
             {t("scheduleAnomaly")}
           </span>
         )}
       </>
     ),
-    assignee: <AssigneeIdentityGroup users={assigneeUsers} emptyLabel={t("notAssigned")} />,
-    status: <IssueStatusBadge status={issue.status} onClick={onStatusClick ? () => onStatusClick(issue) : undefined} disabled={issue.status === "anomaly"} />,
+    assignee: (
+      <AssigneeIdentityGroup
+        users={assigneeUsers}
+        emptyLabel={t("notAssigned")}
+      />
+    ),
+    status: (
+      <IssueStatusBadge
+        status={issue.status}
+        onClick={onStatusClick ? () => onStatusClick(issue) : undefined}
+        disabled={issue.status === "anomaly"}
+      />
+    ),
     priority: onMetadataSave ? (
-      <IssueMetadataBadgeEditor field="priority" value={issue.priority} onSave={(value) => onMetadataSave(issue, "priority", value)}>
+      <IssueMetadataBadgeEditor
+        field="priority"
+        value={issue.priority}
+        onSave={(value) => onMetadataSave(issue, "priority", value)}
+      >
         <PriorityBadge priority={issue.priority} labels={issue.labels} />
       </IssueMetadataBadgeEditor>
-    ) : <PriorityBadge priority={issue.priority} labels={issue.labels} />,
-    createdAt: <time dateTime={issue.createdAt}>{formatDateTime(issue.createdAt)}</time>,
+    ) : (
+      <PriorityBadge priority={issue.priority} labels={issue.labels} />
+    ),
+    createdAt: (
+      <time dateTime={issue.createdAt}>{formatDateTime(issue.createdAt)}</time>
+    ),
     startDate:
-      issue.scheduleAnomaly === "invalid_start_date" || issue.scheduleAnomaly === "multiple_start_dates"
+      issue.scheduleAnomaly === "invalid_start_date" ||
+      issue.scheduleAnomaly === "multiple_start_dates"
         ? t("dateInvalid")
         : issue.startDate
           ? formatCalendarDate(issue.startDate)
           : t("notSet"),
-    dueDate:
-      dueDateInvalid
-        ? t("dateInvalid")
-        : dueDate
-          ? overdue
-            ? <span className="due-date-overdue"><time dateTime={dueDate}>{formatCalendarDate(dueDate)}</time><OverdueIndicator /></span>
-            : <time dateTime={dueDate}>{formatCalendarDate(dueDate)}</time>
-          : t("notSet"),
-    author: issue.author ? <UserIdentity user={profileFor(issue.userProfiles, issue.author)} /> : t("notSet"),
+    dueDate: dueDateInvalid ? (
+      t("dateInvalid")
+    ) : dueDate ? (
+      overdue ? (
+        <span className="due-date-overdue">
+          <time dateTime={dueDate}>{formatCalendarDate(dueDate)}</time>
+          <OverdueIndicator />
+        </span>
+      ) : (
+        <time dateTime={dueDate}>{formatCalendarDate(dueDate)}</time>
+      )
+    ) : (
+      t("notSet")
+    ),
+    author: issue.author ? (
+      <UserIdentity user={profileFor(issue.userProfiles, issue.author)} />
+    ) : (
+      t("notSet")
+    ),
   };
 
   return (
     <tr className="issue-table-row">
-      {columnOrder.filter((field) => visibleFields.includes(field)).map((field) => (
-        <td
-          key={field}
-          data-column-field={field}
-          data-reorder-key={`${issue.owner}/${issue.name}#${issue.number}:${field}`}
-          data-column-align={field === "type" || field === "status" || field === "priority" ? "center" : undefined}
-          className={field === "title" ? "issue-table-title-cell" : undefined}
-        >
-          {cells[field]}
-        </td>
-      ))}
+      {columnOrder
+        .filter((field) => visibleFields.includes(field))
+        .map((field) => (
+          <td
+            key={field}
+            data-column-field={field}
+            data-reorder-key={`${issue.owner}/${issue.name}#${issue.number}:${field}`}
+            data-column-align={
+              field === "type" || field === "status" || field === "priority"
+                ? "center"
+                : undefined
+            }
+            className={field === "title" ? "issue-table-title-cell" : undefined}
+          >
+            {cells[field]}
+          </td>
+        ))}
     </tr>
   );
 }

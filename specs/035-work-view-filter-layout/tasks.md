@@ -28,10 +28,10 @@ No foundational tasks.
 
 **Independent Test**: Open all three work views in All repos and a single Repository; confirm assignee, status, priority, and type appear in that order on one desktop row, and changing/clearing filters preserves the matching results and URL behavior.
 
-- [X] T001 [US1] Add a shared top-filter content region above the result summary in `apps/web/src/features/work-views/WorkViewLayout.tsx`, retaining the existing controls region and summary behavior.
-- [X] T002 [US1] Separate the recent-done visibility control from common filter presentation in `apps/web/src/features/work-views/WorkViewFilterBar.tsx` while preserving its existing state callback and accessible label.
-- [X] T003 [US1] Arrange assignee shortcuts/selector, status, priority, and issue type in that order on one compact desktop row, with each choice label inline before its options, in `apps/web/src/features/work-views/WorkViewFilterBar.tsx`; keep clear-filter and active-filter chips available.
-- [X] T004 [US1] Connect the common filter region and retained recent-done/page controls through `apps/web/src/features/issues/IssueListPage.tsx`, `apps/web/src/features/work-views/KanbanBoard.tsx`, and `apps/web/src/features/work-views/GanttBoard.tsx`; update direct layout consumers in `apps/web/src/features/work-views/KanbanBoard.stories.tsx` and `apps/web/src/features/work-views/GanttBoard.stories.tsx` without changing filter callbacks or URL state.
+- [x] T001 [US1] Add a shared top-filter content region above the result summary in `apps/web/src/features/work-views/WorkViewLayout.tsx`, retaining the existing controls region and summary behavior.
+- [x] T002 [US1] Separate the recent-done visibility control from common filter presentation in `apps/web/src/features/work-views/WorkViewFilterBar.tsx` while preserving its existing state callback and accessible label.
+- [x] T003 [US1] Arrange assignee shortcuts/selector, status, priority, and issue type in that order on one compact desktop row, with each choice label inline before its options, in `apps/web/src/features/work-views/WorkViewFilterBar.tsx`; keep clear-filter and active-filter chips available.
+- [x] T004 [US1] Connect the common filter region and retained recent-done/page controls through `apps/web/src/features/issues/IssueListPage.tsx`, `apps/web/src/features/work-views/KanbanBoard.tsx`, and `apps/web/src/features/work-views/GanttBoard.tsx`; update direct layout consumers in `apps/web/src/features/work-views/KanbanBoard.stories.tsx` and `apps/web/src/features/work-views/GanttBoard.stories.tsx` without changing filter callbacks or URL state.
 
 ---
 
@@ -41,9 +41,9 @@ No foundational tasks.
 
 **Independent Test**: Review the shared filter presentation for all three work views in Traditional Chinese, English, and Japanese at desktop and narrow widths; confirm subtle group separation, visible keyboard focus, accessible selection state, and no horizontal overflow.
 
-- [X] T005 [US2] Style the shared filter region as one compact desktop row, keep each choice group on one line, use subtle spacing without an oversized background panel, and allow narrow-width wrapping in `apps/web/src/index.css`.
-- [X] T006 [P] [US2] Update the shared filter layout examples to show the ordered single row, selected values, and narrow/localized variants in `apps/web/src/features/work-views/WorkViewFilterBar.stories.tsx`.
-- [X] T007 [US2] Review and update affected Traditional Chinese, English, and Japanese filter labels in `apps/web/src/i18n/resources/work-views.ts`; retain keyboard and `aria-pressed` semantics in `apps/web/src/features/work-views/WorkViewFilterBar.tsx`.
+- [x] T005 [US2] Style the shared filter region as one compact desktop row, keep each choice group on one line, use subtle spacing without an oversized background panel, and allow narrow-width wrapping in `apps/web/src/index.css`.
+- [x] T006 [P] [US2] Update the shared filter layout examples to show the ordered single row, selected values, and narrow/localized variants in `apps/web/src/features/work-views/WorkViewFilterBar.stories.tsx`.
+- [x] T007 [US2] Review and update affected Traditional Chinese, English, and Japanese filter labels in `apps/web/src/i18n/resources/work-views.ts`; retain keyboard and `aria-pressed` semantics in `apps/web/src/features/work-views/WorkViewFilterBar.tsx`.
 
 ---
 
@@ -51,8 +51,8 @@ No foundational tasks.
 
 **Purpose**: Verify the shared layout integration and project-required UI quality gates.
 
-- [X] T008 Run `pnpm.cmd typecheck` and `pnpm.cmd build` from the workspace scripts in `package.json`; resolve feature-related failures and review `git diff --check`.
-- [X] T009 Review `specs/035-work-view-filter-layout/quickstart.md` against the rendered views in `apps/web/src/features/issues/IssueListPage.tsx`, `apps/web/src/features/work-views/KanbanBoard.tsx`, and `apps/web/src/features/work-views/GanttBoard.tsx`, including existing filter/URL behavior, localized narrow layouts, keyboard focus, and retained view controls.
+- [x] T008 Run `pnpm.cmd typecheck` and `pnpm.cmd build` from the workspace scripts in `package.json`; resolve feature-related failures and review `git diff --check`.
+- [x] T009 Review `specs/035-work-view-filter-layout/quickstart.md` against the rendered views in `apps/web/src/features/issues/IssueListPage.tsx`, `apps/web/src/features/work-views/KanbanBoard.tsx`, and `apps/web/src/features/work-views/GanttBoard.tsx`, including existing filter/URL behavior, localized narrow layouts, keyboard focus, and retained view controls.
 
 ## Dependencies & Execution Order
 

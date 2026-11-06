@@ -30,17 +30,17 @@
 
 ## Constitution Check
 
-| Gate | 規範 | 設計處理 | 狀態 |
-|---|---|---|---|
-| I | Gitea 是 Issue 資料唯一來源 | 只讀取現有 Issue 欄位；cookie 只保存檢視欄位偏好；URL 只保存日期與尺度 | PASS |
-| II | 操作遵循目前使用者權限 | 不新增 Gitea API 操作、權限或服務身份 | PASS |
-| III | Gitea 寫入必須保全資料並可驗證 | 不修改 Issue、Label 或排程寫入路徑 | PASS |
-| IV | 聚合讀取不得呈現部分結果 | 沿用現有 Gantt loader 與 all-or-error 語意 | PASS |
-| V | Repository 共用固定 Status | 沿用 Issue 的既有 Portal Status 值及 presenter | PASS |
-| VI | 工作範圍及來源清楚可辨 | All repos 使用獨立 Repository 欄標示來源；Title 欄只呈現 Issue 標題 | PASS |
-| VII | 使用者文字支援所有語系 | 新增 control、Scale、日曆標頭及輔助文字同步更新三語 | PASS |
-| UI quality | UI 須可存取、支援窄版與雙主題 | 語意表格、鍵盤欄序調整、狀態不只依賴顏色、Storybook 檢視 | PASS |
-| Spec Kit gate | 實作前完成 spec、plan、tasks、analyze | 依指定流程完成分析後才實作 | PASS |
+| Gate          | 規範                                  | 設計處理                                                               | 狀態 |
+| ------------- | ------------------------------------- | ---------------------------------------------------------------------- | ---- |
+| I             | Gitea 是 Issue 資料唯一來源           | 只讀取現有 Issue 欄位；cookie 只保存檢視欄位偏好；URL 只保存日期與尺度 | PASS |
+| II            | 操作遵循目前使用者權限                | 不新增 Gitea API 操作、權限或服務身份                                  | PASS |
+| III           | Gitea 寫入必須保全資料並可驗證        | 不修改 Issue、Label 或排程寫入路徑                                     | PASS |
+| IV            | 聚合讀取不得呈現部分結果              | 沿用現有 Gantt loader 與 all-or-error 語意                             | PASS |
+| V             | Repository 共用固定 Status            | 沿用 Issue 的既有 Portal Status 值及 presenter                         | PASS |
+| VI            | 工作範圍及來源清楚可辨                | All repos 使用獨立 Repository 欄標示來源；Title 欄只呈現 Issue 標題    | PASS |
+| VII           | 使用者文字支援所有語系                | 新增 control、Scale、日曆標頭及輔助文字同步更新三語                    | PASS |
+| UI quality    | UI 須可存取、支援窄版與雙主題         | 語意表格、鍵盤欄序調整、狀態不只依賴顏色、Storybook 檢視               | PASS |
+| Spec Kit gate | 實作前完成 spec、plan、tasks、analyze | 依指定流程完成分析後才實作                                             | PASS |
 
 ## Project Structure
 

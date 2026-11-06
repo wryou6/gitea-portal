@@ -21,7 +21,9 @@ export type PortalApiErrorResponse = {
   detail?: string;
 };
 
-export function isPortalApiErrorCode(value: unknown): value is PortalApiErrorCode {
+export function isPortalApiErrorCode(
+  value: unknown,
+): value is PortalApiErrorCode {
   return (
     typeof value === "string" &&
     PORTAL_API_ERROR_CODES.some((code) => code === value)

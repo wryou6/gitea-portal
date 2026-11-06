@@ -3,14 +3,30 @@ import { useEffect, useState } from "react";
 import { WorkspaceSelector } from "./WorkspaceSelector";
 
 const repositories = [
-  { owner: "engineering", name: "portal", fullName: "engineering/portal", htmlUrl: "#" },
-  { owner: "platform", name: "service-api", fullName: "platform/service-api", htmlUrl: "#" },
+  {
+    owner: "engineering",
+    name: "portal",
+    fullName: "engineering/portal",
+    htmlUrl: "#",
+  },
+  {
+    owner: "platform",
+    name: "service-api",
+    fullName: "platform/service-api",
+    htmlUrl: "#",
+  },
 ];
 
 function SelectorStory({ pathname }: { pathname: string }) {
   const [currentPath, setCurrentPath] = useState(pathname);
   useEffect(() => setCurrentPath(pathname), [pathname]);
-  return <WorkspaceSelector initialRepositories={repositories} initialPathname={currentPath} onNavigate={setCurrentPath} />;
+  return (
+    <WorkspaceSelector
+      initialRepositories={repositories}
+      initialPathname={currentPath}
+      onNavigate={setCurrentPath}
+    />
+  );
 }
 
 const meta = {
@@ -21,5 +37,10 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 export const AllRepositories: Story = {};
-export const RepositoryWorkspace: Story = { args: { pathname: "/repositories/platform/service-api/kanban" } };
-export const NarrowLayout: Story = { args: { pathname: "/gantt" }, parameters: { viewport: { defaultViewport: "mobile1" } } };
+export const RepositoryWorkspace: Story = {
+  args: { pathname: "/repositories/platform/service-api/kanban" },
+};
+export const NarrowLayout: Story = {
+  args: { pathname: "/gantt" },
+  parameters: { viewport: { defaultViewport: "mobile1" } },
+};

@@ -4,7 +4,11 @@ import { routePaths } from "../../app/routes";
 import { Link, useNavigate } from "react-router";
 import { queryIssues, type Issue, type IssueSearchResult } from "../../lib/api";
 
-export function GlobalIssueSearch({ returnTo, search = queryIssues, initialQuery = "" }: {
+export function GlobalIssueSearch({
+  returnTo,
+  search = queryIssues,
+  initialQuery = "",
+}: {
   returnTo: string;
   initialQuery?: string;
   search?: (filters: Record<string, string>) => Promise<IssueSearchResult>;
@@ -33,9 +37,15 @@ export function GlobalIssueSearch({ returnTo, search = queryIssues, initialQuery
     setLoading(true);
     const timer = window.setTimeout(() => {
       void search({ q: value })
-        .then((result) => { if (!cancelled) setResults(result.items.slice(0, 8)); })
-        .catch(() => { if (!cancelled) setError(true); })
-        .finally(() => { if (!cancelled) setLoading(false); });
+        .then((result) => {
+          if (!cancelled) setResults(result.items.slice(0, 8));
+        })
+        .catch(() => {
+          if (!cancelled) setError(true);
+        })
+        .finally(() => {
+          if (!cancelled) setLoading(false);
+        });
     }, 250);
     return () => {
       cancelled = true;
@@ -61,14 +71,23 @@ export function GlobalIssueSearch({ returnTo, search = queryIssues, initialQuery
       event.preventDefault();
       setActive((current) => (current <= 0 ? results.length - 1 : current - 1));
     } else if (event.key === "Enter" && active >= 0 && results[active]) {
-      navigate(routePaths.issueDetailFrom(results[active]!.owner, results[active]!.name, results[active]!.number, returnTo));
+      navigate(
+        routePaths.issueDetailFrom(
+          results[active]!.owner,
+          results[active]!.name,
+          results[active]!.number,
+          returnTo,
+        ),
+      );
     }
   }
 
   const showResults = open && query.trim().length >= 2;
   return (
     <div className="global-issue-search">
-      <label className="sr-only" htmlFor="global-issue-search-input">{t("searchAllIssues")}</label>
+      <label className="sr-only" htmlFor="global-issue-search-input">
+        {t("searchAllIssues")}
+      </label>
       <input
         ref={inputRef}
         id="global-issue-search-input"
@@ -80,29 +99,55 @@ export function GlobalIssueSearch({ returnTo, search = queryIssues, initialQuery
         aria-activedescendant={active >= 0 ? `${listId}-${active}` : undefined}
         placeholder={t("searchAllIssues")}
         value={query}
-        onChange={(event) => { setQuery(event.target.value); setOpen(true); }}
+        onChange={(event) => {
+          setQuery(event.target.value);
+          setOpen(true);
+        }}
         onFocus={() => setOpen(true)}
         onKeyDown={onKeyDown}
         onBlur={(event) => {
-          if (!event.currentTarget.parentElement?.contains(event.relatedTarget as Node | null)) dismiss();
+          if (
+            !event.currentTarget.parentElement?.contains(
+              event.relatedTarget as Node | null,
+            )
+          )
+            dismiss();
         }}
       />
-      {showResults && <div id={listId} className="global-issue-search-results" role="listbox" aria-label={t("searchResults")}>
-        {loading && <p role="status">{t("searchLoading")}</p>}
-        {error && <p role="alert">{t("searchFailed")}</p>}
-        {!loading && !error && results.length === 0 && <p>{t("searchNoResults")}</p>}
-        {results.map((issue, index) => <Link
-          id={`${listId}-${index}`}
-          key={`${issue.owner}/${issue.name}#${issue.number}`}
-          role="option"
-          aria-selected={index === active}
-          to={routePaths.issueDetailFrom(issue.owner, issue.name, issue.number, returnTo)}
-          onMouseEnter={() => setActive(index)}
+      {showResults && (
+        <div
+          id={listId}
+          className="global-issue-search-results"
+          role="listbox"
+          aria-label={t("searchResults")}
         >
-          <strong>{issue.title}</strong>
-          <span>{issue.owner}/{issue.name} · #{issue.number}</span>
-        </Link>)}
-      </div>}
+          {loading && <p role="status">{t("searchLoading")}</p>}
+          {error && <p role="alert">{t("searchFailed")}</p>}
+          {!loading && !error && results.length === 0 && (
+            <p>{t("searchNoResults")}</p>
+          )}
+          {results.map((issue, index) => (
+            <Link
+              id={`${listId}-${index}`}
+              key={`${issue.owner}/${issue.name}#${issue.number}`}
+              role="option"
+              aria-selected={index === active}
+              to={routePaths.issueDetailFrom(
+                issue.owner,
+                issue.name,
+                issue.number,
+                returnTo,
+              )}
+              onMouseEnter={() => setActive(index)}
+            >
+              <strong>{issue.title}</strong>
+              <span>
+                {issue.owner}/{issue.name} · #{issue.number}
+              </span>
+            </Link>
+          ))}
+        </div>
+      )}
     </div>
   );
 }

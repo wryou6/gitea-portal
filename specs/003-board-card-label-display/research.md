@@ -42,11 +42,11 @@
 
 ## Resolved Unknowns
 
-| Topic | Resolution |
-|---|---|
-| Hidden label scope | Board 所選 exact Workflow Convention 的 state Labels |
+| Topic                   | Resolution                                                                    |
+| ----------------------- | ----------------------------------------------------------------------------- |
+| Hidden label scope      | Board 所選 exact Workflow Convention 的 state Labels                          |
 | Other-convention Labels | 不因本 feature 修改；仍是完整 Issue data，是否呈現由 `visibleLabels` 規則保留 |
-| Issue list/detail | 維持完整 Labels，不套用 Board Card filter |
-| Persistence | None; `visibleLabels` 是 read-time view data |
-| Failure display | 保留 workflowRepair annotation、anomaly column 與 error message |
-| Empty labels | Omit empty Label container |
+| Issue list/detail       | 維持完整 Labels，不套用 Board Card filter                                     |
+| Persistence             | None; `visibleLabels` 是 read-time view data                                  |
+| Failure display         | 保留 workflowRepair annotation、anomaly column 與 error message               |
+| Empty labels            | Omit empty Label container                                                    |

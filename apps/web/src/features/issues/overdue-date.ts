@@ -1,4 +1,8 @@
-import { isCalendarDate, type IssueScheduleAnomaly, type IssueState } from "@gitea-portal/domain";
+import {
+  isCalendarDate,
+  type IssueScheduleAnomaly,
+  type IssueState,
+} from "@gitea-portal/domain";
 
 export type OverdueDateInput = {
   state: IssueState;
@@ -17,10 +21,12 @@ export function isIssueOverdue(
   issue: OverdueDateInput,
   today = localCalendarDate(),
 ): boolean {
-  return issue.state === "open" &&
+  return (
+    issue.state === "open" &&
     issue.dueDate !== null &&
     isCalendarDate(issue.dueDate) &&
     issue.scheduleAnomaly !== "invalid_due_date" &&
     issue.scheduleAnomaly !== "date_range_reversed" &&
-    issue.dueDate < today;
+    issue.dueDate < today
+  );
 }

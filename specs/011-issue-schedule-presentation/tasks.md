@@ -28,10 +28,10 @@ No blocking foundation tasks.
 
 ### Implementation
 
-- [X] T001 [US1] Create `ScheduleDates` in `apps/web/src/features/issues/ScheduleDates.tsx`; validate date-only values, format valid dates as `YYYY/MM/DD` without timezone conversion, expose `開始`/`到期` as labeled date values, and distinguish missing from anomalous values.
-- [X] T002 [P] [US1] Add `apps/web/src/features/issues/ScheduleDates.stories.tsx` with both dates, start-only, due-only, no dates, invalid start, invalid due, and reversed-range examples.
-- [X] T003 [US1] Integrate `ScheduleDates` into `apps/web/src/features/issues/IssueRow.tsx`, `apps/web/src/features/issues/IssueDetailHeader.tsx`, `apps/web/src/features/boards/KanbanCard.tsx`, and `apps/web/src/features/boards/GanttIssueRow.tsx`; update `apps/web/src/features/boards/GanttBoard.tsx` axis labels to `YYYY/MM/DD` and add responsive styles in `apps/web/src/index.css`.
-- [X] T004 [US1] Extend `apps/web/src/features/issues/IssueRow.stories.tsx`, `apps/web/src/features/issues/IssueDetailHeader.stories.tsx`, `apps/web/src/features/boards/KanbanCard.stories.tsx`, and `apps/web/src/features/boards/GanttIssueRow.stories.tsx` with representative date states and verify the shared labels remain readable in their actual layouts.
+- [x] T001 [US1] Create `ScheduleDates` in `apps/web/src/features/issues/ScheduleDates.tsx`; validate date-only values, format valid dates as `YYYY/MM/DD` without timezone conversion, expose `開始`/`到期` as labeled date values, and distinguish missing from anomalous values.
+- [x] T002 [P] [US1] Add `apps/web/src/features/issues/ScheduleDates.stories.tsx` with both dates, start-only, due-only, no dates, invalid start, invalid due, and reversed-range examples.
+- [x] T003 [US1] Integrate `ScheduleDates` into `apps/web/src/features/issues/IssueRow.tsx`, `apps/web/src/features/issues/IssueDetailHeader.tsx`, `apps/web/src/features/boards/KanbanCard.tsx`, and `apps/web/src/features/boards/GanttIssueRow.tsx`; update `apps/web/src/features/boards/GanttBoard.tsx` axis labels to `YYYY/MM/DD` and add responsive styles in `apps/web/src/index.css`.
+- [x] T004 [US1] Extend `apps/web/src/features/issues/IssueRow.stories.tsx`, `apps/web/src/features/issues/IssueDetailHeader.stories.tsx`, `apps/web/src/features/boards/KanbanCard.stories.tsx`, and `apps/web/src/features/boards/GanttIssueRow.stories.tsx` with representative date states and verify the shared labels remain readable in their actual layouts.
 
 **Checkpoint**: Every Issue/Board surface shows the same two date fields; Gantt keeps its existing range, single-day, unscheduled and anomaly behavior.
 
@@ -43,12 +43,12 @@ No blocking foundation tasks.
 
 ### Implementation
 
-- [X] T005 [P] [US2] Add `visibleIssueLabels` in `apps/web/src/features/issues/issueLabelPresentation.ts` to exclude `type:` and `start-date:` from presentation only; keep source `issue.labels` intact for Type parsing and mutations.
-- [X] T006 [P] [US2] Create reusable native date inputs in `apps/web/src/features/issues/ScheduleDateFields.tsx` with「開始日期」「到期日期」labels and accessible clear controls for edit mode.
-- [X] T007 [US2] Use `visibleIssueLabels` in `apps/web/src/features/issues/IssueRow.tsx`, `apps/web/src/features/issues/IssueDetailHeader.tsx`, and `apps/web/src/features/boards/KanbanCard.tsx`; preserve Issue Type parsing from the unfiltered labels.
-- [X] T008 [US2] Replace duplicate date input markup in `apps/web/src/features/issues/IssueCreatePage.tsx` and `apps/web/src/features/issues/IssueEditForm.tsx` with `ScheduleDateFields`; retain existing state, submit payload and Gitea write behavior.
-- [X] T009 [P] [US2] Add `apps/web/src/features/issues/ScheduleDateFields.stories.tsx` for create mode, populated edit mode and cleared values; include keyboard-focusable clear controls with descriptive names.
-- [X] T010 [US2] Update `apps/web/src/features/issues/IssueRow.stories.tsx`, `apps/web/src/features/issues/IssueDetailHeader.stories.tsx`, and `apps/web/src/features/boards/KanbanCard.stories.tsx` to include internal start-date Labels and ordinary Labels; confirm only the internal Labels are omitted from the rendered lists.
+- [x] T005 [P] [US2] Add `visibleIssueLabels` in `apps/web/src/features/issues/issueLabelPresentation.ts` to exclude `type:` and `start-date:` from presentation only; keep source `issue.labels` intact for Type parsing and mutations.
+- [x] T006 [P] [US2] Create reusable native date inputs in `apps/web/src/features/issues/ScheduleDateFields.tsx` with「開始日期」「到期日期」labels and accessible clear controls for edit mode.
+- [x] T007 [US2] Use `visibleIssueLabels` in `apps/web/src/features/issues/IssueRow.tsx`, `apps/web/src/features/issues/IssueDetailHeader.tsx`, and `apps/web/src/features/boards/KanbanCard.tsx`; preserve Issue Type parsing from the unfiltered labels.
+- [x] T008 [US2] Replace duplicate date input markup in `apps/web/src/features/issues/IssueCreatePage.tsx` and `apps/web/src/features/issues/IssueEditForm.tsx` with `ScheduleDateFields`; retain existing state, submit payload and Gitea write behavior.
+- [x] T009 [P] [US2] Add `apps/web/src/features/issues/ScheduleDateFields.stories.tsx` for create mode, populated edit mode and cleared values; include keyboard-focusable clear controls with descriptive names.
+- [x] T010 [US2] Update `apps/web/src/features/issues/IssueRow.stories.tsx`, `apps/web/src/features/issues/IssueDetailHeader.stories.tsx`, and `apps/web/src/features/boards/KanbanCard.stories.tsx` to include internal start-date Labels and ordinary Labels; confirm only the internal Labels are omitted from the rendered lists.
 
 **Checkpoint**: Users can set and clear dates through the same Gitea mutation flow; all intended dates remain visible without showing their backing Label string.
 
@@ -56,8 +56,8 @@ No blocking foundation tasks.
 
 **Purpose**: Confirm implementation against the visual states and responsive/accessibility requirements.
 
-- [X] T011 Run `pnpm.cmd typecheck`, `pnpm.cmd build`, and `pnpm.cmd --filter @gitea-portal/web build-storybook` from the repository root; fix any issues in the relevant `apps/web` source files.
-- [X] T012 Complete the Storybook review in `specs/011-issue-schedule-presentation/quickstart.md` at 375 px and desktop widths, in light and dark themes; verify keyboard reading order, labels, all date states and unchanged ordinary Labels.
+- [x] T011 Run `pnpm.cmd typecheck`, `pnpm.cmd build`, and `pnpm.cmd --filter @gitea-portal/web build-storybook` from the repository root; fix any issues in the relevant `apps/web` source files.
+- [x] T012 Complete the Storybook review in `specs/011-issue-schedule-presentation/quickstart.md` at 375 px and desktop widths, in light and dark themes; verify keyboard reading order, labels, all date states and unchanged ordinary Labels.
 
 ## Dependencies & Execution Order
 

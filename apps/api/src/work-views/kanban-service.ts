@@ -90,9 +90,11 @@ export async function getStatusColumns(
     ),
   );
   const cards = issueGroups.flatMap((issues) =>
-    issues.map(mapIssue).map((issue) =>
-      statusViewCard({ ...issue, visibleLabels: issue.labels }),
-    ),
+    issues
+      .map(mapIssue)
+      .map((issue) =>
+        statusViewCard({ ...issue, visibleLabels: issue.labels }),
+      ),
   );
   const anomalyCards = sortCards(
     cards.filter((card) => card.status === "anomaly"),

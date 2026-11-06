@@ -2,7 +2,10 @@ import type { Meta, StoryObj } from "@storybook/react";
 import { IssueListPage } from "./IssueListPage";
 import { demoIssue } from "../../stories/fixtures";
 import { AppShell } from "../../components/layout/AppShell";
-import { defaultIssueViewPreference, type IssueViewPreference } from "./issue-view-preference";
+import {
+  defaultIssueViewPreference,
+  type IssueViewPreference,
+} from "./issue-view-preference";
 import type { WorkViewFilters } from "../work-views/work-view-filters";
 
 const meta = {
@@ -73,16 +76,36 @@ export const Default: Story = {
 export const DesktopWorkspace: Story = {
   ...Default,
   parameters: { layout: "fullscreen" },
-  decorators: [(Story) => <AppShell login="engineer" routePathname="/issues" routeSearch="" workspaceRepositories={[]}><Story /></AppShell>],
+  decorators: [
+    (Story) => (
+      <AppShell
+        login="engineer"
+        routePathname="/issues"
+        routeSearch=""
+        workspaceRepositories={[]}
+      >
+        <Story />
+      </AppShell>
+    ),
+  ],
 };
-export const DesktopWorkspaceDark: Story = { ...DesktopWorkspace, globals: { theme: "dark" } };
+export const DesktopWorkspaceDark: Story = {
+  ...DesktopWorkspace,
+  globals: { theme: "dark" },
+};
 
 export const AlternatingRows: Story = {
   args: {
     demoIssues: [
       { ...demoIssue, number: 41, status: "todo" },
       { ...demoIssue, number: 42, status: "in-progress" },
-      { ...demoIssue, number: 43, status: "done", state: "closed", closedAt: localClosedAt(0) },
+      {
+        ...demoIssue,
+        number: 43,
+        status: "done",
+        state: "closed",
+        closedAt: localClosedAt(0),
+      },
       {
         ...demoIssue,
         number: 44,
@@ -116,10 +139,34 @@ export const DueDateDefaultAscending: Story = {
   args: {
     demoViewPreference: defaultIssueViewPreference(),
     demoIssues: [
-      { ...demoIssue, owner: "zeta", name: "service", number: 70, dueDate: "2026-10-24" },
-      { ...demoIssue, owner: "alpha", name: "portal", number: 3, dueDate: "2026-10-18" },
-      { ...demoIssue, owner: "zeta", name: "service", number: 5, dueDate: "2026-10-18" },
-      { ...demoIssue, owner: "demo", name: "frontend", number: 9, dueDate: null },
+      {
+        ...demoIssue,
+        owner: "zeta",
+        name: "service",
+        number: 70,
+        dueDate: "2026-10-24",
+      },
+      {
+        ...demoIssue,
+        owner: "alpha",
+        name: "portal",
+        number: 3,
+        dueDate: "2026-10-18",
+      },
+      {
+        ...demoIssue,
+        owner: "zeta",
+        name: "service",
+        number: 5,
+        dueDate: "2026-10-18",
+      },
+      {
+        ...demoIssue,
+        owner: "demo",
+        name: "frontend",
+        number: 9,
+        dueDate: null,
+      },
     ],
   },
 };
@@ -132,22 +179,56 @@ export const SavedKeyAscendingPreference: Story = {
       defaultSortDirection: "asc",
     },
     demoIssues: [
-      { ...demoIssue, owner: "zeta", name: "service", number: 70, dueDate: "2026-10-18" },
-      { ...demoIssue, owner: "alpha", name: "portal", number: 3, dueDate: "2026-10-24" },
+      {
+        ...demoIssue,
+        owner: "zeta",
+        name: "service",
+        number: 70,
+        dueDate: "2026-10-18",
+      },
+      {
+        ...demoIssue,
+        owner: "alpha",
+        name: "portal",
+        number: 3,
+        dueDate: "2026-10-24",
+      },
     ],
   },
 };
 
 export const SingleRepository: Story = {
-  args: { repository: { owner: "demo", name: "frontend" }, demoIssues: [demoIssue] },
+  args: {
+    repository: { owner: "demo", name: "frontend" },
+    demoIssues: [demoIssue],
+  },
 };
 
 export const MultiSelectFilters: Story = {
   args: {
     demoIssues: [
-      { ...demoIssue, number: 81, status: "todo", priority: "high", type: "bug" },
-      { ...demoIssue, number: 82, status: "in-progress", priority: "low", type: "task" },
-      { ...demoIssue, number: 83, status: "done", state: "closed", priority: "medium", type: "feature" },
+      {
+        ...demoIssue,
+        number: 81,
+        status: "todo",
+        priority: "high",
+        type: "bug",
+      },
+      {
+        ...demoIssue,
+        number: 82,
+        status: "in-progress",
+        priority: "low",
+        type: "task",
+      },
+      {
+        ...demoIssue,
+        number: 83,
+        status: "done",
+        state: "closed",
+        priority: "medium",
+        type: "feature",
+      },
     ],
     demoFilterValues: {
       priority: ["high", "low"],
@@ -161,20 +242,23 @@ export const MultiSelectFilters: Story = {
 
 export const LongTitleAndMissingMetadata: Story = {
   args: {
-    demoIssues: [{
-      ...demoIssue,
-      title: "跨多個 Repository 的整合工作需要持續檢查相依服務、相容性、權限邊界與回歸風險，並在發布前留下完整驗證紀錄",
-      assignee: null,
-      author: "",
-      type: null,
-      priority: null,
-      startDate: null,
-      dueDate: null,
-      scheduleStatus: "unscheduled",
-      status: "anomaly",
-      statusAnomaly: { reason: "missing_status", labels: [] },
-      labels: [{ name: "team:frontend" }],
-    }],
+    demoIssues: [
+      {
+        ...demoIssue,
+        title:
+          "跨多個 Repository 的整合工作需要持續檢查相依服務、相容性、權限邊界與回歸風險，並在發布前留下完整驗證紀錄",
+        assignee: null,
+        author: "",
+        type: null,
+        priority: null,
+        startDate: null,
+        dueDate: null,
+        scheduleStatus: "unscheduled",
+        status: "anomaly",
+        statusAnomaly: { reason: "missing_status", labels: [] },
+        labels: [{ name: "team:frontend" }],
+      },
+    ],
   },
 };
 
@@ -191,20 +275,41 @@ export const FutureDueDate: Story = {
 };
 
 export const ClosedIssueWithPastDueDate: Story = {
-  args: { demoIssues: [{ ...demoIssue, state: "closed", status: "done", closedAt: localClosedAt(0), dueDate: localDateOffset(-1) }] },
+  args: {
+    demoIssues: [
+      {
+        ...demoIssue,
+        state: "closed",
+        status: "done",
+        closedAt: localClosedAt(0),
+        dueDate: localDateOffset(-1),
+      },
+    ],
+  },
 };
 
 export const InvalidDueDate: Story = {
   args: {
-    demoIssues: [{ ...demoIssue, dueDate: null, scheduleStatus: "invalid", scheduleAnomaly: "invalid_due_date" }],
+    demoIssues: [
+      {
+        ...demoIssue,
+        dueDate: null,
+        scheduleStatus: "invalid",
+        scheduleAnomaly: "invalid_due_date",
+      },
+    ],
   },
 };
 
 export const Empty: Story = { args: { demoIssues: [] } };
 
-export const Loading: Story = { args: { demoIssues: [], demoState: "loading" } };
+export const Loading: Story = {
+  args: { demoIssues: [], demoState: "loading" },
+};
 
-export const ReadError: Story = { args: { demoIssues: [], demoState: "error" } };
+export const ReadError: Story = {
+  args: { demoIssues: [], demoState: "error" },
+};
 
 export const NarrowViewport: Story = {
   args: { demoIssues: [demoIssue] },
@@ -233,7 +338,18 @@ export const ViewOptionsDefault: Story = {
 const compactViewPreference: IssueViewPreference = {
   ...defaultIssueViewPreference(),
   visibleFields: ["key", "title", "priority", "author"],
-  columnOrder: ["type", "key", "title", "author", "assignee", "status", "priority", "startDate", "dueDate", "createdAt"],
+  columnOrder: [
+    "type",
+    "key",
+    "title",
+    "author",
+    "assignee",
+    "status",
+    "priority",
+    "startDate",
+    "dueDate",
+    "createdAt",
+  ],
   defaultSortField: "createdAt",
   defaultSortDirection: "desc",
 };
@@ -250,7 +366,18 @@ export const ViewOrderNeedsSave: Story = {
   args: {
     demoIssues: [demoIssue],
     demoViewPreference: compactViewPreference,
-    demoColumnOrder: ["type", "key", "priority", "title", "author", "assignee", "status", "startDate", "dueDate", "createdAt"],
+    demoColumnOrder: [
+      "type",
+      "key",
+      "priority",
+      "title",
+      "author",
+      "assignee",
+      "status",
+      "startDate",
+      "dueDate",
+      "createdAt",
+    ],
   },
 };
 
@@ -282,7 +409,18 @@ export const OrderAndSortNeedSave: Story = {
   args: {
     demoIssues: [demoIssue],
     demoViewPreference: compactViewPreference,
-    demoColumnOrder: ["type", "key", "priority", "title", "author", "assignee", "status", "startDate", "dueDate", "createdAt"],
+    demoColumnOrder: [
+      "type",
+      "key",
+      "priority",
+      "title",
+      "author",
+      "assignee",
+      "status",
+      "startDate",
+      "dueDate",
+      "createdAt",
+    ],
     demoSort: { sort: "key", direction: "asc" },
   },
 };
@@ -309,7 +447,18 @@ export const OrderAndSortNeedSaveNarrow: Story = {
   args: {
     demoIssues: [demoIssue],
     demoViewPreference: compactViewPreference,
-    demoColumnOrder: ["type", "key", "priority", "title", "author", "assignee", "status", "startDate", "dueDate", "createdAt"],
+    demoColumnOrder: [
+      "type",
+      "key",
+      "priority",
+      "title",
+      "author",
+      "assignee",
+      "status",
+      "startDate",
+      "dueDate",
+      "createdAt",
+    ],
     demoSort: { sort: "key", direction: "asc" },
   },
   parameters: { viewport: { defaultViewport: "mobile1" } },

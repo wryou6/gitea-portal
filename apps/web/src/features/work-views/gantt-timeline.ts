@@ -25,7 +25,11 @@ export function isCalendarDate(value: string): boolean {
   if (!/^\d{4}-\d{2}-\d{2}$/.test(value)) return false;
   const [year, month, day] = value.split("-").map(Number);
   const date = new Date(Date.UTC(year!, month! - 1, day!));
-  return date.getUTCFullYear() === year && date.getUTCMonth() === month! - 1 && date.getUTCDate() === day;
+  return (
+    date.getUTCFullYear() === year &&
+    date.getUTCMonth() === month! - 1 &&
+    date.getUTCDate() === day
+  );
 }
 
 export function addCalendarDays(value: string, days: number): string {
@@ -37,12 +41,18 @@ export function addCalendarDays(value: string, days: number): string {
 function addCalendarMonths(value: string, months: number): string {
   const [year, month, day] = value.split("-").map(Number);
   const target = new Date(Date.UTC(year!, month! - 1 + months, 1));
-  const lastDay = new Date(Date.UTC(target.getUTCFullYear(), target.getUTCMonth() + 1, 0)).getUTCDate();
+  const lastDay = new Date(
+    Date.UTC(target.getUTCFullYear(), target.getUTCMonth() + 1, 0),
+  ).getUTCDate();
   target.setUTCDate(Math.min(day!, lastDay));
   return target.toISOString().slice(0, 10);
 }
 
-export function shiftTimelineStartDate(value: string, scale: GanttScale, direction: -1 | 1): string {
+export function shiftTimelineStartDate(
+  value: string,
+  scale: GanttScale,
+  direction: -1 | 1,
+): string {
   if (scale === "month") return addCalendarMonths(value, direction);
   const days = scale === "day" ? 1 : scale === "week" ? 7 : 14;
   return addCalendarDays(value, days * direction);
@@ -64,9 +74,10 @@ export function getTimelineCell(
   if (scale === "month") {
     const [year, month] = date.split("-").map(Number);
     const start = `${year}-${String(month).padStart(2, "0")}-01`;
-    const end = month === 12
-      ? `${year! + 1}-01-01`
-      : `${year}-${String(month! + 1).padStart(2, "0")}-01`;
+    const end =
+      month === 12
+        ? `${year! + 1}-01-01`
+        : `${year}-${String(month! + 1).padStart(2, "0")}-01`;
     return { key: start, start, end };
   }
 
@@ -77,7 +88,10 @@ export function getTimelineCell(
     intervalAnchor = addCalendarDays(date, -weekday);
   }
   const offset = calendarDayOrdinal(date) - calendarDayOrdinal(intervalAnchor);
-  const start = addCalendarDays(intervalAnchor, Math.floor(offset / intervalDays) * intervalDays);
+  const start = addCalendarDays(
+    intervalAnchor,
+    Math.floor(offset / intervalDays) * intervalDays,
+  );
   const end = addCalendarDays(start, intervalDays);
   return { key: start, start, end };
 }
@@ -127,7 +141,10 @@ export function dateAtTimelinePosition(
   cells: GanttTimelineCell[],
 ): string {
   if (!cells.length) return localCalendarDate();
-  const bounded = Math.min(Math.max(position, 0), cells.length - Number.EPSILON);
+  const bounded = Math.min(
+    Math.max(position, 0),
+    cells.length - Number.EPSILON,
+  );
   const index = Math.floor(bounded);
   const cell = cells[index]!;
   const daySpan = countCalendarDays(cell.start, cell.end);

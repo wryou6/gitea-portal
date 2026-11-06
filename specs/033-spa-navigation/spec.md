@@ -14,7 +14,7 @@
 
 - Q: 深層網址驗收要涵蓋哪個環境？ → A: 限定目前 repo 可重現的本機 Vite 環境；正式 host fallback 列為部署需求，不納入本功能的主機設定變更。
 
-## User Scenarios & Testing *(mandatory)*
+## User Scenarios & Testing _(mandatory)_
 
 ### User Story 1 - 切換 Portal 畫面時不中斷操作 (Priority: P1)
 
@@ -68,7 +68,7 @@
 - 外部 Gitea、OAuth 登入及登出流程仍可完成其必要的完整頁面導向。
 - URL 含不適用或無效的工作檢視參數時，套用既有的清理與回退規則。
 
-## Requirements *(mandatory)*
+## Requirements _(mandatory)_
 
 ### Functional Requirements
 
@@ -81,12 +81,12 @@
 - **FR-007**: 外部 Gitea 與 OAuth 導航 MUST 維持其必要的站外導向及驗證行為。
 - **FR-008**: 本功能 MUST NOT 改變 Issue、Comment、Label、Assignee、Milestone 或狀態的資料來源、權限檢查及持久化行為。
 
-### Key Entities *(include if data involved)*
+### Key Entities _(include if data involved)_
 
 - **Portal 導航目的地**：目前頁面的路徑及其查詢狀態，用以還原工作區、檢視、Issue 與篩選脈絡。
 - **瀏覽器歷史項目**：使用者在 Portal 內切換或更新狀態所形成的可返回目的地序列。
 
-## Success Criteria *(mandatory)*
+## Success Criteria _(mandatory)_
 
 ### Measurable Outcomes
 

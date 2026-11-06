@@ -4,12 +4,12 @@
 
 ## Issue Schedule Presentation
 
-| Field | Source | Presentation |
-|---|---|---|
-| `startDate` | Existing `Issue.startDate`, nullable calendar date | 「開始」及 `YYYY/MM/DD`；缺值顯示「未設定」；無效/重複來源顯示日期異常 |
-| `dueDate` | Existing `Issue.dueDate`, nullable calendar date | 「到期」及 `YYYY/MM/DD`；缺值顯示「未設定」；無效來源顯示日期異常 |
-| `scheduleStatus` | Existing `Issue.scheduleStatus` | `scheduled`、`unscheduled` 或 `invalid` 決定 Gantt 區域與異常呈現 |
-| `scheduleAnomaly` | Existing optional anomaly code | 轉成繁體中文欄位／區間異常提示，不輸出原始 label 字串 |
+| Field             | Source                                             | Presentation                                                           |
+| ----------------- | -------------------------------------------------- | ---------------------------------------------------------------------- |
+| `startDate`       | Existing `Issue.startDate`, nullable calendar date | 「開始」及 `YYYY/MM/DD`；缺值顯示「未設定」；無效/重複來源顯示日期異常 |
+| `dueDate`         | Existing `Issue.dueDate`, nullable calendar date   | 「到期」及 `YYYY/MM/DD`；缺值顯示「未設定」；無效來源顯示日期異常      |
+| `scheduleStatus`  | Existing `Issue.scheduleStatus`                    | `scheduled`、`unscheduled` 或 `invalid` 決定 Gantt 區域與異常呈現      |
+| `scheduleAnomaly` | Existing optional anomaly code                     | 轉成繁體中文欄位／區間異常提示，不輸出原始 label 字串                  |
 
 ## Invariants
 

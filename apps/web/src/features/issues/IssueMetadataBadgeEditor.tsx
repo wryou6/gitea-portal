@@ -34,28 +34,33 @@ export function IssueMetadataBadgeEditor({
   const [pendingValue, setPendingValue] = useState<string>();
   const [error, setError] = useState<UserFacingError>();
   const fieldLabel = t(field === "priority" ? "priorityLabel" : "type");
-  const choices: Choice[] = field === "priority"
-    ? ISSUE_PRIORITIES.map((priority) => ({
-        value: priority,
-        label: t(`priority${priority[0]!.toUpperCase()}${priority.slice(1)}`),
-        className: `priority-badge priority-badge--${priority}`,
-      }))
-    : ISSUE_TYPES.map((type) => ({
-        value: type,
-        label: t(`type${type[0]!.toUpperCase()}${type.slice(1)}`),
-        className: `issue-type-badge issue-type-badge--${type}`,
-      }));
+  const choices: Choice[] =
+    field === "priority"
+      ? ISSUE_PRIORITIES.map((priority) => ({
+          value: priority,
+          label: t(`priority${priority[0]!.toUpperCase()}${priority.slice(1)}`),
+          className: `priority-badge priority-badge--${priority}`,
+        }))
+      : ISSUE_TYPES.map((type) => ({
+          value: type,
+          label: t(`type${type[0]!.toUpperCase()}${type.slice(1)}`),
+          className: `issue-type-badge issue-type-badge--${type}`,
+        }));
 
   const updatePosition = () => {
     const rect = triggerRef.current?.getBoundingClientRect();
     if (!rect) return;
     const width = popoverRef.current?.offsetWidth ?? 240;
     const height = popoverRef.current?.offsetHeight ?? 280;
-    const left = Math.max(8, Math.min(rect.left, window.innerWidth - width - 8));
+    const left = Math.max(
+      8,
+      Math.min(rect.left, window.innerWidth - width - 8),
+    );
     const below = rect.bottom + 4;
-    const top = below + height <= window.innerHeight - 8
-      ? below
-      : Math.max(8, rect.top - height - 4);
+    const top =
+      below + height <= window.innerHeight - 8
+        ? below
+        : Math.max(8, rect.top - height - 4);
     setPosition({ top, left });
   };
 
@@ -125,49 +130,79 @@ export function IssueMetadataBadgeEditor({
         className="issue-metadata-editor-trigger"
         aria-label={t("editIssueMetadata", {
           field: fieldLabel,
-          value: choices.find((choice) => choice.value === value)?.label ?? t("notSet"),
+          value:
+            choices.find((choice) => choice.value === value)?.label ??
+            t("notSet"),
         })}
         onDragStart={(event) => event.preventDefault()}
       >
         {children}
       </summary>
-      {open && createPortal(<div ref={popoverRef} className="issue-metadata-editor-popover" style={{ top: position.top, left: position.left }}>
-        <span className="issue-metadata-editor-label">{t("chooseIssueMetadata", { field: fieldLabel })}</span>
-        <div className="issue-metadata-editor-options" role="group" aria-label={t("chooseIssueMetadata", { field: fieldLabel })}>
-          {choices.map((choice) => (
-            <button
-              key={choice.value}
-              type="button"
-              className="issue-metadata-editor-option"
-              aria-pressed={value === choice.value}
-              disabled={saving}
-              onClick={() => void save(choice.value)}
-              onDragStart={(event) => event.preventDefault()}
+      {open &&
+        createPortal(
+          <div
+            ref={popoverRef}
+            className="issue-metadata-editor-popover"
+            style={{ top: position.top, left: position.left }}
+          >
+            <span className="issue-metadata-editor-label">
+              {t("chooseIssueMetadata", { field: fieldLabel })}
+            </span>
+            <div
+              className="issue-metadata-editor-options"
+              role="group"
+              aria-label={t("chooseIssueMetadata", { field: fieldLabel })}
             >
-              <span className={`label ${choice.className}`}>{choice.label}</span>
-            </button>
-          ))}
-        </div>
-        {saving && <span className="issue-metadata-editor-status" role="status" aria-live="polite">{t("savingIssueMetadata")}</span>}
-        {error && (
-          <div className="issue-metadata-editor-error">
-            <ErrorNotice message={error} />
-            {pendingValue && (
-              <button type="button" className="issue-metadata-editor-retry" onClick={() => void save(pendingValue)}>
-                {t("retryIssueMetadata")}
-              </button>
+              {choices.map((choice) => (
+                <button
+                  key={choice.value}
+                  type="button"
+                  className="issue-metadata-editor-option"
+                  aria-pressed={value === choice.value}
+                  disabled={saving}
+                  onClick={() => void save(choice.value)}
+                  onDragStart={(event) => event.preventDefault()}
+                >
+                  <span className={`label ${choice.className}`}>
+                    {choice.label}
+                  </span>
+                </button>
+              ))}
+            </div>
+            {saving && (
+              <span
+                className="issue-metadata-editor-status"
+                role="status"
+                aria-live="polite"
+              >
+                {t("savingIssueMetadata")}
+              </span>
             )}
-          </div>
+            {error && (
+              <div className="issue-metadata-editor-error">
+                <ErrorNotice message={error} />
+                {pendingValue && (
+                  <button
+                    type="button"
+                    className="issue-metadata-editor-retry"
+                    onClick={() => void save(pendingValue)}
+                  >
+                    {t("retryIssueMetadata")}
+                  </button>
+                )}
+              </div>
+            )}
+            <button
+              type="button"
+              className="issue-metadata-editor-cancel"
+              disabled={saving}
+              onClick={() => close(true)}
+            >
+              {t("cancelIssueMetadata")}
+            </button>
+          </div>,
+          document.body,
         )}
-        <button
-          type="button"
-          className="issue-metadata-editor-cancel"
-          disabled={saving}
-          onClick={() => close(true)}
-        >
-          {t("cancelIssueMetadata")}
-        </button>
-      </div>, document.body)}
     </details>
   );
 }

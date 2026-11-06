@@ -30,15 +30,15 @@
 
 ## Constitution Check
 
-| Principle | Gate | Design response |
-|---|---|---|
-| Gitea 是 Issue 資料唯一來源 | PASS | 拖曳預覽為暫態；已保存日期由 Gitea 更新與重新讀取提供。 |
-| 操作權限跟隨目前使用者 | PASS | 使用既有 authenticated Issue update 路徑，不新增較高權限的服務身分。 |
-| Gitea 寫入必須保全資料並可驗證 | PASS under Constitution Principle III exception | 沿用 `expectedUpdatedAt`、排程 Label atomic replacement、保留未修改欄位；由 spec 明確允許跨 Due date 與 Label 的依序寫入，失敗時重新讀取並呈現兩端實際值，不宣稱交易原子性。 |
-| 跨來源彙整不得呈現部分結果為完整資料 | PASS | 刷新沿用現有 Gantt loader；必要讀取失敗時呈現既有載入錯誤，不把拖曳預覽當成 Gitea 結果。 |
-| 共用固定 Issue Status 語意 | PASS | 不改狀態欄、狀態 Label、bar 狀態色或狀態轉移。 |
-| 工作範圍與資料來源清楚 | PASS | 保留 All repos 的 Repository 欄與原本 Gantt row 身分。 |
-| 使用者可見文字納入多語系 | PASS | 新增拖曳操作、錯誤及 live announcement 文字皆加入 zh-TW/en/ja。 |
+| Principle                            | Gate                                            | Design response                                                                                                                                                              |
+| ------------------------------------ | ----------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Gitea 是 Issue 資料唯一來源          | PASS                                            | 拖曳預覽為暫態；已保存日期由 Gitea 更新與重新讀取提供。                                                                                                                      |
+| 操作權限跟隨目前使用者               | PASS                                            | 使用既有 authenticated Issue update 路徑，不新增較高權限的服務身分。                                                                                                         |
+| Gitea 寫入必須保全資料並可驗證       | PASS under Constitution Principle III exception | 沿用 `expectedUpdatedAt`、排程 Label atomic replacement、保留未修改欄位；由 spec 明確允許跨 Due date 與 Label 的依序寫入，失敗時重新讀取並呈現兩端實際值，不宣稱交易原子性。 |
+| 跨來源彙整不得呈現部分結果為完整資料 | PASS                                            | 刷新沿用現有 Gantt loader；必要讀取失敗時呈現既有載入錯誤，不把拖曳預覽當成 Gitea 結果。                                                                                     |
+| 共用固定 Issue Status 語意           | PASS                                            | 不改狀態欄、狀態 Label、bar 狀態色或狀態轉移。                                                                                                                               |
+| 工作範圍與資料來源清楚               | PASS                                            | 保留 All repos 的 Repository 欄與原本 Gantt row 身分。                                                                                                                       |
+| 使用者可見文字納入多語系             | PASS                                            | 新增拖曳操作、錯誤及 live announcement 文字皆加入 zh-TW/en/ja。                                                                                                              |
 
 無 Constitution violation；沒有複雜度例外。
 

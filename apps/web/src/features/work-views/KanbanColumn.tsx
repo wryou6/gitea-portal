@@ -17,7 +17,11 @@ export function KanbanColumn({
   onDragStart: (issue: WorkViewCard) => void;
   onDropCard: (issue: WorkViewCard, stateKey: string) => void;
   returnTo?: string;
-  onMetadataSave?: (issue: WorkViewCard, field: "type" | "priority", value: string) => Promise<void>;
+  onMetadataSave?: (
+    issue: WorkViewCard,
+    field: "type" | "priority",
+    value: string,
+  ) => Promise<void>;
   showIssueNumber?: boolean;
 }) {
   const { t, i18n } = useTranslation("issues");
