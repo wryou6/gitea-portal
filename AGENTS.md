@@ -11,6 +11,7 @@
 - 修改前先檢查 `git status --short --branch`、相關 `README.md`、本檔案與 feature spec。
 - 保留與任務無關的既有變更；不要使用 `git reset --hard`、`git checkout --` 或 force push。
 - 不得提交 `.env`、OAuth secret、access token、session secret、private key 或其他 credentials。
+- 使用者指出 AI 判斷有誤（例如「不是 A，而是 B」）時，不可只替換答案或覆述 B。先確認 B 要達成的結果，並查明落差是規則／文件不明確、缺少前提，還是原解法本身不適合目標；用程式與文件證據區分事實和推測。若原解法無法可靠達標，提出並採用更合適的具體做法。確認是專案規則、契約或流程缺漏時，更新對應權威文件及受影響內容，讓後續 AI 能直接理解；不要把一次性或未確認的推測寫成永久規則。
 
 ## 技術邊界
 

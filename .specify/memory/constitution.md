@@ -1,8 +1,8 @@
 <!--
 Sync Impact Report
-Version change: 1.0.1 -> 2.0.0
-Modified principles: III. Gitea 寫入必須保全資料並可驗證 (added a narrow exception for
-  documented multi-endpoint Gitea mutations and explicit partial-result recovery)
+Version change: 2.0.0 -> 2.1.0
+Modified principles: None
+Added principles: VIII. 修正回饋必須追查認知落差
 Added sections: None
 Removed sections: None
 Follow-up TODOs: None
@@ -61,6 +61,14 @@ overwritten.
 提示、狀態文字及無障礙名稱均適用此原則；文字變更 MUST 檢查不同語系及窄螢幕下的
 版面可讀性。
 
+### VIII. 修正回饋必須追查認知落差
+
+當使用者指出 AI 的原判斷有誤並澄清「不是 A，而是 B」時，AI MUST 確認 B 背後要達成的結果，並檢查造成落差的根因。根因可能是專案規則或文件不明確、必要前提未被辨識，或原先提出的解法無法可靠達標；MUST NOT 只替換答案或假設使用者已指出完整根因。
+
+AI MUST 依程式、文件及其他可查證內容區分事實與推測。若使用者提出的做法不適合其目標，AI MUST 說明具體原因並提出可執行的更佳方案；MUST NOT 因照字面執行而保留已知的根本問題。
+
+若確認根因是專案規則、契約、流程或自動化防線的持續性缺口，AI MUST 更新最適合的權威文件或機制，並同步受影響內容，使後續工作能直接理解。一次性情境或尚未確認的推測 MUST NOT 被擴寫成永久規則；涉及產品決策或大範圍改動時，先提出具體方案再確認。
+
 ## Additional Constraints
 
 - OAuth secrets、access tokens、session secrets、private keys 與其他 credentials MUST NOT
@@ -70,6 +78,7 @@ overwritten.
 
 ## Development Process
 
+- 使用者修正 AI 判斷時，依原始目標追查認知落差、評估原解法及其根因；確認是專案層級缺口後，更新權威規則與相關文件，不只在對話中承認誤解。
 - 改變使用者可見行為或資料契約的功能 MUST 維護對應的 Spec Kit 規格與任務文件。
 - 功能實作前 MUST 完成 spec、plan、tasks 與跨文件分析；只有存在阻塞歧義時才進行
   clarify，分析確認沒有重大不一致後才能實作。
@@ -86,4 +95,4 @@ overwritten.
 規則遞增：移除或重新定義既有原則為 MAJOR；新增原則或實質擴充規範為 MINOR；不改變
 規範意義的澄清與修正文句為 PATCH。
 
-**Version**: 2.0.0 | **Ratified**: 2026-09-28 | **Last Amended**: 2026-10-07
+**Version**: 2.1.0 | **Ratified**: 2026-09-28 | **Last Amended**: 2026-11-07
