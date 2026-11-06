@@ -41,6 +41,7 @@ API 預設使用 `http://localhost:3001`，Web 預設使用 `http://localhost:51
 - 修改 Kanban/Gantt view 時，確認沒有新的 Issue persistence mutation，且 repair annotation、error、anomaly column、drag transition 仍可辨識。
 - 修改 UI 後至少執行 `pnpm.cmd typecheck` 與 `pnpm.cmd build`；若涉及 feature spec，更新對應 `specs/<feature>/` 文件與 tasks。
 - `specs/current/` 是已驗收且仍有效需求的權威契約；`specs/` 根層只放進行中的 feature，`specs/archive/` 保存已驗收、已同步的交付紀錄。日常需求判讀不得讀取 archive，除非使用者要求追查歷史。
+- `specs/current/` 必須是無歷史脈絡的產品終態說明：只描述現在應如何運作。每次需求變更都改寫同主題的現行條文，不新增差異、變更日誌、feature 來源／編號、舊行為、變更原因或驗收過程；需要保存的歷史放 feature/archive。提交 current 前依 `.specify/workflows/feature-lifecycle.md` 執行沿革詞與歷史連結檢查。
 - 新 feature 完成實作或 converge 只代表可請使用者驗收，不代表已驗收。只有使用者明確接受，且需求已同步至 `specs/current/` 後，才封存 feature；未收到確認就留在根層。封存保留原編號與目錄名，新編號取根層及 archive 最大編號加一，永不重用。
 - 需求建立、釐清、修訂或實作收斂時，依 `.specify/workflows/feature-lifecycle.md` 同步現行契約及處理驗收／封存。
 - Playwright E2E 使用 `pnpm.cmd --filter @gitea-portal/web test:e2e`。此腳本先建立 production bundle，再由測試直接載入產出的 CSS，以 `page.setContent()` 驗證版面；不要為這類純前端佈局測試啟動 Vite preview 或 API，也不需要 loopback 權限。使用獨立 Playwright 瀏覽器，不使用 Codex CUA MCP 或既有瀏覽器工作階段。若測試需要驗證真實 HTTP/API 整合，才設定 webServer，並從一開始要求本機 loopback 權限。

@@ -1,6 +1,6 @@
 # 產品現行需求契約
 
-本文件依根目錄 README、專案憲章及目前產品行為整理。已驗收的既有 feature 文件移至 archive 作交付證據；此處描述仍有效的產品要求。
+本文件描述 Portal 目前提供的產品能力及持續適用的產品規則。
 
 ## Source of Truth 與權限
 
@@ -36,6 +36,6 @@
 
 Epic、Parent/Child、dependency graph、Story Points、time tracking、Roadmap、custom fields、Pull Request、CI/CD 與獨立 Issue database 不屬於目前產品範圍。
 
-## 來源與治理
+## 需求來源
 
-詳細交付脈絡、原始驗收清單與 feature 分解保留於 `specs/archive/`，只供使用者要求追查歷史時查閱。新需求以本契約和使用者確認為準；新 feature 必須經使用者明確驗收並同步有效需求後才封存。
+Gitea 是 Issue 資料的權威來源；本目錄是 Portal 產品需求的權威來源。
