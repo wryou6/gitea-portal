@@ -60,30 +60,33 @@ describe("authenticated issue write route boundaries", () => {
     const app = await appPromise;
     let requests = 0;
 
-    await withMockGitea(() => {
-      requests += 1;
-      return Response.json({});
-    }, async () => {
-      for (const write of writes) {
-        const missing = await app.inject(write);
-        assert.equal(missing.statusCode, 401, write.url);
+    await withMockGitea(
+      () => {
+        requests += 1;
+        return Response.json({});
+      },
+      async () => {
+        for (const write of writes) {
+          const missing = await app.inject(write);
+          assert.equal(missing.statusCode, 401, write.url);
 
-        const expired = await app.inject({
-          ...write,
-          headers: {
-            cookie: `portal_session=${sessionCookie(Date.now() - 1)}`,
-          },
-        });
-        assert.equal(expired.statusCode, 401, write.url);
+          const expired = await app.inject({
+            ...write,
+            headers: {
+              cookie: `portal_session=${sessionCookie(Date.now() - 1)}`,
+            },
+          });
+          assert.equal(expired.statusCode, 401, write.url);
 
-        const invalidCookie = sessionCookie().replace(/.$/, "x");
-        const invalid = await app.inject({
-          ...write,
-          headers: { cookie: `portal_session=${invalidCookie}` },
-        });
-        assert.equal(invalid.statusCode, 401, write.url);
-      }
-    });
+          const invalidCookie = sessionCookie().replace(/.$/, "x");
+          const invalid = await app.inject({
+            ...write,
+            headers: { cookie: `portal_session=${invalidCookie}` },
+          });
+          assert.equal(invalid.statusCode, 401, write.url);
+        }
+      },
+    );
 
     assert.equal(requests, 0);
   });
@@ -92,19 +95,22 @@ describe("authenticated issue write route boundaries", () => {
     const app = await appPromise;
     let requests = 0;
 
-    await withMockGitea(() => {
-      requests += 1;
-      return Response.json({});
-    }, async () => {
-      for (const write of writes) {
-        const response = await app.inject({
-          ...write,
-          headers: { cookie: `portal_session=${sessionCookie()}` },
-        });
-        assert.equal(response.statusCode, 403, write.url);
-        assert.equal(response.json().code, "auth.csrf_failed");
-      }
-    });
+    await withMockGitea(
+      () => {
+        requests += 1;
+        return Response.json({});
+      },
+      async () => {
+        for (const write of writes) {
+          const response = await app.inject({
+            ...write,
+            headers: { cookie: `portal_session=${sessionCookie()}` },
+          });
+          assert.equal(response.statusCode, 403, write.url);
+          assert.equal(response.json().code, "auth.csrf_failed");
+        }
+      },
+    );
 
     assert.equal(requests, 0);
   });
@@ -114,25 +120,28 @@ describe("authenticated issue write route boundaries", () => {
     let permissionReads = 0;
     let writesToGitea = 0;
 
-    await withMockGitea(({ url }) => {
-      if (url.endsWith("/repos/owner/repo")) {
-        permissionReads += 1;
-        return Response.json({ permissions: { pull: true, push: false } });
-      }
-      writesToGitea += 1;
-      return Response.json({});
-    }, async () => {
-      for (const write of writes) {
-        const response = await app.inject({
-          ...write,
-          headers: {
-            cookie: `portal_session=${sessionCookie()}; portal_csrf=test-csrf`,
-            "x-csrf-token": "test-csrf",
-          },
-        });
-        assert.equal(response.statusCode, 403, write.url);
-      }
-    });
+    await withMockGitea(
+      ({ url }) => {
+        if (url.endsWith("/repos/owner/repo")) {
+          permissionReads += 1;
+          return Response.json({ permissions: { pull: true, push: false } });
+        }
+        writesToGitea += 1;
+        return Response.json({});
+      },
+      async () => {
+        for (const write of writes) {
+          const response = await app.inject({
+            ...write,
+            headers: {
+              cookie: `portal_session=${sessionCookie()}; portal_csrf=test-csrf`,
+              "x-csrf-token": "test-csrf",
+            },
+          });
+          assert.equal(response.statusCode, 403, write.url);
+        }
+      },
+    );
 
     assert.equal(permissionReads, writes.length);
     assert.equal(writesToGitea, 0);

@@ -2,7 +2,7 @@
 
 **Feature Branch**: `047-test-coverage`
 **Created**: 2026-11-06
-**Status**: In Progress
+**Status**: Completed
 **Input**: 為 Gitea Portal 建立前後端分層自動化測試，並依 handoff 補強 authenticated API writes、Gitea adapter 故障、Web 元件互動與 Issue status E2E。
 
 ## Clarifications

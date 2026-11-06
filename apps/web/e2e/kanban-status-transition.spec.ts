@@ -89,10 +89,7 @@ const statusDefinition = {
   ],
 };
 
-async function openBoard(
-  page: Page,
-  transitionStatus: number,
-) {
+async function openBoard(page: Page, transitionStatus: number) {
   let currentStatus: "todo" | "in-progress" = "todo";
   await page.addInitScript(() =>
     sessionStorage.setItem("gitea-portal:work-view-controls-collapsed", "true"),
@@ -122,18 +119,16 @@ async function openBoard(
       status: transitionStatus,
       json: {
         code:
-          transitionStatus === 403
-            ? "permission.denied"
-            : "resource.conflict",
+          transitionStatus === 403 ? "permission.denied" : "resource.conflict",
         error: transitionStatus === 403 ? "Permission denied" : "Conflict",
       },
     });
   });
 
   await page.goto("/repositories/owner/repo/kanban");
-  await expect(
-    page.locator(".kanban-column--todo .kanban-card"),
-  ).toHaveCount(1);
+  await expect(page.locator(".kanban-column--todo .kanban-card")).toHaveCount(
+    1,
+  );
 }
 
 async function dragIntoProgress(page: Page) {
@@ -159,9 +154,7 @@ for (const status of [200, 403, 409] as const) {
         page.locator(".kanban-column--todo .kanban-card"),
       ).toHaveCount(0);
     } else {
-      await expect(
-        page.getByRole("dialog").getByRole("alert"),
-      ).toBeVisible();
+      await expect(page.getByRole("dialog").getByRole("alert")).toBeVisible();
       await expect(
         page.locator(".kanban-column--todo .kanban-card"),
       ).toContainText("Transition verification issue");

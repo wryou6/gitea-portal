@@ -35,7 +35,7 @@
 
 - [x] T023 [P] 測試缺 session、錯誤簽章、過期 session 與缺 CSRF 的 issue create/update/comment/transition 拒絕，並斷言零次 Gitea write，位於 `apps/api/test/routes/issue-write-auth.test.ts`
 - [x] T024 [P] 測試無 push/comment 權限時各寫入 route 回 403 且零次 Gitea write，位於同測試檔
-- [ ] T025 測試授權 status transition 經 route/permission/service/adapter 成功，保留一般 Labels 並只呼叫一次 atomic replacement，新增 `apps/api/test/routes/issue-transition.test.ts`
+- [x] T025 測試授權 status transition 經 route/permission/service/adapter 成功，保留一般 Labels 並只呼叫一次 atomic replacement，位於 `apps/api/test/routes/issue-transition.test.ts`
 - [x] T026 測試 stale `expectedUpdatedAt` 回 409 且不觸發 Gitea writes，位於 `apps/api/test/routes/issue-transition.test.ts`
 
 ## Phase 4: User Story 1 - Gitea adapter failures (P1)
@@ -63,8 +63,8 @@
 ## Phase 7: Polish & Cross-Cutting
 
 - [x] T034 更新 README 與 `specs/047-test-coverage/quickstart.md`，記錄 component suite 指令與 mock 前提
-- [ ] T035 執行 `pnpm.cmd test:api`、`pnpm.cmd test:web`、`pnpm.cmd test:e2e`、`pnpm.cmd typecheck`、`pnpm.cmd build`、`pnpm.cmd format:check` 與 `git diff --check`
-- [ ] T036 對照 spec 更新狀態及測試結果，並確認未連接正式 Gitea、未使用正式 credentials
+- [x] T035 執行 `pnpm.cmd test:api`、`pnpm.cmd test:web`、`pnpm.cmd test:e2e`、`pnpm.cmd typecheck`、`pnpm.cmd build`、`pnpm.cmd format:check` 與 `git diff --check`
+- [x] T036 對照 spec 更新狀態及測試結果，並確認未連接正式 Gitea、未使用正式 credentials
 
 ## Dependencies
 

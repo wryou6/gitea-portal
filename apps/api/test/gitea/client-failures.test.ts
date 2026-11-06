@@ -7,7 +7,10 @@ import { withMockGitea } from "../helpers/mock-gitea.js";
 describe("GiteaClient failure handling", () => {
   for (const status of [401, 403, 404, 429, 500]) {
     it(`preserves HTTP ${status} errors`, async () => {
-      const client = new GiteaClient("http://gitea.test", "delegated-test-token");
+      const client = new GiteaClient(
+        "http://gitea.test",
+        "delegated-test-token",
+      );
       await withMockGitea(
         () => new Response("upstream failure", { status }),
         async () => {

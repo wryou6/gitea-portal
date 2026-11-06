@@ -130,11 +130,9 @@ describe("WorkViewFilterBar component", () => {
       await user.keyboard("{Enter}");
       expect(screen.getByLabelText("serialized filters").textContent).toBe("");
       expect(
-        screen
-          .getByRole("option", {
-            name: "a-very-long-assignee-login-for-layout-check",
-          })
-          .textContent,
+        screen.getByRole("option", {
+          name: "a-very-long-assignee-login-for-layout-check",
+        }).textContent,
       ).toBe("a-very-long-assignee-login-for-layout-check");
       unmount();
     }
