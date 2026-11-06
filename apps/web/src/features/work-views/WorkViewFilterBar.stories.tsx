@@ -53,19 +53,18 @@ export const NarrowLayout: Story = {
   parameters: { viewport: { defaultViewport: "mobile1" } },
 };
 
-function localClosedAt(daysAgo: number): string {
+function localDueDate(daysAgo: number): string {
   const date = new Date();
   date.setDate(date.getDate() - daysAgo);
-  date.setHours(12, 0, 0, 0);
-  return date.toISOString();
+  return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
 }
 
 const recentDoneExamples = [
-  { ...demoIssue, number: 101, title: "今天完成", status: "done" as const, state: "closed" as const, closedAt: localClosedAt(0) },
-  { ...demoIssue, number: 102, title: "起始日完成（第 30 天）", status: "done" as const, state: "closed" as const, closedAt: localClosedAt(29) },
-  { ...demoIssue, number: 103, title: "超出範圍一天", status: "done" as const, state: "closed" as const, closedAt: localClosedAt(30) },
-  { ...demoIssue, number: 104, title: "沒有完成時間", status: "done" as const, state: "closed" as const, closedAt: null },
-  { ...demoIssue, number: 105, title: "未完成項目不受日期限制", status: "todo" as const, closedAt: null },
+  { ...demoIssue, number: 101, title: "截止日期為今天", status: "done" as const, state: "closed" as const, dueDate: localDueDate(0) },
+  { ...demoIssue, number: 102, title: "截止日期在起始日（第 30 天）", status: "done" as const, state: "closed" as const, dueDate: localDueDate(29) },
+  { ...demoIssue, number: 103, title: "截止日期超出範圍一天", status: "done" as const, state: "closed" as const, dueDate: localDueDate(30) },
+  { ...demoIssue, number: 104, title: "沒有截止日期", status: "done" as const, state: "closed" as const, dueDate: null },
+  { ...demoIssue, number: 105, title: "未完成項目不受日期限制", status: "todo" as const, dueDate: null },
 ];
 
 function RecentDoneSummaryDemo() {

@@ -229,6 +229,7 @@ export function KanbanBoard({
             commonFilters={commonFilters}
             currentUserLogin={login}
             recentDoneOnly={recentDoneOnly}
+            onRecentDoneOnlyChange={setRecentDoneOnly}
             userProfiles={userProfiles}
             onScheduleSave={saveGanttSchedule}
             onMetadataSave={saveIssueMetadata}

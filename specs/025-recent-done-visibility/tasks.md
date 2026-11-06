@@ -56,6 +56,7 @@ description: "Task list for recent Done visibility and complete Issue List"
 
 - [X] T012 Update `specs/025-recent-done-visibility/quickstart.md` to reflect the implemented upper-left summary, checkbox, and unpaginated Issue List behavior.
 - [X] T013 Run `pnpm.cmd typecheck` and `pnpm.cmd build` from the repository root; resolve any failures caused by this feature.
+- [X] T014 Use `dueDate` instead of `closedAt` for the recent-Done date window, synchronize the controlled timeline checkbox with its parent state, and update the contract, locale summary, and validation guidance.
 
 ## Dependencies & Execution Order
 

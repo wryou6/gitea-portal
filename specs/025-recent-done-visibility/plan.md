@@ -6,7 +6,7 @@
 
 ## Summary
 
-Expose Gitea's completion timestamp throughout the existing Issue read model, then apply a transient, default-on 30-local-calendar-day filter to Done items in Issues List, Kanban, and Gantt. Change the Issue List read path to return every matching Issue in one response and remove page navigation; keep its existing sorting and filter behavior. No Portal or Gitea persistence is added.
+Apply a transient, default-on 30-local-calendar-day due-date filter to Done items in Issues List, Kanban, and Gantt. Change the Issue List read path to return every matching Issue in one response and remove page navigation; keep its existing sorting and filter behavior. No Portal or Gitea persistence is added.
 
 ## Technical Context
 
@@ -24,7 +24,7 @@ Expose Gitea's completion timestamp throughout the existing Issue read model, th
 
 **Performance Goals**: No new numeric latency target; the Issue List must return and render the complete filtered result set without page navigation
 
-**Constraints**: Preserve per-user Gitea authorization and whole-request failure behavior; use Gitea `closed_at`, never `updated_at`, as completion time; all new user-visible text must be localized in zh-TW, en, and ja
+**Constraints**: Preserve per-user Gitea authorization and whole-request failure behavior; use the existing Issue due date for the recent-Done window; all new user-visible text must be localized in zh-TW, en, and ja
 
 **Scale/Scope**: All repos and single Repository workspaces; Issues List, Kanban, and Gantt; two user stories
 
@@ -32,7 +32,7 @@ Expose Gitea's completion timestamp throughout the existing Issue read model, th
 
 | Principle | Status | Evidence / constraint |
 |-----------|--------|-----------------------|
-| I. Gitea is the sole Issue source | PASS | Read `closed_at` from Gitea; no Issue mirror or persistence |
+| I. Gitea is the sole Issue source | PASS | Read the existing Gitea due date; no Issue mirror or persistence |
 | II. Follow current user permissions | PASS | Reuse the delegated Gitea client and existing repository access scope |
 | III. Safe Gitea writes | PASS | This feature performs no Gitea writes |
 | IV. Aggregate results are complete or fail | PASS | Preserve all-pages reads and fail the request if a required read fails |
@@ -81,7 +81,8 @@ apps/web/src/i18n/resources/work-views.ts
 
 ## Design Decisions
 
-- Carry nullable Gitea `closed_at` through Gitea contract, domain summary, API response, and Web Issue type. A missing timestamp never qualifies for recent Done, but remains visible when the toggle is off.
+- Use the existing normalized `dueDate` in the Web Issue model for recent-Done visibility. Missing or invalid dates do not qualify, but remain visible when the toggle is off.
+- Pass the recent-Done state callback into the controlled Gantt rendered inside Kanban so toggling the timeline filter updates its owning state.
 - Keep the recent-Done toggle separate from URL-backed shared filters and persisted preferences. Each work-view page starts checked; reload or navigation remounts it checked.
 - Apply the predicate after the existing filters and only to issues whose resolved Portal Status is `done`; other statuses and anomalies pass through unchanged.
 - Return the complete Issue List result set from the API with the current sort applied. Remove page/has-next UI state and page controls; existing URLs with a `page` value are treated as the same full list.
@@ -89,8 +90,8 @@ apps/web/src/i18n/resources/work-views.ts
 
 ## Implementation Phases
 
-1. **Shared completion data**: Add `closedAt` to the Gitea/domain/API/Web issue shapes.
-2. **User Story 1 — completion visibility**: Add the localized accessible checkbox and shared predicate; apply recent-only and all-Done behavior to List, Kanban, and Gantt in both workspace scopes; update the upper-left result count and completion-condition summary, and reset the temporary value on reload/navigation.
+1. **Shared Issue data**: Use the existing normalized `dueDate` in the Web work-view predicate.
+2. **User Story 1 — recent-Done visibility**: Add the localized accessible checkbox and shared predicate; apply recent-only and all-Done behavior to List, Kanban, and Gantt in both workspace scopes; update the upper-left result count and due-date condition summary, and reset the temporary value on reload/navigation.
 3. **User Story 2 — complete Issue List**: Return the full sorted matching result set and remove Issue List pagination while preserving filters and sorting.
 4. **Polish**: Update representative Storybook fixtures/states and docs; run required typecheck/build and walk through quickstart scenarios.
 

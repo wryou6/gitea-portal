@@ -1,16 +1,16 @@
 # Research: 最近完成項目篩選與完整 Issue List
 
-## 決策：用 Gitea 關閉時間判斷完成日期
+## 決策：用 Issue 截止日期判斷近期 Done 項目
 
-- **Decision**: 將 Gitea Issue 的 `closed_at` 正規化為 Portal Issue 摘要的可空完成時間，傳給 Web work views。
-- **Rationale**: Done 對應 Gitea Closed；`updated_at` 表示最後更新而非完成時間，Issue 關閉後再編輯會錯誤改變近期範圍。Gitea Issue API 將 `closed_at` 定義為 date-time 欄位。[Gitea API: Get an issue](https://docs.gitea.com/api/operations/issue-get-issue/)
-- **Alternatives considered**: 使用 `updated_at`（不代表完成）；從關閉事件時間線查詢（增加每個 Issue 的額外請求且不符合現有讀取模型）。
+- **Decision**: 對 Done Issue 使用既有正規化欄位 `dueDate`；不使用 `closed_at` 或 `updated_at`。
+- **Rationale**: 近期範圍由使用者要求以截止日期判斷；截止日期已作為日曆日傳給 Web work views。
+- **Alternatives considered**: 使用關閉時間（不符合本次選定的截止日期語意）；使用 `updated_at`（代表最後更新）。
 
 ## 決策：以使用者當地日期套用 30 日視窗
 
-- **Decision**: 取當地今天及往前 29 個日曆日；將 Gitea 關閉時間轉成使用者當地日期後比較，起始日包含在內。缺少或無效的完成時間不符合近期條件。
+- **Decision**: 取當地今天及往前 29 個日曆日；將 `dueDate` 的日曆日期與此範圍比較，起始日包含在內。缺少或無效的截止日期不符合近期條件。
 - **Rationale**: 與已確認的「含今天的最近 30 個日曆日」一致，且跨 DST、月份及年份時仍按本地日曆日期運作。
-- **Alternatives considered**: 固定最近 30×24 小時（可能讓同一當地日期依時刻改變可見性）；以 `updated_at` 代替完成日期（語意錯誤）。
+- **Alternatives considered**: 固定最近 30×24 小時（可能讓同一當地日期依時刻改變可見性）；用 UTC 時刻解析日曆日（可能因時區偏移改變截止日期）。
 
 ## 決策：沿用現有完整 Gitea 讀取，取消 Portal Issue List 分頁
 
@@ -26,8 +26,8 @@
 
 ## 決策：只對 Done 套用 predicate
 
-- **Decision**: 先套用既有 Issue 條件，再只對 `status === "done"` 的項目檢查完成日期；其他狀態及異常項目維持可見。
-- **Rationale**: 開放中的工作沒有完成時間；近期限制只為縮短 Done 歷史欄，不應改變 Todo/In Progress 工作集合。
+- **Decision**: 先套用既有 Issue 條件，再只對 `status === "done"` 的項目檢查截止日期；其他狀態及異常項目維持可見。
+- **Rationale**: 近期限制只作用於 Done 歷史項目，不改變 Todo/In Progress 工作集合。
 - **Alternatives considered**: 對所有 Issue 套日期條件（會隱藏尚未完成工作）；改動 Gitea 狀態或搬移歷史項目（超出檢視功能範圍）。
 
 ## 資料流與錯誤處理

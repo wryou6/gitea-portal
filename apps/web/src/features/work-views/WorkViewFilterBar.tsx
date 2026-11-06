@@ -18,14 +18,16 @@ export function WorkViewRecentDoneFilter({
 }) {
   const { t } = useTranslation("work-views");
   return (
-    <label className="work-view-filter work-view-filter--checkbox">
-      <input
-        type="checkbox"
-        checked={checked}
-        onChange={(event) => onChange(event.currentTarget.checked)}
-      />
+    <button
+      type="button"
+      role="checkbox"
+      aria-checked={checked}
+      className="work-view-filter work-view-filter--checkbox"
+      onClick={() => onChange(!checked)}
+    >
+      <span className="work-view-checkbox-indicator" aria-hidden="true" />
       <span>{t("recentDoneOnly")}</span>
-    </label>
+    </button>
   );
 }
 

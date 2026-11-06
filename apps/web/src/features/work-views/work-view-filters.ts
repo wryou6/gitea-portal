@@ -1,4 +1,5 @@
 import type { Issue } from "../../lib/api";
+import { isCalendarDate } from "@gitea-portal/domain";
 import { sanitizeWorkViewSearch, type WorkViewURLView } from "./work-view-url-state";
 
 export type WorkViewFilters = {
@@ -30,14 +31,11 @@ export function matchesRecentDoneVisibility(
   today = localDateValue(new Date()),
 ): boolean {
   if (!recentDoneOnly || issue.status !== "done") return true;
-  if (!issue.closedAt) return false;
-  const closedAt = new Date(issue.closedAt);
-  if (!Number.isFinite(closedAt.getTime())) return false;
-  const closedDate = localDateValue(closedAt);
+  if (!issue.dueDate || !isCalendarDate(issue.dueDate)) return false;
   const [year, month, day] = today.split("-").map(Number);
   const startDate = new Date(year!, month! - 1, day!);
   startDate.setDate(startDate.getDate() - 29);
-  return closedDate >= localDateValue(startDate) && closedDate <= today;
+  return issue.dueDate >= localDateValue(startDate) && issue.dueDate <= today;
 }
 
 export function createDefaultWorkViewFilters(): WorkViewFilters {

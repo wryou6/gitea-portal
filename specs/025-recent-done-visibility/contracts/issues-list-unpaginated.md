@@ -10,7 +10,7 @@ Existing search, repository, status, assignee, priority, type, milestone, label,
 
 ### Response
 
-The response contains the complete `items` array and no pagination metadata (`page`, `limit`, or `hasNext`). Each item includes `closedAt`, sourced from Gitea `closed_at` and nullable when no timestamp is available.
+The response contains the complete `items` array and no pagination metadata (`page`, `limit`, or `hasNext`). Each item includes its existing nullable `dueDate` calendar date for recent-Done visibility filtering.
 
 ### Completeness and failures
 
@@ -18,4 +18,4 @@ The endpoint aggregates all Gitea pages for all repositories in scope before ret
 
 ## Work-view control behavior
 
-Issues List, Kanban, and Gantt expose an accessible, localized checkbox in the left control panel. It defaults to checked on each page entry, is not serialized to the URL or account preferences, and updates the visible result and upper-left summary immediately. The summary includes the result count and, while checked, “Completed: last 30 days”. It filters only Done items based on their local calendar `closedAt` date; unchecking includes all Done items and removes the date condition from the summary.
+Issues List, Kanban, and Gantt expose an accessible, localized checkbox in the left control panel. It defaults to checked on each page entry, is not serialized to the URL or account preferences, and updates the visible result and upper-left summary immediately. The summary includes the result count and, while checked, “Due date: last 30 days”. It filters only Done items whose `dueDate` is within the inclusive local-calendar window; unchecking includes all Done items and removes the date condition from the summary. When Gantt is rendered inside Kanban's timeline view, its change callback updates the owning Kanban state so the checkbox and results stay synchronized.
