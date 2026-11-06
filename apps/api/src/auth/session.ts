@@ -1,6 +1,7 @@
 import { createHmac, randomBytes, timingSafeEqual } from 'node:crypto';
 import type { FastifyReply, FastifyRequest } from 'fastify';
 import type { AppConfig } from '../config/env.js';
+import { webBasePath } from '../config/web-path.js';
 
 export type PortalSession = { login: string; accessToken: string; expiresAt: number; csrfToken?: string; fullName?: string; avatarUrl?: string };
 const COOKIE = 'portal_session';
@@ -33,13 +34,15 @@ export function readSession(request: FastifyRequest, config: AppConfig): PortalS
 
 export function setSession(reply: FastifyReply, session: PortalSession, config: AppConfig): void {
   const csrfToken = session.csrfToken ?? randomBytes(24).toString('base64url');
-  reply.header('Set-Cookie', [`${COOKIE}=${encodeSession({ ...session, csrfToken }, config.sessionSecret)}; HttpOnly; SameSite=Lax; Path=/`, `portal_csrf=${csrfToken}; SameSite=Lax; Path=/`]);
+  const cookiePath = webBasePath(config) || '/';
+  reply.header('Set-Cookie', [`${COOKIE}=${encodeSession({ ...session, csrfToken }, config.sessionSecret)}; HttpOnly; SameSite=Lax; Path=${cookiePath}`, `portal_csrf=${csrfToken}; SameSite=Lax; Path=${cookiePath}`]);
 }
 
-export function clearSession(reply: FastifyReply): void {
+export function clearSession(reply: FastifyReply, config: AppConfig): void {
+  const cookiePath = webBasePath(config) || '/';
   reply.header('Set-Cookie', [
-    `${COOKIE}=; HttpOnly; SameSite=Lax; Max-Age=0; Path=/`,
-    'portal_csrf=; SameSite=Lax; Max-Age=0; Path=/',
+    `${COOKIE}=; HttpOnly; SameSite=Lax; Max-Age=0; Path=${cookiePath}`,
+    `portal_csrf=; SameSite=Lax; Max-Age=0; Path=${cookiePath}`,
   ]);
 }
 export function sessionState(): PortalSession { return { login: '', accessToken: randomBytes(32).toString('hex'), expiresAt: Date.now() + 8 * 60 * 60 * 1000 }; }

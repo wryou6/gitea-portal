@@ -23,7 +23,8 @@ export class PortalApiError extends Error {
 
 export type UserFacingError = string | PortalApiError;
 
-const SESSION_PATH = "/api/session";
+const APP_BASE_PATH = import.meta.env.BASE_URL.replace(/\/$/, "");
+const SESSION_PATH = `${APP_BASE_PATH}/api/session`;
 const SESSION_EXPIRED_KEY = "gitea-portal:session-expired";
 let authReloadScheduled = false;
 
@@ -137,9 +138,10 @@ export type AllRepositoriesGanttView = { repositories: Repository[]; issues: Iss
 
 export async function api<T>(path: string, init?: RequestInit): Promise<T> {
   const startedAt = performance.now();
+  const requestPath = path.startsWith("/") ? `${APP_BASE_PATH}${path}` : path;
   const csrf = document.cookie.match(/(?:^|;\s*)portal_csrf=([^;]+)/)?.[1];
   try {
-    const response = await fetch(path, {
+    const response = await fetch(requestPath, {
       ...init,
       credentials: "same-origin",
       headers: {
@@ -177,7 +179,7 @@ export async function api<T>(path: string, init?: RequestInit): Promise<T> {
       );
       if (
         portalError.code === "auth.required" &&
-        new URL(path, window.location.origin).pathname !== SESSION_PATH &&
+        new URL(requestPath, window.location.origin).pathname !== SESSION_PATH &&
         !authReloadScheduled
       ) {
         authReloadScheduled = true;
@@ -195,7 +197,7 @@ export async function api<T>(path: string, init?: RequestInit): Promise<T> {
       : (response.json() as Promise<T>);
   } finally {
     const durationMs = Math.round((performance.now() - startedAt) * 100) / 100;
-    console.debug("[portal-timing]", { name: path, durationMs });
+    console.debug("[portal-timing]", { name: requestPath, durationMs });
   }
 }
 

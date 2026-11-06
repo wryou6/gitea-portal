@@ -14,7 +14,8 @@ export function LoginPage({
   sessionExpired?: boolean;
 }) {
   const { t } = useTranslation("auth");
-  const loginUrl = new URL("/auth/login", window.location.origin);
+  const basePath = import.meta.env.BASE_URL.replace(/\/$/, "");
+  const loginUrl = new URL(`${basePath}/auth/login`, window.location.origin);
   const safeTarget = safeReturnTo(returnTo) ?? "/";
   loginUrl.searchParams.set("returnTo", safeTarget);
 
@@ -22,7 +23,7 @@ export function LoginPage({
     <main className="auth-page">
       <section className="auth-card" aria-labelledby="auth-title">
         <Link className="auth-brand" to="/" aria-label="Gitea Portal">
-          <img src="/favicon.svg" alt="" />
+          <img src={`${import.meta.env.BASE_URL}favicon.svg`} alt="" />
           <span>Gitea Portal</span>
         </Link>
         <div className="auth-copy">

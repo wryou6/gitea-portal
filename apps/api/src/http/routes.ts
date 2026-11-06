@@ -28,7 +28,8 @@ export function registerHttpRoutes(app: FastifyInstance, config: AppConfig): voi
     const transaction = consumeOAuthTransaction(request, config, state);
     if (!transaction) {
       clearOAuthTransactionCookie(reply, config);
-      const failure = new URL(withAuthError('/', 'failed'), config.webOrigin);
+      const failurePath = withAuthError(safePortalReturnTo('/', config.webOrigin), 'failed');
+      const failure = new URL(failurePath, new URL(config.webOrigin).origin);
       return reply.redirect(failure.toString());
     }
     const returnTo = safePortalReturnTo(transaction.returnTo, config.webOrigin);
@@ -54,7 +55,7 @@ export function registerHttpRoutes(app: FastifyInstance, config: AppConfig): voi
     clearOAuthTransactionCookie(reply, config);
     return reply.redirect(new URL(returnTo, config.webOrigin).toString());
   });
-  app.post('/auth/logout', async (_request, reply) => { clearSession(reply); return reply.code(204).send(); });
+  app.post('/auth/logout', async (_request, reply) => { clearSession(reply, config); return reply.code(204).send(); });
   app.get('/api/session', async (request, reply) => {
     const session = readSession(request, config);
     if (!session) return reply.code(401).send(apiErrorResponse('auth.required', 'Authentication required'));
@@ -62,7 +63,7 @@ export function registerHttpRoutes(app: FastifyInstance, config: AppConfig): voi
     try {
       const user = await client.currentUser();
       if (user.login !== session.login) {
-        clearSession(reply);
+        clearSession(reply, config);
         return reply.code(401).send(apiErrorResponse('auth.required', 'Authentication required'));
       }
       const fullName = user.fullName?.trim() || undefined;

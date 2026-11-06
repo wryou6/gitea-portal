@@ -10,7 +10,7 @@ import { registerStatusDefinitionRoutes } from "./http/status-definition-routes.
 
 export async function buildApp(config: AppConfig) {
   const app = Fastify({ logger: true });
-  registerErrorHandler(app);
+  registerErrorHandler(app, config);
   registerRequestMetrics(app);
   registerHttpRoutes(app, config);
   registerAuthMiddleware(app, config);

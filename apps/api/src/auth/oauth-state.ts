@@ -1,9 +1,9 @@
 import { createHmac, randomBytes, timingSafeEqual } from "node:crypto";
 import type { FastifyReply, FastifyRequest } from "fastify";
 import type { AppConfig } from "../config/env.js";
+import { webBasePath } from "../config/web-path.js";
 
 const COOKIE_NAME = "portal_oauth_transaction";
-const COOKIE_PATH = "/auth/callback";
 const TRANSACTION_LIFETIME_MS = 10 * 60 * 1000;
 
 export type OAuthTransaction = {
@@ -43,10 +43,11 @@ export function createOAuthTransaction(
   const payload = Buffer.from(JSON.stringify(transaction)).toString("base64url");
   const value = `${payload}.${sign(payload, config.sessionSecret)}`;
   const secure = secureCookie(config) ? "; Secure" : "";
+  const cookiePath = `${webBasePath(config)}/auth/callback`;
 
   appendSetCookie(
     reply,
-    `${COOKIE_NAME}=${value}; HttpOnly; SameSite=Lax; Path=${COOKIE_PATH}; Max-Age=${TRANSACTION_LIFETIME_MS / 1000}${secure}`,
+    `${COOKIE_NAME}=${value}; HttpOnly; SameSite=Lax; Path=${cookiePath}; Max-Age=${TRANSACTION_LIFETIME_MS / 1000}${secure}`,
   );
   return transaction.state;
 }
@@ -99,8 +100,9 @@ export function clearOAuthTransactionCookie(
   config: AppConfig,
 ): void {
   const secure = secureCookie(config) ? "; Secure" : "";
+  const cookiePath = `${webBasePath(config)}/auth/callback`;
   appendSetCookie(
     reply,
-    `${COOKIE_NAME}=; HttpOnly; SameSite=Lax; Path=${COOKIE_PATH}; Max-Age=0${secure}`,
+    `${COOKIE_NAME}=; HttpOnly; SameSite=Lax; Path=${cookiePath}; Max-Age=0${secure}`,
   );
 }

@@ -32,6 +32,20 @@ pnpm.cmd dev
 
 API 會讀取專案根目錄的 `.env`。API 與 Web 分開啟動時，Web Vite dev server 會將 `/api` proxy 到 `http://localhost:3001`。
 
+## IIS 子應用程式部署
+
+若 Portal 部署於 IIS 預設網站的 `/issue` 子應用程式，使用下列命令建立對應前端 bundle：
+
+```powershell
+$env:VITE_BASE_PATH = "/issue/"
+pnpm.cmd build
+Remove-Item Env:VITE_BASE_PATH
+```
+
+將 `apps/web/dist` 內的內容複製到 IIS 子應用程式實體目錄。產物包含 `web.config`，為不存在的前端路徑回退至 `index.html`；IIS 需啟用 URL Rewrite。API 仍須由獨立 Node.js 程序執行。設定 `WEB_ORIGIN` 為完整 Portal 公開網址（例如 `http://portal-host/issue/`），並將 Gitea OAuth callback 設為同一主機的 `/issue/auth/callback`。IIS 需把 `/issue/api/*` 和 `/issue/auth/*` 轉送至 API，移除 `/issue` 前綴；這些反向代理規則由部署環境配置，未包含在靜態 bundle 中。
+
+實際 API 環境變數、ARR 反向代理、Gitea OAuth 與 Windows 工作排程設定，請參考 [IIS 子應用程式部署與操作手冊](specs/044-iis-subpath-deployment/deployment-runbook.md)。
+
 ## 環境變數
 
 | 變數                        | 必填 | 用途                                                                   |
@@ -44,7 +58,7 @@ API 會讀取專案根目錄的 `.env`。API 與 Web 分開啟動時，Web Vite 
 | `GITEA_API_TIMEOUT_MS`      | 否   | Gitea API timeout，預設 `10000`                                        |
 | `PORTAL_SESSION_SECRET`     | 是   | Portal session signing secret；不要使用 `replace-me`                   |
 | `API_PORT`                  | 否   | API port，預設 `3001`                                                  |
-| `WEB_ORIGIN`                | 否   | Web origin，預設 `http://localhost:5173`                               |
+| `WEB_ORIGIN`                | 否   | Portal 公開網址，預設 `http://localhost:5173`；子路徑部署時需包含路徑，例如 `/issue/` |
 
 不要將 `.env`、OAuth secret、access token 或 session secret commit 到 repository。
 

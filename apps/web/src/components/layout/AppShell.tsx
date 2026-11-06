@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, type ReactNode } from "react";
-import { Link, useNavigate } from "react-router";
+import { Link, useLocation, useNavigate } from "react-router";
 import { resolveAppRoute, resolveWorkViewNavigationContext, routePaths, safeReturnTo, workViewForRoute } from "../../app/routes";
 import { WorkspaceSelector } from "./WorkspaceSelector";
 import { useTranslation } from "react-i18next";
@@ -70,9 +70,10 @@ export function AppShell({
 }) {
   const { t } = useTranslation("common");
   const navigate = useNavigate();
+  const location = useLocation();
   const { t: authT } = useTranslation("auth");
-  const pathname = routePathname ?? window.location.pathname;
-  const search = routeSearch ?? window.location.search;
+  const pathname = routePathname ?? location.pathname;
+  const search = routeSearch ?? location.search;
   const route = resolveAppRoute(
     pathname,
     search,
@@ -100,7 +101,7 @@ export function AppShell({
     setLogoutFailed(false);
     try {
       await api<void>("/auth/logout", { method: "POST" });
-      window.location.assign("/");
+      window.location.assign(import.meta.env.BASE_URL);
     } catch {
       setLogoutFailed(true);
       setLogoutPending(false);
@@ -221,7 +222,7 @@ export function AppShell({
       <header className="topbar">
         <div className="topbar-primary">
           <div className="brand" aria-label="Gitea Portal">
-            <img className="brand-mark" src="/favicon.svg" alt="" />
+            <img className="brand-mark" src={`${import.meta.env.BASE_URL}favicon.svg`} alt="" />
             <span>Gitea Portal</span>
           </div>
           <Link
@@ -288,7 +289,7 @@ export function AppShell({
                   if (event.detail > 0) event.currentTarget.blur();
                   event.preventDefault();
                   const target = new URL(item.href, window.location.origin);
-                  const current = resolveWorkViewNavigationContext(window.location.pathname, window.location.search);
+                  const current = resolveWorkViewNavigationContext(pathname, search);
                   const currentView = workViewForRoute(current.route) as WorkViewURLView | undefined;
                   target.search = buildWorkViewSearch(current.search, currentView, item.key as WorkViewURLView);
                   navigate(`${target.pathname}${target.search}`);

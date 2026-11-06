@@ -1,3 +1,5 @@
+import { webBasePath } from "../config/web-path.js";
+
 export const DEFAULT_RETURN_TO = "/";
 export const AUTH_ERROR_QUERY = "portalAuthError";
 
@@ -20,6 +22,9 @@ export function safePortalReturnTo(
   value: unknown,
   webOrigin: string,
 ): string {
+  const webUrl = new URL(webOrigin);
+  const basePath = webBasePath({ webOrigin });
+  const defaultReturnTo = basePath ? `${basePath}/` : DEFAULT_RETURN_TO;
   if (
     typeof value !== "string" ||
     !value.startsWith("/") ||
@@ -27,19 +32,24 @@ export function safePortalReturnTo(
     value.includes("\\") ||
     value.length > 2048
   )
-    return DEFAULT_RETURN_TO;
+    return defaultReturnTo;
 
   try {
-    const origin = new URL(webOrigin).origin;
+    const origin = webUrl.origin;
     const url = new URL(value, origin);
-    const path = url.pathname.length > 1 ? url.pathname.replace(/\/+$/, "") : url.pathname;
+    const externalPath = url.pathname.length > 1 ? url.pathname.replace(/\/+$/, "") : url.pathname;
+    const path = basePath && externalPath.startsWith(`${basePath}/`)
+      ? externalPath.slice(basePath.length)
+      : externalPath === basePath
+        ? "/"
+        : externalPath;
     if (url.origin !== origin || !isKnownPortalPath(path))
-      return DEFAULT_RETURN_TO;
+      return defaultReturnTo;
 
     url.searchParams.delete(AUTH_ERROR_QUERY);
-    return `${path}${url.search}`;
+    return `${basePath}${path === "/" ? "/" : path}${url.search}`;
   } catch {
-    return DEFAULT_RETURN_TO;
+    return defaultReturnTo;
   }
 }
 
