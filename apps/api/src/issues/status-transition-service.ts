@@ -227,7 +227,7 @@ export async function transitionIssue(
       const actual = mapIssue(restored);
       throw new PortalError(
         409,
-        `工作流轉換失敗；已還原原狀態。實際資料：${JSON.stringify(actual)}`,
+        `工作流轉換失敗；已還原原狀態。原因：${error instanceof Error ? error.message : String(error)}；實際資料：${JSON.stringify(actual)}`,
       );
     } catch (rollbackError) {
       if (

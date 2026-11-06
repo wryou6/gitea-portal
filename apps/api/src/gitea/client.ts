@@ -410,7 +410,8 @@ export class GiteaClient {
         `/repos/${encodeURIComponent(repository.owner)}/${encodeURIComponent(repository.name)}/labels?page=${page}&limit=100`,
       );
       labels.push(...current);
-      if (current.length < 100) return labels;
+      // Gitea may cap the requested page size below 100.
+      if (current.length === 0) return labels;
     }
   }
 
