@@ -63,9 +63,11 @@ export function KanbanBoard({
   }, [location.key, location.search]);
 
   const load = useCallback(
-    async (clearError = true) => {
-      setView(undefined);
-      setGanttView(undefined);
+    async (clearError = true, preserveCurrentView = false) => {
+      if (!preserveCurrentView) {
+        setView(undefined);
+        setGanttView(undefined);
+      }
       if (clearError) setError(undefined);
       try {
         if (repository) {
@@ -170,10 +172,10 @@ export function KanbanBoard({
         selectedAssignee,
       );
       if (pendingTransition.targetState) setActiveColumnKey(pendingTransition.targetState);
-      await load();
+      await load(true, true);
     } catch (cause) {
       setError(toUserFacingError(cause, t("transitionRejected")));
-      await load(false);
+      await load(false, true);
       throw cause;
     }
   };
@@ -190,10 +192,10 @@ export function KanbanBoard({
           ...schedule,
         }),
       });
-      await load();
+      await load(true, true);
     } catch (cause) {
       setError(toUserFacingError(cause, t("ganttScheduleSaveFailed")));
-      await load(false);
+      await load(false, true);
       throw cause;
     }
   };
@@ -204,16 +206,16 @@ export function KanbanBoard({
         method: "PATCH",
         body: JSON.stringify({ expectedUpdatedAt: issue.updatedAt, [field]: value }),
       });
-      await load();
+      await load(true, true);
     } catch (cause) {
-      await load(false);
+      await load(false, true);
       throw cause;
     }
   };
 
   return (
     <section className={viewMode === "gantt" ? "workspace-view workspace-view--gantt" : "workspace-view"}>
-      {error && <><ErrorNotice message={error} /><button type="button" onClick={() => void load()}>{t("retry")}</button></>}
+      {error && <><ErrorNotice message={error} /><button type="button" onClick={() => void load(true, true)}>{t("retry")}</button></>}
       <PageHeader
         title={repositoryView?.fullName ?? tCommon(viewMode === "gantt" ? "gantt" : "kanban")}
         compact

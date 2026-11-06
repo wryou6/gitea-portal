@@ -180,6 +180,8 @@ export function GanttBoard({
   const [maxContentColumnWidths, setMaxContentColumnWidths] = useState<Record<string, number>>({});
   const [isNarrowViewport, setIsNarrowViewport] = useState(() => window.matchMedia("(max-width: 720px)").matches);
   const [visibleDate, setVisibleDate] = useState(initialDate);
+  const visibleDateRef = useRef(initialDate);
+  const previousInitialDate = useRef(initialDate);
   const chartScrollRef = useRef<HTMLDivElement>(null);
   const activeTimelinePan = useRef<ActiveTimelinePan | undefined>(undefined);
   const activeColumnResize = useRef<ActiveColumnResize | undefined>(undefined);
@@ -322,8 +324,12 @@ export function GanttBoard({
       isExtendingTimeline.current = false;
       return;
     }
-    chartScrollRef.current.scrollLeft = selectedPosition;
-    setVisibleDate(initialDate);
+    const initialDateChanged = previousInitialDate.current !== initialDate;
+    previousInitialDate.current = initialDate;
+    const anchorDate = initialDateChanged ? initialDate : visibleDateRef.current;
+    chartScrollRef.current.scrollLeft = timelinePosition(anchorDate, cells) * unitWidth;
+    visibleDateRef.current = anchorDate;
+    setVisibleDate(anchorDate);
   }, [selectedPosition, timelineWidth, fieldGridTemplate, fieldsWidth, isNarrowViewport, initialDate]);
 
   function extendTimeline(direction: -1 | 1): number {
@@ -616,7 +622,9 @@ export function GanttBoard({
           onPointerCancel={finishChartPointerPan}
           onLostPointerCapture={finishChartPointerPan}
           onScroll={(event) => {
-            setVisibleDate(dateAtTimelinePosition(event.currentTarget.scrollLeft / unitWidth, cells));
+            const date = dateAtTimelinePosition(event.currentTarget.scrollLeft / unitWidth, cells);
+            visibleDateRef.current = date;
+            setVisibleDate(date);
           }}
         >
           <div className="gantt-chart-header" role="row">
@@ -688,7 +696,11 @@ export function GanttBoard({
         </div>
       )}
       {scheduledIssues.length === 0 && visibleIssues.length > 0 && (
-        <div ref={chartScrollRef} className={`gantt-chart-scroll gantt-chart-scroll--empty${isTimelinePanning ? " gantt-chart-scroll--panning" : ""}`} role="grid" tabIndex={0} aria-label={t("ganttLabel")} style={{ "--gantt-fields-template": fieldGridTemplate, "--gantt-timeline-width": `${timelineWidth}px`, "--gantt-fields-width": `${fieldsWidth}px` } as CSSProperties} onKeyDown={handleChartKeyDown} onPointerDown={handleChartPointerDown} onPointerMove={handleChartPointerMove} onPointerUp={finishChartPointerPan} onPointerCancel={finishChartPointerPan} onLostPointerCapture={finishChartPointerPan} onScroll={(event) => setVisibleDate(dateAtTimelinePosition(event.currentTarget.scrollLeft / unitWidth, cells))}>
+        <div ref={chartScrollRef} className={`gantt-chart-scroll gantt-chart-scroll--empty${isTimelinePanning ? " gantt-chart-scroll--panning" : ""}`} role="grid" tabIndex={0} aria-label={t("ganttLabel")} style={{ "--gantt-fields-template": fieldGridTemplate, "--gantt-timeline-width": `${timelineWidth}px`, "--gantt-fields-width": `${fieldsWidth}px` } as CSSProperties} onKeyDown={handleChartKeyDown} onPointerDown={handleChartPointerDown} onPointerMove={handleChartPointerMove} onPointerUp={finishChartPointerPan} onPointerCancel={finishChartPointerPan} onLostPointerCapture={finishChartPointerPan} onScroll={(event) => {
+          const date = dateAtTimelinePosition(event.currentTarget.scrollLeft / unitWidth, cells);
+          visibleDateRef.current = date;
+          setVisibleDate(date);
+        }}>
           <div className="gantt-chart-header" role="row">
             <div className="gantt-header-fields" role="presentation">
               {columns.map(({ field, label }) => <div className="gantt-column-heading" role="columnheader" key={field}>{label}</div>)}
