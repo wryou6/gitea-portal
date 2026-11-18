@@ -63,23 +63,11 @@ node apps/api/dist/server.js
 
 ## IIS 反向代理
 
-IIS 伺服器需啟用 URL Rewrite 與 ARR。ARR Proxy 設定如下：
+IIS 伺服器需啟用 URL Rewrite 與 ARR，並在 ARR Server Proxy 設定中啟用 `Enable proxy`。`apps/web/public/web.config` 已包含 API/auth 轉送規則及 SPA fallback；建置與複製前端檔案時，兩者會一併部署。不要只複製 `web.config` 的舊備份覆蓋建置產物。
 
-- `Enable proxy`：啟用。
 - `Reverse rewrite host in response headers`：停用，使 API/Gitea 回應中的 `Location` 保留 Gitea 的 `:3000` 連接埠。此為伺服器層級設定。
 
-在 IIS `/issue` 應用程式層級建立輸入規則：
-
-| 欄位             | 值                                 |
-| ---------------- | ---------------------------------- |
-| 名稱             | `Gitea Portal API and Auth Proxy`  |
-| 模式             | `^(api                             | auth)(/.*)?$` |
-| 動作類型         | Rewrite                            |
-| 重寫 URL         | `http://127.0.0.1:3001/{R:1}{R:2}` |
-| 附加查詢字串     | 是                                 |
-| 停止處理後續規則 | 是                                 |
-
-規則必須設在 `/issue` 應用程式層級，因為模式是相對於該應用程式路徑。
+轉送規則位於 `/issue` 應用程式的 `web.config`，模式相對於該應用程式路徑，將 `api/*` 與 `auth/*` 轉送到本機 API。部署後應在 IIS URL Rewrite 確認同時看到 `Gitea Portal API and Auth Proxy` 與 `Portal SPA fallback` 兩條規則。
 
 ## API 開機自動啟動
 

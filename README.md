@@ -42,7 +42,7 @@ pnpm.cmd build
 Remove-Item Env:VITE_BASE_PATH
 ```
 
-將 `apps/web/dist` 內的內容複製到 IIS 子應用程式實體目錄。產物包含 `web.config`，為不存在的前端路徑回退至 `index.html`；IIS 需啟用 URL Rewrite。API 仍須由獨立 Node.js 程序執行。設定 `WEB_ORIGIN` 為完整 Portal 公開網址（例如 `http://portal-host/issue/`），並將 Gitea OAuth callback 設為同一主機的 `/issue/auth/callback`。IIS 需把 `/issue/api/*` 和 `/issue/auth/*` 轉送至 API，移除 `/issue` 前綴；這些反向代理規則由部署環境配置，未包含在靜態 bundle 中。
+將 `apps/web/dist` 內的內容複製到 IIS 子應用程式實體目錄。產物包含 `web.config`，將 API/auth 請求轉送至本機 API，並為不存在的前端路徑回退至 `index.html`；IIS 需啟用 URL Rewrite 與 ARR，並在 ARR 啟用 `Enable proxy`。API 仍須由獨立 Node.js 程序執行。設定 `WEB_ORIGIN` 為完整 Portal 公開網址（例如 `http://portal-host/issue/`），並將 Gitea OAuth callback 設為同一主機的 `/issue/auth/callback`。部署時以建置產物的 `web.config` 為準，避免用不含 API/auth 轉送規則的舊設定覆蓋它。
 
 實際 API 環境變數、ARR 反向代理、Gitea OAuth 與 Windows 工作排程設定，請參考 [IIS 子應用程式部署與操作手冊](specs/current/deployment-runbook.md)。
 
