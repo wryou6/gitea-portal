@@ -9,6 +9,8 @@ export type AppConfig = {
   oauthScope: string;
   giteaTimeoutMs: number;
   sessionSecret: string;
+  sessionIdleTimeoutMs: number;
+  sessionAbsoluteTimeoutMs: number;
   webOrigin: string;
   port: number;
 };
@@ -45,6 +47,12 @@ export function loadConfig(env = process.env): AppConfig {
       throw new Error(`Missing required environment variable: ${name}`);
     return value;
   };
+  const positiveDuration = (name: string, fallback: number): number => {
+    const value = Number(env[name] ?? fallback);
+    if (!Number.isSafeInteger(value) || value <= 0)
+      throw new Error(`${name} must be a positive integer number of milliseconds`);
+    return value;
+  };
   return {
     giteaBaseUrl: required("GITEA_BASE_URL").replace(/\/$/, ""),
     oauthClientId: required("GITEA_OAUTH_CLIENT_ID"),
@@ -55,6 +63,8 @@ export function loadConfig(env = process.env): AppConfig {
       "read:user read:repository read:issue write:issue",
     giteaTimeoutMs: Number(env.GITEA_API_TIMEOUT_MS ?? 10000),
     sessionSecret: required("PORTAL_SESSION_SECRET"),
+    sessionIdleTimeoutMs: positiveDuration("PORTAL_SESSION_IDLE_TIMEOUT_MS", 12 * 60 * 60 * 1000),
+    sessionAbsoluteTimeoutMs: positiveDuration("PORTAL_SESSION_ABSOLUTE_TIMEOUT_MS", 30 * 24 * 60 * 60 * 1000),
     webOrigin: env.WEB_ORIGIN ?? "http://localhost:5173",
     port: Number(env.API_PORT ?? 3000),
   };

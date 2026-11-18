@@ -44,11 +44,15 @@ GITEA_OAUTH_REDIRECT_URI=http://10.90.108.137/issue/auth/callback
 GITEA_OAUTH_SCOPE=read:user read:repository read:issue write:issue
 GITEA_API_TIMEOUT_MS=10000
 PORTAL_SESSION_SECRET=<隨機產生的 Session Secret>
+PORTAL_SESSION_IDLE_TIMEOUT_MS=43200000
+PORTAL_SESSION_ABSOLUTE_TIMEOUT_MS=2592000000
 API_PORT=3001
 WEB_ORIGIN=http://10.90.108.137/issue/
 ```
 
 建議為 IIS 部署建立獨立的 Gitea OAuth2 Application，以免更改本機開發環境使用的 OAuth 設定。其 Redirect URI 必須完全符合 `GITEA_OAUTH_REDIRECT_URI`。若 Windows 環境變數已設定同名值，程式會優先採用環境變數而非 `.env`。
+
+新版 Portal 將 OAuth token 放在經認證加密的 HttpOnly session Cookie，不使用 Redis 或伺服器端 session store。API 預期以單一 Node.js 程序執行。Cookie 的 `Secure` 屬性依 `WEB_ORIGIN` 的 HTTPS scheme 設定；目前入口為 HTTP，因此 Cookie 不會帶 `Secure`。加密可保護 Cookie 內容，但 HTTP 傳輸中的 Cookie 仍可能被攔截並重放。Session 閒置期限預設 12 小時，最長期限預設 30 天。登出清除目前瀏覽器 Cookie，無法撤銷已複製的 Cookie。
 
 手動啟動方式：
 

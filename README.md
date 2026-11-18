@@ -48,19 +48,23 @@ Remove-Item Env:VITE_BASE_PATH
 
 ## 環境變數
 
-| 變數                        | 必填 | 用途                                                                                  |
-| --------------------------- | ---- | ------------------------------------------------------------------------------------- |
-| `GITEA_BASE_URL`            | 是   | 內網 Gitea URL，例如 `http://localhost:3000`                                          |
-| `GITEA_OAUTH_CLIENT_ID`     | 是   | Gitea OAuth Application Client ID                                                     |
-| `GITEA_OAUTH_CLIENT_SECRET` | 是   | Gitea OAuth Application Client Secret，只供 API 使用                                  |
-| `GITEA_OAUTH_REDIRECT_URI`  | 是   | Gitea OAuth callback，預設 `http://localhost:3001/auth/callback`                      |
-| `GITEA_OAUTH_SCOPE`         | 否   | OAuth scope；預設為 `read:user read:repository read:issue write:issue`                |
-| `GITEA_API_TIMEOUT_MS`      | 否   | Gitea API timeout，預設 `10000`                                                       |
-| `PORTAL_SESSION_SECRET`     | 是   | Portal session signing secret；不要使用 `replace-me`                                  |
-| `API_PORT`                  | 否   | API port，預設 `3001`                                                                 |
+| 變數                        | 必填 | 用途                                                                   |
+| --------------------------- | ---- | ---------------------------------------------------------------------- |
+| `GITEA_BASE_URL`            | 是   | 內網 Gitea URL，例如 `http://localhost:3000`                           |
+| `GITEA_OAUTH_CLIENT_ID`     | 是   | Gitea OAuth Application Client ID                                      |
+| `GITEA_OAUTH_CLIENT_SECRET` | 是   | Gitea OAuth Application Client Secret，只供 API 使用                   |
+| `GITEA_OAUTH_REDIRECT_URI`  | 是   | Gitea OAuth callback，預設 `http://localhost:3001/auth/callback`       |
+| `GITEA_OAUTH_SCOPE`         | 否   | OAuth scope；預設為 `read:user read:repository read:issue write:issue` |
+| `GITEA_API_TIMEOUT_MS`      | 否   | Gitea API timeout，預設 `10000`                                        |
+| `PORTAL_SESSION_SECRET`     | 是   | Portal session 加密金鑰來源及 OAuth state 簽章密鑰；不要使用 `replace-me` |
+| `PORTAL_SESSION_IDLE_TIMEOUT_MS` | 否 | Portal 閒置期限，毫秒，預設 `43200000`（12 小時） |
+| `PORTAL_SESSION_ABSOLUTE_TIMEOUT_MS` | 否 | Portal 最長 session 期限，毫秒，預設 `2592000000`（30 天） |
+| `API_PORT`                  | 否   | API port，預設 `3001`                                                  |
 | `WEB_ORIGIN`                | 否   | Portal 公開網址，預設 `http://localhost:5173`；子路徑部署時需包含路徑，例如 `/issue/` |
 
 不要將 `.env`、OAuth secret、access token 或 session secret commit 到 repository。
+
+Portal session 使用加密並驗證完整性的 HttpOnly Cookie 保存 OAuth token，不新增伺服器端 session store。HTTPS 可讓 Cookie 帶上 `Secure` 屬性並保護傳輸；HTTP 仍可運作，但傳輸中的 Cookie 可被攔截並重放。Cookie 閒置 12 小時或建立滿 30 天後到期。登出會清除目前瀏覽器的 Cookie；無伺服器端 session store，因此已複製的 Cookie 無法立即撤銷。此部署方式假設 API 僅有一個 Node.js 程序，不支援多 API 程序間的 token refresh 協調。
 
 ## 工作區與 Issue Status
 
@@ -109,7 +113,7 @@ pnpm.cmd test
 
 ## 安全與權限邊界
 
-- Gitea OAuth delegated access token 只存在後端 session，不得進入 frontend bundle、JSON store 或 Git history。
+- Gitea OAuth delegated token 只可放在加密、HttpOnly 的 Portal session Cookie；不得進入 frontend bundle、API response body、JSON store、日誌或 Git history。
 - Portal 不得因自身設定取得超出使用者 Gitea 權限的 Repository、Issue 或 Label 存取能力。
 - 所有 Issue、Comment、Label、Assignee、Milestone 與狀態操作最終都寫回 Gitea。
 - Portal 不保存 Gitea Issue snapshot；Portal 停止後，Issue 仍可直接由 Gitea 管理。
